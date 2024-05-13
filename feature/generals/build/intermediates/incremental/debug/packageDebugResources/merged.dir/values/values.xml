@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="bookmarkSize">30dp</dimen>
+    <dimen name="marginBetweenSearchIconAndTextField">5dp</dimen>
+    <dimen name="newsItemCommonPadding">10dp</dimen>
+    <dimen name="newsItemThumbnailHeight">300dp</dimen>
+    <dimen name="searchBottomMargin">15dp</dimen>
+    <dimen name="searchIconStartMargin">10dp</dimen>
+    <dimen name="searchInDropdownInnerPadding">10dp</dimen>
+    <dimen name="searchReadingGlassesSize">40dp</dimen>
+    <dimen name="searchTextFieldHorizontalMargin">20dp</dimen>
+    <dimen name="searchTextFieldRadius">40dp</dimen>
+    <string name="semanticDetailScreen">DetailScreen</string>
+    <string name="semanticProgressBar">progressBar</string>
+</resources>

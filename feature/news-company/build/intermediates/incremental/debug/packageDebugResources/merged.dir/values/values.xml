@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="firstNewsItemThumbnailSize">150dp</dimen>
+    <dimen name="newsDetailFooterArrowSize">50dp</dimen>
+    <dimen name="newsItemBorderWidth">1dp</dimen>
+    <dimen name="newsItemInnerPadding">10dp</dimen>
+    <dimen name="newsItemTitleTopMargin">10dp</dimen>
+    <dimen name="normalNewsItemHeight">100dp</dimen>
+    <dimen name="normalNewsItemThumbnailSize">50dp</dimen>
+    <string name="semanticDetailScreen">DetailScreen</string>
+    <string name="semanticProgressBar">progressBar</string>
+</resources>

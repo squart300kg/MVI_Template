@@ -1,0 +1,15 @@
+R_DEF: Internal format may change without notice
+local
+dimen bookmarkSize
+dimen marginBetweenSearchIconAndTextField
+dimen newsItemCommonPadding
+dimen newsItemThumbnailHeight
+dimen searchBottomMargin
+dimen searchIconStartMargin
+dimen searchInDropdownInnerPadding
+dimen searchReadingGlassesSize
+dimen searchTextFieldHorizontalMargin
+dimen searchTextFieldRadius
+drawable ic_reading_glasses
+string semanticDetailScreen
+string semanticProgressBar
