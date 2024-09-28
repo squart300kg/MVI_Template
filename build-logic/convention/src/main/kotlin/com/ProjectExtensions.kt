@@ -14,7 +14,7 @@
  *   limitations under the License.
  */
 
-package kr.co.architecture.build.logic.extension
+package com
 
 import org.gradle.api.Project
 import org.gradle.api.artifacts.VersionCatalog
