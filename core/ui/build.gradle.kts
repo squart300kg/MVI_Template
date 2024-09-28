@@ -44,7 +44,6 @@ dependencies {
     implementation(libs.org.jetbrains.kotlinx.serialization.json)
     implementation(libs.io.coil.kt)
     implementation(libs.com.google.dagger.hilt.android)
-    implementation(libs.androidx.paging.runtimne)
     implementation(libs.androidx.work.runtime)
     implementation(libs.org.jetbrains.kotlinx.collections.immutable)
 

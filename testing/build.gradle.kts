@@ -33,7 +33,6 @@ dependencies {
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.work.runtime)
-    implementation(libs.androidx.paging.runtimne)
     implementation(libs.androidx.test.rules)
     implementation(libs.kotlinx.coroutines.test)
 

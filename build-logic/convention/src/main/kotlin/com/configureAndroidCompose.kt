@@ -20,7 +20,8 @@ internal fun Project.configureAndroidCompose(
             add("implementation", libs.findLibrary("androidx-compose-material3").get())
             add("implementation", libs.findLibrary("androidx-compose-ui-tooling-preview").get())
             add("implementation", libs.findLibrary("androidx-hilt-navigation-compose").get())
-            add("implementation", libs.findLibrary("androidx-paging-compose").get())
+            add("implementation", libs.findLibrary("androidx-lifecycle-viewmodel-compose").get())
+            add("implementation", libs.findLibrary("androidx-lifecycle-runtime-compose").get())
 
             add("androidTestImplementation", platform(bom))
             add("androidTestImplementation", libs.findLibrary("androidx-compose-ui-test-junit4").get())
