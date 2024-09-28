@@ -18,7 +18,6 @@ internal fun Project.configureAndroidCompose(
         dependencies {
             val bom = libs.findLibrary("androidx-compose-bom").get()
             add("implementation", platform(bom))
-            add("implementation", libs.findLibrary("androidx-compose-material").get())
             add("implementation", libs.findLibrary("androidx-compose-material3").get())
             add("implementation", libs.findLibrary("androidx-compose-material3-adaptive").get())
             add("implementation", libs.findLibrary("androidx-compose-material3-windowSizeClass").get())
