@@ -27,7 +27,7 @@ fun NavGraphBuilder.firstScreen() {
 @Composable
 fun FirstScreen(
     modifier: Modifier = Modifier,
-    viewModel: HomeViewModel = hiltViewModel()
+    viewModel: FirstViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.list.collectAsStateWithLifecycle()
     FirstScreen(

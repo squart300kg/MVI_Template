@@ -26,7 +26,7 @@ fun convertUiItem(item: DataModel.Item) =
     )
 
 @HiltViewModel
-class HomeViewModel @Inject constructor(
+class FirstViewModel @Inject constructor(
     private val repository: Repository,
 ) : ViewModel() {
 
