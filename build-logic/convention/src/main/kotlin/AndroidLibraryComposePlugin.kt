@@ -1,5 +1,6 @@
 import com.android.build.gradle.LibraryExtension
 import com.configureAndroidCompose
+import com.configureUiUtil
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.getByType
@@ -11,6 +12,7 @@ class AndroidLibraryComposePlugin: Plugin<Project> {
 
             val extension = extensions.getByType<LibraryExtension>()
             configureAndroidCompose(extension)
+            configureUiUtil(extension)
         }
     }
 }
