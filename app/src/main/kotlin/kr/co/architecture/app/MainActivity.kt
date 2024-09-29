@@ -39,7 +39,7 @@ class MainActivity : ComponentActivity() {
                         ) {
                             firstScreen()
 
-//                            secondScreen()
+                            secondScreen()
                         }
                     }
                 }
