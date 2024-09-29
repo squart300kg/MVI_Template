@@ -10,6 +10,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kr.co.architecture.model.exception.ArchitectureSampleHttpException
 
 interface UiState
 
@@ -65,12 +66,12 @@ abstract class BaseViewModel<State : UiState, Event : UiEvent, Effect : UiSideEf
     protected fun setErrorState(throwable: Throwable?) {
         _errorMessageState.update {
             when (throwable) {
-                is BuddyStockHttpException -> {
+                is ArchitectureSampleHttpException -> {
                     CenterErrorDialogMessage(
                         errorCode = throwable.code,
                         titleMessage = "[${throwable.code}]",
                         contentMessage = throwable.message,
-                        confirmButtonMessage = applicationContext2.getString(R.string.btn_confirm),
+                        confirmButtonMessage = "확인",
                     )
                 }
                 else -> {
@@ -78,7 +79,7 @@ abstract class BaseViewModel<State : UiState, Event : UiEvent, Effect : UiSideEf
                         errorCode = -1,
                         titleMessage = throwable?.stackTraceToString().toString(),
                         contentMessage = "",
-                        confirmButtonMessage = applicationContext2.getString(R.string.btn_confirm),
+                        confirmButtonMessage = "취소"
                     )
                 }
             }

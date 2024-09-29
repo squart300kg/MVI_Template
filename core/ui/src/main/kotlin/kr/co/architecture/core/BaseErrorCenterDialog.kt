@@ -1,6 +1,7 @@
 package kr.co.architecture.core
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -16,10 +17,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.colorResource
-import androidx.compose.ui.res.dimensionResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 
@@ -28,12 +27,7 @@ data class CenterErrorDialogMessage(
     val titleMessage: String,
     val contentMessage: String,
     val confirmButtonMessage: String
-) {
-    companion object {
-        fun getDefault() =
-            CenterErrorDialogMessage(-1, "", "", "")
-    }
-}
+)
 
 @Composable
 fun BaseErrorCenterDialog(
@@ -53,19 +47,19 @@ fun BaseErrorCenterDialog(
                 .fillMaxWidth()
                 .background(
                     color = Color.White,
-                    shape = RoundedCornerShape(dimensionResource(id = R.dimen.dimen_10dp))
+                    shape = RoundedCornerShape(10.dp)
                 )
                 .padding(
-                    horizontal = dimensionResource(id = R.dimen.dimen_16dp),
-                    vertical = dimensionResource(id = R.dimen.dimen_10dp)
+                    horizontal = 16.dp,
+                    vertical = 10.dp
                 )
         ) {
             Column(
                 modifier = Modifier
                     .align(Alignment.CenterHorizontally)
                     .padding(
-                        top = dimensionResource(id = R.dimen.dimen_12dp),
-                        bottom = dimensionResource(id = R.dimen.dimen_16dp)
+                        top = 12.dp,
+                        bottom = 16.dp
                     )
                     .verticalScroll(rememberScrollState())
             ) {
@@ -73,11 +67,7 @@ fun BaseErrorCenterDialog(
                     Text(
                         modifier = Modifier
                             .align(Alignment.CenterHorizontally),
-                        text = centerErrorDialogMessage.titleMessage,
-                        style = TypoSubhead3.copy(
-                            color = colorResource(id = R.color.gray_091E42),
-                            fontWeight = FontWeight.W700
-                        )
+                        text = centerErrorDialogMessage.titleMessage
                     )
                 }
 
@@ -85,15 +75,11 @@ fun BaseErrorCenterDialog(
                     Text(
                         modifier = Modifier
                             .padding(
-                                top = dimensionResource(id = R.dimen.dimen_10dp)
+                                top = 10.dp
                             )
                             .fillMaxSize()
                             .align(Alignment.CenterHorizontally),
                         text = centerErrorDialogMessage.contentMessage,
-                        style = TypoBody1.copy(
-                            color = colorResource(id = R.color.gray_7A869A),
-                            fontWeight = FontWeight.W400
-                        ),
                         textAlign = TextAlign.Center
                     )
                 }
@@ -102,28 +88,25 @@ fun BaseErrorCenterDialog(
 
             Row(
                 modifier = Modifier
-                    .padding(vertical = dimensionResource(id = R.dimen.dimen_16dp))
+                    .padding(vertical = 16.dp)
                     .fillMaxWidth()
             ) {
 
                 Box(
                     modifier = Modifier
                         .weight(0.49f)
-                        .height(dimensionResource(id = R.dimen.dimen_48dp))
+                        .height(48.dp)
                         .background(
-                            color = colorResource(id = R.color.gray_091E42),
-                            shape = RoundedCornerShape(dimensionResource(id = R.dimen.dimen_04dp))
+                            color = Color.LightGray,
+                            shape = RoundedCornerShape(4.dp)
                         )
-                        .noRippledClickable(onClick = onClickedConfirm)
+                        .clickable(onClick = onClickedConfirm)
                 ) {
                     Text(
                         modifier = Modifier
                             .align(Alignment.Center),
                         text = centerErrorDialogMessage.confirmButtonMessage,
-                        style = TypoSubhead2.copy(
-                            color = Color.White,
-                            textAlign = TextAlign.Center
-                        )
+                        color = Color.White,
                     )
                 }
             }
