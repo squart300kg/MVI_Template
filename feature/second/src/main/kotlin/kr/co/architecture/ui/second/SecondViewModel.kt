@@ -1,43 +1,84 @@
 package kr.co.architecture.ui.second
 
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.stateIn
-import kr.co.architecture.core.model.UiResult
-import kr.co.architecture.repository.DataModel
+import kotlinx.coroutines.flow.onCompletion
+import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.launch
+import kr.co.architecture.core.BaseViewModel
+import kr.co.architecture.core.UiEvent
+import kr.co.architecture.core.UiSideEffect
+import kr.co.architecture.core.UiState
+import kr.co.architecture.repository.ArticleDto
 import kr.co.architecture.repository.Repository
 import javax.inject.Inject
 
-data class UiModel(
-    val item: List<Item>
-) {
-    data class Item(
-        val name: String
-    )
+enum class SecondUiType {
+    NONE,
+    LOADED
 }
 
-fun convertUiItem(item: DataModel.Item) =
-    UiModel.Item(
-        name = item.name
-    )
+data class UiModel(
+    val name: String
+) {
+    companion object {
+        fun mapperToUi(dtos: List<ArticleDto>): ImmutableList<UiModel> {
+            return dtos
+                .map { UiModel(it.name) }
+                .toImmutableList()
+        }
+    }
+}
+
+data class SecondUiState(
+    val uiType: SecondUiType = SecondUiType.NONE,
+    val uiModels: ImmutableList<UiModel> = persistentListOf()
+): UiState
+
+sealed interface SecondUiEvent: UiEvent {
+
+}
+
+sealed interface SecondUiSideEffect: UiSideEffect {
+    data object Load: SecondUiSideEffect
+}
 
 @HiltViewModel
 class SecondViewModel @Inject constructor(
     private val repository: Repository,
-) : ViewModel() {
+) : BaseViewModel<SecondUiState, SecondUiEvent, SecondUiSideEffect>() {
 
-    val list = repository.list
-        .map { it.getOrThrow().item.map(::convertUiItem).let(::UiModel) }
-        .map<UiModel, UiResult<UiModel>>{ UiResult.Success(it) }
-        .catch { emit(UiResult.Error(it)) }
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.Lazily,
-            initialValue = UiResult.Empty
-        )
+    override fun createInitialState(): SecondUiState {
+        return SecondUiState()
+    }
+
+    override fun handleEvent(event: SecondUiEvent) {
+        when (event) {
+            else -> {}
+        }
+    }
+
+    init {
+        setEffect { SecondUiSideEffect.Load }
+    }
+
+    fun fetchData() {
+        viewModelScope.launch {
+            repository.getList()
+                .onStart {  }
+                .onCompletion {  }
+                .catch { setErrorState(it) }
+                .collect {
+                    setState { copy(
+                        uiType = SecondUiType.LOADED,
+                        uiModels = UiModel.mapperToUi(it)
+                    ) }
+                }
+        }
+    }
 
 }

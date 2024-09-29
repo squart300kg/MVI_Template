@@ -1,7 +1,8 @@
 package kr.co.architecture.network
 
 import com.skydoves.sandwich.ApiResponse
-import kr.co.architecture.network.model.Response
+import kr.co.architecture.network.model.ArticleResponse
+import kr.co.architecture.network.model.CommonResponse
 import retrofit2.http.GET
 import retrofit2.http.Query
 
@@ -13,5 +14,5 @@ interface RemoteApi {
         @Query("country") country: String = "us",
         @Query("page") page: Int = 1,
         @Query("pageSize") pageSize: Int = 10,
-    ): ApiResponse<Response>
+    ): ApiResponse<CommonResponse<ArticleResponse>>
 }

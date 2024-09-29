@@ -1,40 +1,33 @@
 package kr.co.architecture.repository
 
-import com.skydoves.sandwich.ApiResponse
-import com.skydoves.sandwich.message
+import com.skydoves.sandwich.suspendOperator
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kr.co.architecture.network.RemoteApi
-import kr.co.architecture.network.model.Response
+import kr.co.architecture.network.model.ArticleResponse
+import kr.co.architecture.network.model.CommonResponse
+import kr.co.architecture.network.operator.ResponseBaseOperator
 import javax.inject.Inject
 
-data class DataModel(
-    val item: List<Item>
-) {
-    data class Item(
-        val name: String
-    )
-}
+data class ArticleDto(
+    val name: String
+)
 
-fun convertDataItem(article: Response.Article) =
-    DataModel.Item(
-        name = article.title
-    )
+fun mapperToDto(article: List<ArticleResponse>) =
+    article.map { ArticleDto(it.title) }
 
 class RepositoryImpl @Inject constructor(
     private val remoteApi: RemoteApi
 ) : Repository {
 
-    override val list: Flow<Result<DataModel>> = flow {
-        when (val response = remoteApi.getList()) {
-            is ApiResponse.Success -> {
-                val dataModel = response.data.articles.map(::convertDataItem).let(::DataModel)
-                emit(Result.success(dataModel))
-            }
-            is ApiResponse.Failure.Exception -> emit(Result.failure(response.exception))
-            is ApiResponse.Failure.Error -> emit(Result.failure(Exception(response.message())))
+    override fun getList(): Flow<List<ArticleDto>> {
+        return flow {
+            remoteApi.getList().suspendOperator(
+                ResponseBaseOperator(
+                    mapper = ::mapperToDto,
+                    onSuccess = ::emit)
+            )
         }
-
     }
 }
 

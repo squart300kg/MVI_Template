@@ -4,6 +4,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.TextStyle
@@ -12,7 +13,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
-import kr.co.architecture.core.model.UiResult
 
 const val SECOND_BASE_ROUTE = "secondBaseRoute"
 fun NavGraphBuilder.secondScreen() {
@@ -28,26 +28,31 @@ fun SecondScreen(
     modifier: Modifier = Modifier,
     viewModel: SecondViewModel = hiltViewModel()
 ) {
-    val uiState by viewModel.list.collectAsStateWithLifecycle()
-    FirstScreen(
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    LaunchedEffect(Unit) {
+        viewModel.uiSideEffect.collect { effect ->
+            when (effect) {
+                is SecondUiSideEffect.Load -> viewModel.fetchData()
+            }
+        }
+    }
+    SecondScreen(
         uiState = uiState,
         modifier = modifier,
     )
 }
 
 @Composable
-fun FirstScreen(
+fun SecondScreen(
     modifier: Modifier = Modifier,
-    uiState: UiResult<UiModel>,
+    uiState: SecondUiState,
 ) {
 
-    when (uiState) {
-        is UiResult.Loading -> {}
-        is UiResult.Error -> {}
-        is UiResult.Empty -> {}
-        is UiResult.Success -> {
+    when (uiState.uiType) {
+        SecondUiType.NONE -> {}
+        SecondUiType.LOADED -> {
             LazyColumn(modifier) {
-                items(uiState.model.item) { item ->
+                items(uiState.uiModels) { item ->
                     Text(
                         text = item.name,
                         style = TextStyle(
