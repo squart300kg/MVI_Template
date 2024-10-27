@@ -37,7 +37,10 @@ internal fun BaseNavigationBarWithItems(
             BaseNavigationBarItem(
                 onClick = {
                     val topLevelNavOptions = navOptions {
-                        popUpTo(navController.graph.findStartDestination().id)
+                        popUpTo(navController.graph.findStartDestination().id) {
+                            this.saveState = true
+                        }
+                        restoreState = true
                         launchSingleTop = true
                     }
 
