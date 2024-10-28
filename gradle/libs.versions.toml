@@ -36,13 +36,14 @@ lottieVersion = "6.4.0"
 # plugins
 protobufPlugin = "0.9.4"
 androidGradlePlugin = "8.3.2"
-jetbrainsKotlin = "1.9.23"
+jetbrainsKotlin = "2.0.0"
 serializationPluginVer = "1.7.10"
 
 # libraries and plugins
-daggerHilt = "2.51"
+daggerHilt = "2.51.1"
 appcompat = "1.6.1"
 material = "1.11.0"
+ksp = "2.0.0-1.0.21"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "androidxCore" }
@@ -57,6 +58,7 @@ androidx-compose-material3 = { group = "androidx.compose.material3", name = "mat
 androidx-compose-material = { group = "androidx.compose.material", name = "material", version.ref = "composeMaterial" }
 androidx-hilt-navigation-compose = { group = "androidx.hilt", name = "hilt-navigation-compose", version.ref = "androidxHiltNavigationCompose" }
 androidx-navigation-common-ktx = { group = "androidx.navigation", name = "navigation-common", version.ref = "androidxNavigationCommonKtx"}
+hilt-android-gradle-plugin = { module = "com.google.dagger:hilt-android-gradle-plugin", version.ref = "daggerHilt" }
 junit = { group = "junit", name = "junit", version.ref = "junit"}
 androidx-test-ext-junit = { group = "androidx.test.ext", name = "junit", version.ref = "androidxTestExtJunit"}
 androidx-test-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "androidxEspresso" }
@@ -93,6 +95,7 @@ org-jetbrains-kotlinx-coroutines-core = { group = "org.jetbrains.kotlinx", name 
 com-github-skydoves-sandwich = { group = "com.github.skydoves", name = "sandwich", version.ref = "sandwitch" }
 kotlinx-coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref = "kotlinxCoroutines" }
 androidx-test-rules = { group = "androidx.test", name = "rules", version.ref = "androidxTestRules" }
+ksp-gradlePlugin = { group = "com.google.devtools.ksp", name = "com.google.devtools.ksp.gradle.plugin", version.ref = "ksp" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "androidGradlePlugin" }
@@ -101,6 +104,8 @@ protobuf = { id = "com.google.protobuf", version.ref = "protobufPlugin" }
 jetbrains-kotlin = { id = "org.jetbrains.kotlin.android", version.ref = "jetbrainsKotlin" }
 dagger-hilt = { id = "com.google.dagger.hilt.android", version.ref = "daggerHilt" }
 org-jetbrains-kotlin-plugin-serialization = { id ="org.jetbrains.kotlin.plugin.serialization", version.ref = "serializationPluginVer" }
+ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
+compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "jetbrainsKotlin" }
 
 # Plugins defined by this project
 architecture-sample-application-compose = { id = "architecture.sample.application.compose", version = "unspecified"  }

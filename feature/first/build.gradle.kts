@@ -1,10 +1,8 @@
 plugins {
     alias(libs.plugins.architecture.sample.library.base.setting)
     alias(libs.plugins.jetbrains.kotlin)
-    alias(libs.plugins.dagger.hilt)
     alias(libs.plugins.architecture.sample.library.compose)
     alias(libs.plugins.org.jetbrains.kotlin.plugin.serialization)
-    kotlin("kapt")
 }
 
 android {
@@ -26,9 +24,6 @@ android {
             )
         }
     }
-    kapt {
-        correctErrorTypes = true
-    }
 }
 
 dependencies {
@@ -45,11 +40,8 @@ dependencies {
     implementation(libs.com.google.code.gson)
     implementation(libs.org.jetbrains.kotlinx.serialization.json)
     implementation(libs.io.coil.kt)
-    implementation(libs.com.google.dagger.hilt.android)
     implementation(libs.androidx.work.runtime)
     implementation(libs.org.jetbrains.kotlinx.collections.immutable)
-
-    kapt(libs.com.google.dagger.hilt.compiler)
 
     testImplementation(libs.kotlinx.coroutines.test)
 

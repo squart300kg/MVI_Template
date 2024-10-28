@@ -1,10 +1,8 @@
 plugins {
     alias(libs.plugins.architecture.sample.application.base.setting)
     alias(libs.plugins.jetbrains.kotlin)
-    alias(libs.plugins.dagger.hilt)
     alias(libs.plugins.architecture.sample.application.compose)
     alias(libs.plugins.org.jetbrains.kotlin.plugin.serialization)
-    kotlin("kapt")
 }
 
 android {
@@ -36,9 +34,6 @@ android {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
     }
-    kapt {
-        correctErrorTypes = true
-    }
 }
 
 dependencies {
@@ -54,6 +49,4 @@ dependencies {
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.org.jetbrains.kotlinx.serialization.json)
     implementation(libs.junit)
-    implementation(libs.com.google.dagger.hilt.android)
-    kapt(libs.com.google.dagger.hilt.compiler)
 }

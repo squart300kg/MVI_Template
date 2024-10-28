@@ -1,8 +1,6 @@
 plugins {
     alias(libs.plugins.architecture.sample.library.base.setting)
     alias(libs.plugins.jetbrains.kotlin)
-    alias(libs.plugins.dagger.hilt)
-    kotlin("kapt")
 }
 
 android {
@@ -23,9 +21,6 @@ android {
             )
         }
     }
-    kapt {
-        correctErrorTypes = true
-    }
 }
 
 dependencies {
@@ -34,10 +29,7 @@ dependencies {
     implementation(project(":core:network"))
     implementation(project(":core:common"))
 
-    implementation(libs.com.google.dagger.hilt.android)
     implementation(libs.com.github.skydoves.sandwich)
-
-    kapt(libs.com.google.dagger.hilt.compiler)
 
     testImplementation(libs.kotlinx.coroutines.test)
     testImplementation(libs.junit)

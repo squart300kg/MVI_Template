@@ -2,8 +2,6 @@ import org.jetbrains.kotlin.konan.properties.Properties
 plugins {
     alias(libs.plugins.architecture.sample.library.base.setting)
     alias(libs.plugins.jetbrains.kotlin)
-    alias(libs.plugins.dagger.hilt)
-    kotlin("kapt")
 }
 
 val properties = Properties()
@@ -35,9 +33,6 @@ android {
             )
         }
     }
-    kapt {
-        correctErrorTypes = true
-    }
 }
 
 dependencies {
@@ -45,14 +40,11 @@ dependencies {
     implementation(project(":core:model"))
     implementation(project(":core:common"))
 
-    implementation(libs.com.google.dagger.hilt.android)
     implementation(libs.okhttp.logging)
     implementation(libs.retrofit.core)
     implementation(libs.retrofit.gson.converter)
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.com.github.skydoves.sandwich)
-
-    kapt(libs.com.google.dagger.hilt.compiler)
 
     testImplementation(libs.androidx.test.ext.junit)
 }

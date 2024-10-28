@@ -1,5 +1,6 @@
 import com.android.build.api.dsl.ApplicationExtension
 import com.configureBaseSetting
+import com.configureDaggerHilt
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.getByType
@@ -13,6 +14,7 @@ class AndroidApplicationBaseSettingPlugin: Plugin<Project> {
             with(extension) {
                 defaultConfig.targetSdk = 33
                 configureBaseSetting(this)
+                configureDaggerHilt(this)
             }
         }
     }
