@@ -10,6 +10,7 @@ androidxNavigationCommonKtx = "2.7.7"
 junit = "4.13.2"
 androidxTestExtJunit = "1.1.5"
 orgMockitoKotlin = "4.1.0"
+mock = "5.5.0"
 androidxEspresso = "3.5.0"
 androidxLifecycleViewmodelCompose = "2.7.0"
 androidxLifecycleRuntimeCompose = "2.7.0"
@@ -31,11 +32,12 @@ kotlinxCoroutines = "1.8.0"
 androidxTestRules = "1.5.0"
 immutableCollectionVer = "0.3.7"
 coroutineVersion = "1.8.0"
-lottieVersion = "6.4.0"
+glide = "1.0.0-beta01"
+lottie = "6.0.0"
 
 # plugins
 protobufPlugin = "0.9.4"
-androidGradlePlugin = "8.3.2"
+androidGradlePlugin = "8.6.0"
 jetbrainsKotlin = "2.0.0"
 serializationPluginVer = "1.7.10"
 
@@ -64,6 +66,7 @@ androidx-test-ext-junit = { group = "androidx.test.ext", name = "junit", version
 androidx-test-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "androidxEspresso" }
 androidx-compose-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
 org-mockito-kotlin = { group = "org.mockito.kotlin", name = "mockito-kotlin", version.ref = "orgMockitoKotlin" }
+org-mockito-core = { group = "org.mockito", name = "mockito-core", version.ref = "mock" }
 androidx-compose-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling" }
 androidx-compose-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview" }
 androidx-compose-ui-testManifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }
@@ -96,6 +99,8 @@ com-github-skydoves-sandwich = { group = "com.github.skydoves", name = "sandwich
 kotlinx-coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref = "kotlinxCoroutines" }
 androidx-test-rules = { group = "androidx.test", name = "rules", version.ref = "androidxTestRules" }
 ksp-gradlePlugin = { group = "com.google.devtools.ksp", name = "com.google.devtools.ksp.gradle.plugin", version.ref = "ksp" }
+com-github-bumptech-glide = { group = "com.github.bumptech.glide", name = "compose", version.ref = "glide" }
+com-airbnb-android-lottie-compose = { group = "com.airbnb.android", name = "lottie-compose", version.ref = "lottie" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "androidGradlePlugin" }
@@ -108,10 +113,8 @@ ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "jetbrainsKotlin" }
 
 # Plugins defined by this project
-architecture-sample-application-compose = { id = "architecture.sample.application.compose", version = "unspecified"  }
-architecture-sample-library-compose = { id = "architecture.sample.library.compose", version = "unspecified"  }
-architecture-sample-application-base-setting = { id = "architecture.sample.application.base.setting", version = "unspecified"  }
-architecture-sample-library-base-setting = { id = "architecture.sample.library.base.setting", version = "unspecified"  }
+architecture-sample-ui = { id = "architecture.sample.ui", version = "unspecified"  }
+architecture-sample-base-setting = { id = "architecture.sample.base.setting", version = "unspecified"  }
 
 [bundles]
 [metadata]

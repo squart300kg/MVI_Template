@@ -16,6 +16,10 @@
 
 package com
 
+import com.android.build.api.dsl.ApplicationExtension
+import com.android.build.api.dsl.CommonExtension
+import com.android.build.api.dsl.LibraryExtension
+import com.github.javaparser.utils.Log
 import org.gradle.api.Project
 import org.gradle.api.artifacts.VersionCatalog
 import org.gradle.api.artifacts.VersionCatalogsExtension
@@ -23,3 +27,13 @@ import org.gradle.kotlin.dsl.getByType
 
 val Project.libs
     get(): VersionCatalog = extensions.getByType<VersionCatalogsExtension>().named("libs")
+
+internal fun Project.getBasePluginExtension(): CommonExtension<*, *, *, *, *, *>? =
+    when {
+        plugins.hasPlugin("com.android.application") -> extensions.getByType<ApplicationExtension>()
+        plugins.hasPlugin("com.android.library") -> extensions.getByType<LibraryExtension>()
+        else -> {
+            Log.error("Unsupported module type for AndroidBaseSettingPlugin")
+            null
+        }
+    }

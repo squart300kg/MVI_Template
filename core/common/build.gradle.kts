@@ -1,31 +1,12 @@
 plugins {
-    alias(libs.plugins.architecture.sample.library.base.setting)
-    alias(libs.plugins.jetbrains.kotlin)
+    alias(libs.plugins.android.library)
+    alias(libs.plugins.architecture.sample.base.setting)
 }
 
 android {
     namespace = "kr.co.architecture.common"
 
-    defaultConfig {
+    defaultConfig { }
 
-        testInstrumentationRunner =
-            "androidx.test.runner.AndroidJUnitRunner"
-        consumerProguardFiles("consumer-rules.pro")
-    }
-
-    buildTypes {
-        release {
-            isMinifyEnabled = true
-            proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
-            )
-        }
-    }
-
-    dependencies {
-        implementation(libs.org.jetbrains.kotlinx.coroutines.core)
-
-        testImplementation(libs.junit)
-    }
+    dependencies { }
 }
