@@ -7,14 +7,8 @@ import kr.co.architecture.core.network.RemoteApi
 import kr.co.architecture.core.network.model.ArticleResponse
 import kr.co.architecture.core.network.model.CommonResponse
 import kr.co.architecture.core.network.operator.ResponseBaseOperator
+import kr.co.architecture.core.repository.dto.ArticleDto
 import javax.inject.Inject
-
-data class ArticleDto(
-    val name: String
-)
-
-fun mapperToDto(article: List<ArticleResponse>) =
-    article.map { ArticleDto(it.title) }
 
 class RepositoryImpl @Inject constructor(
     private val remoteApi: RemoteApi
@@ -24,7 +18,7 @@ class RepositoryImpl @Inject constructor(
         return flow {
             remoteApi.getList().suspendOperator(
                 ResponseBaseOperator(
-                    mapper = ::mapperToDto,
+                    mapper = ArticleDto::mapperToDto,
                     onSuccess = ::emit)
             )
         }
