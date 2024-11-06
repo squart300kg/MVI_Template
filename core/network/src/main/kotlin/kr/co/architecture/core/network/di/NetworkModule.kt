@@ -6,7 +6,7 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import kr.co.architecture.network.BuildConfig
+import kr.co.architecture.core.network.BuildConfig
 import kr.co.architecture.core.network.RemoteApi
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
