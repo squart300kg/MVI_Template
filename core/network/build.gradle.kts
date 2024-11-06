@@ -23,6 +23,7 @@ android {
         implementation(libs.retrofit.gson.converter)
         implementation(libs.kotlinx.serialization.json)
         implementation(libs.com.github.skydoves.sandwich)
+        implementation(libs.com.github.skydoves.sandwich.retrofit)
     }
 }
 

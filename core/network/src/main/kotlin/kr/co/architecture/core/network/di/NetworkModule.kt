@@ -1,7 +1,7 @@
 package kr.co.architecture.core.network.di
 
 import android.util.Log
-import com.skydoves.sandwich.adapters.ApiResponseCallAdapterFactory
+import com.skydoves.sandwich.retrofit.adapters.ApiResponseCallAdapterFactory
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
