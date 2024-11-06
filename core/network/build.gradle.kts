@@ -21,7 +21,6 @@ android {
         implementation(libs.okhttp.logging)
         implementation(libs.retrofit.core)
         implementation(libs.retrofit.gson.converter)
-        implementation(libs.kotlinx.serialization.json)
         implementation(libs.com.github.skydoves.sandwich)
         implementation(libs.com.github.skydoves.sandwich.retrofit)
     }
