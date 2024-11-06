@@ -16,7 +16,7 @@ internal fun Project.configureBuildType(
                 val RELEASE_KEY_ALIAS: String by this@configureBuildType
                 val RELEASE_KEY_PASSWORD: String by this@configureBuildType
 
-                storeFile = this@configureBuildType.file("./keystore/wanted.jks")
+                storeFile = this@configureBuildType.file("./keystore/ssyssy.jks")
                 storePassword = System.getenv("RELEASE_PASSWD") ?: RELEASE_KEYSTORE_PASSWORD
                 keyAlias = System.getenv("RELEASE_KEY_ALIAS") ?: RELEASE_KEY_ALIAS
                 keyPassword = System.getenv("RELEASE_KEY_PASSWD") ?: RELEASE_KEY_PASSWORD
