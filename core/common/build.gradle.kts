@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    namespace = "kr.co.architecture.common"
+    namespace = "kr.co.architecture.core.common"
 
     defaultConfig { }
 

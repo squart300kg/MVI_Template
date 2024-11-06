@@ -8,7 +8,7 @@ val properties = Properties()
 properties.load(project.rootProject.file("local.properties").inputStream())
 
 android {
-    namespace = "kr.co.architecture.network"
+    namespace = "kr.co.architecture.core.network"
 
     defaultConfig {
         buildConfigField("String", "apiKey", "${properties["apiKey"]}")

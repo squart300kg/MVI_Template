@@ -5,7 +5,7 @@ plugins {
 }
 
 android {
-    namespace = "kr.co.architecture.first"
+    namespace = "kr.co.architecture.feature.first"
 
     defaultConfig { }
 

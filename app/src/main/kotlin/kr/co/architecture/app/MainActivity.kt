@@ -12,9 +12,9 @@ import androidx.navigation.compose.rememberNavController
 import dagger.hilt.android.AndroidEntryPoint
 import kr.co.architecture.app.ui.navigation.BaseNavigationBarWithItems
 import kr.co.architecture.app.ui.theme.BaseTheme
-import kr.co.architecture.ui.first.FIRST_BASE_ROUTE
-import kr.co.architecture.ui.first.firstScreen
-import kr.co.architecture.ui.second.secondScreen
+import kr.co.architecture.feature.first.FIRST_BASE_ROUTE
+import kr.co.architecture.feature.first.firstScreen
+import kr.co.architecture.feature.second.secondScreen
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {

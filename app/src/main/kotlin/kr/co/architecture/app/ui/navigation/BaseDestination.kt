@@ -4,8 +4,8 @@ import androidx.annotation.DrawableRes
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import kr.co.architecture.app.R
-import kr.co.architecture.ui.first.FIRST_BASE_ROUTE
-import kr.co.architecture.ui.first.SECOND_BASE_ROUTE
+import kr.co.architecture.feature.first.FIRST_BASE_ROUTE
+import kr.co.architecture.feature.first.SECOND_BASE_ROUTE
 
 val baseDestinations: ImmutableList<BaseDestination> =
     BaseDestination.entries.toImmutableList()
