@@ -13,8 +13,8 @@ import kr.co.architecture.core.ui.BaseViewModel
 import kr.co.architecture.core.ui.UiEvent
 import kr.co.architecture.core.ui.UiSideEffect
 import kr.co.architecture.core.ui.UiState
-import kr.co.architecture.core.repository.ArticleDto
 import kr.co.architecture.core.repository.Repository
+import kr.co.architecture.core.repository.dto.ArticleDto
 import javax.inject.Inject
 
 enum class FirstUiType {
