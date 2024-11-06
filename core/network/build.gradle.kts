@@ -14,6 +14,7 @@ android {
         buildConfigField("String", "apiKey", "${properties["apiKey"]}")
         buildConfigField("String", "apiUrl", "${properties["apiUrl"]}")
     }
+
     dependencies {
         implementation(project(":core:model"))
         implementation(project(":core:common"))
