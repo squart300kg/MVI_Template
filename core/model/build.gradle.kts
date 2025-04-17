@@ -1,13 +1,13 @@
 plugins {
-    alias(libs.plugins.android.library)
-    alias(libs.plugins.architecture.sample.base.setting)
-    alias(libs.plugins.org.jetbrains.kotlin.plugin.serialization)
+  alias(libs.plugins.android.library)
+  alias(libs.plugins.architecture.sample.base.setting)
+  alias(libs.plugins.org.jetbrains.kotlin.plugin.serialization)
 }
 
 android {
-    namespace = "kr.co.architecture.core.model"
+  namespace = "kr.co.architecture.core.model"
 
-    defaultConfig { }
+  defaultConfig { }
 
-    dependencies { }
+  dependencies { }
 }

@@ -23,93 +23,93 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 
 data class CenterErrorDialogMessage(
-    val errorCode: Int,
-    val titleMessage: String,
-    val contentMessage: String,
-    val confirmButtonMessage: String
+  val errorCode: Int,
+  val titleMessage: String,
+  val contentMessage: String,
+  val confirmButtonMessage: String
 )
 
 @Composable
 fun BaseErrorCenterDialog(
-    centerErrorDialogMessage: CenterErrorDialogMessage,
-    onDismissDialog: () -> Unit = { },
-    onClickedConfirm: () -> Unit = { }
+  centerErrorDialogMessage: CenterErrorDialogMessage,
+  onDismissDialog: () -> Unit = { },
+  onClickedConfirm: () -> Unit = { }
 ) {
-    Dialog(
-        onDismissRequest = onDismissDialog,
-        properties = DialogProperties(
-            dismissOnBackPress = true,
-            dismissOnClickOutside = true,
-        )
+  Dialog(
+    onDismissRequest = onDismissDialog,
+    properties = DialogProperties(
+      dismissOnBackPress = true,
+      dismissOnClickOutside = true,
+    )
+  ) {
+    Column(
+      modifier = Modifier
+          .fillMaxWidth()
+          .background(
+              color = Color.White,
+              shape = RoundedCornerShape(10.dp)
+          )
+          .padding(
+              horizontal = 16.dp,
+              vertical = 10.dp
+          )
     ) {
-        Column(
+      Column(
+        modifier = Modifier
+            .align(Alignment.CenterHorizontally)
+            .padding(
+                top = 12.dp,
+                bottom = 16.dp
+            )
+            .verticalScroll(rememberScrollState())
+      ) {
+        if (centerErrorDialogMessage.titleMessage.isNotEmpty()) {
+          Text(
             modifier = Modifier
-                .fillMaxWidth()
-                .background(
-                    color = Color.White,
-                    shape = RoundedCornerShape(10.dp)
-                )
-                .padding(
-                    horizontal = 16.dp,
-                    vertical = 10.dp
-                )
-        ) {
-            Column(
-                modifier = Modifier
-                    .align(Alignment.CenterHorizontally)
-                    .padding(
-                        top = 12.dp,
-                        bottom = 16.dp
-                    )
-                    .verticalScroll(rememberScrollState())
-            ) {
-                if (centerErrorDialogMessage.titleMessage.isNotEmpty()) {
-                    Text(
-                        modifier = Modifier
-                            .align(Alignment.CenterHorizontally),
-                        text = centerErrorDialogMessage.titleMessage
-                    )
-                }
-
-                if (centerErrorDialogMessage.contentMessage.isNotEmpty()) {
-                    Text(
-                        modifier = Modifier
-                            .padding(
-                                top = 10.dp
-                            )
-                            .fillMaxSize()
-                            .align(Alignment.CenterHorizontally),
-                        text = centerErrorDialogMessage.contentMessage,
-                        textAlign = TextAlign.Center
-                    )
-                }
-            }
-
-
-            Row(
-                modifier = Modifier
-                    .padding(vertical = 16.dp)
-                    .fillMaxWidth()
-            ) {
-
-                Box(
-                    modifier = Modifier
-                        .weight(0.49f)
-                        .height(48.dp)
-                        .background(
-                            color = Color.LightGray,
-                            shape = RoundedCornerShape(4.dp)
-                        )
-                        .clickable(onClick = onClickedConfirm)
-                ) {
-                    Text(
-                        modifier = Modifier
-                            .align(Alignment.Center),
-                        text = centerErrorDialogMessage.confirmButtonMessage,
-                        color = Color.White,
-                    )
-                }
-            }
+              .align(Alignment.CenterHorizontally),
+            text = centerErrorDialogMessage.titleMessage
+          )
         }
+
+        if (centerErrorDialogMessage.contentMessage.isNotEmpty()) {
+          Text(
+            modifier = Modifier
+                .padding(
+                    top = 10.dp
+                )
+                .fillMaxSize()
+                .align(Alignment.CenterHorizontally),
+            text = centerErrorDialogMessage.contentMessage,
+            textAlign = TextAlign.Center
+          )
+        }
+      }
+
+
+      Row(
+        modifier = Modifier
+            .padding(vertical = 16.dp)
+            .fillMaxWidth()
+      ) {
+
+        Box(
+          modifier = Modifier
+              .weight(0.49f)
+              .height(48.dp)
+              .background(
+                  color = Color.LightGray,
+                  shape = RoundedCornerShape(4.dp)
+              )
+              .clickable(onClick = onClickedConfirm)
+        ) {
+          Text(
+            modifier = Modifier
+              .align(Alignment.Center),
+            text = centerErrorDialogMessage.confirmButtonMessage,
+            color = Color.White,
+          )
+        }
+      }
     }
+  }
 }

@@ -18,67 +18,69 @@ import kr.co.architecture.core.repository.dto.ArticleDto
 import javax.inject.Inject
 
 enum class SecondUiType {
-    NONE,
-    LOADED
+  NONE,
+  LOADED
 }
 
 data class UiModel(
-    val name: String
+  val name: String
 ) {
-    companion object {
-        fun mapperToUi(dtos: List<ArticleDto>): ImmutableList<UiModel> {
-            return dtos
-                .map { UiModel(it.name) }
-                .toImmutableList()
-        }
+  companion object {
+    fun mapperToUi(dtos: List<ArticleDto>): ImmutableList<UiModel> {
+      return dtos
+        .map { UiModel(it.name) }
+        .toImmutableList()
     }
+  }
 }
 
 data class SecondUiState(
-    val uiType: SecondUiType = SecondUiType.NONE,
-    val uiModels: ImmutableList<UiModel> = persistentListOf()
-): UiState
+  val uiType: SecondUiType = SecondUiType.NONE,
+  val uiModels: ImmutableList<UiModel> = persistentListOf()
+) : UiState
 
-sealed interface SecondUiEvent: UiEvent {
+sealed interface SecondUiEvent : UiEvent {
 
 }
 
-sealed interface SecondUiSideEffect: UiSideEffect {
-    data object Load: SecondUiSideEffect
+sealed interface SecondUiSideEffect : UiSideEffect {
+  data object Load : SecondUiSideEffect
 }
 
 @HiltViewModel
 class SecondViewModel @Inject constructor(
-    private val repository: Repository,
+  private val repository: Repository,
 ) : BaseViewModel<SecondUiState, SecondUiEvent, SecondUiSideEffect>() {
 
-    override fun createInitialState(): SecondUiState {
-        return SecondUiState()
-    }
+  override fun createInitialState(): SecondUiState {
+    return SecondUiState()
+  }
 
-    override fun handleEvent(event: SecondUiEvent) {
-        when (event) {
-            else -> {}
+  override fun handleEvent(event: SecondUiEvent) {
+    when (event) {
+      else -> {}
+    }
+  }
+
+  init {
+    setEffect { SecondUiSideEffect.Load }
+  }
+
+  fun fetchData() {
+    viewModelScope.launch {
+      repository.getList()
+        .onStart { }
+        .onCompletion { }
+        .catch { setErrorState(it) }
+        .collect {
+          setState {
+            copy(
+              uiType = SecondUiType.LOADED,
+              uiModels = UiModel.mapperToUi(it)
+            )
+          }
         }
     }
-
-    init {
-        setEffect { SecondUiSideEffect.Load }
-    }
-
-    fun fetchData() {
-        viewModelScope.launch {
-            repository.getList()
-                .onStart {  }
-                .onCompletion {  }
-                .catch { setErrorState(it) }
-                .collect {
-                    setState { copy(
-                        uiType = SecondUiType.LOADED,
-                        uiModels = UiModel.mapperToUi(it)
-                    ) }
-                }
-        }
-    }
+  }
 
 }

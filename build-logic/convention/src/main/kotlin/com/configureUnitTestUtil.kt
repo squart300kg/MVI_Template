@@ -5,19 +5,19 @@ import org.gradle.api.Project
 import org.gradle.kotlin.dsl.dependencies
 
 internal fun Project.configureUnitTestUtil(
-    commonExtension: CommonExtension<*, *, *, *, *, *>,
+  commonExtension: CommonExtension<*, *, *, *, *, *>,
 ) {
-    commonExtension.apply {
+  commonExtension.apply {
 
-        defaultConfig {
-            testInstrumentationRunner =
-                "androidx.test.runner.AndroidJUnitRunner"
-        }
-        dependencies {
-            add("testImplementation", libs.findLibrary("org-mockito-core").get())
-            add("testImplementation", libs.findLibrary("org-mockito-kotlin").get())
-            add("testImplementation", libs.findLibrary("kotlinx-coroutines-test").get())
-            add("testImplementation", libs.findLibrary("androidx-test-ext-junit").get())
-        }
+    defaultConfig {
+      testInstrumentationRunner =
+        "androidx.test.runner.AndroidJUnitRunner"
     }
+    dependencies {
+      add("testImplementation", libs.findLibrary("org-mockito-core").get())
+      add("testImplementation", libs.findLibrary("org-mockito-kotlin").get())
+      add("testImplementation", libs.findLibrary("kotlinx-coroutines-test").get())
+      add("testImplementation", libs.findLibrary("androidx-test-ext-junit").get())
+    }
+  }
 }

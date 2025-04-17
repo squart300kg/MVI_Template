@@ -1,19 +1,19 @@
 plugins {
-    alias(libs.plugins.android.library)
-    alias(libs.plugins.architecture.sample.base.setting)
+  alias(libs.plugins.android.library)
+  alias(libs.plugins.architecture.sample.base.setting)
 }
 
 android {
-    namespace = "kr.co.architecture.core.repository"
+  namespace = "kr.co.architecture.core.repository"
 
-    defaultConfig { }
+  defaultConfig { }
 
-    dependencies {
-        implementation(project(":core:model"))
-        implementation(project(":core:common"))
-        implementation(project(":core:network"))
+  dependencies {
+    implementation(project(":core:model"))
+    implementation(project(":core:common"))
+    implementation(project(":core:network"))
 
-        implementation(libs.com.github.skydoves.sandwich)
-    }
+    implementation(libs.com.github.skydoves.sandwich)
+  }
 }
 

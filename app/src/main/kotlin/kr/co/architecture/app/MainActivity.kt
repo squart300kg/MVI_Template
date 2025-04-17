@@ -19,31 +19,31 @@ import kr.co.architecture.feature.second.secondScreen
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+  override fun onCreate(savedInstanceState: Bundle?) {
+    super.onCreate(savedInstanceState)
 
-        setContent {
-            BaseTheme {
-                val navHostController = rememberNavController()
+    setContent {
+      BaseTheme {
+        val navHostController = rememberNavController()
 
-                Scaffold(
-                    bottomBar = {
-                        BaseNavigationBarWithItems(navHostController)
-                    }
-                ) { innerPadding ->
-                    CompositionLocalProvider() {
-                        NavHost(
-                            modifier = Modifier.padding(innerPadding),
-                            navController = navHostController,
-                            startDestination = FIRST_BASE_ROUTE
-                        ) {
-                            firstScreen()
+        Scaffold(
+          bottomBar = {
+            BaseNavigationBarWithItems(navHostController)
+          }
+        ) { innerPadding ->
+          CompositionLocalProvider() {
+            NavHost(
+              modifier = Modifier.padding(innerPadding),
+              navController = navHostController,
+              startDestination = FIRST_BASE_ROUTE
+            ) {
+              firstScreen()
 
-                            secondScreen()
-                        }
-                    }
-                }
+              secondScreen()
             }
+          }
         }
+      }
     }
+  }
 }

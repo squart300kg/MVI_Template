@@ -1,12 +1,12 @@
 plugins {
-    alias(libs.plugins.android.library)
-    alias(libs.plugins.architecture.sample.base.setting)
+  alias(libs.plugins.android.library)
+  alias(libs.plugins.architecture.sample.base.setting)
 }
 
 android {
-    namespace = "kr.co.architecture.core.common"
+  namespace = "kr.co.architecture.core.common"
 
-    defaultConfig { }
+  defaultConfig { }
 
-    dependencies { }
+  dependencies { }
 }

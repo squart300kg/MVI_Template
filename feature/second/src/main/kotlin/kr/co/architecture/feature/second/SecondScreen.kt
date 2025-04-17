@@ -21,59 +21,59 @@ import androidx.navigation.compose.composable
 
 const val SECOND_BASE_ROUTE = "secondBaseRoute"
 fun NavGraphBuilder.secondScreen() {
-    composable(
-        route = SECOND_BASE_ROUTE
-    ) {
-        SecondScreen()
-    }
+  composable(
+    route = SECOND_BASE_ROUTE
+  ) {
+    SecondScreen()
+  }
 }
 
 @Composable
 fun SecondScreen(
-    modifier: Modifier = Modifier,
-    viewModel: SecondViewModel = hiltViewModel()
+  modifier: Modifier = Modifier,
+  viewModel: SecondViewModel = hiltViewModel()
 ) {
-    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-    LaunchedEffect(Unit) {
-        viewModel.uiSideEffect.collect { effect ->
-            when (effect) {
-                is SecondUiSideEffect.Load -> viewModel.fetchData()
-            }
-        }
+  val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+  LaunchedEffect(Unit) {
+    viewModel.uiSideEffect.collect { effect ->
+      when (effect) {
+        is SecondUiSideEffect.Load -> viewModel.fetchData()
+      }
     }
-    SecondScreen(
-        uiState = uiState,
-        modifier = modifier,
-    )
+  }
+  SecondScreen(
+    uiState = uiState,
+    modifier = modifier,
+  )
 }
 
 @Composable
 fun SecondScreen(
-    modifier: Modifier = Modifier,
-    uiState: SecondUiState,
+  modifier: Modifier = Modifier,
+  uiState: SecondUiState,
 ) {
 
-    when (uiState.uiType) {
-        SecondUiType.NONE -> {}
-        SecondUiType.LOADED -> {
-            LazyColumn(modifier) {
-                items(uiState.uiModels) { item ->
-                    Text(
-                        modifier = Modifier
-                            .padding(8.dp)
-                            .border(
-                                width = 1.dp,
-                                shape = RoundedCornerShape(4.dp),
-                                color = Color.LightGray
-                            )
-                            .padding(8.dp),
-                        text = item.name,
-                        style = TextStyle(
-                            fontSize = 20.sp,
-                        )
-                    )
-                }
-            }
+  when (uiState.uiType) {
+    SecondUiType.NONE -> {}
+    SecondUiType.LOADED -> {
+      LazyColumn(modifier) {
+        items(uiState.uiModels) { item ->
+          Text(
+            modifier = Modifier
+                .padding(8.dp)
+                .border(
+                    width = 1.dp,
+                    shape = RoundedCornerShape(4.dp),
+                    color = Color.LightGray
+                )
+                .padding(8.dp),
+            text = item.name,
+            style = TextStyle(
+              fontSize = 20.sp,
+            )
+          )
         }
+      }
     }
+  }
 }

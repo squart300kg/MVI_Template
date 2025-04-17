@@ -5,14 +5,14 @@ import org.gradle.api.Project
 import org.gradle.kotlin.dsl.dependencies
 
 internal fun Project.configureUiUtil(
-    commonExtension: CommonExtension<*, *, *, *, *, *>,
+  commonExtension: CommonExtension<*, *, *, *, *, *>,
 ) {
-    commonExtension.apply {
+  commonExtension.apply {
 
-        dependencies {
-            add("implementation", libs.findLibrary("org-jetbrains-kotlinx-collections-immutable").get())
-            add("implementation", libs.findLibrary("com-github-bumptech-glide").get())
-            add("implementation", libs.findLibrary("com-airbnb-android-lottie-compose").get())
-        }
+    dependencies {
+      add("implementation", libs.findLibrary("org-jetbrains-kotlinx-collections-immutable").get())
+      add("implementation", libs.findLibrary("com-github-bumptech-glide").get())
+      add("implementation", libs.findLibrary("com-airbnb-android-lottie-compose").get())
     }
+  }
 }

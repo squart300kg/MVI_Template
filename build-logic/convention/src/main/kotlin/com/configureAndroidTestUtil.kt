@@ -5,12 +5,12 @@ import org.gradle.api.Project
 import org.gradle.kotlin.dsl.dependencies
 
 internal fun Project.configureAndroidTestUtil(
-    commonExtension: CommonExtension<*, *, *, *, *, *>,
+  commonExtension: CommonExtension<*, *, *, *, *, *>,
 ) {
-    commonExtension.apply {
+  commonExtension.apply {
 
-        dependencies {
-            add("androidTestImplementation", libs.findLibrary("androidx-test-ext-junit").get())
-        }
+    dependencies {
+      add("androidTestImplementation", libs.findLibrary("androidx-test-ext-junit").get())
     }
+  }
 }

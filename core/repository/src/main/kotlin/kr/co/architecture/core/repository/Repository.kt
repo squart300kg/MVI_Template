@@ -5,6 +5,6 @@ import kr.co.architecture.core.repository.dto.ArticleDto
 
 interface Repository {
 
-    fun getList(): Flow<List<ArticleDto>>
+  fun getList(): Flow<List<ArticleDto>>
 
 }

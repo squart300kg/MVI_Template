@@ -7,18 +7,18 @@ import org.junit.Before
 import org.junit.Rule
 
 class FirstViewModelTest {
-    @get:Rule
-    val mainDispatcherRule = MainDispatcherRule()
+  @get:Rule
+  val mainDispatcherRule = MainDispatcherRule()
 
-    private lateinit var viewModel: FirstViewModel
+  private lateinit var viewModel: FirstViewModel
 
-    private val newsRepository = TestRepository()
+  private val newsRepository = TestRepository()
 
-    @Before
-    fun setup() {
-        viewModel = FirstViewModel(
-            repository = newsRepository
-        )
-    }
+  @Before
+  fun setup() {
+    viewModel = FirstViewModel(
+      repository = newsRepository
+    )
+  }
 
 }

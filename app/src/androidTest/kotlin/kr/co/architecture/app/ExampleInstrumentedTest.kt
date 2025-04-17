@@ -1,12 +1,10 @@
-package kr.co.architecture.ssy
+package kr.co.architecture.app
 
 import androidx.activity.ComponentActivity
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
-import androidx.test.platform.app.InstrumentationRegistry
 
 import org.junit.Test
 
-import org.junit.Assert.*
 import org.junit.Rule
 
 /**
@@ -16,10 +14,10 @@ import org.junit.Rule
  */
 class ExampleInstrumentedTest {
 
-    @get:Rule
-    val composeTestRule = createAndroidComposeRule<ComponentActivity>()
+  @get:Rule
+  val composeTestRule = createAndroidComposeRule<ComponentActivity>()
 
-    @Test
-    fun useAppContext() {
-    }
+  @Test
+  fun useAppContext() {
+  }
 }

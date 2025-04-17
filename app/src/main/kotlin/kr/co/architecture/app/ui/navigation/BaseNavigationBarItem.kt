@@ -24,84 +24,84 @@ import androidx.navigation.navOptions
 
 @Composable
 internal fun BaseNavigationBarWithItems(
-    navController: NavHostController
+  navController: NavHostController
 ) {
-    NavigationBar(
-        containerColor = Color.White
-    ) {
-        baseDestinations.forEach { destination ->
-            val selected = navController
-                .getCurrentDestination()
-                .isTopLevelDestinationInHierarchy(destination)
+  NavigationBar(
+    containerColor = Color.White
+  ) {
+    baseDestinations.forEach { destination ->
+      val selected = navController
+        .getCurrentDestination()
+        .isTopLevelDestinationInHierarchy(destination)
 
-            BaseNavigationBarItem(
-                onClick = {
-                    val topLevelNavOptions = navOptions {
-                        popUpTo(navController.graph.findStartDestination().id) {
-                            this.saveState = true
-                        }
-                        restoreState = true
-                        launchSingleTop = true
-                    }
+      BaseNavigationBarItem(
+        onClick = {
+          val topLevelNavOptions = navOptions {
+            popUpTo(navController.graph.findStartDestination().id) {
+              this.saveState = true
+            }
+            restoreState = true
+            launchSingleTop = true
+          }
 
-                    navController.navigate(destination.route, topLevelNavOptions)
-                },
-                selected = selected,
-                destination = destination
-            )
-        }
+          navController.navigate(destination.route, topLevelNavOptions)
+        },
+        selected = selected,
+        destination = destination
+      )
     }
+  }
 }
 
 @Composable
 fun NavHostController.getCurrentDestination(): NavDestination? {
-    return this.currentBackStackEntryAsState()
-        .value
-        ?.destination
+  return this.currentBackStackEntryAsState()
+    .value
+    ?.destination
 }
 
 fun NavDestination?.isTopLevelDestinationInHierarchy(destination: BaseDestination) =
-    this?.hierarchy?.any {
-        it.route?.contains(destination.route, true) ?: false
-    } ?: false
+  this?.hierarchy?.any {
+    it.route?.contains(destination.route, true) ?: false
+  } ?: false
 
 
 @Composable
 fun RowScope.BaseNavigationBarItem(
-    modifier: Modifier = Modifier,
-    onClick: () -> Unit,
-    selected: Boolean,
-    destination: BaseDestination
+  modifier: Modifier = Modifier,
+  onClick: () -> Unit,
+  selected: Boolean,
+  destination: BaseDestination
 ) {
-    NavigationBarItem(
-        modifier = modifier,
-        selected = selected,
-        onClick = onClick,
-        alwaysShowLabel = false,
-        colors = NavigationBarItemDefaults.colors(
-            indicatorColor = Color.Transparent
-        ),
-        icon = {
-            Column {
-                Image(
-                    modifier = Modifier
-                        .size(24.dp)
-                        .align(Alignment.CenterHorizontally),
-                    painter = painterResource(
-                        id = if (selected) {
-                            destination.selectedIconRes
-                        } else {
-                            destination.unselectedIconRes
-                        }
-                    ),
-                    contentDescription = null
-                )
-
-                Text(
-                    modifier = Modifier.align(Alignment.CenterHorizontally),
-                    text = destination.iconTextIdRes
-                )
+  NavigationBarItem(
+    modifier = modifier,
+    selected = selected,
+    onClick = onClick,
+    alwaysShowLabel = false,
+    colors = NavigationBarItemDefaults.colors(
+      indicatorColor = Color.Transparent
+    ),
+    icon = {
+      Column {
+        Image(
+          modifier = Modifier
+              .size(24.dp)
+              .align(Alignment.CenterHorizontally),
+          painter = painterResource(
+            id = if (selected) {
+              destination.selectedIconRes
+            } else {
+              destination.unselectedIconRes
             }
-        }
-    )
+          ),
+          contentDescription = null
+        )
+
+        Text(
+          modifier = Modifier.align(Alignment.CenterHorizontally),
+          text = destination.iconTextIdRes
+        )
+      }
+    }
+  )
 }

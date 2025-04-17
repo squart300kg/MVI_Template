@@ -6,7 +6,7 @@ import org.junit.Rule
 
 class HomeScreenTest {
 
-    @get:Rule
-    val composeTestRule = createAndroidComposeRule<ComponentActivity>()
+  @get:Rule
+  val composeTestRule = createAndroidComposeRule<ComponentActivity>()
 
 }

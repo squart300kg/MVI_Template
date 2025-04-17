@@ -12,10 +12,10 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 interface RepositoryModules {
 
-    @Singleton
-    @Binds
-    fun bindsNewsRepository(
-        repository: RepositoryImpl
-    ): Repository
+  @Singleton
+  @Binds
+  fun bindsNewsRepository(
+    repository: RepositoryImpl
+  ): Repository
 
 }

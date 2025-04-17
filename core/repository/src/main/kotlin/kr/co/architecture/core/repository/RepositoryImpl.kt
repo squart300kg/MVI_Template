@@ -11,18 +11,19 @@ import kr.co.architecture.core.repository.dto.ArticleDto
 import javax.inject.Inject
 
 class RepositoryImpl @Inject constructor(
-    private val remoteApi: RemoteApi
+  private val remoteApi: RemoteApi
 ) : Repository {
 
-    override fun getList(): Flow<List<ArticleDto>> {
-        return flow {
-            remoteApi.getList().suspendOperator(
-                ResponseBaseOperator(
-                    mapper = ArticleDto::mapperToDto,
-                    onSuccess = ::emit)
-            )
-        }
+  override fun getList(): Flow<List<ArticleDto>> {
+    return flow {
+      remoteApi.getList().suspendOperator(
+        ResponseBaseOperator(
+          mapper = ArticleDto::mapperToDto,
+          onSuccess = ::emit
+        )
+      )
     }
+  }
 }
 
 

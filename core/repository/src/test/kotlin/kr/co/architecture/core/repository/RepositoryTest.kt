@@ -10,15 +10,15 @@ import org.junit.Before
 @OptIn(ExperimentalCoroutinesApi::class)
 class RepositoryTest {
 
-    private val testScope = TestScope(UnconfinedTestDispatcher())
+  private val testScope = TestScope(UnconfinedTestDispatcher())
 
-    private lateinit var repository: RepositoryImpl
+  private lateinit var repository: RepositoryImpl
 
-    private lateinit var remoteApi: RemoteApi
+  private lateinit var remoteApi: RemoteApi
 
-    @Before
-    fun setup() {
+  @Before
+  fun setup() {
 
-    }
+  }
 
 }

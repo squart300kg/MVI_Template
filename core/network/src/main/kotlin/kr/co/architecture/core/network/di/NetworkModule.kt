@@ -18,45 +18,45 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 object NetworkModule {
 
-    @Singleton
-    @Provides
-    fun provideDebugInterceptor(): HttpLoggingInterceptor {
-        return HttpLoggingInterceptor { message ->
-            Log.d("API", message)
-        }.apply {
-            level = HttpLoggingInterceptor.Level.BODY
-        }
+  @Singleton
+  @Provides
+  fun provideDebugInterceptor(): HttpLoggingInterceptor {
+    return HttpLoggingInterceptor { message ->
+      Log.d("API", message)
+    }.apply {
+      level = HttpLoggingInterceptor.Level.BODY
     }
+  }
 
-    @Provides
-    @Singleton
-    fun provideOkHttpClient(
-        loggingInterceptor: HttpLoggingInterceptor
-    ): OkHttpClient {
-        return OkHttpClient.Builder()
-            .addInterceptor(loggingInterceptor)
-            .build()
-    }
+  @Provides
+  @Singleton
+  fun provideOkHttpClient(
+    loggingInterceptor: HttpLoggingInterceptor
+  ): OkHttpClient {
+    return OkHttpClient.Builder()
+      .addInterceptor(loggingInterceptor)
+      .build()
+  }
 
-    @Provides
-    @Singleton
-    fun provideGsonConverter(): GsonConverterFactory {
-        return GsonConverterFactory.create()
-    }
+  @Provides
+  @Singleton
+  fun provideGsonConverter(): GsonConverterFactory {
+    return GsonConverterFactory.create()
+  }
 
-    @Provides
-    @Singleton
-    fun provideMarbleCharacterApi(
-        okHttpClient: OkHttpClient,
-        gsonConverterFactory: GsonConverterFactory
-    ): RemoteApi {
-        return Retrofit.Builder()
-            .baseUrl(BuildConfig.apiUrl)
-            .client(okHttpClient)
-            .addCallAdapterFactory(ApiResponseCallAdapterFactory.create())
-            .addConverterFactory(gsonConverterFactory)
-            .build()
-            .create(RemoteApi::class.java)
-    }
+  @Provides
+  @Singleton
+  fun provideMarbleCharacterApi(
+    okHttpClient: OkHttpClient,
+    gsonConverterFactory: GsonConverterFactory
+  ): RemoteApi {
+    return Retrofit.Builder()
+      .baseUrl(BuildConfig.apiUrl)
+      .client(okHttpClient)
+      .addCallAdapterFactory(ApiResponseCallAdapterFactory.create())
+      .addConverterFactory(gsonConverterFactory)
+      .build()
+      .create(RemoteApi::class.java)
+  }
 
 }

@@ -9,11 +9,11 @@ import retrofit2.http.Query
 
 interface RemoteApi {
 
-    @GET("v2/top-headlines")
-    suspend fun getList(
-        @Query("apikey") apiKey: String = BuildConfig.apiKey,
-        @Query("country") country: String = "us",
-        @Query("page") page: Int = 1,
-        @Query("pageSize") pageSize: Int = 10,
-    ): ApiResponse<CommonResponse<ArticleResponse>>
+  @GET("v2/top-headlines")
+  suspend fun getList(
+    @Query("apikey") apiKey: String = BuildConfig.apiKey,
+    @Query("country") country: String = "us",
+    @Query("page") page: Int = 1,
+    @Query("pageSize") pageSize: Int = 10,
+  ): ApiResponse<CommonResponse<ArticleResponse>>
 }

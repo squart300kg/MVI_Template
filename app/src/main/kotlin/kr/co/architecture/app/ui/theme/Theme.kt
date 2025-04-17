@@ -8,13 +8,13 @@ import androidx.compose.ui.graphics.Color
 
 @Composable
 fun BaseTheme(
-    content: @Composable () -> Unit
+  content: @Composable () -> Unit
 ) {
-    MaterialTheme(
-        colorScheme = lightColorScheme(
-            primary = Color.White,
-            secondary = Color.Black
-        ),
-        content = content
-    )
+  MaterialTheme(
+    colorScheme = lightColorScheme(
+      primary = Color.White,
+      secondary = Color.Black
+    ),
+    content = content
+  )
 }
