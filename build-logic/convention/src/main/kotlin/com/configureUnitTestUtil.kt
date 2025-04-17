@@ -17,7 +17,6 @@ internal fun Project.configureUnitTestUtil(
             add("testImplementation", libs.findLibrary("org-mockito-core").get())
             add("testImplementation", libs.findLibrary("org-mockito-kotlin").get())
             add("testImplementation", libs.findLibrary("kotlinx-coroutines-test").get())
-            add("testImplementation", libs.findLibrary("junit").get())
             add("testImplementation", libs.findLibrary("androidx-test-ext-junit").get())
         }
     }
