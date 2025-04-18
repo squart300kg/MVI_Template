@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package kr.co.test.testing.util
+package kr.co.architecture.test.testing.util
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.test.TestDispatcher

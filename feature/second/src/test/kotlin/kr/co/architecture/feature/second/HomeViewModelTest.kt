@@ -2,7 +2,7 @@ package kr.co.architecture.feature.second
 
 import kr.co.architecture.feature.home.HomeViewModel
 import kr.co.testing.TestRepository
-import kr.co.test.testing.util.MainDispatcherRule
+import kr.co.architecture.test.testing.util.MainDispatcherRule
 import org.junit.Before
 import org.junit.Rule
 
