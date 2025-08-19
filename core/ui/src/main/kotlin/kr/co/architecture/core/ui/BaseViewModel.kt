@@ -23,14 +23,19 @@ abstract class BaseViewModel<State : UiState, Event : UiEvent, Effect : UiSideEf
 
   private val initialState: State by lazy { createInitialState() }
 
-  private val _errorMessageState: MutableStateFlow<CenterErrorDialogMessage?> =
-    MutableStateFlow(null)
-  val errorMessageState = _errorMessageState.asStateFlow()
+  private val _loadingState = MutableStateFlow<Boolean>(false)
+  val loadingState = _loadingState.asStateFlow()
 
-  private val _uiState: MutableStateFlow<State> = MutableStateFlow(initialState)
+  private val _refreshState = MutableStateFlow<State>(initialState)
+  val refreshState = _refreshState.asStateFlow()
+
+  private val _errorMessageState = MutableSharedFlow<CenterErrorDialogMessage>()
+  val errorMessageState = _errorMessageState.asSharedFlow()
+
+  private val _uiState = MutableStateFlow<State>(initialState)
   val uiState = _uiState.asStateFlow()
 
-  private val _uiEvent: MutableSharedFlow<Event> = MutableSharedFlow()
+  private val _uiEvent = MutableSharedFlow<Event>()
   val uiEvent = _uiEvent.asSharedFlow()
 
   private val _uiSideEffect: Channel<Effect> = Channel()
@@ -64,8 +69,8 @@ abstract class BaseViewModel<State : UiState, Event : UiEvent, Effect : UiSideEf
     viewModelScope.launch { _uiSideEffect.send(effectValue) }
   }
 
-  protected fun setErrorState(throwable: Throwable?) {
-    _errorMessageState.update {
+  protected suspend fun setErrorState(throwable: Throwable?) {
+    _errorMessageState.emit(
       when (throwable) {
         is ArchitectureSampleHttpException -> {
           CenterErrorDialogMessage(
@@ -84,6 +89,6 @@ abstract class BaseViewModel<State : UiState, Event : UiEvent, Effect : UiSideEf
           )
         }
       }
-    }
+    )
   }
 }
