@@ -18,6 +18,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
+import kr.co.architecture.core.ui.GlobalUiStateEffect
+import kr.co.architecture.core.ui.util.asString
 
 const val SECOND_BASE_ROUTE = "secondBaseRoute"
 fun NavGraphBuilder.secondScreen() {
@@ -45,6 +47,8 @@ fun SecondScreen(
     uiState = uiState,
     modifier = modifier,
   )
+
+  GlobalUiStateEffect(viewModel)
 }
 
 @Composable
@@ -67,7 +71,7 @@ fun SecondScreen(
                     color = Color.LightGray
                 )
                 .padding(8.dp),
-            text = item.name,
+            text = item.name.asString(),
             style = TextStyle(
               fontSize = 20.sp,
             )

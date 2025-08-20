@@ -18,20 +18,23 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import kr.co.architecture.core.ui.theme.BaseTheme
+import kr.co.architecture.core.ui.util.UiText
+import kr.co.architecture.core.ui.util.asString
 
-data class CenterErrorDialogMessage(
-  val errorCode: Int,
-  val titleMessage: String,
-  val contentMessage: String,
-  val confirmButtonMessage: String
+data class BaseCenterDialogUiModel(
+  val titleMessage: UiText,
+  val contentMessage: UiText,
+  val confirmButtonMessage: UiText
 )
 
 @Composable
-fun BaseErrorCenterDialog(
-  centerErrorDialogMessage: CenterErrorDialogMessage,
+fun BaseCenterDialog(
+  baseCenterDialogUiModel: BaseCenterDialogUiModel,
   onDismissDialog: () -> Unit = { },
   onClickedConfirm: () -> Unit = { }
 ) {
@@ -44,42 +47,42 @@ fun BaseErrorCenterDialog(
   ) {
     Column(
       modifier = Modifier
-          .fillMaxWidth()
-          .background(
-              color = Color.White,
-              shape = RoundedCornerShape(10.dp)
-          )
-          .padding(
-              horizontal = 16.dp,
-              vertical = 10.dp
-          )
+        .fillMaxWidth()
+        .background(
+          color = Color.White,
+          shape = RoundedCornerShape(10.dp)
+        )
+        .padding(
+          horizontal = 16.dp,
+          vertical = 10.dp
+        )
     ) {
       Column(
         modifier = Modifier
-            .align(Alignment.CenterHorizontally)
-            .padding(
-                top = 12.dp,
-                bottom = 16.dp
-            )
-            .verticalScroll(rememberScrollState())
+          .align(Alignment.CenterHorizontally)
+          .padding(
+            top = 12.dp,
+            bottom = 16.dp
+          )
+          .verticalScroll(rememberScrollState())
       ) {
-        if (centerErrorDialogMessage.titleMessage.isNotEmpty()) {
+        if (baseCenterDialogUiModel.titleMessage.asString().isNotEmpty()) {
           Text(
             modifier = Modifier
               .align(Alignment.CenterHorizontally),
-            text = centerErrorDialogMessage.titleMessage
+            text = baseCenterDialogUiModel.titleMessage.asString()
           )
         }
 
-        if (centerErrorDialogMessage.contentMessage.isNotEmpty()) {
+        if (baseCenterDialogUiModel.contentMessage.asString().isNotEmpty()) {
           Text(
             modifier = Modifier
-                .padding(
-                    top = 10.dp
-                )
-                .fillMaxSize()
-                .align(Alignment.CenterHorizontally),
-            text = centerErrorDialogMessage.contentMessage,
+              .padding(
+                top = 10.dp
+              )
+              .fillMaxSize()
+              .align(Alignment.CenterHorizontally),
+            text = baseCenterDialogUiModel.contentMessage.asString(),
             textAlign = TextAlign.Center
           )
         }
@@ -88,8 +91,8 @@ fun BaseErrorCenterDialog(
 
       Row(
         modifier = Modifier
-            .padding(vertical = 16.dp)
-            .fillMaxWidth()
+          .padding(vertical = 16.dp)
+          .fillMaxWidth()
       ) {
 
         Box(
@@ -97,7 +100,7 @@ fun BaseErrorCenterDialog(
               .weight(0.49f)
               .height(48.dp)
               .background(
-                  color = Color.LightGray,
+                  color = Color.DarkGray,
                   shape = RoundedCornerShape(4.dp)
               )
               .clickable(onClick = onClickedConfirm)
@@ -105,11 +108,25 @@ fun BaseErrorCenterDialog(
           Text(
             modifier = Modifier
               .align(Alignment.Center),
-            text = centerErrorDialogMessage.confirmButtonMessage,
+            text = baseCenterDialogUiModel.confirmButtonMessage.asString(),
             color = Color.White,
           )
         }
       }
     }
+  }
+}
+
+@Preview
+@Composable
+fun BaseCenterDialogPreview() {
+  BaseTheme {
+    BaseCenterDialog(
+      baseCenterDialogUiModel = BaseCenterDialogUiModel(
+        titleMessage = UiText.DynamicString("titleMessage"),
+        contentMessage = UiText.DynamicString("contentMessage"),
+        confirmButtonMessage = UiText.DynamicString("confirmButtonMessage")
+      )
+    )
   }
 }

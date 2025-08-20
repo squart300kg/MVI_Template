@@ -1,20 +1,16 @@
 package kr.co.architecture.feature.second
 
-import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
-import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.onCompletion
-import kotlinx.coroutines.flow.onStart
-import kotlinx.coroutines.launch
+import kr.co.architecture.core.repository.Repository
+import kr.co.architecture.core.repository.dto.ArticleDto
 import kr.co.architecture.core.ui.BaseViewModel
 import kr.co.architecture.core.ui.UiEvent
 import kr.co.architecture.core.ui.UiSideEffect
 import kr.co.architecture.core.ui.UiState
-import kr.co.architecture.core.repository.Repository
-import kr.co.architecture.core.repository.dto.ArticleDto
+import kr.co.architecture.core.ui.util.UiText
 import javax.inject.Inject
 
 enum class SecondUiType {
@@ -23,12 +19,16 @@ enum class SecondUiType {
 }
 
 data class UiModel(
-  val name: String
+  val name: UiText
 ) {
   companion object {
     fun mapperToUi(dtos: List<ArticleDto>): ImmutableList<UiModel> {
       return dtos
-        .map { UiModel(it.name) }
+        .map {
+          UiModel(
+            name = UiText.DynamicString(it.name)
+          )
+        }
         .toImmutableList()
     }
   }
@@ -67,19 +67,14 @@ class SecondViewModel @Inject constructor(
   }
 
   fun fetchData() {
-    viewModelScope.launch {
-      repository.getList()
-        .onStart { }
-        .onCompletion { }
-        .catch { setErrorState(it) }
-        .collect {
-          setState {
-            copy(
-              uiType = SecondUiType.LOADED,
-              uiModels = UiModel.mapperToUi(it)
-            )
-          }
-        }
+    launchSafetyWithLoading {
+      val dto = repository.getList()
+      setState {
+        copy(
+          uiType = SecondUiType.LOADED,
+          uiModels = UiModel.mapperToUi(dto)
+        )
+      }
     }
   }
 
