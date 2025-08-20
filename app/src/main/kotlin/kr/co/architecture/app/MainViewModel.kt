@@ -1,8 +1,6 @@
 package kr.co.architecture.app
 
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kr.co.architecture.app.MainUiState
-import kr.co.architecture.core.repository.Repository
 import kr.co.architecture.core.ui.BaseCenterDialogUiModel
 import kr.co.architecture.core.ui.BaseViewModel
 import kr.co.architecture.core.ui.UiEvent

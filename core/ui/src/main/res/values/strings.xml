@@ -1,3 +1,753 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources xmlns:tools="http://schemas.android.com/tools">
+<resources>
+    <string name="app_name">버디스탁</string>
+    <string name="app_exit">한 번 더 뒤로가기 누를 시 종료됩니다.</string>
+
+    <string name="empty"></string>
+    <string name="string_format" formatted="false">%s</string>
+    <string name="network_err_dialog_msg">알수없는 오류로 앱을 종료합니다.</string>
+    <string name="token_err_dialog_msg">토큰이 만료되어 앱을 종료합니다.</string>
+    <string name="exception_position">잘못된 포지션이 선택되었습니다.</string>
+
+    <string name="before_year">%d년 전</string>
+    <string name="before_month">%d달 전</string>
+    <string name="before_week">%d주 전</string>
+    <string name="before_day">%d일 전</string>
+    <string name="before_hour">%d시간 전</string>
+    <string name="before_minute">%d분 전</string>
+    <string name="now">지금</string>
+
+    <string name="btn_block">차단</string>
+    <string name="btn_confirm">확인</string>
+    <string name="btn_cancel">취소</string>
+    <string name="btn_yes">네</string>
+    <string name="btn_no">아니요</string>
+    <string name="btn_next">다음</string>
+    <string name="btn_login">로그인</string>
+    <string name="btn_login2">로그인하기</string>
+    <string name="btn_logout"><u>로그아웃</u></string>
+    <string name="btn_signup">회원가입</string>
+    <string name="btn_auth">인증 요청</string>
+    <string name="btn_complete">완료</string>
+    <string name="btn_invite">초대하기</string>
+    <string name="btn_buddy_apply">버디 요청</string>
+    <string name="btn_more">자세히 알아보기 ></string>
+    <string name="btn_accept">수락</string>
+    <string name="btn_accept_wait">수락 대기중</string>
+    <string name="btn_buddy_accept">버디 수락</string>
+    <string name="btn_buddy_cancel">버디 요청 취소하기</string>
+    <string name="btn_buddy_block">차단 해제</string>
+    <string name="btn_profile_edit">프로필 수정</string>
+    <string name="btn_delete">삭제</string>
+    <string name="btn_go_stock_app">증권사 앱으로 이동</string>
+    <string name="btn_re_require">다시 요청</string>
+    <string name="btn_buddy_list">버디 목록</string>
+    <string name="btn_add_more_buddy">더 많은 버디 추가</string>
+    <string name="btn_buddy_management">버디 관리</string>
+    <string name="btn_buddy_profile">버디 주식보러 가기</string>
+    <string name="btn_buddy_recommend_more">더 많은 추천 유튜버 보러가기 ></string>
+    <string name="btn_more_buddy">더 많은 버디 보러가기</string>
+    <string name="btn_more_youtube">다른 유튜버디 보기</string>
+    <string name="btn_setting">알림 설정</string>
+    <string name="btn_youtube_require">추천 유튜버디 보러가기</string>
+    <string name="btn_nickname_other">다른 닉네임 검색</string>
+    <string name="btn_back_to_contact">연락처로 돌아가기</string>
+    <string name="btn_add_youtube">버디 맺으러 가기</string>
+    <string name="btn_withdraw"><u>회원탈퇴</u></string>
+    <string name="btn_disagree">거절</string>
+    <string name="btn_later">나중에</string>
+    <string name="btn_agree">동의</string>
+    <string name="btn_modify">변경</string>
+    <string name="btn_modify_complete">변경 완료</string>
+    <string name="btn_back">뒤로가기</string>
+    <string name="btn_refresh">새로고침</string>
+    <string name="btn_close">닫기</string>
+    <string name="btn_require_cancel">요청 취소</string>
+    <string name="btn_buddy_invite">친구 초대하러 가기</string>
+    <string name="btn_buddy_more">버디 더 보기</string>
+    <string name="btn_view"><u>보러가기</u></string>
+
+    <string name="minuite_before">%d분 전</string>
+    <string name="kospi">코스피</string>
+    <string name="kosdaq">코스닥</string>
+    <string name="bitcoin">비트코인</string>
+    <string name="ethereum">이더리움</string>
+    <string name="buddy">버디</string>
+    <string name="setting">설정</string>
+    <string name="edit">수정</string>
+    <string name="edt_complete">수정완료</string>
+    <string name="alarm">알림</string>
+    <string name="nickname">닉네임</string>
+    <string name="phone_number">전화번호</string>
+    <string name="email">이메일</string>
+    <string name="version">버전</string>
+    <string name="next">넘어가기</string>
+    <string name="event">종목</string>
+    <string name="date">날짜</string>
+    <string name="note">비고</string>
+    <string name="price">가격</string>
+    <string name="won">원</string>
+    <string name="type">매수 / 매도</string>
+    <string name="gmail">\@gmail.com</string>
+    <string name="all">전체</string>
+    <string name="buy">매수</string>
+    <string name="sell">매도</string>
+    <string name="space">\u0020</string>
+    <string name="times">%d번</string>
+    <string name="traded">거래했어요</string>
+    <string name="comma_sep_price_format">%s 원</string>
+    <string name="text_cnt_80"><![CDATA[<font color = "#3d3d3d">%s</font> / 80]]></string>
+    <string name="latest_trading_history">최근 거래 내역</string>
+    <string name="trading_detail">상세 거래 내역</string>
+    <string name="sales_history">매매 내역</string>
+    <string name="complete_edit">작성 완료</string>
+    <string name="on">켜짐</string>
+    <string name="off">꺼짐</string>
+    <string name="all_feed">전체</string>
+    <string name="view_detail">자세히 보기</string>
+
+    <string name="stock">주식</string>
+    <string name="coin">코인</string>
+    <string name="all_cnt">전체 %d</string>
+    <string name="stock_cnt">주식 %d</string>
+    <string name="coin_cnt">코인 %d</string>
+    <string name="trading_cnt">+%,d</string>
+    <string name="current_amt">현재가</string>
+    <string name="transaction_count">거래 횟수</string>
+    <string name="transaction_count_unit">번</string>
+    <string name="recent_comment">최근 매매노트</string>
+    <string name="trading_comment">매매노트</string>
+    <string name="edit_comment">메모 수정</string>
+    <string name="new_notice">NEW</string>
+    <string name="detail_info">상세정보</string>
+    <string name="comment">메모</string>
+    <string name="reply">댓글</string>
+    <string name="register">등록</string>
+    <string name="edit_reply">댓글 수정</string>
+    <string name="more">더보기</string>
+    <string name="more_view">보러가기</string>
+    <string name="people_cnt_unit">%d명</string>
+    <string name="already_add">이미 추가됨</string>
+
+    <string name="buddy_edit_dialog_alarm">매수/매도 알람</string>
+    <string name="buddy_edit_dialog_bookmarked">버디 즐겨찾기</string>
+    <string name="buddy_edit_dialog_alarm_off">매수/매도 알람 끄기</string>
+    <string name="buddy_edit_dialog_favorites">버디 즐겨찾기 설정</string>
+    <string name="buddy_edit_dialog_del">버디 삭제</string>
+    <string name="logout_dialog">로그아웃 하시겠습니까?</string>
+    <string name="buddy_add_youtube_dialog_title">유튜버디와 버디를 맺으려면?</string>
+    <string name="buddy_add_youtube_dialog_content">1. 본인 유튜브 계정 로그인\n2. 유튜브 계정 관리 액세스 허용</string>
+    <string name="buddy_add_youtube_dialog_info">YouTube 계정 관리. <font color="#3970DF">자세히 알아보기</font></string>
+    <string name="buddy_add_youtube_dialog_info2">을 하면 <b>채널 구독</b>과 동시에 <b>버디가 맺어집니다.</b></string>
+    <string name="err_dialog">알 수 없는 오류가 발생했습니다.</string>
+    <string name="buddy_delete_complete_toast">버디를 삭제했습니다.</string>
+    <string name="buddy_delete_dialog_title">버디를 삭제할까요?</string>
+    <string name="buddy_delete_dialog_content">버디를 삭제하면 버디의 주식 정보를\n열람할 수 없어요.</string>
+    <string name="buddy_block_dialog_clear_title">버디 차단을 해제할까요?</string>
+    <string name="buddy_block_dialog_clear_content">차단을 해제하면 친구의 버디 요청을\n다시 받을 수 있어요.</string>
+    <string name="buddy_block_toast">버디의 차단이 해제 되었습니다.</string>
+
+    <string name="toast_buddy_request_cancel">버디 요청이 취소되었습니다</string>
+    <string name="toast_buddy_request_success">버디 요청이 완료되었습니다</string>
+    <string name="toast_buddy_accept">버디 요청이 수락되었어요.</string>
+    <string name="toast_buddy_delete">버디 요청이 삭제되었어요</string>
+    <string name="toast_profile_modify_complete">버디 프로필이 수정 되었습니다.</string>
+    <string name="toast_trading_comment_delete">매매노트를 삭제했습니다.</string>
+
+    <string name="splash_txt">친구와 함께 소통하는 금융 SNS</string>
+
+    <!-- PermissionActivity -->
+    <string name="permission_title">접근 권한 설정</string>
+    <string name="permission_sub_title">권한 허용 후 서비스를 이용할 수 있습니다.</string>
+    <string name="permission_store">(필수) 저장공간</string>
+    <string name="permission_store_txt">사용자간 주고 받은 정보를 저장하는데 사용됩니다.</string>
+    <string name="permission_sms">(필수) SMS</string>
+    <string name="permission_sms_txt">매수, 매도 정보를 사용자로부터 가져오는데 사용됩니다.</string>
+    <string name="permission_contact">(필수) 주소록</string>
+    <string name="permission_contact_txt">주소록에 저장된 사용자를 친구 신청 및 초대하기 위해 사용됩니다.</string>
+    <string name="permission_alarm">(필수) 알림 접근 허용</string>
+    <string name="permission_alarm_txt">다른 앱에서의 매매내역 알림을 수신하는데 사용됩니다.</string>
+    <string name="permission_info1">서비스를 이용하기 위해서는 위에 해당하는 권한들을 허용해주셔야 사용이 가능합니다.</string>
+    <string name="permission_info2">접근 권한 변경 방법</string>
+    <string name="permission_info3">휴대폰 설정 > 앱 > 버디스탁</string>
+    <string name="permission_guide_info">버디스탁의 알림 접근을 허용해주세요</string>
+
+    <!-- WalkThrough -->
+    <string name="walkthrough_msg1">내 주변 주식 잘 하는 친구가 사는 종목,\n물어보지 말고 실시간으로 받아보세요</string>
+    <string name="walkthrough_msg2">주식 유튜버의 거래 내역까지\n실시간으로 알 수 있어요</string>
+    <string name="walkthrough_msg3">안심하세요, 내가 허락한 친구외에는\n누구도 내 거래 내역을 볼 수 없어요</string>
+
+    <!-- InitActivity -->
+    <string name="init_title">세상에 없던 금융 SNS,\n버디스탁</string>
+    <string name="init_subtitle">친한 친구와 주식 내역 공유 및 토론,\n이제 <font color="#19dcae"><b>버디스탁</b></font>으로 <font color="#19dcae"><b>금융까지 소통</b></font>하세요.</string>
+    <string name="init_google_login">구글 계정으로 로그인</string>
+    <string name="init_master_nickname">nickname</string>
+    <string name="init_master_provide_id">provideID</string>
+    <string name="init_master_login">Master Login</string>
+
+    <!-- LoginActivity -->
+    <string name="login_title">로그인</string>
+    <string name="login_id">아이디</string>
+    <string name="login_id_hint">아이디를 입력해주세요.</string>
+    <string name="login_id_err">아이디 Err</string>
+    <string name="login_pw">비밀번호</string>
+    <string name="login_pw_hint">비밀번호를 입력해주세요.</string>
+    <string name="login_pw_err">비밀번호 Err</string>
+    <string name="login_find_id">아이디 찾기</string>
+    <string name="login_find_pw">비밀번호 찾기</string>
+    <string name="login_sign_up">회원가입</string>
+    <string name="login_sns">또는</string>
+
+    <!-- SignUpActivity -->
+    <string name="signup_nickname_title"><b>닉네임</b>을 입력해주세요.</string>
+    <string name="signup_nickname">닉네임</string>
+    <string name="signup_nickname_hint">닉네임을 입력해주세요. (최대 10자)</string>
+    <string name="signup_nickname_info1">사용 가능한 닉네임입니다.</string>
+    <string name="signup_nickname_info2">중복된 닉네임입니다. 다른 닉네임으로 입력해주세요.</string>
+    <string name="signup_nickname_info3">10자 미만으로 닉네임을 입력해주세요.</string>
+    <string name="signup_phone_title"><b>휴대폰 번호</b>를 입력해주세요.</string>
+    <string name="signup_phone_title_overlay">중복된 휴대폰 번호입니다.\n<b>다른 휴대폰 번호</b>를 입력해주세요.</string>
+    <string name="signup_phone">휴대폰 번호 (\'-\'제외)</string>
+    <string name="signup_phone_hint">010 포함해서 입력해주세요.</string>
+    <string name="signup_phone_auth">인증 요청</string>
+    <string name="signup_auth_title">문자로 전송된\n<b>인증번호 4자리</b>를 입력해주세요.</string>
+    <string name="signup_auth">인증번호</string>
+    <string name="signup_auth_hint">4자리 인증번호</string>
+    <string name="signup_auth_btn">인증번호를 다시 보내주세요</string>
+    <string name="signup_auth_info1">인증번호가 일치하지 않습니다.</string>
+    <string name="signup_auth_info2">인증번호 입력 시간이 만료되었습니다.</string>
+    <string name="signup_auth_dialog_title">인증 횟수 초과</string>
+    <string name="signup_auth_dialog_context">오류/미입력 횟수가 5회 초과하였습니다.\n5분 후에 다시 시도해 주세요.</string>
+    <string name="signup_term_title">마지막으로\n<b>가입약관을 확인해 주세요.</b></string>
+    <string name="signup_term_sub">확인 버튼을 선택 시, 체크한 항목에 대해 모두 이해하고 동의한 것으로 간주됩니다.</string>
+    <string name="signup_term_all_agree">전체동의</string>
+    <string name="signup_term_agree1">버디스탁 이용약관 (필수)</string>
+    <string name="signup_term_agree1_content">버디스탁 서비스 이용 동의 내용\n\n\n\n.\n.\n.\n\n\n\n\nend</string>
+    <string name="signup_term_agree2">개인정보 취급방침 (필수)</string>
+    <string name="signup_term_agree2_content">개인정보 처리 약관 동의 내용 \n\n\n\n\n.\n.\n.\n\n\n\nend</string>
+    <string name="signup_term_agree3">만 19세 이상입니다. (필수)</string>
+    <string name="signup_term_agree4">마케팅 수신 동의 (선택)</string>
+    <string name="signup_term_agree4_content">개마케팅 수신 동의 내용 \n\n\n\n\n.\n.\n.\n\n\n\nend</string>
+    <string name="signup_end">회원 가입 완료!</string>
+    <string name="signup_end_welcome">\'%s\'님,\n버디스탁에 오신걸 환영합니다!</string>
+    <string name="signup_end_start">시작하기</string>
+    <string name="signup_1">1</string>
+    <string name="signup_2">2</string>
+    <string name="signup_3">3</string>
+    <string name="signup_4">4</string>
+
+    <!-- FindActivity -->
+    <string name="find_title">아이디/비밀번호 찾기</string>
+    <string name="find_id_title">아이디 찾기</string>
+    <string name="find_pw_title">비밀번호 찾기</string>
+    <string name="find_id">아이디</string>
+    <string name="find_id_hint">아이디를 입력해주세요.</string>
+    <string name="find_id_err">아이디 Err</string>
+    <string name="find_id_result_msg">회원님의 아이디는\n아래와 같습니다.</string>
+    <string name="find_id_result">ID : </string>
+    <string name="find_name">이름</string>
+    <string name="find_name_hint">이름을 입력해주세요.</string>
+    <string name="find_name_err">이름 Err</string>
+    <string name="find_certification_phone">휴대폰 인증</string>
+    <string name="find_certification_phone_hint">휴대폰 번호를 입력해주세요.</string>
+    <string name="find_certification_phone_err">휴대폰 번호 Err</string>
+    <string name="find_certification">인증받기</string>
+    <string name="find_certification_re">다시받기</string>
+    <string name="find_certification_confirm">인증확인</string>
+    <string name="find_certification_confirm_hint">인증번호를 입력해주세요.</string>
+    <string name="find_certification_confirm_err">인증번호가 일치하지 않습니다.</string>
+
+    <!-- MainActivity -->
+    <string name="main_buddy_feed">버디 피드</string>
+    <string name="main_buddy_list">버디 목록</string>
+    <string name="main_buddy_community">커뮤니티</string>
+    <string name="main_buddy_more">더보기</string>
+    <string name="main_buddy_community_title">익명 커뮤니티</string>
+    <string name="main_buddy_empty_info">친구를 초대해볼까요?</string>
+    <string name="main_buddy_empty_content">친구를 버디스탁에 초대하고\n주식 정보를 공유하세요</string>
+    <string name="main_buddy_btn_invite">친구들 버디스탁에 초대하기</string>
+    <string name="main_buddy_add">버디 추가</string>
+    <string name="main_buddy_require_management">버디 요청 관리</string>
+    <string name="main_alarm">알림</string>
+    <string name="main_buddy_search">버디 검색</string>
+    <string name="main_buddy_add_msg">버디 추가 방법을 선택해주세요.</string>
+    <string name="main_contact_buddy">연락처 버디</string>
+    <string name="main_nickname_buddy">닉네임 버디</string>
+    <string name="main_youtube_buddy">유튜버디</string>
+    <string name="main_buddy_block">차단 버디 목록</string>
+    <string name="main_setting">전체 설정</string>
+    <string name="main_nickname">닉네임</string>
+    <string name="main_contact">연락처</string>
+    <string name="main_youtube">유튜버</string>
+    <string name="main_invite">초대하기</string>
+    <string name="main_wave">파도타기</string>
+    <string name="main_preparing">준비중</string>
+    <string name="main_alarm_setting">알림 설정</string>
+    <string name="main_stock_setting">증권사 앱 설정</string>
+    <string name="main_notice">공지사항</string>
+    <string name="main_security">앱 잠금 설정</string>
+    <string name="main_inquire">문의하기</string>
+    <string name="main_privacy_agreement">개인정보처리방침</string>
+    <string name="main_version_info">버전 정보</string>
+    <string name="main_withdraw">회원 탈퇴</string>
+    <string name="main_version">버전</string>
+    <string name="main_ad_youtube">유튜버의 실시간 거래정보를 알 수 있어요.</string>
+    <string name="main_ad_btn_yes">보고싶어요</string>
+    <string name="main_ad_btn_no">필요없어요</string>
+    <string name="main_tooltip_alarm">친구가 버디를 신청했어요 !</string>
+    <string name="main_tooltip_buddy_add">버디를 추가하세요</string>
+    <string name="main_today_trading">오늘의 주요 지수</string>
+
+    <string name="buddy_list_today_trading">오늘의 주요 지수</string>
+    <string name="buddy_list_my_profile">내 프로필</string>
+    <string name="buddy_list_favorites">즐겨찾기</string>
+    <string name="buddy_list_today_trading_cnt">+%,d건</string>
+    <string name="buddy_list_favorites_cnt">즐겨찾기 %d</string>
+    <string name="buddy_list_favorites_cnt_unit">즐겨찾기 %d명</string>
+    <string name="buddy_list_buddy_cnt">버디 %d</string>
+    <string name="buddy_list_buddy_cnt_unit">버디 %d명</string>
+    <string name="buddy_list_20minute_latency">20분 지연</string>
+
+    <string name="buddy_feed_loading_text">오늘 버디들의 뜨거운 감자는 무엇일까요?</string>
+    <string name="buddy_feed_guide_content">거래 내역이 안보이시나요?</string>
+    <string name="buddy_feed_guide_view"><u>가이드 보기</u></string>
+    <string name="buddy_community_guide_view">버디스탁 커뮤니티 가이드라인 보기</string>
+    <string name="buddy_feed_empty_guide_title">최근 거래는 어떠셨나요?</string>
+    <string name="buddy_feed_empty_guide_content">거래 내역에 대한 생각을 자유롭게 남겨보세요</string>
+    <string name="buddy_feed_empty_late_history">님의 최근 거래 내역</string>
+    <string name="buddy_feed_empty_edit_reply">댓글 작성</string>
+    <string name="buddy_feed_empty_my_feed_top">주식·코인 거래를 하고 피드를 남겨보세요</string>
+    <string name="buddy_feed_empty_my_feed_middle">증권사, 코인 거래 앱에서 거래 후 거래 피드를 남겨보세요.</string>
+    <string name="buddy_feed_empty_my_feed_bottom">[버디 목록 > 버디 추가]를 통해 버디를추가하고 버디의 거래 피드를 볼 수 있어요.</string>
+
+    <string name="buddy_community_banner_title">친구들은 어떤 얘기를 하고있을까?</string>
+    <string name="buddy_community_anonymous">버디에게만 정보 공개</string>
+
+    <string name="dialog_sms_title">버디스탁에서는 SMS 정보를 수집해요</string>
+    <string name="dialog_sms_info">\n%1$s 님의 더 정확한 주식 정보를 가져오기 위해\nSMS 정보를 가져옵니다.\nSMS는 백그라운드에서 수집될 수 있습니다.</string>
+
+    <string name="dialog_contact_title">연락처에서 정보를\n더 많은 버디를 맺어보세요!</string>
+    <string name="dialog_contact_info">더 정확한 버디 정보를 제공하기 위해\n%1$s 님의 연락처 정보를 가져오고자 합니다.\n거절 시 %2$s 님의 연락처를 통해 버디를 추가할 수 없어요.</string>
+
+    <string name="dialog_notification_desc">거래하는 증권사의 앱 알림 혹은 문자 알림을 켜주세요.\n앱 알림이나 문자 알림이 꺼져있다면, 정확한 정보를 가져 올 수 없어요</string>
+    <string name="dialog_notification_title">앱 알림을 허용해 주세요</string>
+
+    <string name="dialog_contact_arrow_title">연락처 정보 제공에 동의하고\n더 많은 버디를 맺어보세요</string>
+    <string name="dialog_contact_arrow_content">연락처 정보 제공에 동의하면 더 정확한 버디 정보를\n제공받을 수 있어요.</string>
+
+    <string name="dialog_trading_comment_write_title">매매 노트 작성 시 주의하세요!</string>
+    <string name="dialog_trading_comment_write_box_title">이건 꼭 사야해</string>
+    <string name="dialog_trading_comment_write_box_content">타인에게 주식이나 코인 구매를 홍보하거나\n강요하는 내용은 증권법 위반에 해당할 수 있습니다.</string>
+
+    <string name="dialog_arrow_alim_title">사용중인 증권사 앱의 알림을\n허용해주세요</string>
+    <string name="dialog_arrow_alim_content">사용중인 증권사 앱의 푸시 알림 또는 문자 알림을\n허용하면 더 정확한 정보를 제공받을 수 있어요.</string>
+    <string name="dialog_arrow_alim_box_title">앱/문자 알림</string>
+
+    <string name="dialog_kakao_block_title">카카오톡에서 체결 알림을\n차단해주세요!</string>
+    <string name="dialog_kakao_block_content">카카오톡에서 체결 알림을 차단하면\n더욱 정확한 정보를 제공받을 수 있습니다.</string>
+    <string name="dialog_kakao_block_box_title">**증권</string>
+    <string name="dialog_kakao_block_box_content">[체결 통보]OOOO 매도</string>
+
+    <string name="dialog_comment_title">메모 작성 시\n주의해서 작성하세요!</string>
+    <string name="dialog_comment_desc">타인에게 주식이나 코인 구매를 홍보하거나 \n강요하는 내용은 증권 법 위반일 수 있습니다.</string>
+
+    <string name="dialog_trading_comment_delete_title">매매 노트 작성을 그만둘까요?</string>
+    <string name="dialog_trading_comment_delete_content">지금까지 작성한 내용은 저장되지 않습니다.</string>
+
+    <string name="dialog_trading_comment_modify_stop_title">매매 노트를 삭제할까요?</string>
+    <string name="dialog_trading_comment_modify_stop_content">작성한 매매노트는 삭제 후 다시 복구할 수 없어요.</string>
+
+    <string name="dialog_trading_comment_update_menu_update">매매 노트 수정</string>
+    <string name="dialog_trading_comment_update_menu_delete">매매 노트 삭제</string>
+
+    <string name="comment_update_toast">메모 작성이 완료 되었습니다.</string>
+    <string name="comment_delete_toast">메모가 삭제되었습니다.</string>
+    <string name="comment_hint">거래 내역에 대한 메모를 작성할 수 있어요</string>
+    <string name="comment_edit">메모 수정</string>
+    <string name="comment_delete">메모 삭제</string>
+    <string name="comment_delete_dialog_title">메모를 삭제할까요?</string>
+    <string name="comment_delete_dialog_content">삭제 후에는 작성한 메모를 다시 복구할 수 없어요.</string>
+
+    <string name="reply_edit">댓글 수정</string>
+    <string name="reply_delete">댓글 삭제</string>
+    <string name="reply_report">댓글 신고</string>
+    <string name="reply_report_title">댓글 신고 사유를 선택해 주세요</string>
+    <string name="reply_hint">댓글을 입력해주세요</string>
+    <string name="reply_delete_dialog_title">댓글을 삭제할까요?</string>
+    <string name="reply_delete_dialog_content">작성한 댓글은 삭제 후 다시 복구할 수 없어요.</string>
+    <string name="reply_update_toast">댓글 작성이 완료 되었습니다.</string>
+    <string name="reply_delete_toast">댓글이 삭제되었습니다.</string>
+    <string name="reply_report_toast">댓글이 신고되었습니다.</string>
+    <string name="reply_block">댓글 사용이 중지되었습니다.</string>
+    <string name="reply_empty">버디의 매수, 매도 내역에\n댓글을 남겨 보세요!</string>
+
+    <string name="dialog_edit_back_title">수정을 그만둘까요?</string>
+    <string name="dialog_edit_back_content">지금까지 작성한 내용은 저장되지 않습니다.</string>
+    <string name="dialog_edit_back_cancel">계속 작성</string>
+    <string name="dialog_edit_back_confirm">그만두고 나가기</string>
+    '
+    <string name="dialog_youtube_access_title">유튜브 권한을 동의해 주세요</string>
+    <string name="dialog_youtube_access_desc">Youtube 계정 관리 권한에 동의해주세요</string>
+    <string name="dialog_youtube_access_info">유튜브 권한을 동의하시면 유튜버디와 버디 맺기를 할 수 있어요. 다시 로그인할 경우, 유튜브 권한 동의 팝업이 떴을 때 동의 버튼을 눌러주시면 유튜버디와 버디를 맺을 수 있습니다.</string>
+
+    <string name="dialog_kakao_alarm_title">카카오톡에서\n체결 알림을 차단해주세요!</string>
+    <string name="dialog_kakao_alarm_content">카카오톡에서 체결 알림을 차단하면\n더욱 정확한 정보를 제공받을 수 있어요.</string>
+    <string name="dialog_kakao_alarm_btn">차단하기</string>
+
+    <string name="dialog_reply_info_title">댓글 작성 시 주의해 주세요</string>
+    <string name="dialog_reply_info_content1">유사 투자 자문업 허가가 없는 경우에는 투자에 대한 상담이 불가하며, 유사 투자 자문업의 경우에도 1:1 상담은 위법입니다.</string>
+    <string name="dialog_reply_info_content2">관련없는 주제나 부적절한 홍보 혹은 타인에 대한 비방은 삼가해 주시기 바랍니다.</string>
+    <string name="dialog_reply_info_content3">타인에게 불쾌감을 주는 욕설, 비방, 차별, 명예훼손, 외설적 혹은 선정적 내용 등이 포함된 경우 커뮤니티 이용이 제한될 수 있습니다.</string>
+    <string name="dialog_reply_info_content4">기타 운영 정책에 어긋나는 내용이 포함될 경우, 사전 고지 없이 삭제될 수 있습니다.</string>
+
+    <string name="toast_bookmark_on">즐겨찾기가 설정되었습니다.</string>
+    <string name="toast_bookmark_off">즐겨찾기가 해제되었습니다.</string>
+    <string name="toast_alarm_on">알람이 설정되었습니다.</string>
+    <string name="toast_alarm_off">알람이 해제되었습니다.</string>
+
+    <!-- More -->
+    <string name="more_my_profile">내 프로필</string>
+    <string name="more_buddy_management">버디 관리</string>
+    <string name="more_buddy_my_activity">내 활동</string>
+    <string name="more_app_setting">앱 설정</string>
+    <string name="more_app_help_and_info">도움 및 정보</string>
+
+    <!-- Alarm -->
+    <string name="alarm_buddy_with">함께아는 버디</string>
+    <string name="alarm_buddy_with_cnt_unit">함께아는 버디 %d명</string>
+    <string name="alarm_sub_comment"><![CDATA[<font color="#00AEB0">%s</font> 내역에 댓글이 작성되었어요.]]></string>
+    <string name="alarm_trading_comment"><![CDATA[<font color="#00AEB0">%s</font>에 대한 매매노트를 작성했어요.]]></string>
+    <string name="alarm_trading"><![CDATA[<font color="#00AEB0">%s</font>를 %s원에 %s했어요.]]></string>
+    <string name="alarm_buddy">회원님과 버디가 맺어졌어요.</string>
+    <string name="alarm_buddy_info">버디에게 받은 요청과 보낸 요청을 볼 수 있어요.</string>
+    <string name="alarm_active">활동</string>
+    <string name="alarm_buddy_more">더 많은 버디 요청이 기다리고 있어요!</string>
+    <string name="alarm_delete_buddy_content">존재하지 않는 버디예요</string>
+    <string name="alarm_on_by_trading">해당 거래 내역의 알림을 켰습니다.</string>
+    <string name="alarm_off_by_trading">해당 거래 내역의 알림을 껐습니다.</string>
+
+    <!-- 버디 요청 -->
+    <string name="buddy_request_empty_buddy_invite">친구 초대</string>
+    <string name="buddy_request_receiving_cnt">%d명의 친구가 버디를 요청했어요</string>
+    <string name="buddy_request_sending_cnt">%d명의 친구에게 버디를 요청했어요</string>
+    <string name="buddy_request_sending_user_greeting_title">%s 님에게 보낸 인사말</string>
+    <string name="buddy_request_accept_title"><![CDATA[<font color = "#00AEB0">%s</font> 님과<br>버디가 되었습니다.]]></string>
+    <string name="buddy_request_accept_content">%s 님의 거래목록을 확인해보세요</string>
+    <string name="buddy_request_cancel_title"><![CDATA[<font color = "#00AEB0">%s</font> 님에게 보낸<br>버디 요청이 취소되었습니다.]]></string>
+    <string name="buddy_request_cancel_content">친구에게 다시 버디를 요청할 수 있어요</string>
+    <string name="buddy_request_title"><![CDATA[<font color = "#00AEB0">%s</font> 님에게<br>버디를 요청했습니다]]></string>
+    <string name="buddy_request_content">친구가 버디 요청을 수락하면 거래 내역을 볼 수 있어요.</string>
+    <string name="buddy_request_delete">버디 요청을 삭제했습니다.</string>
+    <string name="buddy_request_accept">버디 요청을 수락했습니다.</string>
+
+    <!-- 연락처로 버디 추가 -->
+    <string name="buddy_request_contact_first_title">%d명의 친구가 버디스탁을 사용 중이에요</string>
+    <string name="buddy_request_contact_second_title">친구를 버디스탁에 초대해보세요</string>
+
+
+    <!-- MyProfile -->
+    <string name="my_profile_title">내 프로필 수정</string>
+    <string name="my_profile_introduce_title">내 프로필 소개</string>
+    <string name="my_profile_introduce_hint">소개내용을 입력해주세요</string>
+    <string name="my_profile_edit_nickname_change_until">닉네임은 한 달에 한 번만 변경할 수 있습니다.</string>
+    <string name="my_profile_edit_title">내 정보 수정</string>
+
+    <string name="my_profile_info">기본 정보</string>
+    <string name="my_profile_additional_info">추가 정보</string>
+    <string name="my_profile_about_me">자기 소개</string>
+    <string name="my_profile_about_me_info">다른 버디들에게 보여지는 프로필 소개입니다.</string>
+    <string name="my_profile_about_me_hint">자기소개를 입력해주세요.</string>
+    <string name="my_profile_greeting_title">내 정보 수정</string>
+    <string name="my_profile_greeting_sub_title">상대방에게 버디 요청 시, 보여지는 인사말</string>
+    <string name="my_profile_greeting">인사말 설정</string>
+    <string name="my_profile_greeting_info">버디 요청 시, 설정한 인사말로 요청할 수 있습니다.</string>
+    <string name="my_profile_greeting_hint">버디에게 보내는 인사말을 입력해주세요.</string>
+    <string name="my_profile_sns">기타 링크</string>
+    <string name="my_profile_sns_info">개인 SNS 또는 웹 사이트 링크</string>
+    <string name="my_profile_sns_hint">ex) https://www.youtube.com/@buddystock</string>
+    <string name="my_profile_emoji_title">내 캐릭터 선택</string>
+    <string name="my_profile_emoji_btn_cancel">안 바꿀게요</string>
+    <string name="my_profile_emoji_btn_confirm">선택할래요</string>
+    <string name="my_profile_edit_dialog_msg">바뀐 정보를 저장할까요?</string>
+    <string name="my_profile_edit_exit_dialog_msg">바뀐 정보를 저장하지 않고 나가시겠습니까?</string>
+    <string name="my_profile_edit_complete_toast">수정이 완료되었어요</string>
+    <string name="my_profile_edit_empty_toast">인사말을 입력해주세요</string>
+    <string name="my_profile_complete">완료했어요</string>
+
+
+    <!-- Invite -->
+    <string name="invite_info">친구를 버디스탁에 초대해보세요.</string>
+    <string name="invite_info_content">원하는 버디가 없으신가요?\n친구를 초대하여 서로 주식 정보를\n주고 받을 수 있어요.</string>
+
+    <!-- Alarm -->
+    <string name="alarm_title">새로운 주식 거래 소식을 알려드려요</string>
+    <string name="alarm_sub">알림을 받으려면 기기 설정에서 알림을 허용해주세요</string>
+    <string name="no_alim">새로 받은 알림이 없어요.</string>
+
+    <!-- StockApp -->
+    <string name="stock_title">주로 거래하는\n증권사 앱을 선택해주세요</string>
+    <string name="stock_btn">선택 완료</string>
+    <string name="stock_confirm_title">거래 증권사 앱을 설정할까요?</string>
+    <string name="stock_confirm_content">선택하신 증권사 앱으로 설정됩니다.</string>
+    <string name="stock_empty_title">증권사 앱을 설치해주세요</string>
+    <string name="stock_empty_content">증권사 앱이 기기에 설치되어있지 않습니다.\n해당 증권사 앱을 설치한 후 다시 설정해주세요.</string>
+    <string name="stock_change_succeed">주로 거래하는\n증권사 앱이 변경 되었습니다."</string>
+
+    <!-- Notice -->
+    <string name="notice_empty">공지사항이 없습니다.</string>
+
+    <!-- Inquire -->
+    <string name="inquire_title">문의하기</string>
+    <string name="inquire_sub_title">무엇을 도와드릴까요?</string>
+    <string name="inquire_msg">1:1 문의는 최대 5일까지의 시간이 소요되며 메일 문의 시, 개인정보 수집, 이용에 동의한 것으로 간주됩니다.</string>
+    <string name="inquire_btn_email">메일 문의</string>
+    <string name="inquire_title_phone">전화번호를 잊으셨나요?</string>
+    <string name="inquire_msg_phone">회원가입한 전화번호를 잊으셨다면 버디스탁 운영진에게 해당 내용을 전달해주세요.\n빠른 시일 내로 고객님의 문제를 해결해 드리겠습니다.</string>
+    <string name="inquire_info1">궁금한 내용을 메일로 작성해주세요.</string>
+    <string name="inquire_info2">문의 답변은 최대 1~5일 소요됩니다.</string>
+    <string name="inquire_info3">메일 문의 시, 개인정보 수집 및 이용에 동의한 것으로 간주됩니다.</string>
+
+    <!-- Security -->
+    <string name="security_lock">버디스탁 화면 잠금</string>
+    <string name="security_lock_change">비밀번호 변경</string>
+    <string name="security_lock_fingerprint">생체 인식</string>
+    <string name="security_lock_msg1">사용할 비밀번호를 입력해주세요</string>
+    <string name="security_lock_msg2">비밀번호를 한번 더 입력해주세요</string>
+    <string name="security_lock_msg3">새로운 비밀번호를 입력해주세요</string>
+    <string name="security_lock_msg4">현재 사용중인 비밀번호를 입력해주세요</string>
+    <string name="security_lock_msg5">비밀번호를 입력해주세요</string>
+    <string name="security_lock_msg6">새로운 비밀번호를 한번 더 입력해주세요</string>
+    <string name="security_lock_err">비밀번호가 일치하지 않습니다.</string>
+    <string name="security_lock_err2">비밀번호가 일치하지 않습니다.(%s/5)</string>
+    <string name="security_lock_err3">오류/미입력 횟수가 5회 초과하였습니다.\n휴대폰 인증 후 비밀번호를 재설정 할 수 있습니다.</string>
+    <string name="security_lock_delete_title">버디스탁 화면 잠금을 해제할까요?</string>
+    <string name="security_lock_delete_content">본인 인증없이 버디스탁 앱을 열 수 있어요.</string>
+    <string name="security_lock_register_title">버디스탁 화면 잠금</string>
+    <string name="security_lock_change_title">버디스탁 비밀번호 변경</string>
+    <string name="security_lock_change_toast">비밀번호가 변경되었습니다.</string>
+    <string name="security_lock_toast">화면 잠금이 설정 되었습니다</string>
+    <string name="security_lock_delete_toast">화면 잠금이 해제 되었습니다</string>
+    <string name="security_next_time_fingerprint">다음부터 지문인증 사용하기</string>
+    <string name="security_fingerprint_title">지문인증</string>
+    <string name="security_fingerprint_sub_title">기기에 등록된 지문을 이용하여 인증해주세요.</string>
+    <string name="security_fingerprint_btn">비밀번호로 로그인하기</string>
+    <string name="security_fingerprint_dialog_title">생체인식을 사용할까요?</string>
+    <string name="security_fingerprint_dialog_content">잠금해제 비밀번호 대신 생체인식을 사용하시겠습니까?</string>
+    <string name="security_fingerprint_toast">생체인식이 설정되었습니다.</string>
+    <string name="security_fingerprint_delete_toast">생체인식이 해제되었습니다.</string>
+    <string name="security_1">1</string>
+    <string name="security_2">2</string>
+    <string name="security_3">3</string>
+    <string name="security_4">4</string>
+
+    <!-- withdraw -->
+    <string name="withdraw_title">버디스탁을 떠나는 이유를 알려 주세요.</string>
+    <string name="withdraw_reason1">오류가 많아요.</string>
+    <string name="withdraw_reason2">보안이 우려돼요.</string>
+    <string name="withdraw_reason3">필요한 기능이 없어요.</string>
+    <string name="withdraw_reason4">친구들에게 내 정보를 보여주기 싫어요.</string>
+    <string name="withdraw_reason5">탈퇴 후 다시 가입할게요.</string>
+    <string name="withdraw_reason6">기타</string>
+    <string name="withdraw_dialog_title">버디스탁을 탈퇴할까요?</string>
+    <string name="withdraw_dialog">지금까지 맺었던 버디 관계와 주고받은 정보들은 모두 영구삭제됩니다.</string>
+    <string name="withdraw_complete">지금까지 버디스탁을 이용해주셔서 감사합니다.\n아쉽지만 다음에 다시 만나요!</string>
+    <string name="withdraw_complete_title">버디스탁을 탈퇴했습니다</string>
+    <string name="withdraw_inquire">1:1 문의</string>
+
+    <!-- BuddySearch -->
+    <string name="search_recent">최근 검색어</string>
+    <string name="search_all_del">전체 삭제</string>
+    <string name="search_recent_empty">최근 검색어가 없습니다</string>
+    <string name="search_hint">검색할 버디 이름을 입력해주세요</string>
+    <string name="search_result">찾으신 버디입니다</string>
+    <string name="buddy_search_empty">내 버디 목록에 없는 닉네임 입니다</string>
+    <string name="buddy_search_empty_content">친구와 버디를 맺은 상태가 아니라면\n버디를 요청해보세요</string>
+    <string name="buddy_search_btn">버디 추가</string>
+    <string name="buddy_require_management_received">받은 요청</string>
+    <string name="buddy_require_management_send">보낸 요청</string>
+
+
+    <!-- BuddyCancel -->
+    <string name="buddy_cancel_resendable">취소 후 다시 요청할 수 있습니다</string>
+    <string name="buddy_request_cancel">버디 요청 취소</string>
+
+
+    <!-- BuddyAdd -->
+    <string name="buddy_add_contact_title">연락처로 추가</string>
+    <string name="buddy_add_contact_youtube_msg">유튜버와도 버디를 맺을 수 있어요!</string>
+    <string name="buddy_add_contact_cnt"><![CDATA[<font color="#1cbb95">%,d</font>명의 버디스탁 유저가 있습니다.]]></string>
+    <string name="buddy_add_contact_msg">친구들을 버디스탁에 초대해보세요</string>
+    <string name="buddy_add_contact_msg2">원하는 버디가 없으신가요?\n친구를 초대하여 서로의 주식 정보를 주고 받을 수 있어요.</string>
+    <string name="buddy_add_contact_empty">친구들을 버디스탁에 초대해보세요</string>
+    <string name="buddy_add_contact_empty_contact"><![CDATA[원하는 버디가 없으신가요?<br>친구를 초대하여 서로의 주식 정보를<br>주고 받을 수 있어요.]]></string>
+    <string name="buddy_add_contact_btn">친구 초대하러 가기 ></string>
+    <string name="buddy_add_contact_dialog_check">다음에도 사용</string>
+    <string name="buddy_add_contact_dialog_hint">버디에게 보낼 인사말을 입력해주세요 | 80자</string>
+    <string name="buddy_add_contact_dialog_msg">전화번호부에 등록된 버디에게는 버디신청 시\n자동으로 전화번호가 공개돼요.</string>
+
+    <string name="buddy_add_nickname_hint">정확한 닉네임을 입력해주세요</string>
+    <string name="buddy_add_nickname_title">닉네임으로 추가</string>
+    <string name="buddy_add_nickname_empty_title">존재하지 않는 닉네임입니다</string>
+    <string name="buddy_add_nickname_empty_content">정확한 닉네임을 입력해주세요</string>
+
+    <string name="buddy_add_youtube_title">유튜버디 추가</string>
+    <string name="buddy_add_youtube_msg">유튜버와 버디 맺는 방법 알고 계신가요?</string>
+    <string name="buddy_add_youtube_hint">유튜버디 닉네임을 입력해주세요.</string>
+    <string name="buddy_add_youtube_introduce_title1">유튜버디의 실시간 거래정보를\n알 수 있어요.</string>
+    <string name="buddy_add_youtube_introduce_title2">유튜버디가 직접 알려주는\n메모로 소통하세요.</string>
+    <string name="buddy_add_youtube_introduce_title3">권한을 허용하고 유튜버디의\n실시간 거래 정보를 확인해보세요.</string>
+    <string name="buddy_add_youtube_introduce_title4">버디스탁 가입 계정과\n유튜브 사용 계정이 동일해야해요</string>
+    <string name="buddy_add_youtube_introduce_sub1">유튜버디에게 보낸 버디 요청은\n자동으로 수락돼요.</string>
+    <string name="buddy_add_youtube_introduce_sub2">유튜버디의 메모를 확인하고\n상세 거래 내역을 알아보세요.</string>
+    <string name="buddy_add_youtube_introduce_sub3">필수 권한을 허용해야 버디 스탁을 이용할 수 있어요.</string>
+    <string name="buddy_add_youtube_introduce_sub4">유튜버가 확인 할 수 있게 두 계정이 동일해야해요</string>
+    <string name="buddy_add_youtube">유튜브를 구독하고 유튜버와 버디를 맺어보세요</string>
+    <string name="buddy_add_youtube_recommend">추천 유튜버디</string>
+    <string name="buddy_add_youtube_recommend_more_title">더 많은 추천 유튜버를 보러가기</string>
+    <string name="buddy_add_youtube_recommend_more_sub">버디스탁에서 추천하는 더 많은 유튜버들이 기다리고 있어요.\n하단의 버튼을 눌러 더 많은 유튜버들을 탐색하러 가세요 !</string>
+    <string name="buddy_add_youtube_recommend_empty">추천 유튜버디가 없습니다.</string>
+    <string name="buddy_add_youtube_empty">모든 유튜버디와 버디가 되셨습니다.</string>
+    <string name="buddy_add_youtube_recommend_empty2"><![CDATA[새로운 추천 유튜버디가 올 예정이에요.<br>조금만 기다려주세요.]]></string>
+    <string name="buddy_add_youtube_empty2"><![CDATA[새로운 유튜버디가 올 예정이에요.<br>조금만 기다려주세요.]]></string>
+    <string name="buddy_add_youtube_result_empty">가입되어있지 않은 유튜버입니다.</string>
+    <string name="buddy_add_youtube_result_empty_content">다른 유튜버 닉네임으로 검색해주세요</string>
+    <string name="buddy_add_youtube_result_cnt"><![CDATA[<font color = "#1cbb95">%,d</font>명의 유튜버가 있습니다.]]></string>
+    <string name="buddy_add_youtube_toast">유튜버와 버디가 맺어졌습니다.</string>
+    <string name="buddy_add_youtube_not_yet_service">아직 준비중인 서비스입니다.</string>
+
+    <string name="buddy_add_wave_empty_title">모두에게 버디요청을 보냈어요</string>
+    <string name="buddy_add_wave_empty_content">원하는 버디가 없으신가요?\n친구를 초대해서 주식 거래 내역을 공유할 수 있어요</string>
+
+    <string name="buddy_add_detail_youtube"><u>%s</u></string>
+    <string name="buddy_add_detail_msg"><![CDATA[친구의 주식 정보를 알고 싶다면<br><font color="#1cbb95">버디 요청</font>을 눌러주세요.]]></string>
+    <string name="buddy_add_detail_msg2"><![CDATA[친구의 주식 정보를 알고 싶다면<br><font color="#1cbb95">버디 수락</font>을 눌러주세요.]]></string>
+    <string name="buddy_add_detail_msg3">친구의 주식 정보를 알고싶다면\n차단을 해제하고 버디를 요청하세요</string>
+    <string name="buddy_add_detail_ms3"><![CDATA[친구의 스탁 정보를 알고 싶다면?<br><font color="#1cbb95">차단 해제 하기</font>후  <br><font color="#1cbb95">\‘버디 요청\'</font>을 눌러주세요.]]></string>
+    <string name="buddy_add_step1_greetings">친구에게 보낼 인사말을 입력해주세요</string>
+    <string name="buddy_add_step1_email">유튜버에게 인증할 계정을 입력해주세요.<font color="#666666" size="14">유튜브에서 구독한 계정을 정확하게 입력해야 유튜버와버디를 맺을 수 있습니다.</font></string>
+    <string name="buddy_add_step1_other_email">다른 유튜브 계정으로 인증하고 싶나요?\n<font color="#666666" size="14">계정 입력란을 선택해 변경해주세요.</font></string>
+    <string name="buddy_add_step1_btn_greeting">친구에게 보낼 인사말을 써주세요</string>
+    <string name="buddy_add_step1_btn_email">유튜버에게 인증할 계정을 입력해주세요.</string>
+    <string name="buddy_add_step1_btn_next">다 작성했어요</string>
+    <string name="buddy_add_step2_email">친구에게 내 이메일을 공개해요.</string>
+    <string name="buddy_add_step2_email_info">버디가 나를 더 잘 알아볼 수 있게끔\n내 이메일을 공개합니다.</string>
+    <string name="buddy_add_step2_phone">친구에게 내 전화번호를 공개해요.</string>
+    <string name="buddy_add_step2_phone_info">버디가 나를 더 잘 알아볼 수 있게끔\n내 전화번호를 공개합니다.</string>
+    <string name="buddy_add_step2_gmail">유튜버에게 내 이메일을 공개해요.</string>
+    <string name="buddy_add_step2_gmail_info">유튜버가 나의 구독 여부를 알 수 있게\n나의 구글 이메일을 알려줘요.</string>
+    <string name="buddy_add_step_end_sub">친구가 버디 요청을 받을 때까지 기다려주세요.</string>
+    <string name="buddy_add_step_end_title_youtube"><![CDATA[<font color = "#00AEB0">%s</font> 님과\n버디가 되었습니다.]]></string>
+    <string name="buddy_add_step_end_sub_youtube">유튜버가 버디를 신청받을때 까지 기다려주세요.</string>
+    <string name="buddy_add_info_buddy">이미 맺은 버디입니다.</string>
+    <string name="buddy_add_info_request">버디의 요청 수락을 기다리는 중입니다.</string>
+    <string name="buddy_add_info_response">요청 들어온 버디 입니다.</string>
+    <string name="buddy_add_wave_info">최근 거래가 활발한 버디들이에요.</string>
+    <string name="buddy_add_wave_empty">모든 추천 버디에게 요청을 보냈어요.</string>
+    <string name="buddy_add_greeting_input">인사말 입력</string>
+    <string name="buddy_add_greeting_to_user">님에게 보낼 인사말</string>
+    <string name="buddy_add_guide_for_contact_buddy">내 연락처에 등록되어있는  버디는 버디요청 시\n내 전화번호가 공개됩니다</string>
+
+    <!-- BuddyRequireManagement -->
+    <string name="buddy_require_management_receive_title"><![CDATA[친구 <font color = "#1CBB95">%,d</font>명이 버디를 요청했어요!]]></string>
+    <string name="buddy_require_management_receive_sub">내 연락처에 등록되어 있는 친구는 이름이 보여요</string>
+    <string name="buddy_require_management_receive_wait">버디를 수락하고\n친구의 주식 정보를 확인하세요</string>
+    <string name="buddy_require_management_empty_content"><![CDATA[친구를 버디스탁에 초대하고<br>서로 버디를 맺어 보세요.]]></string>
+    <string name="buddy_require_management_receive_empty">받은 버디 요청이 없어요.</string>
+    <string name="buddy_require_management_receive_empty_content">친구를 버디스탁에 초대하고\n서로 버디를 맺어 보세요.</string>
+    <string name="buddy_require_management_send_title"><![CDATA[친구 <font color = "#1CBB95">%,d</font>명에게 버디를 요청했어요!]]></string>
+    <string name="buddy_require_management_send_greet">버디에게 보낸 인사말이에요</string>
+    <string name="buddy_require_management_send_wait"><![CDATA[친구가 버디 요청을<br>받아줄 때까지 기다려주세요]]></string>
+    <string name="buddy_require_management_send_empty">보낸 버디 요청이 없어요.</string>
+    <string name="buddy_require_management_send_empty_content">친구를 버디스탁에 초대하고\n서로 버디를 맺어 보세요.</string>
+    <string name="buddy_require_cancel_title">버디 요청을 취소할까요?</string>
+    <string name="buddy_require_cancel_name">%s 님에게</string>
+    <string name="buddy_require_block">앞으로 친구의 버디요청도 차단할게요</string>
+    <string name="buddy_require_management_confirm_title">버디 요청이 취소되었습니다.</string>
+    <string name="buddy_require_management_confirm_sub">친구에게 보낸 버디 요청이 취소되었습니다.</string>
+    <string name="buddy_require_management_confirm_receive_sub"><![CDATA[<font color = "#1CBB95">%s </font>님과<br>버디가 되었습니다.]]></string>
+    <string name="buddy_require_management_confirm_receive_content">지금 거래 목록을 확인해보세요!</string>
+    <string name="buddy_require_management_confirm_send_sub"><![CDATA[<font color = "#1CBB95">%s </font>님에게 보낸<br>버디 요청이 취소되었습니다.]]></string>
+    <string name="buddy_require_management_confirm_send_content">다시 버디를 요청해보세요.</string>
+
+    <!-- BuddyFeed -->
+    <string name="buddy_feed_delete_all">전체 버디피드 비우기</string>
+    <string name="add_buddy_by_buddy_add_menu">[버디 목록 > 버디 추가] 를 통해서\n버디를 추가해주세요</string>
+    <string name="buddy_feed_total_count_month">월 </string>
+    <string name="buddy_feed_list_youtuber_buddy_name">유튜버디(%s)</string>
+    <string name="buddy_feed_no_buddy">아직 버디가 없어요</string>
+    <string name="buddy_feed_no_record">거래 내역이 없어요</string>
+    <string name="buddy_feed_my_buddies_on">%,d월 %,d일 내 버디들은</string>
+    <string name="buddy_feed_record_empty">버디의 거래 내역이 없어요</string>
+    <string name="buddy_feed_record_empty_sub">아직 버디들이 거래한 내역이 없어요</string>
+    <string name="buddy_collect_info">실제 내 거래 기록과 차이가 날 수 있습니다</string>
+    <string name="buddy_feed_write_commend">매매노트 입력</string>
+
+    <!-- Buddy -->
+    <string name="buddy_title">버디 거래 목록</string>
+    <string name="buddy_trading_info"><![CDATA[오늘 \'%1$s\'님은 <font color = "#1cbb95" ><b>%2$s번</b></font> 거래했어요]]></string>
+    <string name="buddy_detail_setup_stock_app">사용하고있는 증권사 앱을 설정해주세요.</string>
+    <string name="buddy_detail_write_introduction">다른 버디들에게 보여질 자기 소개를 작성해주세요.</string>
+    <string name="buddy_detail_write_greetings">버디에게 보낼 내 기본 인사말을 작성해주세요.</string>
+    <string name="buddy_detail_my_introduction">내 자기소개</string>
+    <string name="buddy_detail_my_greetings">내 인사말</string>
+    <string name="buddy_detail_empty_history">거래 내역이 없습니다</string>
+    <string name="buddy_detail_trade_description">주식 거래를 진행하고, 거래 내역을 확인해보세요</string>
+    <string name="buddy_detail_history_comment_description">거래 내역에 대한 메모를 작성할 수 있어요</string>
+
+    <!-- BuddyBlock -->
+    <string name="buddy_block_title">차단 버디 목록</string>
+    <string name="buddy_block_cnt">%d명의 차단한 버디가 있습니다</string>
+    <string name="buddy_block_result_empty">차단한 버디가 없습니다</string>
+    <string name="buddy_block_require_title">차단 해제한 친구에게 버디 요청 하러가기</string>
+    <string name="buddy_block_require_content">차단 해제한 친구에게 바로 버디 요청을 하러 갈 수 있어요.\n친구에게 버디 요청을 하러 가시겠어요?</string>
+
+    <!-- BuddyProfile -->
+    <string name="buddy_profile_edit">내 프로필 편집</string>
+    <string name="buddy_profile_introduce_content">다른 버디들에게 나를 소개할 수 있어요</string>
+    <string name="buddy_profile_stock_setting">주거래 증권사 앱을 설정해주세요</string>
+    <string name="buddy_profile_main_stock">주거래 증권사</string>
+    <string name="buddy_profile_all_my_empty_content">주식/코인을 매매하면\n내 거래 내역을 확인할 수 있어요</string>
+    <string name="buddy_profile_empty_title">거래 내역이 없습니다</string>
+    <string name="buddy_profile_empty_content">거래를 진행하고, 거래 내역을 확인해보세요</string>
+    <string name="buddy_profile_empty_content_stock">주식을 매매하면\n내 거래 내역을 확인할 수 있어요</string>
+    <string name="buddy_profile_empty_content_coin">코인을 매매하면\n내 거래 내역을 확인할 수 있어요</string>
+    <string name="buddy_profile_like">좋아요 %,d</string>
+    <string name="buddy_profile_sub_comment">댓글 %,d</string>
+    <string name="buddy_profile_blurred_title">친구의 주식 정보를 알고싶다면\n버디 요청을 눌러주세요</string>
+
+    <!-- BuddyWith -->
+    <string name="buddy_with_title">함께 아는 버디</string>
+    <string name="buddy_with_cnt">함께 아는 버디: %,d명</string>
+
+    <!-- TradingDetail -->
+    <string name="trading_detail_input_reply">댓글을 입력해 주세요</string>
+    <string name="trading_detail_toast_registed_reply">댓글이 등록되었습니다.</string>
+    <string name="trading_detail_delete_reply">삭제된 댓글입니다.</string>
+    <string name="trading_detail_reply_empty">내 매매 내역에 댓글을 작성해보세요</string>
+    <string name="trading_detail_reply_empty_buddy">버디의 매매 내역에 댓글을 작성해보세요</string>
+    <string name="trading_writer">작성자</string>
+    <string name="trading_no_verified">버디스탁에서 검증되지 않은 데이터 입니다.</string>
+
+    <!-- FirstRun -->
+    <string name="mainTitle_first_run_first">버디스탁의 \n새로운 커뮤니티를 만나보세요</string>
+    <string name="mainTitle_first_run_second">다양한 의견을 자유롭게</string>
+    <string name="mainTitle_first_run_third">익명으로 부담없이 소통해요</string>
+    <string name="mainTitle_first_run_fourth">안전하게 보호받는 내 거래 정보</string>
+
+    <string name="subTitle_first_run_first">자유로운 소통의 장, \n버디스탁 커뮤니티를 소개합니다.</string>
+    <string name="subTitle_first_run_second">새로운 버디들과 의견을 나눠보세요. 거래 내역에 \n댓글이 달리면 커뮤니티에 게시글이 등록됩니다.</string>
+    <string name="subTitle_first_run_third">커뮤니티에서는 익명으로 댓글을 작성할 수 있어요. \n다양한 사람들과 자유롭게 정보를 공유하세요.</string>
+    <string name="subTitle_first_run_fourth">내 거래내역의 종목 가격과 거래 일시는 버디를 맺은 \n친구에게만 공유됩니다. 동의하시면 지금 바로 시작하세요!</string>
+
+    <!-- Community -->
+    <string name="btn_community_start">커뮤니티 시작하기</string>
+    <string name="community_only_open_to_buddy">버디에게만 정보 공개</string>
+    <string name="community_like">좋아요</string>
+    <string name="community_subcomment">댓글</string>
+    <string name="community_comment_update">%s 댓글 업데이트</string>
+
+    <!-- Community Search -->
+    <string name="community_search_hilt">종목을 입력해주세요</string>
+    <string name="community_search_result_empty_title">검색어가 포함된 콘텐츠가 없습니다</string>
+    <string name="community_search_result_empty_content">검색어를 확인하고 다시 검색해주세요</string>
+    <string name="community_related_stock">연관 주식</string>
 </resources>

@@ -36,12 +36,13 @@ fun AlimCenterScreen(
   viewModel: AlimCenterViewModel = hiltViewModel()
 ) {
   val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+  println("uiStateLog : $uiState")
   LaunchedEffect(Unit) {
-    viewModel.uiSideEffect.collect { effect ->
-      when (effect) {
-        is AlimCenterUiSideEffect.Load -> viewModel.fetchData()
-      }
-    }
+//    viewModel.uiSideEffect.collect { effect ->
+//      when (effect) {
+//        is AlimCenterUiSideEffect.Load -> viewModel.fetchData()
+//      }
+//    }
   }
   AlimCenterScreen(
     uiState = uiState,
@@ -57,27 +58,27 @@ fun AlimCenterScreen(
   uiState: AlimCenterUiState,
 ) {
 
-  when (uiState.uiType) {
-    AlimCenterUiType.NONE -> {}
-    AlimCenterUiType.LOADED -> {
-      LazyColumn(modifier) {
-        items(uiState.uiModels) { item ->
-          Text(
-            modifier = Modifier
-                .padding(8.dp)
-                .border(
-                    width = 1.dp,
-                    shape = RoundedCornerShape(4.dp),
-                    color = Color.LightGray
-                )
-                .padding(8.dp),
-            text = item.name.asString(),
-            style = TextStyle(
-              fontSize = 20.sp,
-            )
-          )
-        }
-      }
-    }
-  }
+//  when (uiState.uiType) {
+//    AlimCenterUiType.NONE -> {}
+//    AlimCenterUiType.LOADED -> {
+//      LazyColumn(modifier) {
+//        items(uiState.uiModels) { item ->
+//          Text(
+//            modifier = Modifier
+//                .padding(8.dp)
+//                .border(
+//                    width = 1.dp,
+//                    shape = RoundedCornerShape(4.dp),
+//                    color = Color.LightGray
+//                )
+//                .padding(8.dp),
+//            text = item.name.asString(),
+//            style = TextStyle(
+//              fontSize = 20.sp,
+//            )
+//          )
+//        }
+//      }
+//    }
+//  }
 }
