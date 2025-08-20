@@ -5,6 +5,7 @@ import kr.co.architecture.core.network.model.AlimCenterEntity
 import kr.co.architecture.core.network.model.AlimCenterEntity.AlimNoticeEntity
 import kr.co.architecture.core.network.model.BuddyRequestFindAllItemEntity
 import kr.co.architecture.core.network.operator.CommonApiResponse
+import java.util.Date
 import javax.inject.Inject
 
 class RemoteMockApiImpl @Inject constructor(
@@ -16,7 +17,29 @@ class RemoteMockApiImpl @Inject constructor(
         code = 200,
         message = "success",
         data = AlimCenterEntity(
-          noticeDto = emptyList<AlimNoticeEntity>(),
+          noticeDto = List(6) {
+            AlimNoticeEntity(
+              notiId = it,
+              userId = it,
+              contentsType = "",
+              contents = "공지사항",
+              nickname = "버디스탁",
+              imogiCd = "EC010$it",
+              buddyUserId = it,
+              buddyType = "",
+              buddyCnt = it,
+              commentId = it,
+              subCommentId = it,
+              tradingId = it,
+              noticeId = it,
+              advertiseId = it,
+              readYn = "Y",
+              commentContents = "",
+              createdDate = Date(),
+              removeBuddy = "",
+              tradingOwnerId = it,
+            )
+          },
           tradingDto = emptyList<AlimCenterEntity.AlimTradingEntity>(),
           activityDto = emptyList<AlimCenterEntity.AlimActivityEntity>(),
           moreNotice = true,
