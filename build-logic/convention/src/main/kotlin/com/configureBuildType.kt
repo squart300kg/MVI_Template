@@ -31,7 +31,10 @@ internal fun Project.configureBuildType(
     }
     buildTypes {
       getByName("release") {
-        isMinifyEnabled = true
+        // AGP버전 8.4.0부터 라이브러리 모듈 자체적으로 코드축소 실행하여
+        // 'R8: Type a.a is defined multiple times'에러 발생.
+        // 따라서 앱 모듈에만 코드축소 적용
+        isMinifyEnabled = commonExtension is ApplicationExtension
         proguardFiles(
           getDefaultProguardFile("proguard-android-optimize.txt"),
           "proguard-rules.pro"
