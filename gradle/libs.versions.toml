@@ -37,7 +37,7 @@ lottie = "6.0.0"
 
 # plugins
 protobufPlugin = "0.9.4"
-androidGradlePlugin = "8.6.0"
+androidGradlePlugin = "8.8.2"
 jetbrainsKotlin = "2.0.0"
 serializationPluginVer = "1.7.10"
 
