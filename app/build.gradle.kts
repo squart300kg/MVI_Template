@@ -19,6 +19,7 @@ android {
     implementation(project(":core:common"))
 
     implementation(libs.androidx.profile.installer)
+    implementation(libs.androidx.compose.runtime.tracing)
     baselineProfile(project(":benchmarks"))
   }
 }

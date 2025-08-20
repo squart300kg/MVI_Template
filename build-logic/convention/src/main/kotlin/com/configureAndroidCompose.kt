@@ -23,7 +23,6 @@ internal fun Project.configureAndroidCompose(
       add("implementation", libs.findLibrary("androidx-hilt-navigation-compose").get())
       add("implementation", libs.findLibrary("androidx-lifecycle-viewmodel-compose").get())
       add("implementation", libs.findLibrary("androidx-lifecycle-runtime-compose").get())
-      add("implementation", libs.findLibrary("androidx-compose-runtime-tracing").get())
 
       add("androidTestImplementation", platform(bom))
       add("androidTestImplementation", libs.findLibrary("androidx-compose-ui-test-junit4").get())
