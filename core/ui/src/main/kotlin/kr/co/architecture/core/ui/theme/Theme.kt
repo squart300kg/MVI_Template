@@ -12,8 +12,7 @@ fun BaseTheme(
 ) {
   MaterialTheme(
     colorScheme = lightColorScheme(
-      primary = Color.White,
-      secondary = Color.Black
+      background = Color.White,
     ),
     content = content
   )

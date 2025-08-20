@@ -1,85 +1,50 @@
 package kr.co.architecture.feature.home
 
-import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
-import kr.co.architecture.core.ui.GlobalUiStateEffect
-import kr.co.architecture.core.ui.util.asString
 
 const val HOME_BASE_ROUTE = "firstBaseRoute"
-const val SECOND_BASE_ROUTE = "secondBaseRoute"
-fun NavGraphBuilder.homeScreen() {
+fun NavGraphBuilder.homeScreen(
+  onNavigateToAlimCenterScreen: () -> Unit = {}
+) {
   composable(
     route = HOME_BASE_ROUTE
   ) {
-    HomeScreen()
+    HomeScreen(
+      onNavigateToAlimCenterScreen = onNavigateToAlimCenterScreen
+    )
   }
 }
 
 @Composable
 fun HomeScreen(
-  modifier: Modifier = Modifier,
-  viewModel: HomeViewModel = hiltViewModel()
+  onNavigateToAlimCenterScreen: () -> Unit = {}
 ) {
-  val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-  LaunchedEffect(Unit) {
-    viewModel.uiSideEffect.collect { effect ->
-      when (effect) {
-        is HomeUiSideEffect.Load -> viewModel.fetchData()
-      }
-    }
-  }
-
-  HomeScreen(
-    uiState = uiState,
-    modifier = modifier,
-  )
-
-  GlobalUiStateEffect(viewModel)
-}
-
-@Composable
-fun HomeScreen(
-  modifier: Modifier = Modifier,
-  uiState: HomeUiState,
-) {
-
-  when (uiState.uiType) {
-    HomeUiType.NONE -> {}
-    HomeUiType.LOADED -> {
-      LazyColumn(modifier) {
-        items(uiState.uiModels) { item ->
-          Text(
-            modifier = Modifier
-                .padding(8.dp)
-                .border(
-                    width = 1.dp,
-                    shape = RoundedCornerShape(4.dp),
-                    color = Color.LightGray
-                )
-                .padding(8.dp),
-            text = item.name.asString(),
-            style = TextStyle(
-              fontSize = 20.sp,
-            )
-          )
-        }
-      }
+  Box(
+    modifier = Modifier
+      .fillMaxSize()
+  ) {
+    Button(
+      modifier = Modifier
+        .align(Alignment.Center),
+      onClick = onNavigateToAlimCenterScreen
+    ) {
+      Text(
+        modifier = Modifier
+          .clickable(onClick = onNavigateToAlimCenterScreen),
+        text = "알림센터 이동",
+        fontSize = 30.sp
+      )
     }
   }
 }
