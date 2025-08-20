@@ -17,9 +17,9 @@ android {
     implementation(project(":core:domain"))
     implementation(project(":core:repository"))
     implementation(project(":core:common"))
-    baselineProfile(project(":benchmarks"))
 
     implementation(libs.androidx.profile.installer)
+    baselineProfile(project(":benchmarks"))
   }
 }
 
