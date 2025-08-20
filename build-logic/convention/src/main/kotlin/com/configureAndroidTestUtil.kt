@@ -10,6 +10,7 @@ internal fun Project.configureAndroidTestUtil(
   commonExtension.apply {
 
     dependencies {
+      add("androidTestImplementation", libs.findLibrary("junit").get())
       add("androidTestImplementation", libs.findLibrary("androidx-test-ext-junit").get())
     }
   }

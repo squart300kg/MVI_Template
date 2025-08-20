@@ -19,6 +19,7 @@ package com
 import com.android.build.api.dsl.ApplicationExtension
 import com.android.build.api.dsl.CommonExtension
 import com.android.build.api.dsl.LibraryExtension
+import com.android.build.api.dsl.TestExtension
 import com.github.javaparser.utils.Log
 import org.gradle.api.Project
 import org.gradle.api.artifacts.VersionCatalog
@@ -32,6 +33,7 @@ internal fun Project.getBasePluginExtension(): CommonExtension<*, *, *, *, *, *>
   when {
     plugins.hasPlugin("com.android.application") -> extensions.getByType<ApplicationExtension>()
     plugins.hasPlugin("com.android.library") -> extensions.getByType<LibraryExtension>()
+    plugins.hasPlugin("com.android.test") -> extensions.getByType<TestExtension>()
     else -> {
       Log.error("Unsupported module type for AndroidBaseSettingPlugin")
       null
