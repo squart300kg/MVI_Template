@@ -1,6 +1,6 @@
 package kr.co.architecture.feature.first
 
-import kr.co.architecture.feature.first.FirstViewModel
+import kr.co.architecture.feature.home.HomeViewModel
 import kr.co.testing.TestRepository
 import kr.co.architecture.test.testing.util.MainDispatcherRule
 import org.junit.Before
@@ -10,13 +10,13 @@ class FirstViewModelTest {
   @get:Rule
   val mainDispatcherRule = MainDispatcherRule()
 
-  private lateinit var viewModel: FirstViewModel
+  private lateinit var viewModel: HomeViewModel
 
   private val newsRepository = TestRepository()
 
   @Before
   fun setup() {
-    viewModel = FirstViewModel(
+    viewModel = HomeViewModel(
       repository = newsRepository
     )
   }

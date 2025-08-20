@@ -8,7 +8,6 @@ import androidx.activity.viewModels
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.getValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.NavHost
@@ -21,8 +20,8 @@ import kr.co.architecture.core.ui.LocalOnErrorMessageChanged
 import kr.co.architecture.core.ui.LocalOnLoadingStateChanged
 import kr.co.architecture.core.ui.LocalOnRefreshStateChanged
 import kr.co.architecture.core.ui.theme.BaseTheme
-import kr.co.architecture.feature.first.FIRST_BASE_ROUTE
-import kr.co.architecture.feature.first.firstScreen
+import kr.co.architecture.feature.home.HOME_BASE_ROUTE
+import kr.co.architecture.feature.home.homeScreen
 import kr.co.architecture.feature.second.secondScreen
 
 @AndroidEntryPoint
@@ -51,9 +50,9 @@ class MainActivity : ComponentActivity() {
             NavHost(
               modifier = Modifier.padding(innerPadding),
               navController = navHostController,
-              startDestination = FIRST_BASE_ROUTE
+              startDestination = HOME_BASE_ROUTE
             ) {
-              firstScreen()
+              homeScreen()
 
               secondScreen()
             }
