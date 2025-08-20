@@ -24,74 +24,74 @@ private fun getLineHeight(lineHeightDimenResId: TextUnit): TextUnit {
     }
 }
 
-internal val TypoDisplay1 = TextStyle(
+val TypoDisplay1 = TextStyle(
     fontWeight = FontWeight.Bold,
     fontFamily = BuddyStockFont,
     fontSize = 24.sp,
     lineHeight = getLineHeight(34.sp)
 )
 
-internal val TypeHeadline = TextStyle(
+val TypeHeadline = TextStyle(
     fontWeight = FontWeight.Bold,
     fontFamily = BuddyStockFont,
     fontSize = 20.sp,
     lineHeight = getLineHeight(28.sp)
 )
 
-internal val TypoSubhead4 = TextStyle(
+val TypoSubhead4 = TextStyle(
     fontWeight = FontWeight.Bold,
     fontFamily = BuddyStockFont,
     fontSize = 18.sp,
     lineHeight = getLineHeight(24.sp)
 )
 
-internal val TypoSubhead3 = TextStyle(
+val TypoSubhead3 = TextStyle(
     fontWeight = FontWeight.Bold,
     fontFamily = BuddyStockFont,
     fontSize = 16.sp,
     lineHeight = getLineHeight(22.sp)
 )
 
-internal val TypoSubhead3Weight500 = TextStyle(
+val TypoSubhead3Weight500 = TextStyle(
     fontWeight = FontWeight.W500,
     fontFamily = BuddyStockFont,
     fontSize = 16.sp,
     lineHeight = getLineHeight(22.sp)
 )
 
-internal val TypoSubhead2 = TextStyle(
+val TypoSubhead2 = TextStyle(
     fontWeight = FontWeight.Bold,
     fontFamily = BuddyStockFont,
     fontSize = 14.sp,
     lineHeight = getLineHeight(20.sp)
 )
 
-internal val TypoSubhead1 = TextStyle(
+val TypoSubhead1 = TextStyle(
     fontWeight = FontWeight.Bold,
     fontFamily = BuddyStockFont,
     fontSize = 12.sp,
     lineHeight = getLineHeight(18.sp)
 )
 
-internal val TypoBody2 = TextStyle(
+val TypoBody2 = TextStyle(
     fontFamily = BuddyStockFont,
     fontSize = 16.sp,
     lineHeight = getLineHeight(24.sp)
 )
 
-internal val TypoBody1 = TextStyle(
+val TypoBody1 = TextStyle(
     fontFamily = BuddyStockFont,
     fontSize = 14.sp,
     lineHeight = getLineHeight(20.sp)
 )
 
-internal val TypoCaption = TextStyle(
+val TypoCaption = TextStyle(
     fontFamily = BuddyStockFont,
     fontSize = 12.sp,
     lineHeight = getLineHeight(18.sp)
 )
 
-internal val TypoMinText = TextStyle(
+val TypoMinText = TextStyle(
     fontFamily = BuddyStockFont,
     fontSize = 11.sp,
     lineHeight = getLineHeight(18.sp)
