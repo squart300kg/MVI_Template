@@ -1,11 +1,10 @@
 package kr.co.architecture.feature.first
 
+import kr.co.architecture.core.domain.GetListUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
-import kr.co.architecture.core.repository.Repository
-import kr.co.architecture.core.repository.dto.ArticleDto
 import kr.co.architecture.core.ui.BaseViewModel
 import kr.co.architecture.core.ui.UiEvent
 import kr.co.architecture.core.ui.UiSideEffect
@@ -22,11 +21,11 @@ data class UiModel(
   val name: UiText
 ) {
   companion object {
-    fun mapperToUi(dtos: List<ArticleDto>): ImmutableList<UiModel> {
-      return dtos
+    fun mapperToUi(names: List<String>): ImmutableList<UiModel> {
+      return names
         .map {
           UiModel(
-            name = UiText.DynamicString(it.name)
+            name = UiText.DynamicString(it)
           )
         }
         .toImmutableList()
@@ -50,7 +49,7 @@ sealed interface FirstUiSideEffect : UiSideEffect {
 
 @HiltViewModel
 class FirstViewModel @Inject constructor(
-  private val repository: Repository,
+  private val getListUseCase: GetListUseCase
 ) : BaseViewModel<FirstUiState, FirstUiEvent, FirstUiSideEffect>() {
 
   override fun createInitialState(): FirstUiState {
@@ -69,11 +68,11 @@ class FirstViewModel @Inject constructor(
 
   fun fetchData() {
     launchSafetyWithLoading {
-      val dto = repository.getList()
+      val names = getListUseCase()
       setState {
         copy(
           uiType = FirstUiType.LOADED,
-          uiModels = UiModel.mapperToUi(dto)
+          uiModels = UiModel.mapperToUi(names)
         )
       }
     }
