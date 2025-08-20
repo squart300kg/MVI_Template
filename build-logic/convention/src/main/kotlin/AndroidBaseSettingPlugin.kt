@@ -1,3 +1,4 @@
+import com.configureBaseAppVersion
 import com.configureBaseSetting
 import com.configureBuildType
 import com.configureDaggerHilt
@@ -10,6 +11,7 @@ class AndroidBaseSettingPlugin : Plugin<Project> {
   override fun apply(target: Project) {
     with(target) {
       getBasePluginExtension()?.let { extension ->
+        configureBaseAppVersion(extension)
         configureBaseSetting(extension)
         configureBuildType(extension)
         configureDaggerHilt(extension)

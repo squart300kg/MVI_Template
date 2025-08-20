@@ -17,12 +17,6 @@ internal fun Project.configureBaseSetting(
     when (this) {
       is ApplicationExtension -> {
         defaultConfig {
-          defaultConfig.targetSdk = 33
-
-          applicationId = "kr.co.architecture.ssy"
-          versionCode = 1
-          versionName = "1.0"
-
           vectorDrawables {
             useSupportLibrary = true
           }
@@ -31,13 +25,6 @@ internal fun Project.configureBaseSetting(
           resources.excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
       }
-    }
-    compileSdk = 34
-    defaultConfig.minSdk = 26
-
-    compileOptions {
-      sourceCompatibility = JavaVersion.VERSION_17
-      targetCompatibility = JavaVersion.VERSION_17
     }
     dependencies {
       add("implementation", libs.findLibrary("org-jetbrains-kotlinx-coroutines-core").get())
