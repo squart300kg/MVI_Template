@@ -12,41 +12,6 @@ import kr.co.architecture.core.ui.UiState
 import kr.co.architecture.core.ui.util.UiText
 import javax.inject.Inject
 
-enum class FirstUiType {
-  NONE,
-  LOADED
-}
-
-data class UiModel(
-  val name: UiText
-) {
-  companion object {
-    fun mapperToUi(names: List<String>): ImmutableList<UiModel> {
-      return names
-        .map {
-          UiModel(
-            name = UiText.DynamicString(it)
-          )
-        }
-        .toImmutableList()
-    }
-  }
-}
-
-data class FirstUiState(
-  val uiType: FirstUiType = FirstUiType.NONE,
-  val uiModels: ImmutableList<UiModel> = persistentListOf(),
-  val isLoading: Boolean = false
-) : UiState
-
-sealed interface FirstUiEvent : UiEvent {
-
-}
-
-sealed interface FirstUiSideEffect : UiSideEffect {
-  data object Load : FirstUiSideEffect
-}
-
 @HiltViewModel
 class FirstViewModel @Inject constructor(
   private val getListUseCase: GetListUseCase
@@ -62,9 +27,7 @@ class FirstViewModel @Inject constructor(
     }
   }
 
-  init {
-    setEffect { FirstUiSideEffect.Load }
-  }
+  init { setEffect { FirstUiSideEffect.Load } }
 
   fun fetchData() {
     launchSafetyWithLoading {

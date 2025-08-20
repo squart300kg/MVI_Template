@@ -12,40 +12,6 @@ import kr.co.architecture.core.ui.UiState
 import kr.co.architecture.core.ui.util.UiText
 import javax.inject.Inject
 
-enum class SecondUiType {
-  NONE,
-  LOADED
-}
-
-data class UiModel(
-  val name: UiText
-) {
-  companion object {
-    fun mapperToUi(names: List<String>): ImmutableList<UiModel> {
-      return names
-        .map {
-          UiModel(
-            name = UiText.DynamicString(it)
-          )
-        }
-        .toImmutableList()
-    }
-  }
-}
-
-data class SecondUiState(
-  val uiType: SecondUiType = SecondUiType.NONE,
-  val uiModels: ImmutableList<UiModel> = persistentListOf()
-) : UiState
-
-sealed interface SecondUiEvent : UiEvent {
-
-}
-
-sealed interface SecondUiSideEffect : UiSideEffect {
-  data object Load : SecondUiSideEffect
-}
-
 @HiltViewModel
 class SecondViewModel @Inject constructor(
   private val getListUseCase: GetListUseCase
@@ -61,9 +27,7 @@ class SecondViewModel @Inject constructor(
     }
   }
 
-  init {
-    setEffect { SecondUiSideEffect.Load }
-  }
+  init { setEffect { SecondUiSideEffect.Load } }
 
   fun fetchData() {
     launchSafetyWithLoading {
@@ -76,5 +40,4 @@ class SecondViewModel @Inject constructor(
       }
     }
   }
-
 }
