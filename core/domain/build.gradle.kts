@@ -11,5 +11,7 @@ android {
   dependencies {
     implementation(project(":core:common"))
     implementation(project(":core:repository"))
+
+    implementation(libs.com.github.skydoves.compose.stable.marker)
   }
 }
