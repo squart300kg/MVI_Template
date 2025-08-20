@@ -80,43 +80,23 @@ fun AlimCenterScreen(
 //      }
 //    }
   }
-  AlimCenterScreen(
-    uiState = uiState,
+  AlimCenterListContent(
     modifier = modifier,
+    uiState = uiState,
+    onNavigateToBuddyRequestScreen = {},
+    onClickedReceivedBuddyItem = { viewModel.setEvent(AlimCenterUiEvent.OnClickedReceivingBuddyItem(it)) },
+    onClickedAlimItem = { viewModel.setEvent(AlimCenterUiEvent.OnClickedAlimItem(it)) },
+    onClickedBuddyAccept = { viewModel.setEvent(AlimCenterUiEvent.OnClickedBuddyAccept(it)) },
+    onClickedBuddyRejectInItem = { viewModel.setEvent(AlimCenterUiEvent.OnClickedBuddyRejectInItem(it)) },
+    onClickedBuddyRejectInDialog = { buddyId, buddyRequestId ->
+      viewModel.setEvent(AlimCenterUiEvent.OnClickedBuddyRejectInDialog(buddyId, buddyRequestId))
+    },
+    onClickedBuddyBlockCheckBoxInRejectDialog = { viewModel.setEvent(AlimCenterUiEvent.OnClickedBuddyBlockCheckBoxInRejectDialog(it)) },
+    onDismissDialog = { viewModel.setEvent(AlimCenterUiEvent.OnDismissDialog) },
+    onRefresh = { viewModel.setEvent(AlimCenterUiEvent.PulledToRefresh) },
   )
 
   GlobalUiStateEffect(viewModel)
-}
-
-@Composable
-fun AlimCenterScreen(
-  modifier: Modifier = Modifier,
-  uiState: AlimCenterUiState,
-) {
-
-//  when (uiState.uiType) {
-//    AlimCenterUiType.NONE -> {}
-//    AlimCenterUiType.LOADED -> {
-//      LazyColumn(modifier) {
-//        items(uiState.uiModels) { item ->
-//          Text(
-//            modifier = Modifier
-//                .padding(8.dp)
-//                .border(
-//                    width = 1.dp,
-//                    shape = RoundedCornerShape(4.dp),
-//                    color = Color.LightGray
-//                )
-//                .padding(8.dp),
-//            text = item.name.asString(),
-//            style = TextStyle(
-//              fontSize = 20.sp,
-//            )
-//          )
-//        }
-//      }
-//    }
-//  }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
