@@ -21,8 +21,8 @@ import kr.co.architecture.core.ui.LocalOnRefreshStateChanged
 import kr.co.architecture.core.ui.theme.BaseTheme
 import kr.co.architecture.feature.home.HOME_BASE_ROUTE
 import kr.co.architecture.feature.home.homeScreen
-import kr.co.architecture.feature.second.SECOND_BASE_ROUTE
-import kr.co.architecture.feature.second.secondScreen
+import kr.co.architecture.feature.alimCenter.ALIM_CENTER_BASE_ROUTE
+import kr.co.architecture.feature.alimCenter.secondScreen
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -50,7 +50,7 @@ class MainActivity : ComponentActivity() {
             ) {
               homeScreen(
                 onNavigateToAlimCenterScreen = {
-                  navHostController.navigate(SECOND_BASE_ROUTE)
+                  navHostController.navigate(ALIM_CENTER_BASE_ROUTE)
                 }
               )
 

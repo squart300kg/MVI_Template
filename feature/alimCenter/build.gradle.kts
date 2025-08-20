@@ -5,7 +5,7 @@ plugins {
 }
 
 android {
-  namespace = "kr.co.architecture.feature.second"
+  namespace = "kr.co.architecture.feature.alimCenter"
 
   defaultConfig { }
 

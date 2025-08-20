@@ -1,4 +1,4 @@
-package kr.co.architecture.feature.second
+package kr.co.architecture.feature.alimCenter
 
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
@@ -8,7 +8,7 @@ import kr.co.architecture.core.ui.UiSideEffect
 import kr.co.architecture.core.ui.UiState
 import kr.co.architecture.core.ui.util.UiText
 
-enum class SecondUiType {
+enum class AlimCenterUiType {
   NONE,
   LOADED
 }
@@ -29,15 +29,15 @@ data class UiModel(
   }
 }
 
-data class SecondUiState(
-  val uiType: SecondUiType = SecondUiType.NONE,
+data class AlimCenterUiState(
+  val uiType: AlimCenterUiType = AlimCenterUiType.NONE,
   val uiModels: ImmutableList<UiModel> = persistentListOf()
 ) : UiState
 
-sealed interface SecondUiEvent : UiEvent {
+sealed interface AlimCenterUiEvent : UiEvent {
 
 }
 
-sealed interface SecondUiSideEffect : UiSideEffect {
-  data object Load : SecondUiSideEffect
+sealed interface AlimCenterUiSideEffect : UiSideEffect {
+  data object Load : AlimCenterUiSideEffect
 }

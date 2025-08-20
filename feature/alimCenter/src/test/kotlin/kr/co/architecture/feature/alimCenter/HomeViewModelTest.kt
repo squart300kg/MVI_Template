@@ -1,4 +1,4 @@
-package kr.co.architecture.feature.second
+package kr.co.architecture.feature.alimCenter
 
 import kr.co.architecture.feature.home.HomeViewModel
 import kr.co.testing.TestRepository
@@ -10,15 +10,15 @@ class HomeViewModelTest {
   @get:Rule
   val mainDispatcherRule = MainDispatcherRule()
 
-  private lateinit var viewModel: HomeViewModel
-
-  private val newsRepository = TestRepository()
-
-  @Before
-  fun setup() {
-    viewModel = HomeViewModel(
-      repository = newsRepository
-    )
-  }
+//  private lateinit var viewModel: HomeViewModel
+//
+//  private val newsRepository = TestRepository()
+//
+//  @Before
+//  fun setup() {
+//    viewModel = HomeViewModel(
+//      repository = newsRepository
+//    )
+//  }
 
 }

@@ -12,7 +12,7 @@ android {
 
   dependencies {
     implementation(project(":feature:home"))
-    implementation(project(":feature:second"))
+    implementation(project(":feature:alimCenter"))
     implementation(project(":core:ui"))
     implementation(project(":core:domain"))
     implementation(project(":core:repository"))

@@ -1,4 +1,4 @@
-package kr.co.architecture.feature.second
+package kr.co.architecture.feature.alimCenter
 
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.padding
@@ -21,29 +21,29 @@ import androidx.navigation.compose.composable
 import kr.co.architecture.core.ui.GlobalUiStateEffect
 import kr.co.architecture.core.ui.util.asString
 
-const val SECOND_BASE_ROUTE = "secondBaseRoute"
+const val ALIM_CENTER_BASE_ROUTE = "alimCenterBaseRoute"
 fun NavGraphBuilder.secondScreen() {
   composable(
-    route = SECOND_BASE_ROUTE
+    route = ALIM_CENTER_BASE_ROUTE
   ) {
-    SecondScreen()
+    AlimCenterScreen()
   }
 }
 
 @Composable
-fun SecondScreen(
+fun AlimCenterScreen(
   modifier: Modifier = Modifier,
-  viewModel: SecondViewModel = hiltViewModel()
+  viewModel: AlimCenterViewModel = hiltViewModel()
 ) {
   val uiState by viewModel.uiState.collectAsStateWithLifecycle()
   LaunchedEffect(Unit) {
     viewModel.uiSideEffect.collect { effect ->
       when (effect) {
-        is SecondUiSideEffect.Load -> viewModel.fetchData()
+        is AlimCenterUiSideEffect.Load -> viewModel.fetchData()
       }
     }
   }
-  SecondScreen(
+  AlimCenterScreen(
     uiState = uiState,
     modifier = modifier,
   )
@@ -52,14 +52,14 @@ fun SecondScreen(
 }
 
 @Composable
-fun SecondScreen(
+fun AlimCenterScreen(
   modifier: Modifier = Modifier,
-  uiState: SecondUiState,
+  uiState: AlimCenterUiState,
 ) {
 
   when (uiState.uiType) {
-    SecondUiType.NONE -> {}
-    SecondUiType.LOADED -> {
+    AlimCenterUiType.NONE -> {}
+    AlimCenterUiType.LOADED -> {
       LazyColumn(modifier) {
         items(uiState.uiModels) { item ->
           Text(
