@@ -28,12 +28,6 @@ internal fun Project.configureBuildType(
 //          isDebuggable = true
           signingConfig = signingConfigs.getByName("release")
         }
-        maybeCreate("nonMinifiedRelease").apply {
-          initWith(getByName("release"))
-          matchingFallbacks += listOf("release")
-          signingConfig = signingConfigs.getByName("release")
-          isMinifyEnabled = false // 이름 그대로 "nonMinified"
-        }
       }
     }
     buildTypes {
