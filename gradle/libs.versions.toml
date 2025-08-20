@@ -90,7 +90,6 @@ org-jetbrains-kotlinx-coroutines-android = { group = "org.jetbrains.kotlinx", na
 org-jetbrains-kotlinx-coroutines-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "coroutineVersion"}
 com-github-skydoves-sandwich = { group = "com.github.skydoves", name = "sandwich", version.ref = "sandwitch" }
 com-github-skydoves-sandwich-retrofit = { group = "com.github.skydoves", name = "sandwich-retrofit", version.ref = "sandwitch" }
-com-github-skydoves-compose-stable-marker = { group = "com.github.skydoves", name = "compose-stable-marker", version.ref = "stableMarker" }
 kotlinx-coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref = "kotlinxCoroutines" }
 androidx-test-rules = { group = "androidx.test", name = "rules", version.ref = "androidxTestRules" }
 ksp-gradlePlugin = { group = "com.google.devtools.ksp", name = "com.google.devtools.ksp.gradle.plugin", version.ref = "ksp" }
