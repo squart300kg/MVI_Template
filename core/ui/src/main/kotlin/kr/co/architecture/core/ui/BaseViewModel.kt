@@ -81,7 +81,9 @@ abstract class BaseViewModel<State : UiState, Event : UiEvent, Effect : UiSideEf
       else _loadingState.update { true }
       runCatching {
         coroutineScope { block() }
-      }.onFailure { showErrorDialog(it) }
+      }.onFailure {
+        it.printStackTrace()
+        showErrorDialog(it) }
       if (isPullToRefresh) _refreshState.update { false }
       else _loadingState.update { false }
     }

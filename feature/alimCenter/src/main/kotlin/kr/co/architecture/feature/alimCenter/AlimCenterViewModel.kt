@@ -9,8 +9,12 @@ import kr.co.architecture.core.model.enums.BuddyRequestTypeEnum
 import kr.co.architecture.core.repository.AlimRepository
 import kr.co.architecture.core.repository.dto.AlimListRequestDto
 import kr.co.architecture.core.ui.BaseViewModel
+import kr.co.architecture.core.ui.CenterDialogUiModel
 import kr.co.architecture.core.ui.model.ReceivingBuddyListUiModel
+import kr.co.architecture.core.ui.util.UiText
+import kr.co.architecture.feature.alimCenter.AlimCenterUiState.BuddyDeleteCenterDialogUiModel
 import javax.inject.Inject
+import kr.co.architecture.core.ui.R as coreUiR
 
 private const val ALIM_CENTER_LIST_SIZE = 6
 
@@ -28,9 +32,72 @@ class AlimCenterViewModel @Inject constructor(
 
   override fun handleEvent(event: AlimCenterUiEvent) {
     when (event) {
-      else -> {}
+      is AlimCenterUiEvent.OnClickedReceivingBuddyItem -> {
+        setEffect {
+          AlimCenterUiSideEffect.OnNavigatedToReceivingRequestScreen(
+            event.uiModel.baseBuddyInfoWithBuddyRequestUiModel.baseBuddyInfoUiModel,
+            event.uiModel.buddyRequestId
+          )
+        }
+      }
+      is AlimCenterUiEvent.OnClickedBuddyAccept -> {
+        setEffect { AlimCenterUiSideEffect.OnShowToastMessage(UiText.StringResource(coreUiR.string.buddy_request_accept)) }
+      }
+      is AlimCenterUiEvent.OnClickedBuddyRejectInItem -> {
+        setState {
+          copy(
+            buddyDeleteCenterDialogUiModel = BuddyDeleteCenterDialogUiModel(
+              centerDialogUiModel = CenterDialogUiModel(
+                titleMessage = UiText.StringResource(coreUiR.string.buddy_delete_dialog_title),
+                contentMessage = UiText.StringResource(coreUiR.string.buddy_delete_dialog_content),
+                checkBoxVoState = CenterDialogUiModel.CheckBoxVo(
+                  checkState = false,
+                  checkMessage = UiText.StringResource(coreUiR.string.buddy_require_block)
+                ),
+                buttonStyleVo = CenterDialogUiModel.ButtonStyleVo.Type1(
+                  leftMessage = UiText.StringResource(coreUiR.string.btn_cancel),
+                  rightMessage = UiText.StringResource(coreUiR.string.buddy_edit_dialog_del)
+                )
+              ),
+              buddyId = event.uiModel.baseBuddyInfoWithBuddyRequestUiModel.baseBuddyInfoUiModel.userId,
+              buddyRequestId = event.uiModel.buddyRequestId,
+            )
+          )
+        }
+
+      }
+      is AlimCenterUiEvent.OnClickedBuddyRejectInDialog -> {
+        setEffect { AlimCenterUiSideEffect.OnShowToastMessage(UiText.StringResource(coreUiR.string.buddy_request_delete)) }
+        setState { copy(buddyDeleteCenterDialogUiModel = null) }
+      }
+      is AlimCenterUiEvent.OnClickedBuddyBlockCheckBoxInRejectDialog -> {
+        uiState.value.buddyDeleteCenterDialogUiModel?.let { state ->
+          setState {
+            copy(
+              buddyDeleteCenterDialogUiModel = state.copy(
+                centerDialogUiModel = state.centerDialogUiModel.copy(
+                  checkBoxVoState = state.centerDialogUiModel.checkBoxVoState?.copy(
+                    checkState = event.isBlocked
+                  )
+                )
+              )
+            )
+          }
+        }
+      }
+      is AlimCenterUiEvent.OnClickedAlimItem -> {
+        setEffect { AlimCenterUiSideEffect.OnNavigatedTo(event.uiModel) }
+      }
+      is AlimCenterUiEvent.PulledToRefresh -> {
+
+      }
+      is AlimCenterUiEvent.OnDismissDialog -> {
+        setState { copy(buddyDeleteCenterDialogUiModel = null) }
+      }
     }
   }
+
+  init { setEffect { AlimCenterUiSideEffect.Load.First } }
 
   fun fetchData(loadType: AlimCenterUiSideEffect.Load) {
     launchSafetyWithLoading(

@@ -19,10 +19,9 @@ import kr.co.architecture.core.ui.LocalOnErrorMessageChanged
 import kr.co.architecture.core.ui.LocalOnLoadingStateChanged
 import kr.co.architecture.core.ui.LocalOnRefreshStateChanged
 import kr.co.architecture.core.ui.theme.BaseTheme
-import kr.co.architecture.feature.home.HOME_BASE_ROUTE
 import kr.co.architecture.feature.home.homeScreen
 import kr.co.architecture.feature.alimCenter.ALIM_CENTER_BASE_ROUTE
-import kr.co.architecture.feature.alimCenter.secondScreen
+import kr.co.architecture.feature.alimCenter.alimCenterScreen
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -46,7 +45,7 @@ class MainActivity : ComponentActivity() {
             NavHost(
               modifier = Modifier.padding(innerPadding),
               navController = navHostController,
-              startDestination = HOME_BASE_ROUTE
+              startDestination = ALIM_CENTER_BASE_ROUTE
             ) {
               homeScreen(
                 onNavigateToAlimCenterScreen = {
@@ -54,7 +53,9 @@ class MainActivity : ComponentActivity() {
                 }
               )
 
-              secondScreen()
+              alimCenterScreen(
+                onNavigateToBack = navHostController::popBackStack
+              )
             }
           }
 

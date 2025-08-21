@@ -60,7 +60,7 @@ data class ReceivingBuddyListUiModel(
                 )
 
                 val contentText =
-                  if (it.withBuddyCount > 0) countText + ""
+                  if (it.withBuddyCount > 0) countText + "ㆍ"
                   else UiText.DynamicString("")
 
                 contentText + dateText

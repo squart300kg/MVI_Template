@@ -1,5 +1,7 @@
 package kr.co.architecture.feature.alimCenter
 
+import android.content.Context
+import android.widget.Toast
 import androidx.annotation.StringRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -32,6 +34,7 @@ import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -58,27 +61,42 @@ import kr.co.architecture.core.ui.R as coreUiR
 import kr.co.architecture.core.ui.theme.*
 
 const val ALIM_CENTER_BASE_ROUTE = "alimCenterBaseRoute"
-fun NavGraphBuilder.secondScreen() {
+fun NavGraphBuilder.alimCenterScreen(
+  onNavigateToBack: () -> Unit = {}
+) {
   composable(
     route = ALIM_CENTER_BASE_ROUTE
   ) {
-    AlimCenterScreen()
+    AlimCenterScreen(
+      onNavigateToBack = onNavigateToBack
+    )
   }
 }
 
 @Composable
 fun AlimCenterScreen(
   modifier: Modifier = Modifier,
+  onNavigateToBack: () -> Unit = {},
+  context: Context = LocalContext.current,
   viewModel: AlimCenterViewModel = hiltViewModel()
 ) {
   val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-  println("uiStateLog : $uiState")
   LaunchedEffect(Unit) {
-//    viewModel.uiSideEffect.collect { effect ->
-//      when (effect) {
-//        is AlimCenterUiSideEffect.Load -> viewModel.fetchData()
-//      }
-//    }
+    viewModel.uiSideEffect.collect { effect ->
+      when (effect) {
+        is AlimCenterUiSideEffect.Load -> viewModel.fetchData(effect)
+        is AlimCenterUiSideEffect.OnNavigatedTo -> {
+          Toast.makeText(context, "'${effect.uiModel.uiEventModel.contentsType}화면'(tradingId=${effect.uiModel.uiEventModel.tradingId}) 이동!", Toast.LENGTH_LONG).show()
+        }
+        is AlimCenterUiSideEffect.OnNavigatedToReceivingRequestScreen -> {
+          Toast.makeText(context, "'버디 받은 요청 화면'(buddyId=${effect.uiModel.userId}, buddyRequestId=${effect.buddyRequestId}) 이동!", Toast.LENGTH_LONG).show()
+        }
+        is AlimCenterUiSideEffect.OnNavigatedToBack -> onNavigateToBack()
+        is AlimCenterUiSideEffect.OnShowToastMessage -> {
+          Toast.makeText(context, effect.message.asString(context), Toast.LENGTH_SHORT).show()
+        }
+      }
+    }
   }
   AlimCenterListContent(
     modifier = modifier,

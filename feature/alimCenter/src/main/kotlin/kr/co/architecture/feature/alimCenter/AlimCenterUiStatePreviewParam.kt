@@ -79,7 +79,7 @@ class AlimCenterUiStatePreviewParam : PreviewParameterProvider<AlimCenterUiState
               AlimUiModel(
                 uiBindingModel = AlimUiModel.AlimUiBindingModel(
                   buddyStockEmoji = IcEmojiBuddyStockLogo,
-                  subCommentContents = UiText.DynamicString("개인정보 처리 방침이 변경되었어요. (상단 고정 필요, 노출 일자 늘리기 가능해야함)"),
+                  subCommentContents = UiText.DynamicString("개인정보 처리 방침이 변경되었어요."),
                   moreViewUrl = "https://www.naver.com",
                   name = UiText.DynamicString("버디스탁"),
                   contents = UiText.DynamicString("개인정보 처리방침 변경"),
