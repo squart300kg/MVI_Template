@@ -35,6 +35,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -44,6 +45,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.util.trace
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavGraphBuilder
@@ -56,9 +58,17 @@ import kr.co.architecture.core.ui.HtmlText
 import kr.co.architecture.core.ui.baseClickable
 import kr.co.architecture.core.ui.model.ReceivingBuddyListUiModel
 import kr.co.architecture.core.ui.noRippledClickable
+import kr.co.architecture.core.ui.theme.BaseTheme
+import kr.co.architecture.core.ui.theme.TypoBody1
+import kr.co.architecture.core.ui.theme.TypoCaption
+import kr.co.architecture.core.ui.theme.TypoSubhead1
+import kr.co.architecture.core.ui.theme.TypoSubhead2
 import kr.co.architecture.core.ui.util.asString
+import kr.co.architecture.test.testing.util.ALIM_CENTER_CATEGORY
+import kr.co.architecture.test.testing.util.ALIM_CENTER_ITEM
+import kr.co.architecture.test.testing.util.ALIM_CENTER_LIST
+import kr.co.architecture.test.testing.util.BUDDY_RECEIVING_REQUEST_ITEM
 import kr.co.architecture.core.ui.R as coreUiR
-import kr.co.architecture.core.ui.theme.*
 
 const val ALIM_CENTER_BASE_ROUTE = "alimCenterBaseRoute"
 fun NavGraphBuilder.alimCenterScreen(
@@ -138,6 +148,7 @@ private fun AlimCenterListContent(
       val pullToRefreshState = rememberPullToRefreshState()
       LazyColumn(
         modifier = Modifier
+          .testTag(ALIM_CENTER_LIST)
           .pullToRefresh(
             state = pullToRefreshState,
             isRefreshing = uiState.isRefresh,
@@ -165,19 +176,56 @@ private fun AlimCenterListContent(
         items(
           items = uiState.receivingBuddyListUiModel.receivingBuddyListUiModel
         ) { uiModel ->
-          ReceivingBuddyRequestItem(
-            modifier = Modifier
-              .padding(
-                start = 16.dp,
-                end = 8.dp
-              )
-              .padding(vertical = 16.dp),
-            receivingBuddyUiModel = uiModel,
-            onClickedItem = { onClickedReceivedBuddyItem(uiModel) },
-            onClickedAccept = {
-              onClickedBuddyAccept(uiModel)
-            },
-            onClickedReject = { onClickedBuddyRejectInItem(uiModel) },
+          trace(BUDDY_RECEIVING_REQUEST_ITEM) {
+            ReceivingBuddyRequestItem(
+              modifier = Modifier
+                .padding(
+                  start = 16.dp,
+                  end = 8.dp
+                )
+                .padding(vertical = 16.dp),
+              receivingBuddyUiModel = uiModel,
+              onClickedItem = { onClickedReceivedBuddyItem(uiModel) },
+              onClickedAccept = {
+                onClickedBuddyAccept(uiModel)
+              },
+              onClickedReject = { onClickedBuddyRejectInItem(uiModel) },
+            )
+          }
+        }
+
+        // 구분선
+        item {
+          HorizontalDivider(
+            modifier = Modifier,
+            color = colorResource(coreUiR.color.gray_DFE1E6),
+            thickness = 8.dp
+          )
+        }
+
+        trace(ALIM_CENTER_CATEGORY) {
+          alimItems(
+            ailmCategoryTitleRes = coreUiR.string.main_notice,
+            alimListUiModel = uiState.alimListUiModel.noticeAlimListUiModel,
+            isMoreView = uiState.alimListUiModel.moreNotice,
+            onClickedAlimItem = onClickedAlimItem
+          )
+        }
+
+        // 구분선
+        item {
+          HorizontalDivider(
+            modifier = Modifier,
+            color = colorResource(coreUiR.color.gray_DFE1E6),
+            thickness = 8.dp
+          )
+        }
+        trace(ALIM_CENTER_CATEGORY) {
+          alimItems(
+            ailmCategoryTitleRes = coreUiR.string.sales_history,
+            alimListUiModel = uiState.alimListUiModel.salesHistoryAlimListUiModel,
+            isMoreView = uiState.alimListUiModel.moreTrading,
+            onClickedAlimItem = onClickedAlimItem
           )
         }
 
@@ -190,43 +238,14 @@ private fun AlimCenterListContent(
           )
         }
 
-        alimItems(
-          ailmCategoryTitleRes = coreUiR.string.main_notice,
-          alimListUiModel = uiState.alimListUiModel.noticeAlimListUiModel,
-          isMoreView = uiState.alimListUiModel.moreNotice,
-          onClickedAlimItem = onClickedAlimItem
-        )
-
-        // 구분선
-        item {
-          HorizontalDivider(
-            modifier = Modifier,
-            color = colorResource(coreUiR.color.gray_DFE1E6),
-            thickness = 8.dp
+        trace(ALIM_CENTER_CATEGORY) {
+          alimItems(
+            ailmCategoryTitleRes = coreUiR.string.alarm_active,
+            alimListUiModel = uiState.alimListUiModel.activityAlimListUiModel,
+            isMoreView = uiState.alimListUiModel.moreActivity,
+            onClickedAlimItem = onClickedAlimItem
           )
         }
-        alimItems(
-          ailmCategoryTitleRes = coreUiR.string.sales_history,
-          alimListUiModel = uiState.alimListUiModel.salesHistoryAlimListUiModel,
-          isMoreView = uiState.alimListUiModel.moreTrading,
-          onClickedAlimItem = onClickedAlimItem
-        )
-
-        // 구분선
-        item {
-          HorizontalDivider(
-            modifier = Modifier,
-            color = colorResource(coreUiR.color.gray_DFE1E6),
-            thickness = 8.dp
-          )
-        }
-
-        alimItems(
-          ailmCategoryTitleRes = coreUiR.string.alarm_active,
-          alimListUiModel = uiState.alimListUiModel.activityAlimListUiModel,
-          isMoreView = uiState.alimListUiModel.moreActivity,
-          onClickedAlimItem = onClickedAlimItem
-        )
       }
 
       uiState.buddyDeleteCenterDialogUiModel?.let { state ->
@@ -271,11 +290,13 @@ private fun LazyListScope.alimItems(
       itemsIndexed(
         items = alimListUiModel
       ) { index, alimVo ->
-        AlimSection(
-          modifier = Modifier,
-          alimUiModel = alimVo,
-          onClickedAlimItem = onClickedAlimItem
-        )
+        trace(ALIM_CENTER_ITEM) {
+          AlimSection(
+            modifier = Modifier,
+            alimUiModel = alimVo,
+            onClickedAlimItem = onClickedAlimItem
+          )
+        }
       }
 
       if (isMoreView) {

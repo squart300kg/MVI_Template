@@ -5,6 +5,8 @@ import androidx.benchmark.macro.FrameTimingMetric
 import androidx.benchmark.macro.StartupMode
 import androidx.benchmark.macro.junit4.MacrobenchmarkRule
 import androidx.test.internal.runner.junit4.AndroidJUnit4ClassRunner
+import androidx.test.uiautomator.By
+import kr.co.architecture.test.testing.util.ALIM_CENTER_LIST
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -16,6 +18,9 @@ class AppListScrollBenchmark {
 
   @Test
   fun startAndScrollProductListWithCompilationNone() = startAndScrollProductList(CompilationMode.None())
+
+  @Test
+  fun startAndScrollProductListWithCompilationDefault() = startAndScrollProductList(CompilationMode.DEFAULT)
 
   @Test
   fun startAndScrollProductListWithBaselineProfile() = startAndScrollProductList(CompilationMode.Partial())
@@ -34,17 +39,10 @@ class AppListScrollBenchmark {
       startActivityAndWait()
     }
   ) {
-//    // PRODUCT_LIST 찾기
-//    val productList = device.waitAndFindObject(By.res(PRODUCT_LIST))
-//
-//    // 수직 스크롤 (Grid, Vertical 대응)
-//    repeat(4) { device.fling(element = productList, direction = Direction.DOWN) }
-//    repeat(2) { device.fling(element = productList, direction = Direction.UP) }
-//
-//    // 수평 스크롤용 첫 horizontal 섹션 찾기
-//    device.findObject(By.res(Pattern.compile(".*_${HORIZONTAL_ITEMS}")))?.let { horizontalSection ->
-//      repeat(2) { device.fling(element = horizontalSection, direction = Direction.RIGHT) }
-//      repeat(1) { device.fling(element = horizontalSection, direction = Direction.LEFT) }
-//    }
+    val alimCenterList = device.waitAndFindObject(By.res(ALIM_CENTER_LIST))
+    repeat(3) {
+      device.flingElementDown(alimCenterList)
+      device.waitForIdle()
+    }
   }
 }
