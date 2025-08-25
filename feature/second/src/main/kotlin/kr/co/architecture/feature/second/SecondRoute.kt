@@ -18,14 +18,15 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
+import kotlinx.serialization.Serializable
+import kr.co.architecture.core.router.internal.navigator.Route
 import kr.co.architecture.core.ui.GlobalUiStateEffect
 import kr.co.architecture.core.ui.util.asString
 
-const val SECOND_BASE_ROUTE = "secondBaseRoute"
+@Serializable
+data object SecondRoute: Route
 fun NavGraphBuilder.secondScreen() {
-  composable(
-    route = SECOND_BASE_ROUTE
-  ) {
+  composable<SecondRoute> {
     SecondScreen()
   }
 }

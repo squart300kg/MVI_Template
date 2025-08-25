@@ -13,40 +13,21 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavDestination
-import androidx.navigation.NavDestination.Companion.hierarchy
-import androidx.navigation.NavGraph.Companion.findStartDestination
-import androidx.navigation.NavHostController
-import androidx.navigation.compose.currentBackStackEntryAsState
-import androidx.navigation.navOptions
+import kr.co.architecture.core.router.internal.navigator.Route
 
 @Composable
 internal fun BaseNavigationBarWithItems(
-  navController: NavHostController
+  currentTab: MainBottomTab?,
+  onClickedBottomTab: (MainBottomTab) -> Unit
 ) {
   NavigationBar(
     containerColor = Color.White
   ) {
-    baseDestinations.forEach { destination ->
-      val selected = navController
-        .getCurrentDestination()
-        .isTopLevelDestinationInHierarchy(destination)
-
+    MainBottomTab.entries.forEach { destination ->
       BaseNavigationBarItem(
-        onClick = {
-          val topLevelNavOptions = navOptions {
-            popUpTo(navController.graph.findStartDestination().id) {
-              this.saveState = true
-            }
-            restoreState = true
-            launchSingleTop = true
-          }
-
-          navController.navigate(destination.route, topLevelNavOptions)
-        },
-        selected = selected,
+        onClick = { onClickedBottomTab(destination) },
+        selected = currentTab == destination,
         destination = destination
       )
     }
@@ -54,24 +35,11 @@ internal fun BaseNavigationBarWithItems(
 }
 
 @Composable
-fun NavHostController.getCurrentDestination(): NavDestination? {
-  return this.currentBackStackEntryAsState()
-    .value
-    ?.destination
-}
-
-fun NavDestination?.isTopLevelDestinationInHierarchy(destination: BaseDestination) =
-  this?.hierarchy?.any {
-    it.route?.contains(destination.route, true) ?: false
-  } ?: false
-
-
-@Composable
 fun RowScope.BaseNavigationBarItem(
   modifier: Modifier = Modifier,
   onClick: () -> Unit,
   selected: Boolean,
-  destination: BaseDestination
+  destination: MainBottomTab
 ) {
   NavigationBarItem(
     modifier = modifier,

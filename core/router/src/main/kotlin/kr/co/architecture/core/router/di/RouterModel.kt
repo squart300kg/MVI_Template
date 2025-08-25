@@ -13,15 +13,15 @@ import kr.co.architecture.core.router.internal.navigator.NavigatorImpl
 @InstallIn(ActivityRetainedComponent::class)
 internal abstract class RouterModel {
 
-    @Binds
-    @ActivityRetainedScoped
-    abstract fun provideNavigator(
-        navigator: NavigatorImpl
-    ): Navigator
+  @Binds
+  @ActivityRetainedScoped
+  abstract fun provideNavigator(
+    navigator: NavigatorImpl
+  ): Navigator
 
-    @Binds
-    @ActivityRetainedScoped
-    abstract fun provideInternalNavigator(
-        navigator: NavigatorImpl
-    ): InternalNavigator
+  @Binds
+  @ActivityRetainedScoped
+  abstract fun provideInternalNavigator(
+    navigator: NavigatorImpl
+  ): InternalNavigator
 }

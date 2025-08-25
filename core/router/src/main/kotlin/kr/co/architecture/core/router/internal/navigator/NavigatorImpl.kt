@@ -1,9 +1,12 @@
 package kr.co.architecture.core.router.internal.navigator
 
+import dagger.hilt.android.scopes.ActivityRetainedScoped
 import kotlinx.coroutines.channels.Channel
 import javax.inject.Inject
 
+@ActivityRetainedScoped
 internal class NavigatorImpl @Inject constructor(): Navigator, InternalNavigator {
+
   override val channel = Channel<InternalRoute>(Channel.BUFFERED)
 
   override suspend fun navigate(route: Route, saveState: Boolean, launchSingleTop: Boolean) {

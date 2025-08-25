@@ -8,21 +8,24 @@ import androidx.activity.viewModels
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.getValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.rememberNavController
 import dagger.hilt.android.AndroidEntryPoint
 import kr.co.architecture.app.ui.navigation.BaseNavigationBarWithItems
+import kr.co.architecture.app.ui.navigation.MainNavigator
+import kr.co.architecture.app.ui.navigation.rememberMainNavigator
+import kr.co.architecture.core.router.LaunchedRouter
 import kr.co.architecture.core.ui.BaseCenterDialog
 import kr.co.architecture.core.ui.BaseProgressBar
 import kr.co.architecture.core.ui.LocalOnErrorMessageChanged
 import kr.co.architecture.core.ui.LocalOnLoadingStateChanged
 import kr.co.architecture.core.ui.LocalOnRefreshStateChanged
 import kr.co.architecture.core.ui.theme.BaseTheme
-import kr.co.architecture.feature.first.FIRST_BASE_ROUTE
+import kr.co.architecture.feature.detail.detailScreen
+import kr.co.architecture.feature.first.FirstRoute
 import kr.co.architecture.feature.first.firstScreen
+import kr.co.architecture.feature.second.SecondRoute
 import kr.co.architecture.feature.second.secondScreen
 
 @AndroidEntryPoint
@@ -34,42 +37,63 @@ class MainActivity : ComponentActivity() {
     super.onCreate(savedInstanceState)
 
     setContent {
-      BaseTheme {
-        val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-        val navHostController = rememberNavController()
+      val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+      val navigator: MainNavigator = rememberMainNavigator()
 
+      LaunchedRouter(navigator.navController)
+
+      BaseTheme {
         Scaffold(
           bottomBar = {
-            BaseNavigationBarWithItems(navHostController)
-          }
-        ) { innerPadding ->
-          CompositionLocalProvider(
-            LocalOnErrorMessageChanged provides { viewModel.showErrorDialog(it) },
-            LocalOnLoadingStateChanged provides { viewModel.setLoadingState(it) },
-            LocalOnRefreshStateChanged provides { viewModel.setRefreshState(it) }
-          ) {
-            NavHost(
-              modifier = Modifier.padding(innerPadding),
-              navController = navHostController,
-              startDestination = FIRST_BASE_ROUTE
-            ) {
-              firstScreen()
-
-              secondScreen()
-            }
-          }
-
-          BaseProgressBar(uiState.isLoading)
-
-          uiState.errorDialog?.let { state ->
-            BaseCenterDialog(
-              baseCenterDialogUiModel = state,
-              onClickedConfirm = {
-                viewModel.setEvent(MainUiEvent.OnClickedErrorDialogConfirm)
+            BaseNavigationBarWithItems(
+              currentTab = navigator.currentTab,
+              onClickedBottomTab = { selectedTab ->
+                when (selectedTab.route) {
+                  is FirstRoute -> viewModel.navigateTo(
+                    route = FirstRoute,
+                    saveState = true,
+                    launchSingleTop = true
+                  )
+                  is SecondRoute -> viewModel.navigateTo(
+                    route = SecondRoute,
+                    saveState = true,
+                    launchSingleTop = true
+                  )
+                }
               }
             )
+          },
+          content =  { innerPadding ->
+            CompositionLocalProvider(
+              LocalOnErrorMessageChanged provides { viewModel.showErrorDialog(it) },
+              LocalOnLoadingStateChanged provides { viewModel.setLoadingState(it) },
+              LocalOnRefreshStateChanged provides { viewModel.setRefreshState(it) }
+            ) {
+              NavHost(
+                modifier = Modifier.padding(innerPadding),
+                navController = navigator.navController,
+                startDestination = navigator.startDestination
+              ) {
+                firstScreen()
+
+                secondScreen()
+
+                detailScreen()
+              }
+            }
+
+            BaseProgressBar(uiState.isLoading)
+
+            uiState.errorDialog?.let { state ->
+              BaseCenterDialog(
+                baseCenterDialogUiModel = state,
+                onClickedConfirm = {
+                  viewModel.setEvent(MainUiEvent.OnClickedErrorDialogConfirm)
+                }
+              )
+            }
           }
-        }
+        )
       }
     }
   }
