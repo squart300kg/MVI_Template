@@ -14,8 +14,8 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kr.co.architecture.core.model.ArchitectureSampleHttpException
-import kr.co.architecture.core.router.Navigator
-import kr.co.architecture.core.router.Route
+import kr.co.architecture.core.router.internal.navigator.Navigator
+import kr.co.architecture.core.router.internal.navigator.Route
 import kr.co.architecture.core.ui.util.UiText
 import javax.inject.Inject
 

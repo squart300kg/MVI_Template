@@ -1,4 +1,4 @@
-package kr.co.architecture.core.router
+package kr.co.architecture.core.router.internal.navigator
 
 import kotlinx.coroutines.channels.Channel
 import javax.inject.Inject

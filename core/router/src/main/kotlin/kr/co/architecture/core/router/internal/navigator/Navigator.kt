@@ -1,4 +1,4 @@
-package kr.co.architecture.core.router
+package kr.co.architecture.core.router.internal.navigator
 
 /**
  * 화면 간 내비게이션을 정의하는 인터페이스.

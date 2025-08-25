@@ -5,9 +5,9 @@ import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ActivityRetainedComponent
 import dagger.hilt.android.scopes.ActivityRetainedScoped
-import kr.co.architecture.core.router.InternalNavigator
-import kr.co.architecture.core.router.Navigator
-import kr.co.architecture.core.router.NavigatorImpl
+import kr.co.architecture.core.router.internal.navigator.InternalNavigator
+import kr.co.architecture.core.router.internal.navigator.Navigator
+import kr.co.architecture.core.router.internal.navigator.NavigatorImpl
 
 @Module
 @InstallIn(ActivityRetainedComponent::class)

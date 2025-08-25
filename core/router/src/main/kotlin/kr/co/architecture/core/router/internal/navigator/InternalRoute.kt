@@ -1,4 +1,4 @@
-package kr.co.architecture.core.router
+package kr.co.architecture.core.router.internal.navigator
 
 internal sealed interface InternalRoute {
   data class Navigate(
