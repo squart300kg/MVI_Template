@@ -1,5 +1,6 @@
 package kr.co.architecture.core.ui
 
+import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.CoroutineScope
@@ -13,7 +14,10 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kr.co.architecture.core.model.ArchitectureSampleHttpException
+import kr.co.architecture.core.router.Navigator
+import kr.co.architecture.core.router.Route
 import kr.co.architecture.core.ui.util.UiText
+import javax.inject.Inject
 
 interface UiState
 
@@ -43,6 +47,14 @@ abstract class BaseViewModel<State : UiState, Event : UiEvent, Effect : UiSideEf
 
   private val _uiSideEffect: Channel<Effect> = Channel()
   val uiSideEffect = _uiSideEffect.receiveAsFlow()
+
+  @Inject
+  lateinit var navigator: Navigator
+
+  @VisibleForTesting
+  fun injectNavigator(navigator: Navigator) {
+    this.navigator = navigator
+  }
 
   init {
     // subscribe event
@@ -85,6 +97,22 @@ abstract class BaseViewModel<State : UiState, Event : UiEvent, Effect : UiSideEf
       if (isPullToRefresh) _refreshState.update { false }
       else _loadingState.update { false }
     }
+  }
+
+  fun navigateBack() = viewModelScope.launch {
+    navigator.navigateBack()
+  }
+
+  fun navigateWeb(url: String) = viewModelScope.launch {
+    navigator.navigateWeb(url)
+  }
+
+  fun navigateTo(
+    route: Route,
+    saveState: Boolean = false,
+    launchSingleTop: Boolean = false
+  ) = viewModelScope.launch {
+    navigator.navigate(route, saveState, launchSingleTop)
   }
 
   protected suspend fun showErrorDialog(throwable: Throwable?) {
