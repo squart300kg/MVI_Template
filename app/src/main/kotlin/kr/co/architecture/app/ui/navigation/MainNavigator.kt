@@ -18,13 +18,14 @@ internal class MainNavigator(
     val startDestination = MainBottomTab.FIRST.route
 
     val currentTab: MainBottomTab?
-        @Composable get() = MainBottomTab.entries
-            .find { currentDestination?.hasRoute(it::class) == true }
+        @Composable get() = MainBottomTab.find { tab ->
+            currentDestination?.hasRoute(tab::class) == true
+        }
 
     @Composable
-    fun shouldShowBottomBar() = MainBottomTab.entries
-        .map { it.route }
-        .any { currentDestination?.hasRoute(it::class) == true }
+    fun shouldShowBottomBar() = MainBottomTab.contains {
+        currentDestination?.hasRoute(it::class) == true
+    }
 }
 
 @Composable

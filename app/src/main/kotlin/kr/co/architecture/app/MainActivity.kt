@@ -46,7 +46,9 @@ class MainActivity : ComponentActivity() {
         Scaffold(
           bottomBar = {
             BaseNavigationBarWithItems(
-              currentTab = navigator.currentTab,
+              currentTab = navigator.currentTab.also {
+                println("tabLog : $it")
+              },
               onClickedBottomTab = { selectedTab ->
                 when (selectedTab.route) {
                   is FirstRoute -> viewModel.navigateTo(
