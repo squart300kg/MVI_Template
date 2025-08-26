@@ -10,13 +10,10 @@ enum class DetailUiType {
   LOADED
 }
 
-data class UiModel(
-  val name: UiText
-)
-
 data class DetailUiState(
   val uiType: DetailUiType = DetailUiType.NONE,
-  val uiModel: UiModel? = null
+  val id: UiText = UiText.DynamicString(""),
+  val name: UiText = UiText.DynamicString("")
 ) : UiState
 
 sealed interface DetailUiEvent : UiEvent {

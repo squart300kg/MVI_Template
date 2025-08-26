@@ -1,11 +1,17 @@
 package kr.co.architecture.feature.detail
 
+import androidx.lifecycle.SavedStateHandle
+import androidx.navigation.toRoute
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kr.co.architecture.core.ui.BaseViewModel
+import kr.co.architecture.core.ui.DetailRoute
+import kr.co.architecture.core.ui.util.UiText
 import javax.inject.Inject
 
 @HiltViewModel
-class DetailViewModel @Inject constructor() : BaseViewModel<DetailUiState, DetailUiEvent, DetailUiSideEffect>() {
+class DetailViewModel @Inject constructor(
+  private val savedStateHandle: SavedStateHandle
+) : BaseViewModel<DetailUiState, DetailUiEvent, DetailUiSideEffect>() {
 
   override fun createInitialState(): DetailUiState {
     return DetailUiState()
@@ -17,11 +23,22 @@ class DetailViewModel @Inject constructor() : BaseViewModel<DetailUiState, Detai
     }
   }
 
-  init { setEffect { DetailUiSideEffect.Load } }
+  init {
+    setEffect { DetailUiSideEffect.Load }
+  }
 
   fun fetchData() {
     launchSafetyWithLoading {
+      val id = savedStateHandle.toRoute<DetailRoute>().id
+      val name = savedStateHandle.toRoute<DetailRoute>().name
 
+      setState {
+        copy(
+          uiType = DetailUiType.LOADED,
+          id = UiText.DynamicString(id),
+          name = UiText.DynamicString(name)
+        )
+      }
     }
   }
 }

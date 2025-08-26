@@ -49,18 +49,7 @@ class MainActivity : ComponentActivity() {
               currentTab = navigator.currentTab,
               visible = navigator.shouldShowBottomBar(),
               onClickedBottomTab = { selectedTab ->
-                when (selectedTab.route) {
-                  is FirstRoute -> viewModel.navigateTo(
-                    route = FirstRoute,
-                    saveState = true,
-                    launchSingleTop = true
-                  )
-                  is SecondRoute -> viewModel.navigateTo(
-                    route = SecondRoute,
-                    saveState = true,
-                    launchSingleTop = true
-                  )
-                }
+                viewModel.setEvent(MainUiEvent.OnClickedBottomTab(selectedTab))
               }
             )
           },
