@@ -35,8 +35,6 @@ private fun InternalLaunchedRouter(
   LaunchedEffect(routerViewModel, lifecycleOwner) {
     lifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
       routerViewModel.sideEffect.collectLatest { sideEffect ->
-        println("tabSelected sideEffect: $sideEffect")
-
         when (sideEffect) {
           is RouteSideEffect.NavigateBack -> {
             navHostController.popBackStack()

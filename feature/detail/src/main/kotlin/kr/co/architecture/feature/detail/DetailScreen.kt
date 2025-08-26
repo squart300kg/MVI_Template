@@ -8,14 +8,17 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
+import androidx.navigation.toRoute
 import kotlinx.serialization.Serializable
 import kr.co.architecture.core.router.internal.navigator.Route
+import kr.co.architecture.core.ui.DetailRoute
 import kr.co.architecture.core.ui.GlobalUiStateEffect
 
-@Serializable
-data object DetailRoute: Route
 fun NavGraphBuilder.detailScreen() {
   composable<DetailRoute> {
+    val id: String? = it.toRoute<DetailRoute>().id
+    val name: String? = it.toRoute<DetailRoute>().name
+    println("detailScreenLog, id: $id, name: $name")
     DetailScreen()
   }
 }

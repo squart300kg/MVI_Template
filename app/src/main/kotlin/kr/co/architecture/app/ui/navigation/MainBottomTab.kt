@@ -2,12 +2,10 @@ package kr.co.architecture.app.ui.navigation
 
 import androidx.annotation.DrawableRes
 import androidx.compose.runtime.Composable
-import kotlinx.collections.immutable.ImmutableList
-import kotlinx.collections.immutable.toImmutableList
 import kr.co.architecture.app.R
 import kr.co.architecture.core.router.internal.navigator.Route
-import kr.co.architecture.feature.first.FirstRoute
-import kr.co.architecture.feature.second.SecondRoute
+import kr.co.architecture.core.ui.FirstRoute
+import kr.co.architecture.core.ui.SecondRoute
 
 enum class MainBottomTab(
   @DrawableRes val selectedIconRes: Int,

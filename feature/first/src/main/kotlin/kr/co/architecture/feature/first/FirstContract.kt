@@ -14,14 +14,16 @@ enum class FirstUiType {
 }
 
 data class UiModel(
+  val id: String,
   val name: UiText
 ) {
   companion object {
     fun mapperToUi(names: List<String>): ImmutableList<UiModel> {
       return names
-        .map {
+        .mapIndexed { index, name ->
           UiModel(
-            name = UiText.DynamicString(it)
+            id = "$index",
+            name = UiText.DynamicString(name)
           )
         }
         .toImmutableList()
@@ -36,7 +38,7 @@ data class FirstUiState(
 ) : UiState
 
 sealed interface FirstUiEvent : UiEvent {
-
+  data class OnClickedItem(val item: UiModel) : FirstUiEvent
 }
 
 sealed interface FirstUiSideEffect : UiSideEffect {

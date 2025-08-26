@@ -1,6 +1,7 @@
 package kr.co.architecture.feature.first
 
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -20,11 +21,10 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import kotlinx.serialization.Serializable
 import kr.co.architecture.core.router.internal.navigator.Route
+import kr.co.architecture.core.ui.FirstRoute
 import kr.co.architecture.core.ui.GlobalUiStateEffect
 import kr.co.architecture.core.ui.util.asString
 
-@Serializable
-data object FirstRoute: Route
 fun NavGraphBuilder.firstScreen() {
   composable<FirstRoute> {
     FirstScreen()
@@ -46,8 +46,9 @@ fun FirstScreen(
   }
 
   FirstScreen(
-    uiState = uiState,
     modifier = modifier,
+    uiState = uiState,
+    onClickedItem = { viewModel.setEvent(FirstUiEvent.OnClickedItem(it)) }
   )
 
   GlobalUiStateEffect(viewModel)
@@ -57,6 +58,7 @@ fun FirstScreen(
 fun FirstScreen(
   modifier: Modifier = Modifier,
   uiState: FirstUiState,
+  onClickedItem: (UiModel) -> Unit = {}
 ) {
 
   when (uiState.uiType) {
@@ -66,13 +68,14 @@ fun FirstScreen(
         items(uiState.uiModels) { item ->
           Text(
             modifier = Modifier
-                .padding(8.dp)
-                .border(
-                    width = 1.dp,
-                    shape = RoundedCornerShape(4.dp),
-                    color = Color.LightGray
-                )
-                .padding(8.dp),
+              .padding(8.dp)
+              .border(
+                width = 1.dp,
+                shape = RoundedCornerShape(4.dp),
+                color = Color.LightGray
+              )
+              .padding(8.dp)
+              .clickable(onClick = { onClickedItem(item) }),
             text = item.name.asString(),
             style = TextStyle(
               fontSize = 20.sp,

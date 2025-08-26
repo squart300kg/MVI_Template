@@ -1,5 +1,10 @@
 package kr.co.architecture.app.ui.navigation
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideIn
+import androidx.compose.animation.slideOut
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.RowScope
@@ -13,23 +18,31 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import kr.co.architecture.core.router.internal.navigator.Route
 
 @Composable
 internal fun BaseNavigationBarWithItems(
   currentTab: MainBottomTab?,
+  visible: Boolean,
   onClickedBottomTab: (MainBottomTab) -> Unit
 ) {
-  NavigationBar(
-    containerColor = Color.White
+  AnimatedVisibility(
+    visible = visible,
+    enter = fadeIn() + slideIn { IntOffset(0, it.height) },
+    exit = fadeOut() + slideOut { IntOffset(0, it.height) }
   ) {
-    MainBottomTab.entries.forEach { destination ->
-      BaseNavigationBarItem(
-        onClick = { onClickedBottomTab(destination) },
-        selected = currentTab == destination,
-        destination = destination
-      )
+    NavigationBar(
+      containerColor = Color.White
+    ) {
+      MainBottomTab.entries.forEach { destination ->
+        BaseNavigationBarItem(
+          onClick = { onClickedBottomTab(destination) },
+          selected = currentTab == destination,
+          destination = destination
+        )
+      }
     }
   }
 }

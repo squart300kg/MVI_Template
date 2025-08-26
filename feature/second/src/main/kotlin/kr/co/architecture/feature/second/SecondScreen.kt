@@ -21,10 +21,9 @@ import androidx.navigation.compose.composable
 import kotlinx.serialization.Serializable
 import kr.co.architecture.core.router.internal.navigator.Route
 import kr.co.architecture.core.ui.GlobalUiStateEffect
+import kr.co.architecture.core.ui.SecondRoute
 import kr.co.architecture.core.ui.util.asString
 
-@Serializable
-data object SecondRoute: Route
 fun NavGraphBuilder.secondScreen() {
   composable<SecondRoute> {
     SecondScreen()
