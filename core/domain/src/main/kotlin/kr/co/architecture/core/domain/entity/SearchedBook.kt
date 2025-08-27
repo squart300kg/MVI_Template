@@ -8,6 +8,7 @@ data class SearchedBook(
 )
 
 data class Book(
+  val isbn: String,
   val title: String,
   val authors: List<String>,
   val publisher: String,

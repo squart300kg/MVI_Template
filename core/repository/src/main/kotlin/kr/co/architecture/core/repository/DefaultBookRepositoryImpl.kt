@@ -1,5 +1,6 @@
 package kr.co.architecture.core.repository
 
+import kr.co.architecture.core.database.dao.BookSearchDao
 import kr.co.architecture.core.domain.entity.SearchedBook
 import kr.co.architecture.core.domain.enums.SearchTypeEnum
 import kr.co.architecture.core.domain.repository.BookRepository
@@ -10,7 +11,8 @@ import kr.co.architecture.core.repository.mapper.BookSearchMapper
 import javax.inject.Inject
 
 class DefaultBookRepositoryImpl @Inject constructor(
-  private val remoteApi: RemoteApi
+  private val remoteApi: RemoteApi,
+  private val bookSearchDao: BookSearchDao
 ) : BookRepository {
 
   override suspend fun searchBook(params: SearchBookUseCase.Params): SearchedBook {

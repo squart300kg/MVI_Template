@@ -17,6 +17,7 @@ object BookSearchMapper {
       ),
       books = apiResponse.documents.map {
         Book(
+          isbn = it.isbn,
           title = it.title,
           authors = it.authors,
           publisher = it.publisher,

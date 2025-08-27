@@ -88,7 +88,7 @@ fun SearchScreen(
       ) {
         items(
           items = uiState.uiModels,
-          key = { it.id }
+          key = { it.isbn }
         ) { item ->
           BookItem(
             modifier = Modifier

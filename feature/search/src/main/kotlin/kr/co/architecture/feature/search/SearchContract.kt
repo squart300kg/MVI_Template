@@ -18,6 +18,7 @@ enum class SearchUiType {
 }
 
 data class UiModel(
+  val isbn: String,
   val thumbnail: String,
   val title: UiText,
   val publisher: UiText,
@@ -26,8 +27,6 @@ data class UiModel(
   val price: UiText,
   val publishDate: UiText,
 ) {
-  val id: Int
-    get() = this.hashCode()
 
   companion object {
     fun mapperToUi(
@@ -38,6 +37,7 @@ data class UiModel(
       return searchedBook.books
         .map { book ->
           UiModel(
+            isbn = book.isbn,
             thumbnail = book.thumbnail,
             title = UiText.DynamicString(book.title),
             publisher = UiText.StringResource(
