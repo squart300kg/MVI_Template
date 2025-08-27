@@ -1,4 +1,4 @@
-package kr.co.architecture.feature.first
+package kr.co.architecture.feature.home
 
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -19,8 +19,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
-import kotlinx.serialization.Serializable
-import kr.co.architecture.core.router.internal.navigator.Route
 import kr.co.architecture.core.ui.FirstRoute
 import kr.co.architecture.core.ui.GlobalUiStateEffect
 import kr.co.architecture.core.ui.util.asString

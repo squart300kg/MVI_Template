@@ -18,14 +18,12 @@ import kr.co.architecture.app.ui.navigation.rememberMainNavigator
 import kr.co.architecture.core.router.LaunchedRouter
 import kr.co.architecture.core.ui.BaseCenterDialog
 import kr.co.architecture.core.ui.BaseProgressBar
-import kr.co.architecture.core.ui.FirstRoute
 import kr.co.architecture.core.ui.LocalOnErrorMessageChanged
 import kr.co.architecture.core.ui.LocalOnLoadingStateChanged
 import kr.co.architecture.core.ui.LocalOnRefreshStateChanged
-import kr.co.architecture.core.ui.SecondRoute
 import kr.co.architecture.core.ui.theme.BaseTheme
 import kr.co.architecture.feature.detail.detailScreen
-import kr.co.architecture.feature.first.firstScreen
+import kr.co.architecture.feature.home.firstScreen
 import kr.co.architecture.feature.second.secondScreen
 
 @AndroidEntryPoint
