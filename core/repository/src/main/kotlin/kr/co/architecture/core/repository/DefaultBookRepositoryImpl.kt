@@ -20,17 +20,24 @@ class DefaultBookRepositoryImpl @Inject constructor(
   private val bookSearchDao: BookSearchDao
 ) : BookRepository {
 
+  private val cachedSearchedBooks = mutableListOf<Book>()
+
   override fun observeBookmarkedBooks(): Flow<List<Book>> =
     bookSearchDao.observeBookmarkedBooks()
       .map { it.map(BookMapper::mapperToDomain) }
 
   override suspend fun toggleBookmark(params: ToggleBookmarkUseCase.Params) {
+    val cachedBook = cachedSearchedBooks.find { it.isbn == params.isbn.value }
+    checkNotNull(cachedBook) {
+      "cached UI `Book` and Domain `Book` does not sync"
+    }
+
     when (params.bookmarkToggleTypeEnum) {
       BookmarkToggleTypeEnum.SAVE -> {
-        bookSearchDao.upsert(BookMapper.mapperToEntity(params.book))
+        bookSearchDao.upsert(BookMapper.mapperToEntity(cachedBook))
       }
       BookmarkToggleTypeEnum.DELETE -> {
-        bookSearchDao.upsert(BookMapper.mapperToEntity(params.book))
+        bookSearchDao.delete(cachedBook.isbn)
       }
     }
   }
@@ -43,5 +50,6 @@ class DefaultBookRepositoryImpl @Inject constructor(
     )
       .safeGet()
       .let(SearchedBookMapper::mapperToDomain)
+      .also { cachedSearchedBooks.addAll(it.books) }
   }
 }

@@ -2,7 +2,6 @@ package kr.co.architecture.core.database.entity
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
-import androidx.room.Index
 import androidx.room.PrimaryKey
 import java.util.Date
 
@@ -13,13 +12,15 @@ data class BookEntity(
     @ColumnInfo(name = "title")
     val title: String,
     @ColumnInfo(name = "authors")
-    val authors: List<String>,
+    val authors: String,
     @ColumnInfo(name = "publisher")
     val publisher: String,
     @ColumnInfo(name = "dateTime")
     val dateTime: Date,
-    @ColumnInfo(name = "price")
-    val price: Int,
+    @ColumnInfo(name = "discountedPrice")
+    val discountedPrice: Int,
+    @ColumnInfo(name = "originPrice")
+    val originPrice: Int,
     @ColumnInfo(name = "url")
     val url: String,
     @ColumnInfo(name = "thumbnail")

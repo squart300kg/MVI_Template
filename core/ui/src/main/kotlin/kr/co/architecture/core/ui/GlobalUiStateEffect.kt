@@ -14,7 +14,6 @@ fun <UI_STATE : UiState,
   GlobalUiStateEffect(viewModel: VIEWMODEL) {
   val localOnErrorMessageChanged by rememberUpdatedState(LocalOnErrorMessageChanged.current)
   val localOnLoadingStateChanged by rememberUpdatedState(LocalOnLoadingStateChanged.current)
-  val localOnRefreshStateChanged by rememberUpdatedState(LocalOnRefreshStateChanged.current)
   LaunchedEffect(Unit) {
     launch {
       viewModel.errorMessageState.collect {
@@ -24,11 +23,6 @@ fun <UI_STATE : UiState,
     launch {
       viewModel.loadingState.collect {
         localOnLoadingStateChanged(it)
-      }
-    }
-    launch {
-      viewModel.refreshState.collect {
-        localOnRefreshStateChanged(it)
       }
     }
   }

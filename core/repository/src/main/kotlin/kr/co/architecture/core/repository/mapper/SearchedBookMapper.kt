@@ -22,9 +22,13 @@ object SearchedBookMapper {
           authors = it.authors,
           publisher = it.publisher,
           dateTime = it.dateTime,
-          price =
-            if (it.salePrice == 0) Price.DiscountPrice(it.price)
-            else Price.SalePrice(it.salePrice),
+          price = when (it.salePrice != 0) {
+            true -> Price.Discount(
+              origin = it.price,
+              discounted = it.salePrice
+            )
+            false -> Price.Origin(it.price)
+          },
           url = it.url,
           thumbnail = it.thumbnail,
           isBookmarked = false

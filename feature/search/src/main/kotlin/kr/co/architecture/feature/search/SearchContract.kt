@@ -54,10 +54,16 @@ data class UiModel(
               )
             ),
             isBookmarked = book.isBookmarked,
-            price = UiText.StringResource(
-              resId = coreUiR.string.won,
-              args = listOf(moneyTextFormatter(book.price.value))
-            ),
+            price = run {
+              val displayedPrice = when (val price = book.price) {
+                is Price.Discount -> price.discounted
+                is Price.Origin -> price.origin
+              }
+              UiText.StringResource(
+                resId = coreUiR.string.won,
+                args = listOf(moneyTextFormatter(displayedPrice))
+              )
+            },
             publishDate = UiText.StringResource(
               resId = coreUiR.string.publishDate,
               args = listOf(dateTextFormatter(book.dateTime))
@@ -66,20 +72,6 @@ data class UiModel(
         }
         .toImmutableList()
     }
-
-    fun mapperToDomain(
-      uiModel: UiModel
-    ) = Book(
-      isbn = uiModel.isbn,
-      title = uiModel.title.value ?: "",
-      authors = uiModel.authors.value?.split(", ") ?: emptyList(),
-      publisher = uiModel.publisher.value ?: "",
-      dateTime = uiModel.publishDate.value ?: "",
-      price = Price(uiModel.price.value ?: 0),
-      url = "",
-      thumbnail = uiModel.thumbnail,
-      isBookmarked = uiModel.isBookmarked
-    )
   }
 }
 
@@ -96,5 +88,4 @@ sealed interface SearchUiEvent : UiEvent {
 }
 
 sealed interface HomeUiSideEffect : UiSideEffect {
-  data object Load : HomeUiSideEffect
 }

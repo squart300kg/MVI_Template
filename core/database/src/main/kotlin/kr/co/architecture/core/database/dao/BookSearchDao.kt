@@ -14,8 +14,8 @@ interface BookSearchDao {
     @Query("SELECT * FROM BookEntity")
     fun observeBookmarkedBooks(): Flow<List<BookEntity>>
 
-    @Delete
-    fun delete(bookEntity: BookEntity)
+    @Query("DELETE FROM BookEntity WHERE isbn = :isbn")
+    fun delete(isbn: String)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun upsert(vararg bookEntity: BookEntity)

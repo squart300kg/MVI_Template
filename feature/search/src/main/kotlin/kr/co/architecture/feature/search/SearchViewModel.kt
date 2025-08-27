@@ -1,8 +1,10 @@
 package kr.co.architecture.feature.search
 
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
 import kr.co.architecture.core.common.formatter.DateTextFormatter
 import kr.co.architecture.core.common.formatter.MoneyTextFormatter
+import kr.co.architecture.core.domain.entity.ISBN
 import kr.co.architecture.core.domain.enums.BookmarkToggleTypeEnum
 import kr.co.architecture.core.domain.enums.SearchTypeEnum
 import kr.co.architecture.core.domain.enums.SortTypeEnum
@@ -40,7 +42,7 @@ class SearchViewModel @Inject constructor(
               bookmarkToggleTypeEnum =
               if (event.item.isBookmarked) BookmarkToggleTypeEnum.DELETE
               else BookmarkToggleTypeEnum.SAVE,
-              book = UiModel.mapperToDomain(event.item)
+              isbn = ISBN(event.item.isbn)
             )
           )
         }
@@ -55,30 +57,25 @@ class SearchViewModel @Inject constructor(
   }
 
   init {
-    setEffect { HomeUiSideEffect.Load }
-
-  }
-
-  fun fetchData() {
     launchSafetyWithLoading {
-      val searchedBook = searchBookUseCase(
+      searchBookUseCase(
         params = SearchBookUseCase.Params(
           page = 1,
           query = "미움받을용기",
           sortTypeEnum = SortTypeEnum.ACCURACY,
           searchTypeEnum = SearchTypeEnum.IN_REMOTE
         )
-      )
-
-      setState {
-        copy(
-          uiType = SearchUiType.LOADED,
-          uiModels = UiModel.mapperToUi(
-            searchedBook = searchedBook,
-            dateTextFormatter = dateTextFormatter,
-            moneyTextFormatter = moneyTextFormatter
+      ).collect { searchedBook ->
+        setState {
+          copy(
+            uiType = SearchUiType.LOADED,
+            uiModels = UiModel.mapperToUi(
+              searchedBook = searchedBook,
+              dateTextFormatter = dateTextFormatter,
+              moneyTextFormatter = moneyTextFormatter
+            )
           )
-        )
+        }
       }
     }
   }

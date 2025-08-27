@@ -2,6 +2,8 @@ package kr.co.architecture.core.domain.entity
 
 import java.util.Date
 
+// TODO: 모델 패키지 정리
+
 data class SearchedBook(
   val pageable: Pageable,
   val books: List<Book>
@@ -19,10 +21,12 @@ data class Book(
   val isBookmarked: Boolean,
 )
 
+@JvmInline
+value class ISBN(val value: String)
+
 sealed interface Price {
-  val value: Int
+  val origin: Int
   @JvmInline
-  value class SalePrice(override val value: Int) : Price
-  @JvmInline
-  value class DiscountPrice(override val value: Int) : Price
+  value class Origin(override val origin: Int) : Price
+  data class Discount(override val origin: Int, val discounted: Int) : Price
 }
