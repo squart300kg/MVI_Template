@@ -1,6 +1,7 @@
 package kr.co.architecture.core.database.dao
 
 import androidx.room.Dao
+import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
@@ -13,8 +14,8 @@ interface BookSearchDao {
     @Query("SELECT * FROM BookEntity")
     fun observeBookmarkedBooks(): Flow<List<BookEntity>>
 
-    @Query("DELETE FROM BookEntity WHERE characterId = :id")
-    fun deleteCharacter(id: Int)
+    @Delete
+    fun delete(bookEntity: BookEntity)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun upsert(vararg bookEntity: BookEntity)

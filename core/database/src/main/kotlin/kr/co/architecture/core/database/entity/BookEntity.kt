@@ -4,21 +4,24 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.Index
 import androidx.room.PrimaryKey
+import java.util.Date
 
-@Entity(
-    indices = [
-        Index(value = ["id", "characterId"], unique = true),
-    ]
-)
+@Entity
 data class BookEntity(
-    @PrimaryKey(autoGenerate = true) val id: Int = 0,
-    @ColumnInfo(name = "characterId") val characterId: Int,
-    @ColumnInfo(name = "thumbnail") val thumbnail: String,
-    @ColumnInfo(name = "name") val name: String,
-    @ColumnInfo(name = "description") val description: String,
-    @ColumnInfo(name = "urlCount") val urlCount:Int,
-    @ColumnInfo(name = "comicCount") val comicCount:Int,
-    @ColumnInfo(name = "storyCount") val storyCount:Int,
-    @ColumnInfo(name = "eventCount") val eventCount:Int,
-    @ColumnInfo(name = "seriesCount") val seriesCount:Int,
+    @PrimaryKey
+    val isbn: String,
+    @ColumnInfo(name = "title")
+    val title: String,
+    @ColumnInfo(name = "authors")
+    val authors: List<String>,
+    @ColumnInfo(name = "publisher")
+    val publisher: String,
+    @ColumnInfo(name = "dateTime")
+    val dateTime: Date,
+    @ColumnInfo(name = "price")
+    val price: Int,
+    @ColumnInfo(name = "url")
+    val url: String,
+    @ColumnInfo(name = "thumbnail")
+    val thumbnail: String
 )
