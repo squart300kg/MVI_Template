@@ -1,4 +1,4 @@
-//package kr.co.architecture.feature.home
+//package kr.co.architecture.feature.search
 //
 //import kr.co.testing.TestRepository
 //import kr.co.architecture.test.testing.util.MainDispatcherRule

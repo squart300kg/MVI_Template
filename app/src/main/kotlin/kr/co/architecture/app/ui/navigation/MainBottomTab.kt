@@ -1,6 +1,7 @@
 package kr.co.architecture.app.ui.navigation
 
 import androidx.annotation.DrawableRes
+import androidx.annotation.StringRes
 import androidx.compose.runtime.Composable
 import kr.co.architecture.app.R
 import kr.co.architecture.core.router.internal.navigator.Route
@@ -10,19 +11,19 @@ import kr.co.architecture.core.ui.BookmarkRoute
 enum class MainBottomTab(
   @DrawableRes val selectedIconRes: Int,
   @DrawableRes val unselectedIconRes: Int,
-  val iconTextIdRes: String,
+  @StringRes val iconTextIdRes: Int,
   val route: Route
 ) {
   FIRST(
     selectedIconRes = R.drawable.tab_first_on,
     unselectedIconRes = R.drawable.tab_first_off,
-    iconTextIdRes = "first",
+    iconTextIdRes = R.string.search,
     route = HomeRoute
   ),
   SECOND(
     selectedIconRes = R.drawable.tab_second_on,
     unselectedIconRes = R.drawable.tab_second_off,
-    iconTextIdRes = "second",
+    iconTextIdRes = R.string.bookmark,
     route = BookmarkRoute
   );
 

@@ -23,7 +23,7 @@ import kr.co.architecture.core.ui.LocalOnLoadingStateChanged
 import kr.co.architecture.core.ui.LocalOnRefreshStateChanged
 import kr.co.architecture.core.ui.theme.BaseTheme
 import kr.co.architecture.feature.detail.detailScreen
-import kr.co.architecture.feature.home.homeScreen
+import kr.co.architecture.feature.search.homeScreen
 import kr.co.architecture.feature.bookmark.bookmarkScreen
 
 @AndroidEntryPoint

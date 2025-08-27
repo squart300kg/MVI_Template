@@ -11,13 +11,12 @@ android {
   defaultConfig { }
 
   dependencies {
-    implementation(project(":feature:home"))
+    implementation(project(":feature:search"))
     implementation(project(":feature:bookmark"))
     implementation(project(":feature:detail"))
     implementation(project(":core:ui"))
     implementation(project(":core:router"))
     implementation(project(":core:domain"))
-//    implementation(project(":core:repository"))
     baselineProfile(project(":benchmarks"))
 
     implementation(libs.androidx.profile.installer)

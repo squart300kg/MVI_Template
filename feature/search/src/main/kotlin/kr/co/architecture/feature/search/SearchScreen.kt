@@ -1,4 +1,4 @@
-package kr.co.architecture.feature.home
+package kr.co.architecture.feature.search
 
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -32,7 +32,7 @@ fun NavGraphBuilder.homeScreen() {
 @Composable
 fun HomeScreen(
   modifier: Modifier = Modifier,
-  viewModel: HomeViewModel = hiltViewModel()
+  viewModel: SearchViewModel = hiltViewModel()
 ) {
   val uiState by viewModel.uiState.collectAsStateWithLifecycle()
   LaunchedEffect(Unit) {
@@ -46,7 +46,7 @@ fun HomeScreen(
   HomeScreen(
     modifier = modifier,
     uiState = uiState,
-    onClickedItem = { viewModel.setEvent(HomeUiEvent.OnClickedItem(it)) }
+    onClickedItem = { viewModel.setEvent(SearchUiEvent.OnClickedItem(it)) }
   )
 
   GlobalUiStateEffect(viewModel)
@@ -55,13 +55,13 @@ fun HomeScreen(
 @Composable
 fun HomeScreen(
   modifier: Modifier = Modifier,
-  uiState: HomeUiState,
+  uiState: SearchUiState,
   onClickedItem: (UiModel) -> Unit = {}
 ) {
 
   when (uiState.uiType) {
-    HomeUiType.NONE -> {}
-    HomeUiType.LOADED -> {
+    SearchUiType.NONE -> {}
+    SearchUiType.LOADED -> {
       LazyColumn(modifier) {
         items(uiState.uiModels) { item ->
           Text(

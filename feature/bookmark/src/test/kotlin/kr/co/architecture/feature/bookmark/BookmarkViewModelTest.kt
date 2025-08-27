@@ -1,6 +1,6 @@
 package kr.co.architecture.feature.bookmark
 
-import kr.co.architecture.feature.home.HomeViewModel
+import kr.co.architecture.feature.search.HomeViewModel
 import kr.co.testing.TestRepository
 import kr.co.architecture.test.testing.util.MainDispatcherRule
 import org.junit.Before

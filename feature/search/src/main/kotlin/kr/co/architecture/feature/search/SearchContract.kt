@@ -1,4 +1,4 @@
-package kr.co.architecture.feature.home
+package kr.co.architecture.feature.search
 
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
@@ -8,7 +8,7 @@ import kr.co.architecture.core.ui.UiSideEffect
 import kr.co.architecture.core.ui.UiState
 import kr.co.architecture.core.ui.util.UiText
 
-enum class HomeUiType {
+enum class SearchUiType {
   NONE,
   LOADED
 }
@@ -31,14 +31,14 @@ data class UiModel(
   }
 }
 
-data class HomeUiState(
-  val uiType: HomeUiType = HomeUiType.NONE,
+data class SearchUiState(
+  val uiType: SearchUiType = SearchUiType.NONE,
   val uiModels: ImmutableList<UiModel> = persistentListOf(),
   val isLoading: Boolean = false
 ) : UiState
 
-sealed interface HomeUiEvent : UiEvent {
-  data class OnClickedItem(val item: UiModel) : HomeUiEvent
+sealed interface SearchUiEvent : UiEvent {
+  data class OnClickedItem(val item: UiModel) : SearchUiEvent
 }
 
 sealed interface HomeUiSideEffect : UiSideEffect {

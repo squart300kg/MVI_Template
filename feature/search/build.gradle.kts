@@ -5,7 +5,7 @@ plugins {
 }
 
 android {
-  namespace = "kr.co.architecture.feature.home"
+  namespace = "kr.co.architecture.feature.search"
 
   defaultConfig { }
 
