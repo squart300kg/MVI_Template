@@ -1,8 +1,19 @@
 package kr.co.architecture.feature.search
 
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -10,9 +21,12 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -21,7 +35,9 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import kr.co.architecture.core.ui.HomeRoute
 import kr.co.architecture.core.ui.GlobalUiStateEffect
+import kr.co.architecture.core.ui.theme.BaseTheme
 import kr.co.architecture.core.ui.util.asString
+import kr.co.architecture.core.ui.R as coreUiR
 
 fun NavGraphBuilder.homeScreen() {
   composable<HomeRoute> {
@@ -83,4 +99,75 @@ fun HomeScreen(
       }
     }
   }
+}
+
+@Composable
+fun BookItem(
+  modifier: Modifier = Modifier
+) {
+  Row(
+    modifier = modifier
+      .padding(10.dp)
+      .fillMaxWidth()
+      .height(200.dp)
+  ) {
+    Box(
+      modifier = Modifier
+        .fillMaxHeight()
+        .aspectRatio(0.5f)
+        .background(Color.LightGray)
+    )
+
+    Column(
+      modifier = Modifier
+        .align(Alignment.CenterVertically),
+    ) {
+      Text(
+        modifier = Modifier.padding(4.dp),
+        text = "도서"
+      )
+
+      Text(
+        modifier = Modifier.padding(4.dp),
+        text = "도서 제목",
+        fontSize = 18.sp
+      )
+
+      Text(
+        modifier = Modifier.padding(4.dp),
+        text = "출판사(bold) : 출판사"
+      )
+
+      Text(
+        modifier = Modifier.padding(4.dp),
+        text = "저자(bold) : 저자"
+      )
+    }
+
+    Column(
+      modifier = Modifier
+        .fillMaxHeight(),
+      verticalArrangement = Arrangement.SpaceBetween
+    ) {
+      Image(
+        modifier = Modifier
+          .align(Alignment.End),
+        painter = painterResource(id = coreUiR.drawable.ic_bookmark_filled),
+        contentDescription = null
+      )
+
+      Text(
+        modifier = Modifier,
+        text = "50,000원"
+      )
+    }
+  }
+}
+
+@Preview
+@Composable
+fun BookItemPreview() {
+  BookItem(
+    modifier = Modifier.background(Color.White)
+  )
 }
