@@ -13,7 +13,9 @@ android {
   dependencies {
     implementation(project(":feature:first"))
     implementation(project(":feature:second"))
+    implementation(project(":feature:detail"))
     implementation(project(":core:ui"))
+    implementation(project(":core:router"))
     implementation(project(":core:domain"))
     implementation(project(":core:repository"))
     implementation(project(":core:common"))

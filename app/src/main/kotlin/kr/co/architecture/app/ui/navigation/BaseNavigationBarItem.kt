@@ -1,5 +1,10 @@
 package kr.co.architecture.app.ui.navigation
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideIn
+import androidx.compose.animation.slideOut
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.RowScope
@@ -13,65 +18,41 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavDestination
-import androidx.navigation.NavDestination.Companion.hierarchy
-import androidx.navigation.NavGraph.Companion.findStartDestination
-import androidx.navigation.NavHostController
-import androidx.navigation.compose.currentBackStackEntryAsState
-import androidx.navigation.navOptions
+import kr.co.architecture.core.router.internal.navigator.Route
 
 @Composable
 internal fun BaseNavigationBarWithItems(
-  navController: NavHostController
+  currentTab: MainBottomTab?,
+  visible: Boolean,
+  onClickedBottomTab: (MainBottomTab) -> Unit
 ) {
-  NavigationBar(
-    containerColor = Color.White
+  AnimatedVisibility(
+    visible = visible,
+    enter = fadeIn() + slideIn { IntOffset(0, it.height) },
+    exit = fadeOut() + slideOut { IntOffset(0, it.height) }
   ) {
-    baseDestinations.forEach { destination ->
-      val selected = navController
-        .getCurrentDestination()
-        .isTopLevelDestinationInHierarchy(destination)
-
-      BaseNavigationBarItem(
-        onClick = {
-          val topLevelNavOptions = navOptions {
-            popUpTo(navController.graph.findStartDestination().id) {
-              this.saveState = true
-            }
-            restoreState = true
-            launchSingleTop = true
-          }
-
-          navController.navigate(destination.route, topLevelNavOptions)
-        },
-        selected = selected,
-        destination = destination
-      )
+    NavigationBar(
+      containerColor = Color.White
+    ) {
+      MainBottomTab.entries.forEach { destination ->
+        BaseNavigationBarItem(
+          onClick = { onClickedBottomTab(destination) },
+          selected = currentTab == destination,
+          destination = destination
+        )
+      }
     }
   }
 }
-
-@Composable
-fun NavHostController.getCurrentDestination(): NavDestination? {
-  return this.currentBackStackEntryAsState()
-    .value
-    ?.destination
-}
-
-fun NavDestination?.isTopLevelDestinationInHierarchy(destination: BaseDestination) =
-  this?.hierarchy?.any {
-    it.route?.contains(destination.route, true) ?: false
-  } ?: false
-
 
 @Composable
 fun RowScope.BaseNavigationBarItem(
   modifier: Modifier = Modifier,
   onClick: () -> Unit,
   selected: Boolean,
-  destination: BaseDestination
+  destination: MainBottomTab
 ) {
   NavigationBarItem(
     modifier = modifier,
