@@ -33,9 +33,6 @@ abstract class BaseViewModel<State : UiState, Event : UiEvent, Effect : UiSideEf
   private val _loadingState = MutableStateFlow<Boolean>(false)
   val loadingState = _loadingState.asStateFlow()
 
-  private val _refreshState = MutableStateFlow<Boolean>(false)
-  val refreshState = _refreshState.asStateFlow()
-
   private val _errorMessageState = MutableSharedFlow<BaseCenterDialogUiModel>()
   val errorMessageState = _errorMessageState.asSharedFlow()
 
@@ -85,17 +82,14 @@ abstract class BaseViewModel<State : UiState, Event : UiEvent, Effect : UiSideEf
   }
 
   protected fun launchSafetyWithLoading(
-    isPullToRefresh: Boolean = false,
     block: suspend CoroutineScope.() -> Unit,
   ) {
     viewModelScope.launch {
-      if (isPullToRefresh) _refreshState.update { true }
-      else _loadingState.update { true }
+      _loadingState.update { true }
       runCatching {
         coroutineScope { block() }
       }.onFailure { showErrorDialog(it) }
-      if (isPullToRefresh) _refreshState.update { false }
-      else _loadingState.update { false }
+      _loadingState.update { false }
     }
   }
 

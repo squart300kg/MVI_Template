@@ -13,8 +13,7 @@ import javax.inject.Inject
 
 data class MainUiState(
   val errorDialog: BaseCenterDialogUiModel? = null,
-  val isLoading: Boolean = false,
-  val isRefresh: Boolean = false,
+  val isLoading: Boolean = false
 ): UiState
 sealed interface MainUiEvent : UiEvent {
   data class OnClickedBottomTab(val tab: MainBottomTab) : MainUiEvent
@@ -59,9 +58,5 @@ class MainViewModel @Inject constructor(
 
   fun setLoadingState(isLoading: Boolean) {
     setState { copy(isLoading = isLoading) }
-  }
-
-  fun setRefreshState(isRefresh: Boolean) {
-    setState { copy(isRefresh = isRefresh) }
   }
 }

@@ -54,7 +54,10 @@ class SearchViewModel @Inject constructor(
     }
   }
 
-  init { setEffect { HomeUiSideEffect.Load } }
+  init {
+    setEffect { HomeUiSideEffect.Load }
+
+  }
 
   fun fetchData() {
     launchSafetyWithLoading {

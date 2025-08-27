@@ -20,11 +20,9 @@ import kr.co.architecture.core.ui.BaseCenterDialog
 import kr.co.architecture.core.ui.BaseProgressBar
 import kr.co.architecture.core.ui.LocalOnErrorMessageChanged
 import kr.co.architecture.core.ui.LocalOnLoadingStateChanged
-import kr.co.architecture.core.ui.LocalOnRefreshStateChanged
 import kr.co.architecture.core.ui.theme.BaseTheme
-import kr.co.architecture.feature.detail.detailScreen
-import kr.co.architecture.feature.search.SearchScreen
 import kr.co.architecture.feature.bookmark.bookmarkScreen
+import kr.co.architecture.feature.detail.detailScreen
 import kr.co.architecture.feature.search.searchScreen
 
 @AndroidEntryPoint
@@ -56,7 +54,6 @@ class MainActivity : ComponentActivity() {
             CompositionLocalProvider(
               LocalOnErrorMessageChanged provides { viewModel.showErrorDialog(it) },
               LocalOnLoadingStateChanged provides { viewModel.setLoadingState(it) },
-              LocalOnRefreshStateChanged provides { viewModel.setRefreshState(it) }
             ) {
               NavHost(
                 modifier = Modifier.padding(innerPadding),
