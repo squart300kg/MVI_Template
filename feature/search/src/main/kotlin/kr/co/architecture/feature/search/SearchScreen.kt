@@ -22,6 +22,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
@@ -32,6 +34,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
+import kotlinx.coroutines.Dispatchers
+import kr.co.architecture.core.ui.CoilAsyncImage
 import kr.co.architecture.core.ui.SearchRoute
 import kr.co.architecture.core.ui.GlobalUiStateEffect
 import kr.co.architecture.core.ui.HtmlText
@@ -109,10 +113,9 @@ fun BookItem(
       .fillMaxWidth()
       .height(IntrinsicSize.Max)
   ) {
-    Box(
-      modifier = Modifier
-        .weight(0.2f)
-        .background(Color.LightGray)
+    CoilAsyncImage(
+      modifier = Modifier.weight(0.2f),
+      url = uiModel.thumbnail,
     )
 
     Column(
@@ -169,6 +172,7 @@ fun BookItem(
     )
   }
 }
+
 
 //@Preview
 //@Composable
