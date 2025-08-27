@@ -8,7 +8,5 @@ android {
 
   defaultConfig { }
 
-  dependencies {
-    implementation(project(":core:repository"))
-  }
+  dependencies { }
 }

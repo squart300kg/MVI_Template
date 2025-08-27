@@ -1,6 +1,6 @@
-package kr.co.architecture.core.domain
+package kr.co.architecture.core.domain.usecase
 
-import kr.co.architecture.core.repository.Repository
+import kr.co.architecture.core.domain.repository.Repository
 import javax.inject.Inject
 
 class GetListUseCase @Inject constructor(

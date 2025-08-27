@@ -1,7 +1,7 @@
 package kr.co.architecture.feature.first
 
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kr.co.architecture.core.domain.GetListUseCase
+import kr.co.architecture.core.domain.usecase.GetListUseCase
 import kr.co.architecture.core.ui.BaseViewModel
 import kr.co.architecture.core.ui.DetailRoute
 import javax.inject.Inject

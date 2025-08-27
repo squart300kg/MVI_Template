@@ -1,6 +1,6 @@
 package kr.co.architecture.feature.second
 
-import kr.co.architecture.core.domain.GetListUseCase
+import kr.co.architecture.core.domain.usecase.GetListUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf

@@ -17,7 +17,7 @@ android {
     implementation(project(":core:ui"))
     implementation(project(":core:router"))
     implementation(project(":core:domain"))
-    implementation(project(":core:repository"))
+//    implementation(project(":core:repository"))
     baselineProfile(project(":benchmarks"))
 
     implementation(libs.androidx.profile.installer)

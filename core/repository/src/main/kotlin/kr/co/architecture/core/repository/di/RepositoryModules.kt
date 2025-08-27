@@ -4,7 +4,7 @@ import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import kr.co.architecture.core.repository.Repository
+import kr.co.architecture.core.domain.repository.Repository
 import kr.co.architecture.core.repository.RepositoryImpl
 import javax.inject.Singleton
 

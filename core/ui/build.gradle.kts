@@ -13,6 +13,5 @@ android {
     implementation(project(":core:model"))
     implementation(project(":core:router"))
     implementation(project(":core:domain"))
-    implementation(project(":core:repository"))
   }
 }
