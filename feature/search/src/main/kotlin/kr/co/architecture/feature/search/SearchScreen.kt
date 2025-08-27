@@ -24,7 +24,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -34,6 +36,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import kr.co.architecture.core.ui.SearchRoute
 import kr.co.architecture.core.ui.GlobalUiStateEffect
+import kr.co.architecture.core.ui.HtmlText
 import kr.co.architecture.core.ui.util.asString
 import kr.co.architecture.core.ui.R as coreUiR
 
@@ -77,21 +80,12 @@ fun SearchScreen(
     SearchUiType.NONE -> {}
     SearchUiType.LOADED -> {
       LazyColumn(modifier) {
-        items(uiState.uiModels) { item ->
-          Text(
-            modifier = Modifier
-              .padding(8.dp)
-              .border(
-                width = 1.dp,
-                shape = RoundedCornerShape(4.dp),
-                color = Color.LightGray
-              )
-              .padding(8.dp)
-              .clickable(onClick = { onClickedItem(item) }),
-            text = item.name.asString(),
-            style = TextStyle(
-              fontSize = 20.sp,
-            )
+        items(
+          items = uiState.uiModels,
+          key = { it.hashCode() }
+        ) { item ->
+          BookItem(
+            uiModel = item
           )
         }
       }
@@ -101,18 +95,19 @@ fun SearchScreen(
 
 @Composable
 fun BookItem(
-  modifier: Modifier = Modifier
+  modifier: Modifier = Modifier,
+  uiModel: UiModel
 ) {
   Row(
     modifier = modifier
       .padding(10.dp)
       .fillMaxWidth()
-      .height(200.dp)
+      .height(150.dp)
   ) {
     Box(
       modifier = Modifier
         .fillMaxHeight()
-        .aspectRatio(0.5f)
+        .aspectRatio(0.8f)
         .background(Color.LightGray)
     )
 
@@ -120,25 +115,36 @@ fun BookItem(
       modifier = Modifier
         .align(Alignment.CenterVertically),
     ) {
-      Text(
+      HtmlText(
         modifier = Modifier.padding(4.dp),
-        text = "도서"
+        text = stringResource(id = coreUiR.string.book),
+        style = TextStyle(
+          fontSize = 12.sp
+        )
       )
 
-      Text(
+      HtmlText(
         modifier = Modifier.padding(4.dp),
-        text = "도서 제목",
-        fontSize = 18.sp
+        text = uiModel.title.asString(),
+        style = TextStyle(
+          fontWeight = FontWeight.Bold
+        )
       )
 
-      Text(
+      HtmlText(
         modifier = Modifier.padding(4.dp),
-        text = "출판사(bold) : 출판사"
+        text = uiModel.publisher.asString(),
+        style = TextStyle(
+          fontSize = 12.sp
+        )
       )
 
-      Text(
+      HtmlText(
         modifier = Modifier.padding(4.dp),
-        text = "저자(bold) : 저자"
+        text = uiModel.authors.asString(),
+        style = TextStyle(
+          fontSize = 12.sp
+        )
       )
     }
 
@@ -156,16 +162,20 @@ fun BookItem(
 
       Text(
         modifier = Modifier,
-        text = "50,000원"
+        text = uiModel.price.asString(),
+        style = TextStyle(
+          fontWeight = FontWeight.Bold
+        )
       )
     }
   }
 }
 
-@Preview
-@Composable
-fun BookItemPreview() {
-  BookItem(
-    modifier = Modifier.background(Color.White)
-  )
-}
+//@Preview
+//@Composable
+//fun BookItemPreview() {
+//  BookItem(
+//    modifier = Modifier.background(Color.White),
+//    uiModel = UiModel()
+//  )
+//}

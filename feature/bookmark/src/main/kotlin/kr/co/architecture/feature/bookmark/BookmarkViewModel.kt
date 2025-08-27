@@ -25,14 +25,14 @@ class BookmarkViewModel @Inject constructor(
 
   fun fetchData() {
     launchSafetyWithLoading {
-      val names = searchBookUseCase(
-        params = SearchBookUseCase.Params(
-          page = 1,
-          query = "미움받을용기",
-          sortTypeEnum = SortTypeEnum.ACCURACY
-        )
-      )
-      println("apiLog : $names")
+//      val names = searchBookUseCase(
+//        params = SearchBookUseCase.Params(
+//          page = 1,
+//          query = "미움받을용기",
+//          sortTypeEnum = SortTypeEnum.ACCURACY
+//        )
+//      )
+//      println("apiLog : $names")
 //      setState {
 //        copy(
 //          uiType = SecondUiType.LOADED,

@@ -1,6 +1,7 @@
 package kr.co.architecture.feature.search
 
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kr.co.architecture.core.domain.enums.SearchTypeEnum
 import kr.co.architecture.core.domain.enums.SortTypeEnum
 import kr.co.architecture.core.domain.usecase.SearchBookUseCase
 import kr.co.architecture.core.ui.BaseViewModel
@@ -19,12 +20,12 @@ class SearchViewModel @Inject constructor(
   override fun handleEvent(event: SearchUiEvent) {
     when (event) {
       is SearchUiEvent.OnClickedItem -> {
-        navigateTo(
-          route = DetailRoute(
-            id = event.item.id,
-            name = event.item.name.value ?: ""
-          )
-        )
+//        navigateTo(
+//          route = DetailRoute(
+//            id = event.item.id,
+//            name = event.item.name.value ?: ""
+//          )
+//        )
       }
     }
   }
@@ -33,20 +34,21 @@ class SearchViewModel @Inject constructor(
 
   fun fetchData() {
     launchSafetyWithLoading {
-      val names = searchBookUseCase(
+      val searchedBook = searchBookUseCase(
         params = SearchBookUseCase.Params(
           page = 1,
           query = "미움받을용기",
-          sortTypeEnum = SortTypeEnum.ACCURACY
+          sortTypeEnum = SortTypeEnum.ACCURACY,
+          searchTypeEnum = SearchTypeEnum.IN_REMOTE
         )
       )
 
-//      setState {
-//        copy(
-//          uiType = FirstUiType.LOADED,
-//          uiModels = UiModel.mapperToUi(names)
-//        )
-//      }
+      setState {
+        copy(
+          uiType = SearchUiType.LOADED,
+          uiModels = UiModel.mapperToUi(searchedBook)
+        )
+      }
     }
   }
 }

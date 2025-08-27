@@ -14,12 +14,14 @@ data class Book(
   val dateTime: Date,
   val price: Price,
   val url: String,
-  val thumbnail: String
+  val thumbnail: String,
+  val isBookmarked: Boolean,
 )
 
 sealed interface Price {
+  val value: Int
   @JvmInline
-  value class SalePrice(val value: Int) : Price
+  value class SalePrice(override val value: Int) : Price
   @JvmInline
-  value class DiscountPrice(val value: Int) : Price
+  value class DiscountPrice(override val value: Int) : Price
 }

@@ -1,6 +1,7 @@
 package kr.co.architecture.core.repository
 
 import kr.co.architecture.core.domain.entity.SearchedBook
+import kr.co.architecture.core.domain.enums.SearchTypeEnum
 import kr.co.architecture.core.domain.repository.BookRepository
 import kr.co.architecture.core.domain.usecase.SearchBookUseCase
 import kr.co.architecture.core.network.RemoteApi

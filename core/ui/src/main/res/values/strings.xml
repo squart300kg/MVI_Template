@@ -1,3 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="won">%d 원</string>
+    <string name="book">도서</string>
+    <string name="publisher"><![CDATA[<b>출판사</b> : %1$s]]></string>
+    <string name="authors"><![CDATA[<b>저자</b> : %1$s]]></string>
 </resources>

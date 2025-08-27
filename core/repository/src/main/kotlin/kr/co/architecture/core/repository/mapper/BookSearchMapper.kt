@@ -1,6 +1,7 @@
 package kr.co.architecture.core.repository.mapper
 
 import kr.co.architecture.core.domain.entity.Book
+import kr.co.architecture.core.domain.entity.Pageable
 import kr.co.architecture.core.domain.entity.Price
 import kr.co.architecture.core.domain.entity.SearchedBook
 import kr.co.architecture.core.domain.enums.SortTypeEnum
@@ -10,7 +11,7 @@ import kr.co.architecture.core.repository.enums.SortTypeDtoEnum
 object BookSearchMapper {
   fun mapperToDomain(apiResponse: SearchedBookApiResponse) =
     SearchedBook(
-      pageable = kr.co.architecture.core.domain.entity.Pageable(
+      pageable = Pageable(
         isEnd = apiResponse.meta.isEnd,
         pageableCount = apiResponse.meta.pageableCount
       ),
@@ -24,7 +25,8 @@ object BookSearchMapper {
             if (it.salePrice == 0) Price.DiscountPrice(it.price)
             else Price.SalePrice(it.salePrice),
           url = it.url,
-          thumbnail = it.thumbnail
+          thumbnail = it.thumbnail,
+          isBookmarked = false
         )
       }
     )
