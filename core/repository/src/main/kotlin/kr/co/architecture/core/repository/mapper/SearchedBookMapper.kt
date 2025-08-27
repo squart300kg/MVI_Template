@@ -8,7 +8,7 @@ import kr.co.architecture.core.domain.enums.SortTypeEnum
 import kr.co.architecture.core.network.model.SearchedBookApiResponse
 import kr.co.architecture.core.repository.enums.SortTypeDtoEnum
 
-object BookSearchMapper {
+object SearchedBookMapper {
   fun mapperToDomain(apiResponse: SearchedBookApiResponse) =
     SearchedBook(
       pageable = Pageable(

@@ -5,6 +5,8 @@ import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
 import kr.co.architecture.core.common.formatter.DateTextFormatter
 import kr.co.architecture.core.common.formatter.MoneyTextFormatter
+import kr.co.architecture.core.domain.entity.Book
+import kr.co.architecture.core.domain.entity.Price
 import kr.co.architecture.core.domain.entity.SearchedBook
 import kr.co.architecture.core.ui.UiEvent
 import kr.co.architecture.core.ui.UiSideEffect
@@ -64,6 +66,20 @@ data class UiModel(
         }
         .toImmutableList()
     }
+
+    fun mapperToDomain(
+      uiModel: UiModel
+    ) = Book(
+      isbn = uiModel.isbn,
+      title = uiModel.title.value ?: "",
+      authors = uiModel.authors.value?.split(", ") ?: emptyList(),
+      publisher = uiModel.publisher.value ?: "",
+      dateTime = uiModel.publishDate.value ?: "",
+      price = Price(uiModel.price.value ?: 0),
+      url = "",
+      thumbnail = uiModel.thumbnail,
+      isBookmarked = uiModel.isBookmarked
+    )
   }
 }
 
