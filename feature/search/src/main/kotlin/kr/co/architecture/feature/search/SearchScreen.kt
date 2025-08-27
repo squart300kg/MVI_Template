@@ -1,5 +1,6 @@
 package kr.co.architecture.feature.search
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -37,6 +38,7 @@ import androidx.navigation.compose.composable
 import kr.co.architecture.core.ui.SearchRoute
 import kr.co.architecture.core.ui.GlobalUiStateEffect
 import kr.co.architecture.core.ui.HtmlText
+import kr.co.architecture.core.ui.roundItem
 import kr.co.architecture.core.ui.util.asString
 import kr.co.architecture.core.ui.R as coreUiR
 
@@ -79,12 +81,17 @@ fun SearchScreen(
   when (uiState.uiType) {
     SearchUiType.NONE -> {}
     SearchUiType.LOADED -> {
-      LazyColumn(modifier) {
+      LazyColumn(
+        modifier = modifier
+          .background(Color.LightGray)
+      ) {
         items(
           items = uiState.uiModels,
           key = { it.hashCode() }
         ) { item ->
           BookItem(
+            modifier = Modifier
+              .padding(10.dp),
             uiModel = item
           )
         }
@@ -100,6 +107,9 @@ fun BookItem(
 ) {
   Row(
     modifier = modifier
+      .roundItem(
+       roundDp = 10.dp
+      )
       .padding(10.dp)
       .fillMaxWidth()
       .height(150.dp)
