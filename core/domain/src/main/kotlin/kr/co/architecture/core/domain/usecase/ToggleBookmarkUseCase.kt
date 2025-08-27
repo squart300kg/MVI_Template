@@ -8,6 +8,7 @@ class ToggleBookmarkUseCase @Inject constructor(
   private val bookRepository: BookRepository
 ) {
   suspend operator fun invoke(params: Params) {
+
   }
 
   data class Params(

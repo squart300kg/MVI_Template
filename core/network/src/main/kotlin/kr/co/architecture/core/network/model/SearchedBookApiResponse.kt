@@ -5,11 +5,11 @@ import java.util.Date
 
 data class SearchedBookApiResponse(
   @SerializedName("documents")
-  val documents: List<Author>,
+  val documents: List<Book>,
   @SerializedName("meta")
   val meta: Meta
 ) {
-  data class Author(
+  data class Book(
     @SerializedName("authors")
     val authors: List<String>,
     @SerializedName("contents")
