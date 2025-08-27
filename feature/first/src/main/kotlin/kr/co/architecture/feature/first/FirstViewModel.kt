@@ -1,6 +1,7 @@
 package kr.co.architecture.feature.first
 
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kr.co.architecture.core.domain.enums.SortTypeEnum
 import kr.co.architecture.core.domain.usecase.GetListUseCase
 import kr.co.architecture.core.ui.BaseViewModel
 import kr.co.architecture.core.ui.DetailRoute
@@ -32,13 +33,20 @@ class FirstViewModel @Inject constructor(
 
   fun fetchData() {
     launchSafetyWithLoading {
-      val names = getListUseCase()
-      setState {
-        copy(
-          uiType = FirstUiType.LOADED,
-          uiModels = UiModel.mapperToUi(names)
+      val names = getListUseCase(
+        params = GetListUseCase.Params(
+          page = 1,
+          query = "미움받을용기",
+          sortTypeEnum = SortTypeEnum.ACCURACY
         )
-      }
+      )
+      println("apiLog : $names")
+//      setState {
+//        copy(
+//          uiType = FirstUiType.LOADED,
+//          uiModels = UiModel.mapperToUi(names)
+//        )
+//      }
     }
   }
 }

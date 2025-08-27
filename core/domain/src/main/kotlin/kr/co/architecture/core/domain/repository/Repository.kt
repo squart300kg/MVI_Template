@@ -1,9 +1,10 @@
 package kr.co.architecture.core.domain.repository
 
-import kr.co.architecture.core.domain.entity.Article
+import kr.co.architecture.core.domain.entity.SearchedBook
+import kr.co.architecture.core.domain.usecase.GetListUseCase
 
 interface Repository {
 
-  suspend fun getList(): List<Article>
+  suspend fun searchBook(params: GetListUseCase.Params): SearchedBook
 
 }
