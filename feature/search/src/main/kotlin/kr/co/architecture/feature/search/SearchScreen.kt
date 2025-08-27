@@ -114,7 +114,7 @@ fun BookItem(
       .height(IntrinsicSize.Max)
   ) {
     CoilAsyncImage(
-      modifier = Modifier.weight(0.2f),
+      modifier = Modifier.weight(0.3f),
       url = uiModel.thumbnail,
     )
 
@@ -174,7 +174,7 @@ fun BookItem(
     Image(
       modifier = Modifier
         .wrapContentWidth(Alignment.End)
-        .weight(0.2f),
+        .weight(0.1f),
       painter = painterResource(id = coreUiR.drawable.ic_bookmark_filled),
       contentDescription = null
     )
