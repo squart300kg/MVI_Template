@@ -13,16 +13,21 @@ import androidx.core.text.HtmlCompat
 @Composable
 fun HtmlText(
   modifier: Modifier = Modifier,
-  text: String,
+  inputText: String,
+  maxLine: Int = 1,
   style: TextStyle = LocalTextStyle.current.copy(color = Color.Black)
 ) {
   AndroidView(modifier = modifier, factory = { context ->
     TextView(context).apply {
-      this.text = HtmlCompat.fromHtml(text, HtmlCompat.FROM_HTML_MODE_COMPACT)
+      this.text = HtmlCompat.fromHtml(inputText, HtmlCompat.FROM_HTML_MODE_COMPACT)
       this.setTextColor(Color.Black.toArgb())
       this.textSize = style.fontSize.value
     }
   }, update = { textView ->
-    textView.text = HtmlCompat.fromHtml(text, HtmlCompat.FROM_HTML_MODE_COMPACT)
+    textView.run {
+      text = HtmlCompat.fromHtml(inputText, HtmlCompat.FROM_HTML_MODE_COMPACT)
+      maxLines = maxLine
+      ellipsize = android.text.TextUtils.TruncateAt.END
+    }
   })
 }
