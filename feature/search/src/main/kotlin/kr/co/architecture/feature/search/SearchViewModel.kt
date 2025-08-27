@@ -1,7 +1,9 @@
 package kr.co.architecture.feature.search
 
+import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.launch
 import kr.co.architecture.core.common.formatter.DateTextFormatter
 import kr.co.architecture.core.common.formatter.MoneyTextFormatter
 import kr.co.architecture.core.domain.entity.ISBN
@@ -36,28 +38,24 @@ class SearchViewModel @Inject constructor(
 //        )
       }
       is SearchUiEvent.OnClickedBookmark -> {
-        launchSafetyWithLoading {
+//        launchSafetyWithLoading {
+//        }
+        viewModelScope.launch {
           toggleBookmarkUseCase(
             params = ToggleBookmarkUseCase.Params(
               bookmarkToggleTypeEnum =
-              if (event.item.isBookmarked) BookmarkToggleTypeEnum.DELETE
-              else BookmarkToggleTypeEnum.SAVE,
+                if (event.item.isBookmarked) BookmarkToggleTypeEnum.DELETE
+                else BookmarkToggleTypeEnum.SAVE,
               isbn = ISBN(event.item.isbn)
             )
           )
         }
-//        navigateTo(
-//          route = DetailRoute(
-//            id = event.item.id,
-//            name = event.item.name.value ?: ""
-//          )
-//        )
       }
     }
   }
 
   init {
-    launchSafetyWithLoading {
+    viewModelScope.launch {
       searchBookUseCase(
         params = SearchBookUseCase.Params(
           page = 1,
@@ -65,7 +63,11 @@ class SearchViewModel @Inject constructor(
           sortTypeEnum = SortTypeEnum.ACCURACY,
           searchTypeEnum = SearchTypeEnum.IN_REMOTE
         )
-      ).collect { searchedBook ->
+      )
+        .catch {
+          println("errorLog, init : ${it.stackTraceToString()}")
+        }
+        .collect { searchedBook ->
         setState {
           copy(
             uiType = SearchUiType.LOADED,
