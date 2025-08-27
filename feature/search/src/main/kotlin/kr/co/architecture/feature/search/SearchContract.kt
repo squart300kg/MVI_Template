@@ -3,7 +3,8 @@ package kr.co.architecture.feature.search
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
-import kr.co.architecture.core.common.date.DateTextFormatter
+import kr.co.architecture.core.common.formatter.DateTextFormatter
+import kr.co.architecture.core.common.formatter.MoneyTextFormatter
 import kr.co.architecture.core.domain.entity.SearchedBook
 import kr.co.architecture.core.ui.UiEvent
 import kr.co.architecture.core.ui.UiSideEffect
@@ -31,7 +32,8 @@ data class UiModel(
   companion object {
     fun mapperToUi(
       searchedBook: SearchedBook,
-      dateTextFormatter: DateTextFormatter
+      dateTextFormatter: DateTextFormatter,
+      moneyTextFormatter: MoneyTextFormatter
     ): ImmutableList<UiModel> {
       return searchedBook.books
         .map { book ->
@@ -52,7 +54,7 @@ data class UiModel(
             isBookmarked = book.isBookmarked,
             price = UiText.StringResource(
               resId = coreUiR.string.won,
-              args = listOf(book.price.value)
+              args = listOf(moneyTextFormatter(book.price.value))
             ),
             publishDate = UiText.StringResource(
               resId = coreUiR.string.publishDate,

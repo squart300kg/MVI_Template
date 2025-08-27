@@ -1,7 +1,8 @@
 package kr.co.architecture.feature.search
 
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kr.co.architecture.core.common.date.DateTextFormatter
+import kr.co.architecture.core.common.formatter.DateTextFormatter
+import kr.co.architecture.core.common.formatter.MoneyTextFormatter
 import kr.co.architecture.core.domain.enums.SearchTypeEnum
 import kr.co.architecture.core.domain.enums.SortTypeEnum
 import kr.co.architecture.core.domain.usecase.SearchBookUseCase
@@ -11,7 +12,8 @@ import javax.inject.Inject
 @HiltViewModel
 class SearchViewModel @Inject constructor(
   private val searchBookUseCase: SearchBookUseCase,
-  private val dateTextFormatter: DateTextFormatter
+  private val dateTextFormatter: DateTextFormatter,
+  private val moneyTextFormatter: MoneyTextFormatter,
 ) : BaseViewModel<SearchUiState, SearchUiEvent, HomeUiSideEffect>() {
 
   override fun createInitialState(): SearchUiState {
@@ -57,7 +59,8 @@ class SearchViewModel @Inject constructor(
           uiType = SearchUiType.LOADED,
           uiModels = UiModel.mapperToUi(
             searchedBook = searchedBook,
-            dateTextFormatter = dateTextFormatter
+            dateTextFormatter = dateTextFormatter,
+            moneyTextFormatter = moneyTextFormatter
           )
         )
       }
