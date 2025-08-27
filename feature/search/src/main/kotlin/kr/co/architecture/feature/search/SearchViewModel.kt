@@ -1,16 +1,17 @@
 package kr.co.architecture.feature.search
 
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kr.co.architecture.core.common.date.DateTextFormatter
 import kr.co.architecture.core.domain.enums.SearchTypeEnum
 import kr.co.architecture.core.domain.enums.SortTypeEnum
 import kr.co.architecture.core.domain.usecase.SearchBookUseCase
 import kr.co.architecture.core.ui.BaseViewModel
-import kr.co.architecture.core.ui.DetailRoute
 import javax.inject.Inject
 
 @HiltViewModel
 class SearchViewModel @Inject constructor(
-  private val searchBookUseCase: SearchBookUseCase
+  private val searchBookUseCase: SearchBookUseCase,
+  private val dateTextFormatter: DateTextFormatter
 ) : BaseViewModel<SearchUiState, SearchUiEvent, HomeUiSideEffect>() {
 
   override fun createInitialState(): SearchUiState {
@@ -20,6 +21,14 @@ class SearchViewModel @Inject constructor(
   override fun handleEvent(event: SearchUiEvent) {
     when (event) {
       is SearchUiEvent.OnClickedItem -> {
+//        navigateTo(
+//          route = DetailRoute(
+//            id = event.item.id,
+//            name = event.item.name.value ?: ""
+//          )
+//        )
+      }
+      is SearchUiEvent.OnClickedBookmark -> {
 //        navigateTo(
 //          route = DetailRoute(
 //            id = event.item.id,
@@ -46,7 +55,10 @@ class SearchViewModel @Inject constructor(
       setState {
         copy(
           uiType = SearchUiType.LOADED,
-          uiModels = UiModel.mapperToUi(searchedBook)
+          uiModels = UiModel.mapperToUi(
+            searchedBook = searchedBook,
+            dateTextFormatter = dateTextFormatter
+          )
         )
       }
     }

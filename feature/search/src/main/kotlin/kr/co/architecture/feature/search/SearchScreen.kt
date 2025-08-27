@@ -88,7 +88,7 @@ fun SearchScreen(
       ) {
         items(
           items = uiState.uiModels,
-          key = { it.hashCode() }
+          key = { it.id }
         ) { item ->
           BookItem(
             modifier = Modifier
@@ -151,6 +151,14 @@ fun BookItem(
       HtmlText(
         modifier = Modifier.padding(4.dp),
         inputText = uiModel.authors.asString(),
+        style = TextStyle(
+          fontSize = 12.sp
+        )
+      )
+
+      HtmlText(
+        modifier = Modifier.padding(4.dp),
+        inputText = uiModel.publishDate.asString(),
         style = TextStyle(
           fontSize = 12.sp
         )

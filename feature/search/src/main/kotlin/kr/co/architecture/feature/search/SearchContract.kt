@@ -3,7 +3,7 @@ package kr.co.architecture.feature.search
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
-import kr.co.architecture.core.domain.entity.Price
+import kr.co.architecture.core.common.date.DateTextFormatter
 import kr.co.architecture.core.domain.entity.SearchedBook
 import kr.co.architecture.core.ui.UiEvent
 import kr.co.architecture.core.ui.UiSideEffect
@@ -22,10 +22,17 @@ data class UiModel(
   val publisher: UiText,
   val authors: UiText,
   val isBookmarked: Boolean,
-  val price: UiText
+  val price: UiText,
+  val publishDate: UiText,
 ) {
+  val id: Int
+    get() = this.hashCode()
+
   companion object {
-    fun mapperToUi(searchedBook: SearchedBook): ImmutableList<UiModel> {
+    fun mapperToUi(
+      searchedBook: SearchedBook,
+      dateTextFormatter: DateTextFormatter
+    ): ImmutableList<UiModel> {
       return searchedBook.books
         .map { book ->
           UiModel(
@@ -46,6 +53,10 @@ data class UiModel(
             price = UiText.StringResource(
               resId = coreUiR.string.won,
               args = listOf(book.price.value)
+            ),
+            publishDate = UiText.StringResource(
+              resId = coreUiR.string.publishDate,
+              args = listOf(dateTextFormatter(book.dateTime))
             )
           )
         }
@@ -63,6 +74,7 @@ data class SearchUiState(
 
 sealed interface SearchUiEvent : UiEvent {
   data class OnClickedItem(val item: UiModel) : SearchUiEvent
+  data class OnClickedBookmark(val item: UiModel) : SearchUiEvent
 }
 
 sealed interface HomeUiSideEffect : UiSideEffect {

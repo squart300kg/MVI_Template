@@ -4,4 +4,5 @@
     <string name="book">도서</string>
     <string name="publisher"><![CDATA[<b>출판사</b> : %1$s]]></string>
     <string name="authors"><![CDATA[<b>저자</b> : %1$s]]></string>
+    <string name="publishDate"><![CDATA[<b>출간일</b> : %1$s]]></string>
 </resources>

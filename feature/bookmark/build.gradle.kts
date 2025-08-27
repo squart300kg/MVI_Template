@@ -13,6 +13,7 @@ android {
     implementation(project(":core:ui"))
     implementation(project(":core:router"))
     implementation(project(":core:domain"))
+    implementation(project(":core:common"))
     implementation(project(":core:model"))
     implementation(project(":testing"))
   }
