@@ -2,14 +2,14 @@ package kr.co.architecture.feature.search
 
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kr.co.architecture.core.domain.enums.SortTypeEnum
-import kr.co.architecture.core.domain.usecase.GetListUseCase
+import kr.co.architecture.core.domain.usecase.SearchBookUseCase
 import kr.co.architecture.core.ui.BaseViewModel
 import kr.co.architecture.core.ui.DetailRoute
 import javax.inject.Inject
 
 @HiltViewModel
 class SearchViewModel @Inject constructor(
-  private val getListUseCase: GetListUseCase
+  private val searchBookUseCase: SearchBookUseCase
 ) : BaseViewModel<SearchUiState, SearchUiEvent, HomeUiSideEffect>() {
 
   override fun createInitialState(): SearchUiState {
@@ -33,14 +33,14 @@ class SearchViewModel @Inject constructor(
 
   fun fetchData() {
     launchSafetyWithLoading {
-      val names = getListUseCase(
-        params = GetListUseCase.Params(
+      val names = searchBookUseCase(
+        params = SearchBookUseCase.Params(
           page = 1,
           query = "미움받을용기",
           sortTypeEnum = SortTypeEnum.ACCURACY
         )
       )
-      println("apiLog : $names")
+
 //      setState {
 //        copy(
 //          uiType = FirstUiType.LOADED,

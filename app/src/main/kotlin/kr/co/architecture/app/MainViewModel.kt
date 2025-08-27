@@ -4,7 +4,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kr.co.architecture.app.ui.navigation.MainBottomTab
 import kr.co.architecture.core.ui.BaseCenterDialogUiModel
 import kr.co.architecture.core.ui.BaseViewModel
-import kr.co.architecture.core.ui.HomeRoute
+import kr.co.architecture.core.ui.SearchRoute
 import kr.co.architecture.core.ui.BookmarkRoute
 import kr.co.architecture.core.ui.UiEvent
 import kr.co.architecture.core.ui.UiSideEffect
@@ -35,8 +35,8 @@ class MainViewModel @Inject constructor(
     when (event) {
       is MainUiEvent.OnClickedBottomTab -> {
         when (event.tab.route) {
-          is HomeRoute -> navigateTo(
-            route = HomeRoute,
+          is SearchRoute -> navigateTo(
+            route = SearchRoute,
             saveState = true,
             launchSingleTop = true
           )

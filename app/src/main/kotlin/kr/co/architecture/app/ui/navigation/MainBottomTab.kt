@@ -5,7 +5,7 @@ import androidx.annotation.StringRes
 import androidx.compose.runtime.Composable
 import kr.co.architecture.app.R
 import kr.co.architecture.core.router.internal.navigator.Route
-import kr.co.architecture.core.ui.HomeRoute
+import kr.co.architecture.core.ui.SearchRoute
 import kr.co.architecture.core.ui.BookmarkRoute
 
 enum class MainBottomTab(
@@ -18,7 +18,7 @@ enum class MainBottomTab(
     selectedIconRes = R.drawable.tab_first_on,
     unselectedIconRes = R.drawable.tab_first_off,
     iconTextIdRes = R.string.search,
-    route = HomeRoute
+    route = SearchRoute
   ),
   SECOND(
     selectedIconRes = R.drawable.tab_second_on,

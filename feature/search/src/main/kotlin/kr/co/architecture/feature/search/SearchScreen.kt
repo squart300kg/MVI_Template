@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -33,20 +32,19 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
-import kr.co.architecture.core.ui.HomeRoute
+import kr.co.architecture.core.ui.SearchRoute
 import kr.co.architecture.core.ui.GlobalUiStateEffect
-import kr.co.architecture.core.ui.theme.BaseTheme
 import kr.co.architecture.core.ui.util.asString
 import kr.co.architecture.core.ui.R as coreUiR
 
-fun NavGraphBuilder.homeScreen() {
-  composable<HomeRoute> {
-    HomeScreen()
+fun NavGraphBuilder.searchScreen() {
+  composable<SearchRoute> {
+    SearchScreen()
   }
 }
 
 @Composable
-fun HomeScreen(
+fun SearchScreen(
   modifier: Modifier = Modifier,
   viewModel: SearchViewModel = hiltViewModel()
 ) {
@@ -59,7 +57,7 @@ fun HomeScreen(
     }
   }
 
-  HomeScreen(
+  SearchScreen(
     modifier = modifier,
     uiState = uiState,
     onClickedItem = { viewModel.setEvent(SearchUiEvent.OnClickedItem(it)) }
@@ -69,7 +67,7 @@ fun HomeScreen(
 }
 
 @Composable
-fun HomeScreen(
+fun SearchScreen(
   modifier: Modifier = Modifier,
   uiState: SearchUiState,
   onClickedItem: (UiModel) -> Unit = {}

@@ -1,18 +1,18 @@
 package kr.co.architecture.core.repository
 
 import kr.co.architecture.core.domain.entity.SearchedBook
-import kr.co.architecture.core.domain.repository.Repository
-import kr.co.architecture.core.domain.usecase.GetListUseCase
+import kr.co.architecture.core.domain.repository.BookRepository
+import kr.co.architecture.core.domain.usecase.SearchBookUseCase
 import kr.co.architecture.core.network.RemoteApi
 import kr.co.architecture.core.network.operator.safeGet
 import kr.co.architecture.core.repository.mapper.BookSearchMapper
 import javax.inject.Inject
 
-class RepositoryImpl @Inject constructor(
+class DefaultBookRepositoryImpl @Inject constructor(
   private val remoteApi: RemoteApi
-) : Repository {
+) : BookRepository {
 
-  override suspend fun searchBook(params: GetListUseCase.Params): SearchedBook {
+  override suspend fun searchBook(params: SearchBookUseCase.Params): SearchedBook {
     return remoteApi.searchBook(
       query = params.query,
       sort = BookSearchMapper.mapperToDto(params.sortTypeEnum).value,
