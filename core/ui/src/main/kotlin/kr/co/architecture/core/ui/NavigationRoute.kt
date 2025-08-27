@@ -7,7 +7,7 @@ import kr.co.architecture.core.router.internal.navigator.Route
 data class DetailRoute(val id: String, val name: String): Route
 
 @Serializable
-data object FirstRoute : Route
+data object HomeRoute : Route
 
 @Serializable
-data object SecondRoute: Route
+data object BookmarkRoute: Route
