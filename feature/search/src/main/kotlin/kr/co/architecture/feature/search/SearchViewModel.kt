@@ -54,6 +54,15 @@ class SearchViewModel @Inject constructor(
           )
         }
       }
+      is SearchUiEvent.OnQueryChange -> setState { copy(query = event.query) }
+      is SearchUiEvent.OnSearch -> {
+        setState { copy(page = 1) }
+        setEffect { SearchUiSideEffect.Load.First }
+      }
+      is SearchUiEvent.OnChangeSort -> {
+        setState { copy(sort = event.sort, page = 1) }
+        setEffect { SearchUiSideEffect.Load.First }
+      }
     }
   }
 
@@ -62,7 +71,7 @@ class SearchViewModel @Inject constructor(
    *   1. sorting
    *   2. 검색
    *   3. 페이징 o
-   *   4. 상세 페이지 이동
+   *   4. 상세 페이지 이동 o
    * 2. Bookmark
    *   1. 로컬 리스트 조회
    *   2. 검색
@@ -83,8 +92,8 @@ class SearchViewModel @Inject constructor(
             is SearchUiSideEffect.Load.First -> 1
             is SearchUiSideEffect.Load.More -> setStateAndGet { copy(page = page + 1) }.page
           },
-          query = "미움받을용기",
-          sortTypeEnum = SortTypeEnum.ACCURACY,
+          query = uiState.value.query,
+          sortTypeEnum = uiState.value.sort,
           searchTypeEnum = SearchTypeEnum.IN_REMOTE
         )
       ).collect { result ->

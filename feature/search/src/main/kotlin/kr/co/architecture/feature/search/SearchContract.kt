@@ -7,6 +7,7 @@ import kr.co.architecture.core.common.formatter.DateTextFormatter
 import kr.co.architecture.core.common.formatter.MoneyTextFormatter
 import kr.co.architecture.core.domain.entity.Price
 import kr.co.architecture.core.domain.entity.SearchedBooks
+import kr.co.architecture.core.domain.enums.SortTypeEnum
 import kr.co.architecture.core.ui.UiEvent
 import kr.co.architecture.core.ui.UiSideEffect
 import kr.co.architecture.core.ui.UiState
@@ -78,6 +79,8 @@ data class SearchUiState(
   val uiType: SearchUiType = SearchUiType.NONE,
   val uiModels: ImmutableList<UiModel> = persistentListOf(),
   val page: Int = 1,
+  val query: String = "",
+  val sort: SortTypeEnum = SortTypeEnum.ACCURACY,
   val isPageable: Boolean = true,
   val isLoading: Boolean = false
 ) : UiState
@@ -86,6 +89,9 @@ sealed interface SearchUiEvent : UiEvent {
   data class OnClickedItem(val item: UiModel) : SearchUiEvent
   data class OnClickedBookmark(val item: UiModel) : SearchUiEvent
   data object OnScrolledToEnd : SearchUiEvent
+  data class OnQueryChange(val query: String) : SearchUiEvent
+  data object OnSearch : SearchUiEvent
+  data class OnChangeSort(val sort: SortTypeEnum) : SearchUiEvent
 }
 
 sealed interface SearchUiSideEffect : UiSideEffect {
