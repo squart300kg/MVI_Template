@@ -7,7 +7,7 @@ import kr.co.architecture.core.ui.SearchHeaderUiModel
 import kr.co.architecture.core.ui.UiEvent
 import kr.co.architecture.core.ui.UiSideEffect
 import kr.co.architecture.core.ui.UiState
-import kr.co.architecture.core.ui.enums.SortTypeUiEnum
+import kr.co.architecture.core.ui.enums.SortUiEnum
 
 enum class SearchUiType {
   NONE,
@@ -29,7 +29,7 @@ sealed interface SearchUiEvent : UiEvent {
   data object OnScrolledToEnd : SearchUiEvent
   data class OnQueryChange(val query: String) : SearchUiEvent
   data object OnSearch : SearchUiEvent
-  data class OnChangeSort(val sort: SortTypeUiEnum) : SearchUiEvent
+  data class OnChangeSort(val sort: SortUiEnum) : SearchUiEvent
 }
 
 sealed interface SearchUiSideEffect : UiSideEffect {

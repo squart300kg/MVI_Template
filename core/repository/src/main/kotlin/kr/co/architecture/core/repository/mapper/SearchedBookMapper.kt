@@ -4,10 +4,10 @@ import kr.co.architecture.core.domain.entity.Book
 import kr.co.architecture.core.domain.entity.Pageable
 import kr.co.architecture.core.domain.entity.Price
 import kr.co.architecture.core.domain.entity.SearchedBooks
-import kr.co.architecture.core.domain.enums.SortTypeEnum
+import kr.co.architecture.core.domain.enums.SortEnum
 import kr.co.architecture.core.network.model.NO_EXIST_PRICE
 import kr.co.architecture.core.network.model.SearchedBookApiResponse
-import kr.co.architecture.core.repository.enums.SortTypeDtoEnum
+import kr.co.architecture.core.repository.enums.SortDtoEnum
 
 object SearchedBookMapper {
   fun mapperToDomain(apiResponse: SearchedBookApiResponse) =
@@ -38,8 +38,8 @@ object SearchedBookMapper {
       }
     )
 
-  fun mapperToDto(domainRequest: SortTypeEnum) = when (domainRequest) {
-    SortTypeEnum.ACCURACY -> SortTypeDtoEnum.ACCURACY
-    SortTypeEnum.LATEST -> SortTypeDtoEnum.LATEST
+  fun mapperToDto(domainRequest: SortEnum) = when (domainRequest) {
+    SortEnum.ACCURACY -> SortDtoEnum.ACCURACY
+    SortEnum.LATEST -> SortDtoEnum.LATEST
   }
 }

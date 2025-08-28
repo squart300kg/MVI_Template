@@ -10,7 +10,7 @@ import kr.co.architecture.core.domain.entity.Book
 import kr.co.architecture.core.domain.entity.ISBN
 import kr.co.architecture.core.domain.entity.SearchedBooks
 import kr.co.architecture.core.domain.enums.BookmarkToggleTypeEnum
-import kr.co.architecture.core.domain.enums.SortTypeEnum
+import kr.co.architecture.core.domain.enums.SortEnum
 import kr.co.architecture.core.domain.repository.BookRepository
 import kr.co.architecture.core.domain.usecase.SearchBookUseCase
 import kr.co.architecture.core.domain.usecase.SearchBooksUseCase
@@ -26,7 +26,7 @@ class DefaultBookRepositoryImpl @Inject constructor(
   private val bookSearchDao: BookSearchDao
 ) : BookRepository {
 
-  private data class QueryKey(val query: String, val sort: SortTypeEnum)
+  private data class QueryKey(val query: String, val sort: SortEnum)
   private var currentKey: QueryKey? = null
 
   // DefaultBookRepositoryImpl은 Singleton이어서, 공유자원 관리 및 RaceCondition
@@ -63,7 +63,7 @@ class DefaultBookRepositoryImpl @Inject constructor(
   }
 
   override suspend fun searchBooks(params: SearchBooksUseCase.Params): SearchedBooks {
-    val newKey = QueryKey(params.query, params.sortTypeEnum)
+    val newKey = QueryKey(params.query, params.sortEnum)
 
     // 다른 쿼리/정렬로 시작하거나 첫 페이지면 캐시 초기화
     if (currentKey != newKey || params.page == 1) {
@@ -73,7 +73,7 @@ class DefaultBookRepositoryImpl @Inject constructor(
 
     return remoteApi.searchBook(
       query = params.query,
-      sort = SearchedBookMapper.mapperToDto(params.sortTypeEnum).value,
+      sort = SearchedBookMapper.mapperToDto(params.sortEnum).value,
       page = params.page
     )
       .safeGet()

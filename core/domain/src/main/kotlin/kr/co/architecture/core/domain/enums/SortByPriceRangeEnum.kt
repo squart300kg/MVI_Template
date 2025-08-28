@@ -2,22 +2,12 @@ package kr.co.architecture.core.domain.enums
 
 import kr.co.architecture.core.domain.entity.Price
 
-enum class SortTypeEnum {
-  ACCURACY,
-  LATEST
-}
-
-enum class SortDirectionEnum {
-  ASCENDING,
-  DESCENDING
-}
-
 /**
  * 구간 규칙:
  * - 하한: 초과(>) / 상한: 이하(<=)  → 구간이 절대 겹치지 않음
  *   [.., 5_000], (5_000, 15_000], (15_000, 25_000], (25_000, ..)
  */
-enum class PriceRangeSortTypeEnum(
+enum class SortByPriceRangeEnum(
   val minExclusive: Int?,   // null이면 하한 없음
   val maxInclusive: Int?    // null이면 상한 없음
 ) {
@@ -43,7 +33,7 @@ enum class PriceRangeSortTypeEnum(
 
   companion object {
     /** 금액으로 구간 역탐색 */
-    fun of(amount: Int): PriceRangeSortTypeEnum = entries.first { it.contains(amount) }
+    fun of(amount: Int): SortByPriceRangeEnum = entries.first { it.contains(amount) }
   }
 }
 

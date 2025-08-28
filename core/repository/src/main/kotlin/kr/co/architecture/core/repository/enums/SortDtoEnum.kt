@@ -1,6 +1,6 @@
 package kr.co.architecture.core.repository.enums
 
-enum class SortTypeDtoEnum(val value: String) {
+enum class SortDtoEnum(val value: String) {
   ACCURACY("accuracy"),
   LATEST("latest")
 }

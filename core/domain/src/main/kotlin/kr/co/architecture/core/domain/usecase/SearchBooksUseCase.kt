@@ -1,7 +1,7 @@
 package kr.co.architecture.core.domain.usecase
 
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kr.co.architecture.core.domain.enums.SortTypeEnum
+import kr.co.architecture.core.domain.enums.SortEnum
 import kr.co.architecture.core.domain.repository.BookRepository
 import javax.inject.Inject
 
@@ -15,6 +15,6 @@ class SearchBooksUseCase @Inject constructor(
   data class Params(
     val page: Int,
     val query: String,
-    val sortTypeEnum: SortTypeEnum
+    val sortEnum: SortEnum
   )
 }

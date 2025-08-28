@@ -21,7 +21,7 @@ import kr.co.architecture.core.domain.usecase.ToggleBookmarkUseCase
 import kr.co.architecture.core.ui.BaseViewModel
 import kr.co.architecture.core.ui.BookUiModel
 import kr.co.architecture.core.ui.DetailRoute
-import kr.co.architecture.core.ui.enums.SortTypeUiEnum
+import kr.co.architecture.core.ui.enums.SortUiEnum
 import javax.inject.Inject
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -121,7 +121,7 @@ class SearchViewModel @Inject constructor(
               is SearchUiSideEffect.Load.More -> setStateAndGet { copy(page = page + 1) }.page
             },
             query = uiState.value.searchHeaderUiModel.query(),
-            sortTypeEnum = SortTypeUiEnum.mapperToDomain(uiState.value.searchHeaderUiModel.sort)
+            sortEnum = SortUiEnum.mapperToDomain(uiState.value.searchHeaderUiModel.sort)
           )
         )
         setState {

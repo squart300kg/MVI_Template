@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -15,6 +16,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.outlined.Close
 import androidx.compose.material.icons.outlined.KeyboardArrowDown
+import androidx.compose.material.icons.outlined.Menu
 import androidx.compose.material3.AssistChip
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -35,12 +37,12 @@ import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
-import kr.co.architecture.core.ui.enums.SortTypeUiEnum
+import kr.co.architecture.core.ui.enums.SortUiEnum
 import kr.co.architecture.core.ui.R as coreUiR
 
 data class SearchHeaderUiModel(
   val query: () -> String = {""},
-  val sort: SortTypeUiEnum = SortTypeUiEnum.ACCURACY
+  val sort: SortUiEnum = SortUiEnum.ACCURACY
 )
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -48,35 +50,26 @@ data class SearchHeaderUiModel(
 fun SearchHeader(
   modifier: Modifier = Modifier,
   uiModel: SearchHeaderUiModel,
+  leftLabelText: String? = null,
   onQueryChange: (String) -> Unit,
   onSearch: () -> Unit,
-  onChangeSort: (SortTypeUiEnum) -> Unit = {}
+  trailingActions: @Composable RowScope.() -> Unit
 ) {
   val focusManager = LocalFocusManager.current
   val keyboardController = LocalSoftwareKeyboardController.current
 
   Column(modifier = modifier.padding(horizontal = 16.dp, vertical = 8.dp)) {
+
     OutlinedTextField(
-      modifier = Modifier
-        .fillMaxWidth()
-        .height(60.dp),
+      modifier = Modifier.fillMaxWidth().height(60.dp),
       value = uiModel.query(),
       onValueChange = onQueryChange,
-      placeholder = {
-        Text(text = stringResource(coreUiR.string.placeHint))
-      },
-      leadingIcon = {
-        Icon(
-          imageVector = Icons.Default.Search,
-          contentDescription = null)
-      },
+      placeholder = { Text(text = stringResource(coreUiR.string.placeHint)) },
+      leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
       trailingIcon = {
         if (uiModel.query().isNotEmpty()) {
           IconButton(onClick = { onQueryChange("") }) {
-            Icon(
-              imageVector = Icons.Outlined.Close,
-              contentDescription = stringResource(coreUiR.string.erase)
-            )
+            Icon(Icons.Outlined.Close, contentDescription = stringResource(coreUiR.string.erase))
           }
         }
       },
@@ -96,27 +89,56 @@ fun SearchHeader(
 
     Row(
       modifier = Modifier.fillMaxWidth(),
-      verticalAlignment = Alignment.CenterVertically,
-      horizontalArrangement = Arrangement.SpaceBetween
+      verticalAlignment = Alignment.CenterVertically
     ) {
-      Text(text = stringResource(uiModel.sort.resId))
+      // 좌측 라벨
+      Text(
+        text = leftLabelText ?: stringResource(uiModel.sort.resId),
+        modifier = Modifier.weight(1f)
+      )
 
-      var expanded by rememberSaveable { mutableStateOf(false) }
-      Box {
-        AssistChip(
-          onClick = { expanded = true },
-          label = { Text(stringResource(coreUiR.string.sort)) },
-          leadingIcon = { Icon(Icons.Outlined.KeyboardArrowDown, contentDescription = null) }
+      // 우측 액션칩들 (필터/정렬 등 원하는 만큼)
+      Row(
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        content = trailingActions
+      )
+    }
+  }
+}
+
+@Composable
+fun SortMenuChip(
+  selected: SortUiEnum,
+  onChange: (SortUiEnum) -> Unit,
+  label: String = stringResource(coreUiR.string.sort)
+) {
+  var expanded by rememberSaveable { mutableStateOf(false) }
+  Box {
+    AssistChip(
+      onClick = { expanded = true },
+      label = { Text(label) },
+      leadingIcon = { Icon(Icons.Outlined.KeyboardArrowDown, contentDescription = null) }
+    )
+    DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
+      SortUiEnum.entries.forEach { option ->
+        DropdownMenuItem(
+          text = { Text(stringResource(option.resId)) },
+          onClick = { onChange(option); expanded = false }
         )
-        DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
-          SortTypeUiEnum.entries.forEach { uiEnum ->
-            DropdownMenuItem(
-              text = { Text(stringResource(uiEnum.resId)) },
-              onClick = { onChangeSort(uiEnum); expanded = false }
-            )
-          }
-        }
       }
     }
   }
+}
+
+@Composable
+fun FilterChip(
+  onClick: () -> Unit,
+  label: String = stringResource(coreUiR.string.filter)
+) {
+  AssistChip(
+    onClick = onClick,
+    label = { Text(label) },
+    leadingIcon = { Icon(Icons.Outlined.Menu, contentDescription = null) }
+  )
 }
