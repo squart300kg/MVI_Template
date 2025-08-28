@@ -50,39 +50,13 @@ data class BookUiModel(
       dateTextFormatter: DateTextFormatter,
       moneyTextFormatter: MoneyTextFormatter
     ): ImmutableList<BookUiModel> {
-      return searchedBooks.books
-        .map { book ->
-          BookUiModel(
-            isbn = book.isbn,
-            thumbnail = book.thumbnail,
-            title = UiText.DynamicString(book.title),
-            publisher = UiText.StringResource(
-              resId = coreUiR.string.publisher,
-              args = listOf(book.publisher)
-            ),
-            authors = UiText.StringResource(
-              resId = coreUiR.string.authors,
-              args = listOf(book.authors.joinToString(", "))
-            ),
-            isBookmarked = book.isBookmarked,
-            price = run {
-              val displayedPrice = when (val price = book.price) {
-                is Price.Discount -> price.discounted
-                is Price.Origin -> price.origin
-              }
-              UiText.StringResource(
-                resId = coreUiR.string.won,
-                args = listOf(moneyTextFormatter(displayedPrice))
-              )
-            },
-            publishDate = UiText.StringResource(
-              resId = coreUiR.string.publishDate,
-              args = listOf(dateTextFormatter(book.dateTime))
-            )
-          )
-        }
-        .toImmutableList()
+      return mapperToUi(
+        book = searchedBooks.books,
+        dateTextFormatter = dateTextFormatter,
+        moneyTextFormatter = moneyTextFormatter
+      ).toImmutableList()
     }
+
     fun mapperToUi(
       book: List<Book>,
       dateTextFormatter: DateTextFormatter,
