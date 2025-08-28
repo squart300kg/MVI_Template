@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -32,6 +33,7 @@ import kr.co.architecture.core.ui.CoilAsyncImage
 import kr.co.architecture.core.ui.SearchRoute
 import kr.co.architecture.core.ui.GlobalUiStateEffect
 import kr.co.architecture.core.ui.HtmlText
+import kr.co.architecture.core.ui.PaginationLoadEffect
 import kr.co.architecture.core.ui.baseClickable
 import kr.co.architecture.core.ui.roundItem
 import kr.co.architecture.core.ui.util.asString
@@ -53,7 +55,7 @@ fun SearchScreen(
     viewModel.uiSideEffect.collect { effect ->
       when (effect) {
         is SearchUiSideEffect.Load -> {
-          viewModel.fetchData()
+          viewModel.fetchData(effect)
         }
       }
     }
@@ -62,7 +64,8 @@ fun SearchScreen(
   SearchScreen(
     modifier = modifier,
     uiState = uiState,
-    onClickedBookmark = { viewModel.setEvent(SearchUiEvent.OnClickedBookmark(it)) }
+    onClickedBookmark = { viewModel.setEvent(SearchUiEvent.OnClickedBookmark(it)) },
+    onScrollToEnd = { viewModel.setEvent(SearchUiEvent.OnScrolledToEnd) }
   )
 
   GlobalUiStateEffect(viewModel)
@@ -72,15 +75,23 @@ fun SearchScreen(
 fun SearchScreen(
   modifier: Modifier = Modifier,
   uiState: SearchUiState,
-  onClickedBookmark: (UiModel) -> Unit = {}
+  onClickedBookmark: (UiModel) -> Unit = {},
+  onScrollToEnd: () -> Unit = {}
 ) {
+  val listState = rememberLazyListState()
+  PaginationLoadEffect(
+    listState = listState,
+    isEnd = uiState.isPageable,
+    onScrollToEnd = onScrollToEnd
+  )
 
   when (uiState.uiType) {
     SearchUiType.NONE -> {}
     SearchUiType.LOADED -> {
       LazyColumn(
         modifier = modifier
-          .background(Color.LightGray)
+          .background(Color.LightGray),
+        state = listState
       ) {
         items(
           items = uiState.uiModels,

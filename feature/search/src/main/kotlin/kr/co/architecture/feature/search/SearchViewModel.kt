@@ -2,7 +2,7 @@ package kr.co.architecture.feature.search
 
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.catch
+import kotlinx.collections.immutable.PersistentList
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kr.co.architecture.core.common.formatter.DateTextFormatter
@@ -31,6 +31,9 @@ class SearchViewModel @Inject constructor(
 
   override fun handleEvent(event: SearchUiEvent) {
     when (event) {
+      is SearchUiEvent.OnScrolledToEnd -> {
+        setEffect { SearchUiSideEffect.Load.More }
+      }
       is SearchUiEvent.OnClickedItem -> {
 //        navigateTo(
 //          route = DetailRoute(
@@ -59,7 +62,7 @@ class SearchViewModel @Inject constructor(
    * 1. Search
    *   1. sorting
    *   2. 검색
-   *   3. 페이징
+   *   3. 페이징 o
    *   4. 상세 페이지 이동
    * 2. Bookmark
    *   1. 로컬 리스트 조회
@@ -72,11 +75,14 @@ class SearchViewModel @Inject constructor(
     setEffect { SearchUiSideEffect.Load.First }
   }
 
-  fun fetchData() {
+  fun fetchData(loadType: SearchUiSideEffect.Load) {
     viewModelScope.launch {
       searchBookUseCase(
         params = SearchBookUseCase.Params(
-          page = 1,
+          page = when (loadType) {
+            is SearchUiSideEffect.Load.First -> 1
+            is SearchUiSideEffect.Load.More -> setStateAndGet { copy(page = page + 1) }.page
+          },
           query = "미움받을용기",
           sortTypeEnum = SortTypeEnum.ACCURACY,
           searchTypeEnum = SearchTypeEnum.IN_REMOTE
@@ -88,9 +94,22 @@ class SearchViewModel @Inject constructor(
           }
           is DomainResult.Success -> {
             _loadingState.update { false }
-            setState { copy(
+            setState {
+              copy(
               uiType = SearchUiType.LOADED,
-              uiModels = UiModel.mapperToUi(result.data, dateTextFormatter, moneyTextFormatter)
+              uiModels = run {
+                val uiModel = UiModel.mapperToUi(
+                  searchedBook = result.data,
+                  dateTextFormatter = dateTextFormatter,
+                  moneyTextFormatter = moneyTextFormatter
+                )
+                when (loadType) {
+                  is SearchUiSideEffect.Load.First -> uiModel
+                  is SearchUiSideEffect.Load.More -> (uiState.value.uiModels as PersistentList)
+                    .addAll(uiModel)
+                }
+              },
+              isPageable = result.data.pageable.isEnd
             )}
           }
           is DomainResult.Error -> {

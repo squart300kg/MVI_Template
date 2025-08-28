@@ -78,12 +78,14 @@ data class SearchUiState(
   val uiType: SearchUiType = SearchUiType.NONE,
   val uiModels: ImmutableList<UiModel> = persistentListOf(),
   val page: Int = 1,
+  val isPageable: Boolean = true,
   val isLoading: Boolean = false
 ) : UiState
 
 sealed interface SearchUiEvent : UiEvent {
   data class OnClickedItem(val item: UiModel) : SearchUiEvent
   data class OnClickedBookmark(val item: UiModel) : SearchUiEvent
+  data object OnScrolledToEnd : SearchUiEvent
 }
 
 sealed interface SearchUiSideEffect : UiSideEffect {

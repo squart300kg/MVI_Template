@@ -10,6 +10,7 @@ import androidx.compose.runtime.remember
 @Composable
 fun PaginationLoadEffect(
   listState: LazyListState,
+  isEnd: Boolean,
   onScrollToEnd: () -> Unit,
   bufferItemCount: Int = 5
 ) {
@@ -24,6 +25,6 @@ fun PaginationLoadEffect(
     }
   }
   LaunchedEffect(shouldLoadMore) {
-    if (shouldLoadMore) onScrollToEnd()
+    if (shouldLoadMore && !isEnd) onScrollToEnd()
   }
 }

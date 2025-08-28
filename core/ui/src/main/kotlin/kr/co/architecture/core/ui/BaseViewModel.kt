@@ -12,6 +12,7 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.flow.updateAndGet
 import kotlinx.coroutines.launch
 import kr.co.architecture.core.model.ArchitectureSampleHttpException
 import kr.co.architecture.core.router.internal.navigator.Navigator
@@ -76,21 +77,14 @@ abstract class BaseViewModel<State : UiState, Event : UiEvent, Effect : UiSideEf
     _uiState.update { newState }
   }
 
+  protected fun setStateAndGet(reduce: State.() -> State): State {
+    val newState = uiState.value.reduce()
+    return _uiState.updateAndGet { newState }
+  }
+
   protected fun setEffect(builder: () -> Effect) {
     val effectValue = builder()
     viewModelScope.launch { _uiSideEffect.send(effectValue) }
-  }
-
-  protected fun launchSafetyWithLoading(
-    block: suspend CoroutineScope.() -> Unit,
-  ) {
-    viewModelScope.launch {
-      _loadingState.update { true }
-      runCatching {
-        coroutineScope { block() }
-      }.onFailure { showErrorDialog(it) }
-      _loadingState.update { false }
-    }
   }
 
   fun navigateBack() = viewModelScope.launch {

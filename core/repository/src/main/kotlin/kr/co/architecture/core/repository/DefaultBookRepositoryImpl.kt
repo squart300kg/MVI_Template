@@ -49,6 +49,13 @@ class DefaultBookRepositoryImpl @Inject constructor(
       page = params.page
     )
       .safeGet()
+      .also {
+        // TODO: 주석 지우기
+        println("apiLog, meta ; ${it.meta}")
+        it.documents.forEachIndexed { index, item ->
+          println("apiLog, document ; $index : $item")
+        }
+      }
       .let(SearchedBookMapper::mapperToDomain)
       .also { cachedSearchedBooks.addAll(it.books) }
   }
