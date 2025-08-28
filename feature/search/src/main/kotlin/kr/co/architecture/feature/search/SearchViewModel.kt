@@ -38,8 +38,6 @@ class SearchViewModel @Inject constructor(
 //        )
       }
       is SearchUiEvent.OnClickedBookmark -> {
-//        launchSafetyWithLoading {
-//        }
         viewModelScope.launch {
           toggleBookmarkUseCase(
             params = ToggleBookmarkUseCase.Params(

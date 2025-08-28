@@ -3,6 +3,8 @@ package kr.co.architecture.core.network.model
 import com.google.gson.annotations.SerializedName
 import java.util.Date
 
+const val NO_EXIST_PRICE = -1
+
 data class SearchedBookApiResponse(
   @SerializedName("documents")
   val documents: List<Book>,

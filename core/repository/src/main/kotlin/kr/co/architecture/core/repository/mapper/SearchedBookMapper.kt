@@ -5,6 +5,7 @@ import kr.co.architecture.core.domain.entity.Pageable
 import kr.co.architecture.core.domain.entity.Price
 import kr.co.architecture.core.domain.entity.SearchedBook
 import kr.co.architecture.core.domain.enums.SortTypeEnum
+import kr.co.architecture.core.network.model.NO_EXIST_PRICE
 import kr.co.architecture.core.network.model.SearchedBookApiResponse
 import kr.co.architecture.core.repository.enums.SortTypeDtoEnum
 
@@ -22,7 +23,7 @@ object SearchedBookMapper {
           authors = it.authors,
           publisher = it.publisher,
           dateTime = it.dateTime,
-          price = when (it.salePrice != 0) {
+          price = when (it.salePrice != NO_EXIST_PRICE) {
             true -> Price.Discount(
               origin = it.price,
               discounted = it.salePrice
