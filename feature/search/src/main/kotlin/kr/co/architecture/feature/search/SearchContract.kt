@@ -2,8 +2,8 @@ package kr.co.architecture.feature.search
 
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
-import kr.co.architecture.core.domain.entity.ISBN
 import kr.co.architecture.core.ui.BookUiModel
+import kr.co.architecture.core.ui.SearchHeaderUiModel
 import kr.co.architecture.core.ui.UiEvent
 import kr.co.architecture.core.ui.UiSideEffect
 import kr.co.architecture.core.ui.UiState
@@ -17,9 +17,8 @@ enum class SearchUiType {
 data class SearchUiState(
   val uiType: SearchUiType = SearchUiType.NONE,
   val bookUiModels: ImmutableList<BookUiModel> = persistentListOf(),
+  val searchHeaderUiModel: SearchHeaderUiModel = SearchHeaderUiModel(),
   val page: Int = 1,
-  val query: String = "ㄷ",
-  val sort: SortTypeUiEnum = SortTypeUiEnum.ACCURACY,
   val isPageable: Boolean = true,
   val isLoading: Boolean = false
 ) : UiState

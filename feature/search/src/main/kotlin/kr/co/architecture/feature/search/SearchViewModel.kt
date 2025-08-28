@@ -66,13 +66,17 @@ class SearchViewModel @Inject constructor(
         }
       }
       is SearchUiEvent.OnQueryChange -> {
-        setState { copy(query = event.query) }
+        setState {
+          copy(searchHeaderUiModel = uiState.value.searchHeaderUiModel.copy(query = { event.query }))
+        }
       }
       is SearchUiEvent.OnSearch -> {
         setEffect { SearchUiSideEffect.Load.First }
       }
       is SearchUiEvent.OnChangeSort -> {
-        setState { copy(sort = event.sort) }
+        setState {
+          copy(searchHeaderUiModel = uiState.value.searchHeaderUiModel.copy(sort = event.sort))
+        }
         setEffect { SearchUiSideEffect.Load.First }
       }
     }
@@ -119,8 +123,8 @@ class SearchViewModel @Inject constructor(
               is SearchUiSideEffect.Load.First -> setStateAndGet { copy(page = 1) }.page
               is SearchUiSideEffect.Load.More -> setStateAndGet { copy(page = page + 1) }.page
             },
-            query = uiState.value.query,
-            sortTypeEnum = SortTypeUiEnum.mapperToDomain(uiState.value.sort),
+            query = uiState.value.searchHeaderUiModel.query(),
+            sortTypeEnum = SortTypeUiEnum.mapperToDomain(uiState.value.searchHeaderUiModel.sort),
             searchTypeEnum = SearchTypeEnum.IN_REMOTE
           )
         )
