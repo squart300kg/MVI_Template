@@ -46,19 +46,15 @@ class DefaultBookRepositoryImpl @Inject constructor(
   }
 
   override suspend fun searchBooks(params: SearchBooksUseCase.Params): SearchedBooks {
+
+    if (params.page == 1) cachedSearchedBooks.clear()
+
     return remoteApi.searchBook(
       query = params.query,
       sort = SearchedBookMapper.mapperToDto(params.sortTypeEnum).value,
       page = params.page
     )
       .safeGet()
-      .also {
-        // TODO: 주석 지우기
-        println("apiLog, meta ; ${it.meta}")
-        it.documents.forEachIndexed { index, item ->
-          println("apiLog, document ; $index : $item")
-        }
-      }
       .let(SearchedBookMapper::mapperToDomain)
       .also { cachedSearchedBooks.addAll(it.books) }
   }

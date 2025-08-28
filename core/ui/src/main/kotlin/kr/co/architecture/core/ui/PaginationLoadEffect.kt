@@ -24,6 +24,7 @@ fun PaginationLoadEffect(
         lastVisibleItemIndex >= totalItemCount - bufferItemCount
     }
   }
+
   LaunchedEffect(shouldLoadMore) {
     if (shouldLoadMore && !isEnd) onScrollToEnd()
   }

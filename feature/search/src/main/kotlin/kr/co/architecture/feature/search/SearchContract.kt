@@ -80,7 +80,7 @@ data class SearchUiState(
   val uiType: SearchUiType = SearchUiType.NONE,
   val uiModels: ImmutableList<UiModel> = persistentListOf(),
   val page: Int = 1,
-  val query: String = "",
+  val query: String = "ㄷ",
   val sort: SortTypeUiEnum = SortTypeUiEnum.ACCURACY,
   val isPageable: Boolean = true,
   val isLoading: Boolean = false

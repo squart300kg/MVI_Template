@@ -3,14 +3,20 @@ package kr.co.architecture.feature.search
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.collections.immutable.PersistentList
+import kotlinx.collections.immutable.toImmutableList
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.flatMapConcat
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kr.co.architecture.core.common.formatter.DateTextFormatter
 import kr.co.architecture.core.common.formatter.MoneyTextFormatter
-import kr.co.architecture.core.domain.entity.DomainResult
 import kr.co.architecture.core.domain.entity.ISBN
 import kr.co.architecture.core.domain.enums.BookmarkToggleTypeEnum
 import kr.co.architecture.core.domain.enums.SearchTypeEnum
+import kr.co.architecture.core.domain.usecase.ObserveBookmarkedBooksUseCase
 import kr.co.architecture.core.domain.usecase.SearchBooksUseCase
 import kr.co.architecture.core.domain.usecase.ToggleBookmarkUseCase
 import kr.co.architecture.core.ui.BaseViewModel
@@ -18,9 +24,11 @@ import kr.co.architecture.core.ui.DetailRoute
 import kr.co.architecture.core.ui.enums.SortTypeUiEnum
 import javax.inject.Inject
 
+@OptIn(ExperimentalCoroutinesApi::class)
 @HiltViewModel
 class SearchViewModel @Inject constructor(
   private val searchBooksUseCase: SearchBooksUseCase,
+  private val observeBookmarkedBooksUseCase: ObserveBookmarkedBooksUseCase,
   private val toggleBookmarkUseCase: ToggleBookmarkUseCase,
   private val dateTextFormatter: DateTextFormatter,
   private val moneyTextFormatter: MoneyTextFormatter,
@@ -44,23 +52,26 @@ class SearchViewModel @Inject constructor(
       }
       is SearchUiEvent.OnClickedBookmark -> {
         viewModelScope.launch {
-          toggleBookmarkUseCase(
-            params = ToggleBookmarkUseCase.Params(
-              bookmarkToggleTypeEnum =
-                if (event.item.isBookmarked) BookmarkToggleTypeEnum.DELETE
-                else BookmarkToggleTypeEnum.SAVE,
-              isbn = ISBN(event.item.isbn)
+          runCatching {
+            toggleBookmarkUseCase(
+              params = ToggleBookmarkUseCase.Params(
+                bookmarkToggleTypeEnum =
+                  if (event.item.isBookmarked) BookmarkToggleTypeEnum.DELETE
+                  else BookmarkToggleTypeEnum.SAVE,
+                isbn = ISBN(event.item.isbn)
+              )
             )
-          )
+          }.onFailure { showErrorDialog(it) }
         }
       }
-      is SearchUiEvent.OnQueryChange -> setState { copy(query = event.query) }
+      is SearchUiEvent.OnQueryChange -> {
+        setState { copy(query = event.query) }
+      }
       is SearchUiEvent.OnSearch -> {
-        setState { copy(page = 1) }
         setEffect { SearchUiSideEffect.Load.First }
       }
       is SearchUiEvent.OnChangeSort -> {
-        setState { copy(sort = event.sort, page = 1) }
+        setState { copy(sort = event.sort) }
         setEffect { SearchUiSideEffect.Load.First }
       }
     }
@@ -68,8 +79,8 @@ class SearchViewModel @Inject constructor(
 
   /**
    * 1. Search
-   *   1. sorting
-   *   2. 검색
+   *   1. sorting o
+   *   2. 검색 o
    *   3. 페이징 o
    *   4. 상세 페이지 이동 o
    * 2. Bookmark
@@ -79,54 +90,80 @@ class SearchViewModel @Inject constructor(
    *   4. 상세 페이지 이동
    */
 
+  /**
+   * 1. search first loading
+   * 1. search more loading
+   * 1. toggle loading
+   *
+   */
   init {
-    setEffect { SearchUiSideEffect.Load.First }
+    uiState
+      .filter { it.uiModels.isNotEmpty() }
+      .flatMapConcat { uiState ->
+        observeBookmarkedBooksUseCase()
+          .onEach { bookmarkedBooks ->
+            setState {
+              copy(
+                uiModels = uiModels
+                  .map { uiModel ->
+                    uiModel.copy(isBookmarked = bookmarkedBooks.any { it.isbn == uiModel.isbn })
+                  }.toImmutableList()
+              )
+            }
+          }
+      }.launchIn(viewModelScope)
+
+//    viewModelScope.launch {
+//
+////      observeBookmarkedBooksUseCase()
+////        .collectLatest { bookmarkedBooks ->
+////          setState {
+////            copy(
+////              uiModels = uiModels
+////                .map { uiModel ->
+////                  uiModel.copy(isBookmarked = bookmarkedBooks.any { it.isbn == uiModel.isbn })
+////                }.toImmutableList()
+////            )
+////          }
+////        }
+//    }
   }
 
   // TODO: 검색결과 없을때도 표시
   fun fetchData(loadType: SearchUiSideEffect.Load) {
     viewModelScope.launch {
-      searchBooksUseCase(
-        params = SearchBooksUseCase.Params(
-          page = when (loadType) {
-            is SearchUiSideEffect.Load.First -> 1
-            is SearchUiSideEffect.Load.More -> setStateAndGet { copy(page = page + 1) }.page
-          },
-          query = uiState.value.query,
-          sortTypeEnum = SortTypeUiEnum.mapperToDomain(uiState.value.sort),
-          searchTypeEnum = SearchTypeEnum.IN_REMOTE
+      _loadingState.update { true }
+      runCatching {
+        val searchedBooks = searchBooksUseCase(
+          params = SearchBooksUseCase.Params(
+            page = when (loadType) {
+              is SearchUiSideEffect.Load.First -> setStateAndGet { copy(page = 1) }.page
+              is SearchUiSideEffect.Load.More -> setStateAndGet { copy(page = page + 1) }.page
+            },
+            query = uiState.value.query,
+            sortTypeEnum = SortTypeUiEnum.mapperToDomain(uiState.value.sort),
+            searchTypeEnum = SearchTypeEnum.IN_REMOTE
+          )
         )
-      ).collect { result ->
-        when (result) {
-          is DomainResult.Loading -> {
-            _loadingState.update { true }
-          }
-          is DomainResult.Error -> {
-            _loadingState.update { false }
-            showErrorDialog(result.throwable)
-          }
-          is DomainResult.Success -> {
-            _loadingState.update { false }
-            setState {
-              copy(
-              uiType = SearchUiType.LOADED,
-              uiModels = run {
-                val uiModel = UiModel.mapperToUi(
-                  searchedBooks = result.data,
-                  dateTextFormatter = dateTextFormatter,
-                  moneyTextFormatter = moneyTextFormatter
-                )
-                when (loadType) {
-                  is SearchUiSideEffect.Load.First -> uiModel
-                  is SearchUiSideEffect.Load.More -> (uiState.value.uiModels as PersistentList)
-                    .addAll(uiModel)
-                }
-              },
-              isPageable = result.data.pageable.isEnd
-            )}
-          }
-        }
-      }
+        setState {
+          copy(
+            uiType = SearchUiType.LOADED,
+            uiModels = run {
+              val uiModel = UiModel.mapperToUi(
+                searchedBooks = searchedBooks,
+                dateTextFormatter = dateTextFormatter,
+                moneyTextFormatter = moneyTextFormatter
+              )
+              when (loadType) {
+                is SearchUiSideEffect.Load.First -> uiModel
+                is SearchUiSideEffect.Load.More -> (uiState.value.uiModels as PersistentList)
+                  .addAll(uiModel)
+              }
+            },
+            isPageable = searchedBooks.pageable.isEnd
+          )}
+      }.onFailure { showErrorDialog(it) }
+      _loadingState.update { false }
     }
   }
 }

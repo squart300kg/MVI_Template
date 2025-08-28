@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -37,9 +38,11 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -112,12 +115,7 @@ fun SearchScreen(
   onClickedBookmark: (UiModel) -> Unit = {},
   onScrollToEnd: () -> Unit = {}
 ) {
-  val listState = rememberLazyListState()
-  PaginationLoadEffect(
-    listState = listState,
-    isEnd = uiState.isPageable,
-    onScrollToEnd = onScrollToEnd
-  )
+
 
   Column(modifier = modifier.fillMaxSize()) {
     SearchHeader(
@@ -131,14 +129,19 @@ fun SearchScreen(
     when (uiState.uiType) {
       SearchUiType.NONE -> {}
       SearchUiType.LOADED -> {
+        val listState = rememberLazyListState()
+        PaginationLoadEffect(
+          listState = listState,
+          isEnd = uiState.isPageable,
+          onScrollToEnd = onScrollToEnd
+        )
         LazyColumn(
           modifier = modifier
             .background(Color.LightGray),
           state = listState
         ) {
           items(
-            items = uiState.uiModels,
-            key = { it.isbn }
+            items = uiState.uiModels
           ) { item ->
             BookItem(
               modifier = Modifier
@@ -149,6 +152,7 @@ fun SearchScreen(
             )
           }
         }
+
       }
     }
   }
