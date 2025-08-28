@@ -44,7 +44,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -55,7 +54,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
-import kr.co.architecture.core.domain.entity.ISBN
 import kr.co.architecture.core.domain.enums.SortTypeEnum
 import kr.co.architecture.core.ui.CoilAsyncImage
 import kr.co.architecture.core.ui.SearchRoute
@@ -63,7 +61,6 @@ import kr.co.architecture.core.ui.GlobalUiStateEffect
 import kr.co.architecture.core.ui.HtmlText
 import kr.co.architecture.core.ui.PaginationLoadEffect
 import kr.co.architecture.core.ui.baseClickable
-import kr.co.architecture.core.ui.roundItem
 import kr.co.architecture.core.ui.util.asString
 import kr.co.architecture.core.ui.R as coreUiR
 
@@ -249,7 +246,7 @@ fun BookItem(
 private fun sortLabel(sort: SortTypeEnum): String =
   when (sort) {
     SortTypeEnum.ACCURACY -> "정확도순"
-    SortTypeEnum.RECENCY -> "최신순"
+    SortTypeEnum.LATEST -> "최신순"
   }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -309,7 +306,7 @@ fun SearchHeader(
           )
           DropdownMenuItem(
             text = { Text("최신순") },
-            onClick = { onChangeSort(SortTypeEnum.RECENCY); expanded = false }
+            onClick = { onChangeSort(SortTypeEnum.LATEST); expanded = false }
           )
         }
       }

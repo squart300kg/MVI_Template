@@ -40,6 +40,6 @@ object SearchedBookMapper {
 
   fun mapperToDto(domainRequest: SortTypeEnum) = when (domainRequest) {
     SortTypeEnum.ACCURACY -> SortTypeDtoEnum.ACCURACY
-    SortTypeEnum.RECENCY -> SortTypeDtoEnum.RECENCY
+    SortTypeEnum.LATEST -> SortTypeDtoEnum.LATEST
   }
 }
