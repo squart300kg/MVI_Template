@@ -7,4 +7,9 @@
     <string name="publishDate"><![CDATA[<b>출간일</b> : %1$s]]></string>
     <string name="contentsIntroduction"><![CDATA[<b>책 소개</b> : %1$s]]></string>
     <string name="back">뒤로</string>
+    <string name="placeHint">제목 또는 저자를 입력하세요.</string>
+    <string name="erase">지우기</string>
+    <string name="sort">정렬</string>
+    <string name="sortTypeAccuracy">정확도순</string>
+    <string name="sortTypeLatest">최신순</string>
 </resources>

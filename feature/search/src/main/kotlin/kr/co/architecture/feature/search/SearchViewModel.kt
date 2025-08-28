@@ -11,11 +11,11 @@ import kr.co.architecture.core.domain.entity.DomainResult
 import kr.co.architecture.core.domain.entity.ISBN
 import kr.co.architecture.core.domain.enums.BookmarkToggleTypeEnum
 import kr.co.architecture.core.domain.enums.SearchTypeEnum
-import kr.co.architecture.core.domain.enums.SortTypeEnum
 import kr.co.architecture.core.domain.usecase.SearchBooksUseCase
 import kr.co.architecture.core.domain.usecase.ToggleBookmarkUseCase
 import kr.co.architecture.core.ui.BaseViewModel
 import kr.co.architecture.core.ui.DetailRoute
+import kr.co.architecture.core.ui.enums.SortTypeUiEnum
 import javax.inject.Inject
 
 @HiltViewModel
@@ -93,7 +93,7 @@ class SearchViewModel @Inject constructor(
             is SearchUiSideEffect.Load.More -> setStateAndGet { copy(page = page + 1) }.page
           },
           query = uiState.value.query,
-          sortTypeEnum = uiState.value.sort,
+          sortTypeEnum = SortTypeUiEnum.mapperToDomain(uiState.value.sort),
           searchTypeEnum = SearchTypeEnum.IN_REMOTE
         )
       ).collect { result ->

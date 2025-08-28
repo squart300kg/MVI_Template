@@ -11,6 +11,7 @@ import kr.co.architecture.core.domain.enums.SortTypeEnum
 import kr.co.architecture.core.ui.UiEvent
 import kr.co.architecture.core.ui.UiSideEffect
 import kr.co.architecture.core.ui.UiState
+import kr.co.architecture.core.ui.enums.SortTypeUiEnum
 import kr.co.architecture.core.ui.util.UiText
 import kr.co.architecture.core.ui.R as coreUiR
 
@@ -80,7 +81,7 @@ data class SearchUiState(
   val uiModels: ImmutableList<UiModel> = persistentListOf(),
   val page: Int = 1,
   val query: String = "",
-  val sort: SortTypeEnum = SortTypeEnum.ACCURACY,
+  val sort: SortTypeUiEnum = SortTypeUiEnum.ACCURACY,
   val isPageable: Boolean = true,
   val isLoading: Boolean = false
 ) : UiState
@@ -91,7 +92,7 @@ sealed interface SearchUiEvent : UiEvent {
   data object OnScrolledToEnd : SearchUiEvent
   data class OnQueryChange(val query: String) : SearchUiEvent
   data object OnSearch : SearchUiEvent
-  data class OnChangeSort(val sort: SortTypeEnum) : SearchUiEvent
+  data class OnChangeSort(val sort: SortTypeUiEnum) : SearchUiEvent
 }
 
 sealed interface SearchUiSideEffect : UiSideEffect {

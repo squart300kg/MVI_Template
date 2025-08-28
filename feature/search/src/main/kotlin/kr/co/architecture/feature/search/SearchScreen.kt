@@ -31,7 +31,6 @@ import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -39,7 +38,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -56,13 +55,13 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
-import kr.co.architecture.core.domain.enums.SortTypeEnum
 import kr.co.architecture.core.ui.CoilAsyncImage
-import kr.co.architecture.core.ui.SearchRoute
 import kr.co.architecture.core.ui.GlobalUiStateEffect
 import kr.co.architecture.core.ui.HtmlText
 import kr.co.architecture.core.ui.PaginationLoadEffect
+import kr.co.architecture.core.ui.SearchRoute
 import kr.co.architecture.core.ui.baseClickable
+import kr.co.architecture.core.ui.enums.SortTypeUiEnum
 import kr.co.architecture.core.ui.util.asString
 import kr.co.architecture.core.ui.R as coreUiR
 
@@ -108,7 +107,7 @@ fun SearchScreen(
   uiState: SearchUiState,
   onQueryChange: (String) -> Unit = {},
   onSearch: () -> Unit = {},
-  onChangeSort: (SortTypeEnum) -> Unit = {},
+  onChangeSort: (SortTypeUiEnum) -> Unit = {},
   onClickedItem: (UiModel) -> Unit = {},
   onClickedBookmark: (UiModel) -> Unit = {},
   onScrollToEnd: () -> Unit = {}
@@ -244,22 +243,15 @@ fun BookItem(
   }
 }
 
-@Composable
-private fun sortLabel(sort: SortTypeEnum): String =
-  when (sort) {
-    SortTypeEnum.ACCURACY -> "정확도순"
-    SortTypeEnum.LATEST -> "최신순"
-  }
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SearchHeader(
   modifier: Modifier = Modifier,
   query: () -> String = {""},
-  sort: SortTypeEnum,
+  sort: SortTypeUiEnum,
   onQueryChange: (String) -> Unit,
   onSearch: () -> Unit,
-  onChangeSort: (SortTypeEnum) -> Unit
+  onChangeSort: (SortTypeUiEnum) -> Unit
 ) {
   val focusManager = LocalFocusManager.current
   val keyboardController = LocalSoftwareKeyboardController.current
@@ -271,12 +263,21 @@ fun SearchHeader(
         .height(60.dp),
       value = query(),
       onValueChange = onQueryChange,
-      placeholder = { Text("제목 또는 저자를 입력하세요.") },
-      leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
+      placeholder = {
+        Text(text = stringResource(coreUiR.string.placeHint))
+      },
+      leadingIcon = {
+        Icon(
+          imageVector = Icons.Default.Search,
+          contentDescription = null)
+      },
       trailingIcon = {
         if (query().isNotEmpty()) {
           IconButton(onClick = { onQueryChange("") }) {
-            Icon(Icons.Outlined.Close, contentDescription = "지우기")
+            Icon(
+              imageVector = Icons.Outlined.Close,
+              contentDescription = stringResource(coreUiR.string.erase)
+            )
           }
         }
       },
@@ -294,30 +295,27 @@ fun SearchHeader(
 
     Spacer(Modifier.height(12.dp))
 
-    // 정렬 표시 + 드롭다운
     Row(
       modifier = Modifier.fillMaxWidth(),
       verticalAlignment = Alignment.CenterVertically,
       horizontalArrangement = Arrangement.SpaceBetween
     ) {
-      Text(sortLabel(sort), style = MaterialTheme.typography.bodyMedium)
+      Text(text = stringResource(sort.resId))
 
-      var expanded by remember { mutableStateOf(false) }
+      var expanded by rememberSaveable { mutableStateOf(false) }
       Box {
         AssistChip(
           onClick = { expanded = true },
-          label = { Text("정렬") },
+          label = { Text(stringResource(coreUiR.string.sort)) },
           leadingIcon = { Icon(Icons.Outlined.KeyboardArrowDown, contentDescription = null) }
         )
         DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
-          DropdownMenuItem(
-            text = { Text("정확도순") },
-            onClick = { onChangeSort(SortTypeEnum.ACCURACY); expanded = false }
-          )
-          DropdownMenuItem(
-            text = { Text("최신순") },
-            onClick = { onChangeSort(SortTypeEnum.LATEST); expanded = false }
-          )
+          SortTypeUiEnum.entries.forEach { uiEnum ->
+            DropdownMenuItem(
+              text = { Text(stringResource(uiEnum.resId)) },
+              onClick = { onChangeSort(uiEnum); expanded = false }
+            )
+          }
         }
       }
     }

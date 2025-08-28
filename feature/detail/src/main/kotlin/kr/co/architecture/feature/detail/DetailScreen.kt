@@ -121,9 +121,7 @@ fun DetailScreen(
           verticalArrangement = Arrangement.spacedBy(6.dp)
         ) {
           HtmlText(inputText = uiState.publisher.asString())
-          HtmlText(inputText = uiState.publisher.asString())
           HtmlText(inputText = uiState.publishDate.asString())
-          HtmlText(inputText = uiState.isbn)
           HtmlText(inputText = uiState.price.asString())
         }
       }
