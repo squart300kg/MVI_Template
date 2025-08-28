@@ -15,7 +15,6 @@ import kr.co.architecture.core.common.formatter.DateTextFormatter
 import kr.co.architecture.core.common.formatter.MoneyTextFormatter
 import kr.co.architecture.core.domain.entity.ISBN
 import kr.co.architecture.core.domain.enums.BookmarkToggleTypeEnum
-import kr.co.architecture.core.domain.enums.SearchTypeEnum
 import kr.co.architecture.core.domain.usecase.ObserveBookmarkedBooksUseCase
 import kr.co.architecture.core.domain.usecase.SearchBooksUseCase
 import kr.co.architecture.core.domain.usecase.ToggleBookmarkUseCase
@@ -124,8 +123,7 @@ class SearchViewModel @Inject constructor(
               is SearchUiSideEffect.Load.More -> setStateAndGet { copy(page = page + 1) }.page
             },
             query = uiState.value.searchHeaderUiModel.query(),
-            sortTypeEnum = SortTypeUiEnum.mapperToDomain(uiState.value.searchHeaderUiModel.sort),
-            searchTypeEnum = SearchTypeEnum.IN_REMOTE
+            sortTypeEnum = SortTypeUiEnum.mapperToDomain(uiState.value.searchHeaderUiModel.sort)
           )
         )
         setState {

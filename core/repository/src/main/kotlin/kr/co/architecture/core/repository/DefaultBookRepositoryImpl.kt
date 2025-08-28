@@ -1,12 +1,16 @@
 package kr.co.architecture.core.repository
 
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kr.co.architecture.core.database.dao.BookSearchDao
 import kr.co.architecture.core.domain.entity.Book
+import kr.co.architecture.core.domain.entity.ISBN
 import kr.co.architecture.core.domain.entity.SearchedBooks
 import kr.co.architecture.core.domain.enums.BookmarkToggleTypeEnum
+import kr.co.architecture.core.domain.enums.SortTypeEnum
 import kr.co.architecture.core.domain.repository.BookRepository
 import kr.co.architecture.core.domain.usecase.SearchBookUseCase
 import kr.co.architecture.core.domain.usecase.SearchBooksUseCase
@@ -15,7 +19,6 @@ import kr.co.architecture.core.network.RemoteApi
 import kr.co.architecture.core.network.operator.safeGet
 import kr.co.architecture.core.repository.mapper.SearchedBookMapper
 import kr.co.architecture.core.repository.mapper.BookMapper
-import java.util.LinkedList
 import javax.inject.Inject
 
 class DefaultBookRepositoryImpl @Inject constructor(
@@ -23,7 +26,13 @@ class DefaultBookRepositoryImpl @Inject constructor(
   private val bookSearchDao: BookSearchDao
 ) : BookRepository {
 
-  private val cachedSearchedBooks = LinkedList<Book>()
+  private data class QueryKey(val query: String, val sort: SortTypeEnum)
+  private var currentKey: QueryKey? = null
+
+  // DefaultBookRepositoryImpl은 Singleton이어서, 공유자원 관리 및 RaceCondition
+  // 방지가 필요하여 Mutex 선언
+  private val cacheMutex = Mutex()
+  private val cachedSearchedBooks = LinkedHashMap<ISBN, Book>()
 
   override fun observeBookmarkedBooks(): Flow<List<Book>> =
     bookSearchDao.observeBookmarkedBooks()
@@ -38,16 +47,29 @@ class DefaultBookRepositoryImpl @Inject constructor(
     when (params.bookmarkToggleTypeEnum) {
       BookmarkToggleTypeEnum.SAVE -> {
         bookSearchDao.upsert(BookMapper.mapperToEntity(cachedBook))
+        // 캐시 동기화
+        cacheMutex.withLock {
+          cachedSearchedBooks[ISBN(cachedBook.isbn)] = cachedBook.copy(isBookmarked = true)
+        }
       }
       BookmarkToggleTypeEnum.DELETE -> {
         bookSearchDao.delete(cachedBook.isbn)
+        // 캐시 동기화
+        cacheMutex.withLock {
+          cachedSearchedBooks[ISBN(cachedBook.isbn)] = cachedBook.copy(isBookmarked = false)
+        }
       }
     }
   }
 
   override suspend fun searchBooks(params: SearchBooksUseCase.Params): SearchedBooks {
+    val newKey = QueryKey(params.query, params.sortTypeEnum)
 
-    if (params.page == 1) cachedSearchedBooks.clear()
+    // 다른 쿼리/정렬로 시작하거나 첫 페이지면 캐시 초기화
+    if (currentKey != newKey || params.page == 1) {
+      cachedSearchedBooks.clear()
+      currentKey = newKey
+    }
 
     return remoteApi.searchBook(
       query = params.query,
@@ -56,20 +78,25 @@ class DefaultBookRepositoryImpl @Inject constructor(
     )
       .safeGet()
       .let(SearchedBookMapper::mapperToDomain)
-      .also { cachedSearchedBooks.addAll(it.books) }
+      .also { searchedBooks ->
+        cacheMutex.withLock {
+          searchedBooks.books.forEach { book ->
+            cachedSearchedBooks[ISBN(book.isbn)] = book
+          }
+        }
+      }
   }
 
   override suspend fun searchBook(params: SearchBookUseCase.Params): Book? {
-    val isbn = params.isbn.value
+    val isbn = params.isbn
     val localBooks = observeBookmarkedBooks().first()
-    return cachedSearchedBooks
-      .firstOrNull { it.isbn == isbn }
-      ?.let { remoteBook ->
-        val isBookmarked = localBooks.any { it.isbn == remoteBook.isbn }
-        if (isBookmarked) remoteBook.copy(isBookmarked = true)
-        else remoteBook
-      } ?: run {
-      localBooks.find { it.isbn == isbn }
-    }
+    return cachedSearchedBooks[isbn]
+      ?.let { cachedBook ->
+        val isBookmarked = localBooks.any { it.isbn == cachedBook.isbn }
+        if (isBookmarked) cachedBook.copy(isBookmarked = true)
+        else cachedBook
+      } ?: run { localBooks.find { it.isbn == isbn.value } }
+      ?.also { cachedSearchedBooks[isbn] = it }
   }
 }
+
