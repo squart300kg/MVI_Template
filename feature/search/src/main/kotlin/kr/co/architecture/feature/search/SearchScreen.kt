@@ -50,7 +50,13 @@ fun SearchScreen(
 ) {
   val uiState by viewModel.uiState.collectAsStateWithLifecycle()
   LaunchedEffect(Unit) {
-    viewModel.uiSideEffect.collect { effect -> }
+    viewModel.uiSideEffect.collect { effect ->
+      when (effect) {
+        is SearchUiSideEffect.Load -> {
+          viewModel.fetchData()
+        }
+      }
+    }
   }
 
   SearchScreen(

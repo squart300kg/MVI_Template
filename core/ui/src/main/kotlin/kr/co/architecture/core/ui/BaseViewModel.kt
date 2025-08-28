@@ -30,7 +30,7 @@ abstract class BaseViewModel<State : UiState, Event : UiEvent, Effect : UiSideEf
 
   private val initialState: State by lazy { createInitialState() }
 
-  private val _loadingState = MutableStateFlow<Boolean>(false)
+  protected val _loadingState = MutableStateFlow<Boolean>(false)
   val loadingState = _loadingState.asStateFlow()
 
   private val _errorMessageState = MutableSharedFlow<BaseCenterDialogUiModel>()

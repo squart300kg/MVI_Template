@@ -28,17 +28,17 @@ class DetailViewModel @Inject constructor(
   }
 
   fun fetchData() {
-    launchSafetyWithLoading {
-      val id = savedStateHandle.toRoute<DetailRoute>().id
-      val name = savedStateHandle.toRoute<DetailRoute>().name
-
-      setState {
-        copy(
-          uiType = DetailUiType.LOADED,
-          id = UiText.DynamicString(id),
-          name = UiText.DynamicString(name)
-        )
-      }
-    }
+//    launchSafetyWithLoading {
+//      val id = savedStateHandle.toRoute<DetailRoute>().id
+//      val name = savedStateHandle.toRoute<DetailRoute>().name
+//
+//      setState {
+//        copy(
+//          uiType = DetailUiType.LOADED,
+//          id = UiText.DynamicString(id),
+//          name = UiText.DynamicString(name)
+//        )
+//      }
+//    }
   }
 }

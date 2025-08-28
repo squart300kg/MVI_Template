@@ -24,21 +24,21 @@ class BookmarkViewModel @Inject constructor(
   init { setEffect { BookmarkUiSideEffect.Load } }
 
   fun fetchData() {
-    launchSafetyWithLoading {
-//      val names = searchBookUseCase(
-//        params = SearchBookUseCase.Params(
-//          page = 1,
-//          query = "미움받을용기",
-//          sortTypeEnum = SortTypeEnum.ACCURACY
-//        )
-//      )
-//      println("apiLog : $names")
-//      setState {
-//        copy(
-//          uiType = SecondUiType.LOADED,
-//          uiModels = UiModel.mapperToUi(names)
-//        )
-//      }
-    }
+//    launchSafetyWithLoading {
+////      val names = searchBookUseCase(
+////        params = SearchBookUseCase.Params(
+////          page = 1,
+////          query = "미움받을용기",
+////          sortTypeEnum = SortTypeEnum.ACCURACY
+////        )
+////      )
+////      println("apiLog : $names")
+////      setState {
+////        copy(
+////          uiType = SecondUiType.LOADED,
+////          uiModels = UiModel.mapperToUi(names)
+////        )
+////      }
+//    }
   }
 }

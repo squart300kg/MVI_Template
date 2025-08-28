@@ -5,7 +5,6 @@ import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
 import kr.co.architecture.core.common.formatter.DateTextFormatter
 import kr.co.architecture.core.common.formatter.MoneyTextFormatter
-import kr.co.architecture.core.domain.entity.Book
 import kr.co.architecture.core.domain.entity.Price
 import kr.co.architecture.core.domain.entity.SearchedBook
 import kr.co.architecture.core.ui.UiEvent
@@ -87,5 +86,9 @@ sealed interface SearchUiEvent : UiEvent {
   data class OnClickedBookmark(val item: UiModel) : SearchUiEvent
 }
 
-sealed interface HomeUiSideEffect : UiSideEffect {
+sealed interface SearchUiSideEffect : UiSideEffect {
+  sealed interface Load: SearchUiSideEffect {
+    data object First: Load
+    data object More: Load
+  }
 }

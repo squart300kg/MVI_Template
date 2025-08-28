@@ -3,9 +3,11 @@ package kr.co.architecture.feature.search
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kr.co.architecture.core.common.formatter.DateTextFormatter
 import kr.co.architecture.core.common.formatter.MoneyTextFormatter
+import kr.co.architecture.core.domain.entity.DomainResult
 import kr.co.architecture.core.domain.entity.ISBN
 import kr.co.architecture.core.domain.enums.BookmarkToggleTypeEnum
 import kr.co.architecture.core.domain.enums.SearchTypeEnum
@@ -21,7 +23,7 @@ class SearchViewModel @Inject constructor(
   private val toggleBookmarkUseCase: ToggleBookmarkUseCase,
   private val dateTextFormatter: DateTextFormatter,
   private val moneyTextFormatter: MoneyTextFormatter,
-) : BaseViewModel<SearchUiState, SearchUiEvent, HomeUiSideEffect>() {
+) : BaseViewModel<SearchUiState, SearchUiEvent, SearchUiSideEffect>() {
 
   override fun createInitialState(): SearchUiState {
     return SearchUiState()
@@ -39,6 +41,7 @@ class SearchViewModel @Inject constructor(
       }
       is SearchUiEvent.OnClickedBookmark -> {
         viewModelScope.launch {
+
           toggleBookmarkUseCase(
             params = ToggleBookmarkUseCase.Params(
               bookmarkToggleTypeEnum =
@@ -52,7 +55,24 @@ class SearchViewModel @Inject constructor(
     }
   }
 
+  /**
+   * 1. Search
+   *   1. sorting
+   *   2. 검색
+   *   3. 페이징
+   *   4. 상세 페이지 이동
+   * 2. Bookmark
+   *   1. 로컬 리스트 조회
+   *   2. 검색
+   *   3. 북마크 해제
+   *   4. 상세 페이지 이동
+   */
+
   init {
+    setEffect { SearchUiSideEffect.Load.First }
+  }
+
+  fun fetchData() {
     viewModelScope.launch {
       searchBookUseCase(
         params = SearchBookUseCase.Params(
@@ -61,20 +81,22 @@ class SearchViewModel @Inject constructor(
           sortTypeEnum = SortTypeEnum.ACCURACY,
           searchTypeEnum = SearchTypeEnum.IN_REMOTE
         )
-      )
-        .catch {
-          println("errorLog, init : ${it.stackTraceToString()}")
-        }
-        .collect { searchedBook ->
-        setState {
-          copy(
-            uiType = SearchUiType.LOADED,
-            uiModels = UiModel.mapperToUi(
-              searchedBook = searchedBook,
-              dateTextFormatter = dateTextFormatter,
-              moneyTextFormatter = moneyTextFormatter
-            )
-          )
+      ).collect { result ->
+        when (result) {
+          is DomainResult.Loading -> {
+            _loadingState.update { true }
+          }
+          is DomainResult.Success -> {
+            _loadingState.update { false }
+            setState { copy(
+              uiType = SearchUiType.LOADED,
+              uiModels = UiModel.mapperToUi(result.data, dateTextFormatter, moneyTextFormatter)
+            )}
+          }
+          is DomainResult.Error -> {
+            _loadingState.update { false }
+            showErrorDialog(result.throwable)
+          }
         }
       }
     }
