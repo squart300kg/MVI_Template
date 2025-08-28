@@ -50,7 +50,7 @@ fun SearchHeader(
   uiModel: SearchHeaderUiModel,
   onQueryChange: (String) -> Unit,
   onSearch: () -> Unit,
-  onChangeSort: (SortTypeUiEnum) -> Unit
+  onChangeSort: (SortTypeUiEnum) -> Unit = {}
 ) {
   val focusManager = LocalFocusManager.current
   val keyboardController = LocalSoftwareKeyboardController.current

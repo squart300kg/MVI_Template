@@ -44,9 +44,9 @@ fun BookmarkScreen(
   val uiState by viewModel.uiState.collectAsStateWithLifecycle()
   LaunchedEffect(Unit) {
     viewModel.uiSideEffect.collect { effect ->
-      when (effect) {
-        is BookmarkUiSideEffect.Load -> viewModel.fetchData()
-      }
+//      when (effect) {
+//        is BookmarkUiSideEffect.Load -> viewModel.fetchData()
+//      }
     }
   }
   BookmarkScreen(
@@ -54,7 +54,6 @@ fun BookmarkScreen(
     uiState = uiState,
     onQueryChange = { viewModel.setEvent(BookmarkUiEvent.OnQueryChange(it)) },
     onSearch = { viewModel.setEvent(BookmarkUiEvent.OnSearch) },
-    onChangeSort = { viewModel.setEvent(BookmarkUiEvent.OnChangeSort(it)) },
     onClickedBookmark = { isbn, isBookmarked ->
       viewModel.setEvent(BookmarkUiEvent.OnClickedBookmark(isbn, isBookmarked)) },
     onClickedItem = { viewModel.setEvent(BookmarkUiEvent.OnClickedItem(it)) },
@@ -69,7 +68,6 @@ fun BookmarkScreen(
   uiState: BookmarkUiState,
   onQueryChange: (String) -> Unit = {},
   onSearch: () -> Unit = {},
-  onChangeSort: (SortTypeUiEnum) -> Unit = {},
   onClickedItem: (isbn: String) -> Unit = {},
   onClickedBookmark: (isbn: String, isBookmarked: Boolean) -> Unit = { _, _ -> },
 ) {
@@ -82,7 +80,6 @@ fun BookmarkScreen(
           uiModel = uiState.searchHeaderUiModel,
           onQueryChange = onQueryChange,
           onSearch = onSearch,
-          onChangeSort = onChangeSort
         )
         LazyColumn(
           modifier = modifier

@@ -7,7 +7,6 @@ import com.skydoves.sandwich.suspendOnError
 import com.skydoves.sandwich.suspendOnException
 import kr.co.architecture.core.model.ArchitectureSampleHttpException
 
-
 suspend fun <ENTITY> ApiResponse<ENTITY>.safeGet(): ENTITY = this
   .suspendOnError {
     throw ArchitectureSampleHttpException(

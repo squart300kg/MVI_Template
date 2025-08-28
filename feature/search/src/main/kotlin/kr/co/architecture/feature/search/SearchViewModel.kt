@@ -34,9 +34,7 @@ class SearchViewModel @Inject constructor(
   private val moneyTextFormatter: MoneyTextFormatter,
 ) : BaseViewModel<SearchUiState, SearchUiEvent, SearchUiSideEffect>() {
 
-  override fun createInitialState(): SearchUiState {
-    return SearchUiState()
-  }
+  override fun createInitialState() = SearchUiState()
 
   override fun handleEvent(event: SearchUiEvent) {
     when (event) {

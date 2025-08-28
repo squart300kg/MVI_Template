@@ -25,9 +25,7 @@ class DetailViewModel @Inject constructor(
   private val moneyTextFormatter: MoneyTextFormatter
 ) : BaseViewModel<DetailUiState, DetailUiEvent, DetailUiSideEffect>() {
 
-  override fun createInitialState(): DetailUiState {
-    return DetailUiState()
-  }
+  override fun createInitialState() = DetailUiState()
 
   override fun handleEvent(event: DetailUiEvent) {
     when (event) {

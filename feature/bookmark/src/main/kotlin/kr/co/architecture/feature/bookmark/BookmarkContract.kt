@@ -25,7 +25,6 @@ sealed interface BookmarkUiEvent : UiEvent {
   data class OnClickedBookmark(val isbn: String, val isBookmarked: Boolean) : BookmarkUiEvent
   data class OnQueryChange(val query: String) : BookmarkUiEvent
   data object OnSearch : BookmarkUiEvent
-  data class OnChangeSort(val sort: SortTypeUiEnum) : BookmarkUiEvent
 }
 
 sealed interface BookmarkUiSideEffect : UiSideEffect {

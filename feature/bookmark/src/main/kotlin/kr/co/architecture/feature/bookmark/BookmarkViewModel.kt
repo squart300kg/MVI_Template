@@ -1,12 +1,7 @@
 package kr.co.architecture.feature.bookmark
 
 import androidx.lifecycle.viewModelScope
-import kr.co.architecture.core.domain.usecase.SearchBooksUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.collections.immutable.toImmutableList
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.filter
-import kotlinx.coroutines.flow.flatMapConcat
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
@@ -23,15 +18,13 @@ import javax.inject.Inject
 
 @HiltViewModel
 class BookmarkViewModel @Inject constructor(
-  private val observeBookmarkedBooksUseCase: ObserveBookmarkedBooksUseCase,
+  observeBookmarkedBooksUseCase: ObserveBookmarkedBooksUseCase,
   private val toggleBookmarkUseCase: ToggleBookmarkUseCase,
   private val dateTextFormatter: DateTextFormatter,
   private val moneyTextFormatter: MoneyTextFormatter,
 ) : BaseViewModel<BookmarkUiState, BookmarkUiEvent, BookmarkUiSideEffect>() {
 
-  override fun createInitialState(): BookmarkUiState {
-    return BookmarkUiState()
-  }
+  override fun createInitialState() = BookmarkUiState()
 
   override fun handleEvent(event: BookmarkUiEvent) {
     when (event) {
@@ -55,7 +48,6 @@ class BookmarkViewModel @Inject constructor(
             )
           }.onFailure { showErrorDialog(it) }
         }
-
       }
       is BookmarkUiEvent.OnQueryChange -> {
         setState {
@@ -63,12 +55,8 @@ class BookmarkViewModel @Inject constructor(
         }
       }
       is BookmarkUiEvent.OnSearch -> {
-        setEffect { BookmarkUiSideEffect.Load }
-      }
-      is BookmarkUiEvent.OnChangeSort -> {
-        setState {
-          copy(searchHeaderUiModel = uiState.value.searchHeaderUiModel.copy(sort = event.sort))
-        }
+        // TODO: 로컬 검색기능을
+        //  1. 도서이름, 출판사, 저자 로 검색되도록
       }
     }
   }
@@ -87,9 +75,5 @@ class BookmarkViewModel @Inject constructor(
           )
         }
       }.launchIn(viewModelScope)
-  }
-
-  fun fetchData() {
-
   }
 }

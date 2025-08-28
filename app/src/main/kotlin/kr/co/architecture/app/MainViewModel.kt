@@ -26,9 +26,7 @@ class MainViewModel @Inject constructor(
 
 ) : BaseViewModel<MainUiState, MainUiEvent, MainUiSideEffect>() {
 
-  override fun createInitialState(): MainUiState {
-    return MainUiState()
-  }
+  override fun createInitialState() = MainUiState()
 
   override fun handleEvent(event: MainUiEvent) {
     when (event) {
