@@ -1,14 +1,13 @@
 package kr.co.architecture.feature.bookmark
 
-import kr.co.architecture.core.domain.usecase.SearchBookUseCase
+import kr.co.architecture.core.domain.usecase.SearchBooksUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kr.co.architecture.core.domain.enums.SortTypeEnum
 import kr.co.architecture.core.ui.BaseViewModel
 import javax.inject.Inject
 
 @HiltViewModel
 class BookmarkViewModel @Inject constructor(
-  private val searchBookUseCase: SearchBookUseCase
+  private val searchBooksUseCase: SearchBooksUseCase
 ) : BaseViewModel<BookmarkUiState, BookmarkUiEvent, BookmarkUiSideEffect>() {
 
   override fun createInitialState(): BookmarkUiState {

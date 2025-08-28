@@ -12,14 +12,15 @@ import kr.co.architecture.core.domain.entity.ISBN
 import kr.co.architecture.core.domain.enums.BookmarkToggleTypeEnum
 import kr.co.architecture.core.domain.enums.SearchTypeEnum
 import kr.co.architecture.core.domain.enums.SortTypeEnum
-import kr.co.architecture.core.domain.usecase.SearchBookUseCase
+import kr.co.architecture.core.domain.usecase.SearchBooksUseCase
 import kr.co.architecture.core.domain.usecase.ToggleBookmarkUseCase
 import kr.co.architecture.core.ui.BaseViewModel
+import kr.co.architecture.core.ui.DetailRoute
 import javax.inject.Inject
 
 @HiltViewModel
 class SearchViewModel @Inject constructor(
-  private val searchBookUseCase: SearchBookUseCase,
+  private val searchBooksUseCase: SearchBooksUseCase,
   private val toggleBookmarkUseCase: ToggleBookmarkUseCase,
   private val dateTextFormatter: DateTextFormatter,
   private val moneyTextFormatter: MoneyTextFormatter,
@@ -35,12 +36,11 @@ class SearchViewModel @Inject constructor(
         setEffect { SearchUiSideEffect.Load.More }
       }
       is SearchUiEvent.OnClickedItem -> {
-//        navigateTo(
-//          route = DetailRoute(
-//            id = event.item.id,
-//            name = event.item.name.value ?: ""
-//          )
-//        )
+        navigateTo(
+          route = DetailRoute(
+            isbn = event.item.isbn
+          )
+        )
       }
       is SearchUiEvent.OnClickedBookmark -> {
         viewModelScope.launch {
@@ -75,10 +75,11 @@ class SearchViewModel @Inject constructor(
     setEffect { SearchUiSideEffect.Load.First }
   }
 
+  // TODO: 검색결과 없을때도 표시
   fun fetchData(loadType: SearchUiSideEffect.Load) {
     viewModelScope.launch {
-      searchBookUseCase(
-        params = SearchBookUseCase.Params(
+      searchBooksUseCase(
+        params = SearchBooksUseCase.Params(
           page = when (loadType) {
             is SearchUiSideEffect.Load.First -> 1
             is SearchUiSideEffect.Load.More -> setStateAndGet { copy(page = page + 1) }.page
@@ -92,6 +93,10 @@ class SearchViewModel @Inject constructor(
           is DomainResult.Loading -> {
             _loadingState.update { true }
           }
+          is DomainResult.Error -> {
+            _loadingState.update { false }
+            showErrorDialog(result.throwable)
+          }
           is DomainResult.Success -> {
             _loadingState.update { false }
             setState {
@@ -99,7 +104,7 @@ class SearchViewModel @Inject constructor(
               uiType = SearchUiType.LOADED,
               uiModels = run {
                 val uiModel = UiModel.mapperToUi(
-                  searchedBook = result.data,
+                  searchedBooks = result.data,
                   dateTextFormatter = dateTextFormatter,
                   moneyTextFormatter = moneyTextFormatter
                 )
@@ -111,10 +116,6 @@ class SearchViewModel @Inject constructor(
               },
               isPageable = result.data.pageable.isEnd
             )}
-          }
-          is DomainResult.Error -> {
-            _loadingState.update { false }
-            showErrorDialog(result.throwable)
           }
         }
       }

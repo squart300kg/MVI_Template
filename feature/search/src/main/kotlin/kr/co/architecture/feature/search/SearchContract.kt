@@ -6,7 +6,7 @@ import kotlinx.collections.immutable.toImmutableList
 import kr.co.architecture.core.common.formatter.DateTextFormatter
 import kr.co.architecture.core.common.formatter.MoneyTextFormatter
 import kr.co.architecture.core.domain.entity.Price
-import kr.co.architecture.core.domain.entity.SearchedBook
+import kr.co.architecture.core.domain.entity.SearchedBooks
 import kr.co.architecture.core.ui.UiEvent
 import kr.co.architecture.core.ui.UiSideEffect
 import kr.co.architecture.core.ui.UiState
@@ -31,11 +31,11 @@ data class UiModel(
 
   companion object {
     fun mapperToUi(
-      searchedBook: SearchedBook,
+      searchedBooks: SearchedBooks,
       dateTextFormatter: DateTextFormatter,
       moneyTextFormatter: MoneyTextFormatter
     ): ImmutableList<UiModel> {
-      return searchedBook.books
+      return searchedBooks.books
         .map { book ->
           UiModel(
             isbn = book.isbn,

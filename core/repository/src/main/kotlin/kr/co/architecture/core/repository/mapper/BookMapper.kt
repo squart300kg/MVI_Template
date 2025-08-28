@@ -20,6 +20,7 @@ object BookMapper {
       },
       url = book.url,
       thumbnail = book.thumbnail,
+      contents = book.contents,
       isBookmarked = true
     )
 
@@ -35,6 +36,7 @@ object BookMapper {
         else 0,
       originPrice = book.price.origin,
       url = book.url,
+      contents = book.contents,
       thumbnail = book.thumbnail
     )
 }

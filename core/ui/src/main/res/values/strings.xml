@@ -5,4 +5,6 @@
     <string name="publisher"><![CDATA[<b>출판사</b> : %1$s]]></string>
     <string name="authors"><![CDATA[<b>저자</b> : %1$s]]></string>
     <string name="publishDate"><![CDATA[<b>출간일</b> : %1$s]]></string>
+    <string name="contentsIntroduction"><![CDATA[<b>책 소개</b> : %1$s]]></string>
+    <string name="back">뒤로</string>
 </resources>

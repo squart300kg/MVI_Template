@@ -24,5 +24,7 @@ data class BookEntity(
     @ColumnInfo(name = "url")
     val url: String,
     @ColumnInfo(name = "thumbnail")
-    val thumbnail: String
+    val thumbnail: String,
+    @ColumnInfo(name = "contents")
+    val contents: String
 )

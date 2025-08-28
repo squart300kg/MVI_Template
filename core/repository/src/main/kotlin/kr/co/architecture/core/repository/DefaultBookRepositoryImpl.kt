@@ -4,10 +4,11 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kr.co.architecture.core.database.dao.BookSearchDao
 import kr.co.architecture.core.domain.entity.Book
-import kr.co.architecture.core.domain.entity.SearchedBook
+import kr.co.architecture.core.domain.entity.SearchedBooks
 import kr.co.architecture.core.domain.enums.BookmarkToggleTypeEnum
 import kr.co.architecture.core.domain.repository.BookRepository
 import kr.co.architecture.core.domain.usecase.SearchBookUseCase
+import kr.co.architecture.core.domain.usecase.SearchBooksUseCase
 import kr.co.architecture.core.domain.usecase.ToggleBookmarkUseCase
 import kr.co.architecture.core.network.RemoteApi
 import kr.co.architecture.core.network.operator.safeGet
@@ -42,7 +43,7 @@ class DefaultBookRepositoryImpl @Inject constructor(
     }
   }
 
-  override suspend fun searchBook(params: SearchBookUseCase.Params): SearchedBook {
+  override suspend fun searchBooks(params: SearchBooksUseCase.Params): SearchedBooks {
     return remoteApi.searchBook(
       query = params.query,
       sort = SearchedBookMapper.mapperToDto(params.sortTypeEnum).value,
@@ -58,5 +59,9 @@ class DefaultBookRepositoryImpl @Inject constructor(
       }
       .let(SearchedBookMapper::mapperToDomain)
       .also { cachedSearchedBooks.addAll(it.books) }
+  }
+
+  override fun searchBook(params: SearchBookUseCase.Params): Book? {
+    return cachedSearchedBooks.find { params.isbn.value == it.isbn }
   }
 }

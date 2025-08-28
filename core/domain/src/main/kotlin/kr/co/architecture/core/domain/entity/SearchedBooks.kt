@@ -4,7 +4,7 @@ import java.util.Date
 
 // TODO: 모델 패키지 정리
 
-data class SearchedBook(
+data class SearchedBooks(
   val pageable: Pageable,
   val books: List<Book>
 )
@@ -18,6 +18,7 @@ data class Book(
   val price: Price,
   val url: String,
   val thumbnail: String,
+  val contents: String,
   val isBookmarked: Boolean,
 )
 
