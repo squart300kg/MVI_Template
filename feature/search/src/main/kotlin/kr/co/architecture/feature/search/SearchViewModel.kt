@@ -20,6 +20,7 @@ import kr.co.architecture.core.domain.usecase.ObserveBookmarkedBooksUseCase
 import kr.co.architecture.core.domain.usecase.SearchBooksUseCase
 import kr.co.architecture.core.domain.usecase.ToggleBookmarkUseCase
 import kr.co.architecture.core.ui.BaseViewModel
+import kr.co.architecture.core.ui.BookUiModel
 import kr.co.architecture.core.ui.DetailRoute
 import kr.co.architecture.core.ui.enums.SortTypeUiEnum
 import javax.inject.Inject
@@ -46,7 +47,7 @@ class SearchViewModel @Inject constructor(
       is SearchUiEvent.OnClickedItem -> {
         navigateTo(
           route = DetailRoute(
-            isbn = event.item.isbn
+            isbn = event.isbn
           )
         )
       }
@@ -56,9 +57,9 @@ class SearchViewModel @Inject constructor(
             toggleBookmarkUseCase(
               params = ToggleBookmarkUseCase.Params(
                 bookmarkToggleTypeEnum =
-                  if (event.item.isBookmarked) BookmarkToggleTypeEnum.DELETE
+                  if (event.isBookmarked) BookmarkToggleTypeEnum.DELETE
                   else BookmarkToggleTypeEnum.SAVE,
-                isbn = ISBN(event.item.isbn)
+                isbn = ISBN(event.isbn)
               )
             )
           }.onFailure { showErrorDialog(it) }

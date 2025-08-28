@@ -55,6 +55,9 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
+import kr.co.architecture.core.domain.entity.ISBN
+import kr.co.architecture.core.ui.BookItem
+import kr.co.architecture.core.ui.BookUiModel
 import kr.co.architecture.core.ui.CoilAsyncImage
 import kr.co.architecture.core.ui.GlobalUiStateEffect
 import kr.co.architecture.core.ui.HtmlText
@@ -93,7 +96,8 @@ fun SearchScreen(
     onQueryChange = { viewModel.setEvent(SearchUiEvent.OnQueryChange(it)) },
     onSearch = { viewModel.setEvent(SearchUiEvent.OnSearch) },
     onChangeSort = { viewModel.setEvent(SearchUiEvent.OnChangeSort(it)) },
-    onClickedBookmark = { viewModel.setEvent(SearchUiEvent.OnClickedBookmark(it)) },
+    onClickedBookmark = { isbn, isBookmarked ->
+      viewModel.setEvent(SearchUiEvent.OnClickedBookmark(isbn, isBookmarked)) },
     onClickedItem = { viewModel.setEvent(SearchUiEvent.OnClickedItem(it)) },
     onScrollToEnd = { viewModel.setEvent(SearchUiEvent.OnScrolledToEnd) }
   )
@@ -108,12 +112,10 @@ fun SearchScreen(
   onQueryChange: (String) -> Unit = {},
   onSearch: () -> Unit = {},
   onChangeSort: (SortTypeUiEnum) -> Unit = {},
-  onClickedItem: (BookUiModel) -> Unit = {},
-  onClickedBookmark: (BookUiModel) -> Unit = {},
+  onClickedItem: (isbn: String) -> Unit = {},
+  onClickedBookmark: (isbn: String, isBookmarked: Boolean) -> Unit = { _, _ -> },
   onScrollToEnd: () -> Unit = {}
 ) {
-
-
   Column(modifier = modifier.fillMaxSize()) {
     SearchHeader(
       query = { uiState.query },
@@ -144,102 +146,12 @@ fun SearchScreen(
               modifier = Modifier
                 .padding(10.dp),
               bookUiModel = item,
-              onClickedBookmark = onClickedBookmark,
-              onClickedItem = onClickedItem
+              onClickedBookmark = { onClickedBookmark(item.isbn, item.isBookmarked) },
+              onClickedItem = { onClickedItem(item.isbn) }
             )
           }
         }
-
       }
-    }
-  }
-}
-
-@Composable
-fun BookItem(
-  modifier: Modifier = Modifier,
-  bookUiModel: BookUiModel,
-  onClickedBookmark: (BookUiModel) -> Unit = {},
-  onClickedItem: (BookUiModel) -> Unit = {}
-) {
-  Surface(
-    modifier = modifier
-      .fillMaxWidth()
-      .height(IntrinsicSize.Max)
-      .baseClickable { onClickedItem(bookUiModel) },
-    shape = RoundedCornerShape(12.dp)
-  ) {
-    Row(
-      modifier = Modifier.padding(10.dp)
-    ) {
-      CoilAsyncImage(
-        modifier = Modifier.weight(0.3f),
-        url = bookUiModel.thumbnail,
-      )
-
-      Column(
-        modifier = Modifier
-          .weight(0.5f)
-          .align(Alignment.CenterVertically),
-      ) {
-        HtmlText(
-          modifier = Modifier.padding(4.dp),
-          inputText = stringResource(id = coreUiR.string.book),
-          style = TextStyle(
-            fontSize = 12.sp
-          )
-        )
-
-        HtmlText(
-          modifier = Modifier.padding(4.dp),
-          inputText = bookUiModel.title.asString(),
-          style = TextStyle(
-            fontWeight = FontWeight.Bold
-          ),
-          maxLine = 2
-        )
-
-        HtmlText(
-          modifier = Modifier.padding(4.dp),
-          inputText = bookUiModel.publisher.asString(),
-          style = TextStyle(
-            fontSize = 12.sp
-          )
-        )
-
-        HtmlText(
-          modifier = Modifier.padding(4.dp),
-          inputText = bookUiModel.authors.asString(),
-          style = TextStyle(
-            fontSize = 12.sp
-          )
-        )
-
-        HtmlText(
-          modifier = Modifier.padding(4.dp),
-          inputText = bookUiModel.publishDate.asString(),
-          style = TextStyle(
-            fontSize = 12.sp
-          )
-        )
-
-        Text(
-          modifier = Modifier.padding(4.dp),
-          text = bookUiModel.price.asString(),
-          fontWeight = FontWeight.Bold
-        )
-      }
-
-      Image(
-        modifier = Modifier
-          .wrapContentWidth(Alignment.End)
-          .weight(0.1f)
-          .baseClickable { onClickedBookmark(bookUiModel) },
-        imageVector =
-          if (bookUiModel.isBookmarked) Icons.Filled.Favorite
-          else Icons.Outlined.FavoriteBorder,
-        contentDescription = null
-      )
     }
   }
 }
