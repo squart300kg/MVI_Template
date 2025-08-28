@@ -44,7 +44,6 @@ class SearchViewModel @Inject constructor(
       }
       is SearchUiEvent.OnClickedBookmark -> {
         viewModelScope.launch {
-
           toggleBookmarkUseCase(
             params = ToggleBookmarkUseCase.Params(
               bookmarkToggleTypeEnum =

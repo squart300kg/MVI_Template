@@ -15,6 +15,6 @@ interface BookRepository {
 
   suspend fun searchBooks(params: SearchBooksUseCase.Params): SearchedBooks
 
-  fun searchBook(params: SearchBookUseCase.Params): Book?
+  suspend fun searchBook(params: SearchBookUseCase.Params): Book?
 
 }

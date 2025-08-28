@@ -49,6 +49,8 @@ fun DetailScreen(
   DetailScreen(
     modifier = modifier,
     uiState = uiState,
+    onClickedBookmark = { viewModel.setEvent(DetailUiEvent.OnClickedBookmark) },
+    onClickedBack = { viewModel.setEvent(DetailUiEvent.OnClickedBack) },
   )
 
   GlobalUiStateEffect(viewModel)
@@ -66,10 +68,18 @@ fun DetailScreen(
     modifier = modifier,
     topBar = {
       TopAppBar(
-        title = { Text(text = stringResource(coreUiR.string.back), maxLines = 1) },
+        title = {
+          Text(
+            text = stringResource(coreUiR.string.back),
+            maxLines = 1
+          )
+        },
         navigationIcon = {
           IconButton(onClick = onClickedBack) {
-            Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = null)
+            Icon(
+              imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+              contentDescription = null
+            )
           }
         },
         actions = {
@@ -96,7 +106,6 @@ fun DetailScreen(
         modifier = Modifier.fillMaxWidth(),
         verticalAlignment = Alignment.Top
       ) {
-        // 표지 (이미지 자리)
         CoilAsyncImage(
           modifier = Modifier
             .sizeIn(minWidth = 96.dp)
@@ -107,7 +116,6 @@ fun DetailScreen(
 
         Spacer(Modifier.width(16.dp))
 
-        // 메타 정보
         Column(
           modifier = Modifier.weight(1f),
           verticalArrangement = Arrangement.spacedBy(6.dp)

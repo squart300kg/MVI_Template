@@ -1,6 +1,7 @@
 package kr.co.architecture.core.repository
 
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kr.co.architecture.core.database.dao.BookSearchDao
 import kr.co.architecture.core.domain.entity.Book
@@ -14,6 +15,7 @@ import kr.co.architecture.core.network.RemoteApi
 import kr.co.architecture.core.network.operator.safeGet
 import kr.co.architecture.core.repository.mapper.SearchedBookMapper
 import kr.co.architecture.core.repository.mapper.BookMapper
+import java.util.LinkedList
 import javax.inject.Inject
 
 class DefaultBookRepositoryImpl @Inject constructor(
@@ -21,14 +23,14 @@ class DefaultBookRepositoryImpl @Inject constructor(
   private val bookSearchDao: BookSearchDao
 ) : BookRepository {
 
-  private val cachedSearchedBooks = mutableListOf<Book>()
+  private val cachedSearchedBooks = LinkedList<Book>()
 
   override fun observeBookmarkedBooks(): Flow<List<Book>> =
     bookSearchDao.observeBookmarkedBooks()
       .map { it.map(BookMapper::mapperToDomain) }
 
   override suspend fun toggleBookmark(params: ToggleBookmarkUseCase.Params) {
-    val cachedBook = cachedSearchedBooks.find { it.isbn == params.isbn.value }
+    val cachedBook = searchBook(SearchBookUseCase.Params(params.isbn))
     checkNotNull(cachedBook) {
       "cached UI `Book` and Domain `Book` does not sync"
     }
@@ -61,7 +63,17 @@ class DefaultBookRepositoryImpl @Inject constructor(
       .also { cachedSearchedBooks.addAll(it.books) }
   }
 
-  override fun searchBook(params: SearchBookUseCase.Params): Book? {
-    return cachedSearchedBooks.find { params.isbn.value == it.isbn }
+  override suspend fun searchBook(params: SearchBookUseCase.Params): Book? {
+    val isbn = params.isbn.value
+    val localBooks = observeBookmarkedBooks().first()
+    return cachedSearchedBooks
+      .firstOrNull { it.isbn == isbn }
+      ?.let { remoteBook ->
+        val isBookmarked = localBooks.any { it.isbn == remoteBook.isbn }
+        if (isBookmarked) remoteBook.copy(isBookmarked = true)
+        else remoteBook
+      } ?: run {
+      localBooks.find { it.isbn == isbn }
+    }
   }
 }

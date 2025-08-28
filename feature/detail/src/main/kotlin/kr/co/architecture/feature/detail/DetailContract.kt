@@ -34,6 +34,7 @@ data class DetailUiState(
       dateTextFormatter: DateTextFormatter,
       moneyTextFormatter: MoneyTextFormatter
     ) = DetailUiState(
+      uiType = DetailUiType.LOADED,
       isbn = book.isbn,
       thumbnail = book.thumbnail,
       title = UiText.DynamicString(book.title),
@@ -43,10 +44,7 @@ data class DetailUiState(
       ),
       authors = UiText.StringResource(
         resId = coreUiR.string.authors,
-        args = listOf(
-          book.authors
-            .joinToString(", ")
-        )
+        args = listOf(book.authors.joinToString(", "))
       ),
       isBookmarked = book.isBookmarked,
       price = run {
@@ -70,7 +68,8 @@ data class DetailUiState(
 
 
 sealed interface DetailUiEvent : UiEvent {
-
+  data object OnClickedBookmark: DetailUiEvent
+  data object OnClickedBack: DetailUiEvent
 }
 
 sealed interface DetailUiSideEffect : UiSideEffect {

@@ -9,16 +9,18 @@ import kotlinx.coroutines.launch
 import kr.co.architecture.core.common.formatter.DateTextFormatter
 import kr.co.architecture.core.common.formatter.MoneyTextFormatter
 import kr.co.architecture.core.domain.entity.ISBN
+import kr.co.architecture.core.domain.enums.BookmarkToggleTypeEnum
 import kr.co.architecture.core.domain.usecase.SearchBookUseCase
+import kr.co.architecture.core.domain.usecase.ToggleBookmarkUseCase
 import kr.co.architecture.core.ui.BaseViewModel
 import kr.co.architecture.core.ui.DetailRoute
-import kr.co.architecture.core.ui.util.UiText
 import javax.inject.Inject
 
 @HiltViewModel
 class DetailViewModel @Inject constructor(
   private val savedStateHandle: SavedStateHandle,
   private val searchBookUseCase: SearchBookUseCase,
+  private val toggleBookmarkUseCase: ToggleBookmarkUseCase,
   private val dateTextFormatter: DateTextFormatter,
   private val moneyTextFormatter: MoneyTextFormatter
 ) : BaseViewModel<DetailUiState, DetailUiEvent, DetailUiSideEffect>() {
@@ -29,7 +31,24 @@ class DetailViewModel @Inject constructor(
 
   override fun handleEvent(event: DetailUiEvent) {
     when (event) {
-      else -> {}
+      is DetailUiEvent.OnClickedBookmark -> {
+        viewModelScope.launch {
+          toggleBookmarkUseCase(
+            params = ToggleBookmarkUseCase.Params(
+              bookmarkToggleTypeEnum =
+                if (uiState.value.isBookmarked) BookmarkToggleTypeEnum.DELETE
+                else BookmarkToggleTypeEnum.SAVE,
+              isbn = ISBN(uiState.value.isbn)
+            )
+          )
+          setState { copy(isBookmarked = !uiState.value.isBookmarked) }
+        }
+      }
+      is DetailUiEvent.OnClickedBack -> {
+        viewModelScope.launch {
+          navigator.navigateBack()
+        }
+      }
     }
   }
 
@@ -52,7 +71,6 @@ class DetailViewModel @Inject constructor(
             moneyTextFormatter = moneyTextFormatter
           )
         }
-
       }.onFailure { showErrorDialog(it) }
     }
   }
