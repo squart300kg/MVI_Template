@@ -26,6 +26,7 @@ import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import kr.co.architecture.core.common.formatter.DateTextFormatter
 import kr.co.architecture.core.common.formatter.MoneyTextFormatter
+import kr.co.architecture.core.domain.entity.Book
 import kr.co.architecture.core.domain.entity.Price
 import kr.co.architecture.core.domain.entity.SearchedBooks
 import kr.co.architecture.core.ui.util.UiText
@@ -61,10 +62,7 @@ data class BookUiModel(
             ),
             authors = UiText.StringResource(
               resId = coreUiR.string.authors,
-              args = listOf(
-                book.authors
-                  .joinToString(", ")
-              )
+              args = listOf(book.authors.joinToString(", "))
             ),
             isBookmarked = book.isBookmarked,
             price = run {
@@ -83,6 +81,43 @@ data class BookUiModel(
             )
           )
         }
+        .toImmutableList()
+    }
+    fun mapperToUi(
+      book: List<Book>,
+      dateTextFormatter: DateTextFormatter,
+      moneyTextFormatter: MoneyTextFormatter
+    ): ImmutableList<BookUiModel> {
+      return book.map {
+        BookUiModel(
+          isbn = it.isbn,
+          thumbnail = it.thumbnail,
+          title = UiText.DynamicString(it.title),
+          publisher = UiText.StringResource(
+            resId = coreUiR.string.publisher,
+            args = listOf(it.publisher)
+          ),
+          authors = UiText.StringResource(
+            resId = coreUiR.string.authors,
+            args = listOf(it.authors.joinToString(", "))
+          ),
+          isBookmarked = it.isBookmarked,
+          price = run {
+            val displayedPrice = when (val price = it.price) {
+              is Price.Discount -> price.discounted
+              is Price.Origin -> price.origin
+            }
+            UiText.StringResource(
+              resId = coreUiR.string.won,
+              args = listOf(moneyTextFormatter(displayedPrice))
+            )
+            },
+          publishDate = UiText.StringResource(
+            resId = coreUiR.string.publishDate,
+            args = listOf(dateTextFormatter(it.dateTime))
+          )
+        )
+      }
         .toImmutableList()
     }
   }

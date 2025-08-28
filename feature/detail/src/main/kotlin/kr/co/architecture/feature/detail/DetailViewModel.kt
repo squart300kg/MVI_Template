@@ -33,15 +33,17 @@ class DetailViewModel @Inject constructor(
     when (event) {
       is DetailUiEvent.OnClickedBookmark -> {
         viewModelScope.launch {
-          toggleBookmarkUseCase(
-            params = ToggleBookmarkUseCase.Params(
-              bookmarkToggleTypeEnum =
-                if (uiState.value.isBookmarked) BookmarkToggleTypeEnum.DELETE
-                else BookmarkToggleTypeEnum.SAVE,
-              isbn = ISBN(uiState.value.isbn)
+          runCatching {
+            toggleBookmarkUseCase(
+              params = ToggleBookmarkUseCase.Params(
+                bookmarkToggleTypeEnum =
+                  if (uiState.value.isBookmarked) BookmarkToggleTypeEnum.DELETE
+                  else BookmarkToggleTypeEnum.SAVE,
+                isbn = ISBN(uiState.value.isbn)
+              )
             )
-          )
-          setState { copy(isBookmarked = !uiState.value.isBookmarked) }
+            setState { copy(isBookmarked = !uiState.value.isBookmarked) }
+          }.onFailure { showErrorDialog(it) }
         }
       }
       is DetailUiEvent.OnClickedBack -> {
