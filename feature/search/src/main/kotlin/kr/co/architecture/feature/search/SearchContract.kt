@@ -7,7 +7,6 @@ import kr.co.architecture.core.common.formatter.DateTextFormatter
 import kr.co.architecture.core.common.formatter.MoneyTextFormatter
 import kr.co.architecture.core.domain.entity.Price
 import kr.co.architecture.core.domain.entity.SearchedBooks
-import kr.co.architecture.core.domain.enums.SortTypeEnum
 import kr.co.architecture.core.ui.UiEvent
 import kr.co.architecture.core.ui.UiSideEffect
 import kr.co.architecture.core.ui.UiState
@@ -20,7 +19,7 @@ enum class SearchUiType {
   LOADED
 }
 
-data class UiModel(
+data class BookUiModel(
   val isbn: String,
   val thumbnail: String,
   val title: UiText,
@@ -36,10 +35,10 @@ data class UiModel(
       searchedBooks: SearchedBooks,
       dateTextFormatter: DateTextFormatter,
       moneyTextFormatter: MoneyTextFormatter
-    ): ImmutableList<UiModel> {
+    ): ImmutableList<BookUiModel> {
       return searchedBooks.books
         .map { book ->
-          UiModel(
+          BookUiModel(
             isbn = book.isbn,
             thumbnail = book.thumbnail,
             title = UiText.DynamicString(book.title),
@@ -78,7 +77,7 @@ data class UiModel(
 
 data class SearchUiState(
   val uiType: SearchUiType = SearchUiType.NONE,
-  val uiModels: ImmutableList<UiModel> = persistentListOf(),
+  val bookUiModels: ImmutableList<BookUiModel> = persistentListOf(),
   val page: Int = 1,
   val query: String = "ㄷ",
   val sort: SortTypeUiEnum = SortTypeUiEnum.ACCURACY,
@@ -87,8 +86,8 @@ data class SearchUiState(
 ) : UiState
 
 sealed interface SearchUiEvent : UiEvent {
-  data class OnClickedItem(val item: UiModel) : SearchUiEvent
-  data class OnClickedBookmark(val item: UiModel) : SearchUiEvent
+  data class OnClickedItem(val item: BookUiModel) : SearchUiEvent
+  data class OnClickedBookmark(val item: BookUiModel) : SearchUiEvent
   data object OnScrolledToEnd : SearchUiEvent
   data class OnQueryChange(val query: String) : SearchUiEvent
   data object OnSearch : SearchUiEvent

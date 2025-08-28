@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -38,11 +37,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -111,8 +108,8 @@ fun SearchScreen(
   onQueryChange: (String) -> Unit = {},
   onSearch: () -> Unit = {},
   onChangeSort: (SortTypeUiEnum) -> Unit = {},
-  onClickedItem: (UiModel) -> Unit = {},
-  onClickedBookmark: (UiModel) -> Unit = {},
+  onClickedItem: (BookUiModel) -> Unit = {},
+  onClickedBookmark: (BookUiModel) -> Unit = {},
   onScrollToEnd: () -> Unit = {}
 ) {
 
@@ -141,12 +138,12 @@ fun SearchScreen(
           state = listState
         ) {
           items(
-            items = uiState.uiModels
+            items = uiState.bookUiModels
           ) { item ->
             BookItem(
               modifier = Modifier
                 .padding(10.dp),
-              uiModel = item,
+              bookUiModel = item,
               onClickedBookmark = onClickedBookmark,
               onClickedItem = onClickedItem
             )
@@ -161,15 +158,15 @@ fun SearchScreen(
 @Composable
 fun BookItem(
   modifier: Modifier = Modifier,
-  uiModel: UiModel,
-  onClickedBookmark: (UiModel) -> Unit = {},
-  onClickedItem: (UiModel) -> Unit = {}
+  bookUiModel: BookUiModel,
+  onClickedBookmark: (BookUiModel) -> Unit = {},
+  onClickedItem: (BookUiModel) -> Unit = {}
 ) {
   Surface(
     modifier = modifier
       .fillMaxWidth()
       .height(IntrinsicSize.Max)
-      .baseClickable { onClickedItem(uiModel) },
+      .baseClickable { onClickedItem(bookUiModel) },
     shape = RoundedCornerShape(12.dp)
   ) {
     Row(
@@ -177,7 +174,7 @@ fun BookItem(
     ) {
       CoilAsyncImage(
         modifier = Modifier.weight(0.3f),
-        url = uiModel.thumbnail,
+        url = bookUiModel.thumbnail,
       )
 
       Column(
@@ -195,7 +192,7 @@ fun BookItem(
 
         HtmlText(
           modifier = Modifier.padding(4.dp),
-          inputText = uiModel.title.asString(),
+          inputText = bookUiModel.title.asString(),
           style = TextStyle(
             fontWeight = FontWeight.Bold
           ),
@@ -204,7 +201,7 @@ fun BookItem(
 
         HtmlText(
           modifier = Modifier.padding(4.dp),
-          inputText = uiModel.publisher.asString(),
+          inputText = bookUiModel.publisher.asString(),
           style = TextStyle(
             fontSize = 12.sp
           )
@@ -212,7 +209,7 @@ fun BookItem(
 
         HtmlText(
           modifier = Modifier.padding(4.dp),
-          inputText = uiModel.authors.asString(),
+          inputText = bookUiModel.authors.asString(),
           style = TextStyle(
             fontSize = 12.sp
           )
@@ -220,7 +217,7 @@ fun BookItem(
 
         HtmlText(
           modifier = Modifier.padding(4.dp),
-          inputText = uiModel.publishDate.asString(),
+          inputText = bookUiModel.publishDate.asString(),
           style = TextStyle(
             fontSize = 12.sp
           )
@@ -228,7 +225,7 @@ fun BookItem(
 
         Text(
           modifier = Modifier.padding(4.dp),
-          text = uiModel.price.asString(),
+          text = bookUiModel.price.asString(),
           fontWeight = FontWeight.Bold
         )
       }
@@ -237,9 +234,9 @@ fun BookItem(
         modifier = Modifier
           .wrapContentWidth(Alignment.End)
           .weight(0.1f)
-          .baseClickable { onClickedBookmark(uiModel) },
+          .baseClickable { onClickedBookmark(bookUiModel) },
         imageVector =
-          if (uiModel.isBookmarked) Icons.Filled.Favorite
+          if (bookUiModel.isBookmarked) Icons.Filled.Favorite
           else Icons.Outlined.FavoriteBorder,
         contentDescription = null
       )

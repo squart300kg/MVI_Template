@@ -89,22 +89,15 @@ class SearchViewModel @Inject constructor(
    *   3. 북마크 해제
    *   4. 상세 페이지 이동
    */
-
-  /**
-   * 1. search first loading
-   * 1. search more loading
-   * 1. toggle loading
-   *
-   */
   init {
     uiState
-      .filter { it.uiModels.isNotEmpty() }
+      .filter { it.bookUiModels.isNotEmpty() }
       .flatMapConcat { uiState ->
         observeBookmarkedBooksUseCase()
           .onEach { bookmarkedBooks ->
             setState {
               copy(
-                uiModels = uiModels
+                bookUiModels = bookUiModels
                   .map { uiModel ->
                     uiModel.copy(isBookmarked = bookmarkedBooks.any { it.isbn == uiModel.isbn })
                   }.toImmutableList()
@@ -112,21 +105,6 @@ class SearchViewModel @Inject constructor(
             }
           }
       }.launchIn(viewModelScope)
-
-//    viewModelScope.launch {
-//
-////      observeBookmarkedBooksUseCase()
-////        .collectLatest { bookmarkedBooks ->
-////          setState {
-////            copy(
-////              uiModels = uiModels
-////                .map { uiModel ->
-////                  uiModel.copy(isBookmarked = bookmarkedBooks.any { it.isbn == uiModel.isbn })
-////                }.toImmutableList()
-////            )
-////          }
-////        }
-//    }
   }
 
   // TODO: 검색결과 없을때도 표시
@@ -148,16 +126,16 @@ class SearchViewModel @Inject constructor(
         setState {
           copy(
             uiType = SearchUiType.LOADED,
-            uiModels = run {
-              val uiModel = UiModel.mapperToUi(
+            bookUiModels = run {
+              val bookUiModel = BookUiModel.mapperToUi(
                 searchedBooks = searchedBooks,
                 dateTextFormatter = dateTextFormatter,
                 moneyTextFormatter = moneyTextFormatter
               )
               when (loadType) {
-                is SearchUiSideEffect.Load.First -> uiModel
-                is SearchUiSideEffect.Load.More -> (uiState.value.uiModels as PersistentList)
-                  .addAll(uiModel)
+                is SearchUiSideEffect.Load.First -> bookUiModel
+                is SearchUiSideEffect.Load.More -> (uiState.value.bookUiModels as PersistentList)
+                  .addAll(bookUiModel)
               }
             },
             isPageable = searchedBooks.pageable.isEnd
