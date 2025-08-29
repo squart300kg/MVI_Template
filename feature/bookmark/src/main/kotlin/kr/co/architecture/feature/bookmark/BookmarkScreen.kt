@@ -66,7 +66,7 @@ fun BookmarkScreen(
 ) {
   Column(modifier = modifier.fillMaxSize()) {
     SearchHeader(
-      uiModel = uiState.searchHeaderUiModel,
+      query = uiState.query,
       onQueryChange = onQueryChange
     ) {
       SortMenuChip(
@@ -96,8 +96,8 @@ fun BookmarkScreen(
               modifier = Modifier
                 .padding(10.dp),
               uiModel = item,
-              onClickedBookmark = { onClickedBookmark(item.isbn, item.isBookmarked) },
-              onClickedItem = { onClickedItem(item.isbn) }
+              onClickedBookmark = onClickedBookmark,
+              onClickedItem = onClickedItem
             )
           }
         }

@@ -3,11 +3,11 @@ package kr.co.architecture.feature.search
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kr.co.architecture.core.ui.BookUiModel
-import kr.co.architecture.core.ui.SearchHeaderUiModel
 import kr.co.architecture.core.ui.UiEvent
 import kr.co.architecture.core.ui.UiSideEffect
 import kr.co.architecture.core.ui.UiState
 import kr.co.architecture.core.ui.enums.SortUiEnum
+import kr.co.architecture.core.ui.util.UiText
 
 enum class SearchUiType {
   NONE,
@@ -17,9 +17,9 @@ enum class SearchUiType {
 
 data class SearchUiState(
   val uiType: SearchUiType = SearchUiType.NONE,
-  val bookUiModels: ImmutableList<BookUiModel> = persistentListOf(),
-  val searchHeaderUiModel: SearchHeaderUiModel = SearchHeaderUiModel(),
+  val query: UiText = UiText.DynamicString(""),
   val sort: SortUiEnum = SortUiEnum.ACCURACY,
+  val bookUiModels: ImmutableList<BookUiModel> = persistentListOf(),
   val page: Int = 1,
   val isPageable: Boolean = true,
   val isLoading: Boolean = false

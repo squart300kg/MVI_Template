@@ -28,6 +28,7 @@ import kr.co.architecture.core.ui.BookUiModel
 import kr.co.architecture.core.ui.DetailRoute
 import kr.co.architecture.core.ui.enums.SortDirectionUiEnum
 import kr.co.architecture.core.ui.enums.SortPriceRangeUiEnum
+import kr.co.architecture.core.ui.util.UiText
 import javax.inject.Inject
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -85,9 +86,10 @@ class BookmarkViewModel @Inject constructor(
           }.onFailure { showErrorDialog(it) }
         }
       }
+      // TODO: 람다타입 리컴포지션 확인
       is BookmarkUiEvent.OnQueryChange -> {
         queryFlow.update { event.query }.also {
-          setState { copy(searchHeaderUiModel = uiState.value.searchHeaderUiModel.copy(query = { event.query })) }
+          setState { copy(query = UiText.DynamicString(event.query)) }
         }
       }
       is BookmarkUiEvent.OnChangeSortDirection -> {

@@ -4,6 +4,8 @@ import android.widget.TextView
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.isSpecified
@@ -19,8 +21,10 @@ fun HtmlText(
   maxLine: Int = 1,
   style: TextStyle = LocalTextStyle.current
 ) {
-  val resolvedColor =
-    if (style.color.isSpecified) style.color else MaterialTheme.colorScheme.onSurface
+  val resolvedColor by rememberUpdatedState(
+    if (style.color.isSpecified) style.color
+    else MaterialTheme.colorScheme.onSurface
+  )
 
   AndroidView(modifier = modifier, factory = { context ->
     TextView(context).apply {

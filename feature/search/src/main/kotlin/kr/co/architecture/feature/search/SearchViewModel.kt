@@ -22,6 +22,7 @@ import kr.co.architecture.core.ui.BaseViewModel
 import kr.co.architecture.core.ui.BookUiModel
 import kr.co.architecture.core.ui.DetailRoute
 import kr.co.architecture.core.ui.enums.SortUiEnum
+import kr.co.architecture.core.ui.util.UiText
 import javax.inject.Inject
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -64,7 +65,7 @@ class SearchViewModel @Inject constructor(
       }
       is SearchUiEvent.OnQueryChange -> {
         setState {
-          copy(searchHeaderUiModel = uiState.value.searchHeaderUiModel.copy(query = { event.query }))
+          copy(query = UiText.DynamicString(event.query))
         }
       }
       is SearchUiEvent.OnSearch -> {
@@ -79,21 +80,6 @@ class SearchViewModel @Inject constructor(
     }
   }
 
-  /**
-   * 1. Search
-   *   1. sorting o
-   *   2. 검색 o
-   *   3. 페이징 o
-   *   4. 상세 페이지 이동 o
-   * 2. Bookmark
-   *   1. 로컬 리스트 조회 o
-   *   2. 검색(제목, 저자, 출판사) o
-   *   3. 필터링 o
-   *     1. 오름/내림차순 o
-   *     2. 금액 o
-   *   3. 북마크 해제 o
-   *   4. 상세 페이지 이동 o
-   */
   init {
     uiState
       .filter { it.bookUiModels.isNotEmpty() }
@@ -112,7 +98,6 @@ class SearchViewModel @Inject constructor(
       }.launchIn(viewModelScope)
   }
 
-  // TODO: 검색결과 없을때도 표시
   fun fetchData(loadType: SearchUiSideEffect.Load) {
     viewModelScope.launch {
       _loadingState.update { true }
@@ -123,7 +108,7 @@ class SearchViewModel @Inject constructor(
               is SearchUiSideEffect.Load.First -> setStateAndGet { copy(page = 1) }.page
               is SearchUiSideEffect.Load.More -> setStateAndGet { copy(page = page + 1) }.page
             },
-            query = uiState.value.searchHeaderUiModel.query(),
+            query = uiState.value.query.value ?: "",
             sortEnum = SortUiEnum.mapperToDomain(uiState.value.sort)
           )
         )

@@ -1,19 +1,18 @@
 package kr.co.architecture.feature.search
 
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Alignment
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -28,7 +27,8 @@ import kr.co.architecture.core.ui.SearchHeader
 import kr.co.architecture.core.ui.SearchRoute
 import kr.co.architecture.core.ui.SortMenuChip
 import kr.co.architecture.core.ui.enums.SortUiEnum
-import kr.co.architecture.core.ui.R as coreUiR
+import kr.co.architecture.core.ui.theme.BaseTheme
+import kr.co.architecture.feature.search.preview.SearchUiStatePreviewParam
 
 fun NavGraphBuilder.searchScreen() {
   composable<SearchRoute> {
@@ -80,7 +80,7 @@ fun SearchScreen(
 ) {
   Column(modifier = modifier.fillMaxSize()) {
     SearchHeader(
-      uiModel = uiState.searchHeaderUiModel,
+      query = uiState.query,
       onQueryChange = onQueryChange,
       onSearch = onSearch,
     ) {
@@ -91,6 +91,9 @@ fun SearchScreen(
       )
     }
 
+    println("lazyColumnHssh uiState: ${uiState}")
+
+    // TODO: 타이핑에따른 리컴포지션 개선하기
     when (uiState.uiType) {
       SearchUiType.NONE -> {}
       SearchUiType.EMPTY_RESULT -> NoResultContent()
@@ -110,9 +113,11 @@ fun SearchScreen(
             BookCard(
               modifier = Modifier
                 .padding(10.dp),
-              uiModel = item,
-              onClickedBookmark = { onClickedBookmark(item.isbn, item.isBookmarked) },
-              onClickedItem = { onClickedItem(item.isbn) }
+              uiModel = item.also {
+                println("lazyColumnHssh item: ${System.identityHashCode(it)}")
+              },
+              onClickedBookmark = onClickedBookmark,
+              onClickedItem = onClickedItem
             )
           }
         }
@@ -121,12 +126,15 @@ fun SearchScreen(
   }
 }
 
-// TODO: preview추가하기
-//@Preview
-//@Composable
-//fun BookItemPreview() {
-//  BookItem(
-//    modifier = Modifier.background(Color.White),
-//    uiModel = UiModel()
-//  )
-//}
+@Preview
+@Composable
+fun SearchScreenPreview(
+  @PreviewParameter(SearchUiStatePreviewParam::class)
+  uiState: SearchUiState
+) {
+  BaseTheme {
+    SearchScreen(
+      uiState = uiState
+    )
+  }
+}

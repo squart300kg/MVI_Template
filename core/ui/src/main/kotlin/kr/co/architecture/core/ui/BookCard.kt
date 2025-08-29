@@ -101,14 +101,14 @@ data class BookUiModel(
 fun BookCard(
   modifier: Modifier = Modifier,
   uiModel: BookUiModel,
-  onClickedBookmark: (BookUiModel) -> Unit = {},
-  onClickedItem: (BookUiModel) -> Unit = {}
+  onClickedBookmark: (isbn: String, isBookmarked: Boolean) -> Unit = {_,_->},
+  onClickedItem: (isbn: String) -> Unit = {}
 ) {
   Card(
     modifier = modifier.fillMaxWidth(),
     shape = RoundedCornerShape(12.dp),
     elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
-    onClick = { onClickedItem(uiModel) }
+    onClick = { onClickedItem(uiModel.isbn) }
   ) {
     Row(
       modifier = Modifier.padding(10.dp)
@@ -175,7 +175,7 @@ fun BookCard(
         modifier = Modifier
           .wrapContentWidth(Alignment.End)
           .weight(0.1f)
-          .baseClickable { onClickedBookmark(uiModel) },
+          .baseClickable { onClickedBookmark(uiModel.isbn, uiModel.isBookmarked) },
         imageVector =
           if (uiModel.isBookmarked) Icons.Filled.Favorite
           else Icons.Outlined.FavoriteBorder,

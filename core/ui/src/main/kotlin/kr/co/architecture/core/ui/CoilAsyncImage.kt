@@ -17,12 +17,10 @@ fun CoilAsyncImage(
   val request = ImageRequest.Builder(LocalContext.current)
     .data(url)
     .crossfade(true)
-    .memoryCacheKey(url)     // 동일 URL 키로 메모리 캐시
-    .diskCacheKey(url)       // 디스크 캐시 키
-    .dispatcher(Dispatchers.IO) // 로딩 디스패처
+    .memoryCacheKey(url)
+    .diskCacheKey(url)
+    .dispatcher(Dispatchers.IO)
     .allowHardware(true)
-    // 필요 시 변환
-    //.transformations(RoundedCornersTransformation(24f))
     .build()
 
   AsyncImage(
