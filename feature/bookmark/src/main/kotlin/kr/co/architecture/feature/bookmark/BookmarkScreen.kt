@@ -17,7 +17,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import kotlinx.collections.immutable.toImmutableList
-import kr.co.architecture.core.ui.BookItem
+import kr.co.architecture.core.ui.BookCard
 import kr.co.architecture.core.ui.BookmarkRoute
 import kr.co.architecture.core.ui.GlobalUiStateEffect
 import kr.co.architecture.core.ui.SearchHeader
@@ -96,12 +96,12 @@ fun BookmarkScreen(
 
         LazyColumn(
           modifier = modifier
-            .background(Color.LightGray)
+//            .background(Color.LightGray)
         ) {
           items(
             items = uiState.bookUiModels
           ) { item ->
-            BookItem(
+            BookCard(
               modifier = Modifier
                 .padding(10.dp),
               uiModel = item,

@@ -8,11 +8,11 @@ import androidx.compose.ui.res.stringResource
  * Dropdown Chip사용 시, 구현하여 사용
  */
 @Stable
-interface UiLabeledEnum {
+interface BaseSortUiEnum {
   val resId: Int
   val args: String?
 }
 
 @Composable
-fun UiLabeledEnum.asString(): String =
+fun BaseSortUiEnum.asString(): String =
   args?.let { stringResource(resId, it) } ?: stringResource(resId)

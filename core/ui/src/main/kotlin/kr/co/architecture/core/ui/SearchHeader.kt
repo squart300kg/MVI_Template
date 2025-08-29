@@ -37,7 +37,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import kotlinx.collections.immutable.ImmutableList
-import kr.co.architecture.core.ui.enums.UiLabeledEnum
+import kr.co.architecture.core.ui.enums.BaseSortUiEnum
 import kr.co.architecture.core.ui.enums.asString
 import kr.co.architecture.core.ui.R as coreUiR
 
@@ -101,9 +101,9 @@ fun SearchHeader(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SortMenuChip(
-  selected: UiLabeledEnum,
-  options: ImmutableList<UiLabeledEnum>,
-  onChange: (UiLabeledEnum) -> Unit
+  selected: BaseSortUiEnum,
+  options: ImmutableList<BaseSortUiEnum>,
+  onChange: (BaseSortUiEnum) -> Unit
 ) {
   var expanded by rememberSaveable { mutableStateOf(false) }
   Box {
@@ -115,7 +115,7 @@ fun SortMenuChip(
     DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
       options.forEach { opt ->
         DropdownMenuItem(
-          text = { Text(selected.asString()) },
+          text = { Text(opt.asString()) },
           onClick = { onChange(opt); expanded = false }
         )
       }

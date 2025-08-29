@@ -7,7 +7,7 @@ import kr.co.architecture.core.ui.R
 enum class SortPriceRangeUiEnum(
   @StringRes override val resId: Int,
   override val args: String
-): UiLabeledEnum {
+): BaseSortUiEnum {
   LESS_THAN_10000(R.string.priceRangeLess, "10,000"),
   MORE_THAN_10000(R.string.priceRangeMore, "10,000");
 

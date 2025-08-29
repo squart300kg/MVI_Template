@@ -7,7 +7,7 @@ import kr.co.architecture.core.ui.R
 enum class SortUiEnum(
   @StringRes override val resId: Int,
   override val args: String? = null
-): UiLabeledEnum {
+): BaseSortUiEnum {
   ACCURACY(R.string.sortTypeAccuracy),
   LATEST(R.string.sortTypeLatest);
 

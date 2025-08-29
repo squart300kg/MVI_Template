@@ -7,7 +7,7 @@ import kr.co.architecture.core.ui.R
 enum class SortDirectionUiEnum(
   @StringRes override val resId: Int,
   override val args: String? = null
-): UiLabeledEnum {
+): BaseSortUiEnum {
   ASCENDING(R.string.ascendingByTitle),
   DESCENDING(R.string.descendingByTitle);
 
