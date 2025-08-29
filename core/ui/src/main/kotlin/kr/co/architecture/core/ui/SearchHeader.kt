@@ -45,25 +45,25 @@ import kr.co.architecture.core.ui.R as coreUiR
 @Composable
 fun SearchHeader(
   modifier: Modifier = Modifier,
-  query: () -> String,
   onQueryChange: (String) -> Unit,
-  onSearch: () -> Unit = {},
+  onSearch: (String) -> Unit = {},
   trailingActions: @Composable RowScope.() -> Unit
 ) {
   val focusManager = LocalFocusManager.current
   val keyboard = LocalSoftwareKeyboardController.current
 
   Column(modifier.padding(horizontal = 16.dp, vertical = 8.dp)) {
+    var query by rememberSaveable { mutableStateOf("") }
     OutlinedTextField(
       modifier = Modifier
         .fillMaxWidth()
         .height(60.dp),
-      value = query(),
-      onValueChange = onQueryChange,
+      value = query,
+      onValueChange = { query = it; onQueryChange(it) },
       placeholder = { Text(text = stringResource(coreUiR.string.placeHint)) },
       leadingIcon = { Icon(Icons.Default.Search, null) },
       trailingIcon = {
-        if (query().isNotEmpty()) {
+        if (query.isNotEmpty()) {
           IconButton(onClick = { onQueryChange("") }) {
             Icon(Icons.Outlined.Close, contentDescription = stringResource(coreUiR.string.erase))
           }
@@ -74,7 +74,7 @@ fun SearchHeader(
       keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
       keyboardActions = KeyboardActions(
         onSearch = {
-          onSearch()
+          onSearch(query)
           focusManager.clearFocus(force = true)
           keyboard?.hide()
         }

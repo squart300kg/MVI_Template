@@ -8,9 +8,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
@@ -26,8 +24,8 @@ import kr.co.architecture.core.ui.GlobalUiStateEffect
 import kr.co.architecture.core.ui.NoResultContent
 import kr.co.architecture.core.ui.SearchHeader
 import kr.co.architecture.core.ui.SortMenuChip
-import kr.co.architecture.core.ui.enums.SortPriceRangeUiEnum
 import kr.co.architecture.core.ui.enums.SortDirectionUiEnum
+import kr.co.architecture.core.ui.enums.SortPriceRangeUiEnum
 import kr.co.architecture.core.ui.theme.BaseTheme
 import kr.co.architecture.feature.bookmark.preview.BookmarkUiStatePreviewParam
 
@@ -49,13 +47,23 @@ fun BookmarkScreen(
   BookmarkScreen(
     modifier = modifier,
     uiState = uiState,
-    onQueryChange = { viewModel.setEvent(BookmarkUiEvent.OnQueryChange(it)) },
-    onClickedBookmark = { isbn, isBookmarked ->
-      viewModel.setEvent(BookmarkUiEvent.OnClickedBookmark(isbn, isBookmarked))
+    onQueryChange = remember(viewModel) {
+      { viewModel.setEvent(BookmarkUiEvent.OnQueryChange(it)) }
     },
-    onClickedItem = { viewModel.setEvent(BookmarkUiEvent.OnClickedItem(it)) },
-    onChangeDirectionSort = { viewModel.setEvent(BookmarkUiEvent.OnChangeSortDirection(it)) },
-    onChangePriceSort = { viewModel.setEvent(BookmarkUiEvent.OnChangePriceRange(it)) },
+    onClickedBookmark = remember(viewModel) {
+      { isbn, isBookmarked ->
+        viewModel.setEvent(BookmarkUiEvent.OnClickedBookmark(isbn, isBookmarked))
+      }
+    },
+    onClickedItem = remember(viewModel) {
+      { viewModel.setEvent(BookmarkUiEvent.OnClickedItem(it)) }
+    },
+    onChangeDirectionSort = remember(viewModel) {
+      { viewModel.setEvent(BookmarkUiEvent.OnChangeSortDirection(it)) }
+    },
+    onChangePriceSort = remember(viewModel) {
+      { viewModel.setEvent(BookmarkUiEvent.OnChangePriceRange(it)) }
+    },
   )
 
   GlobalUiStateEffect(viewModel)
@@ -72,10 +80,8 @@ fun BookmarkScreen(
   onChangePriceSort: (SortPriceRangeUiEnum) -> Unit = {},
 ) {
   Column(modifier = modifier.fillMaxSize()) {
-    var query by rememberSaveable { mutableStateOf("") }
     SearchHeader(
-      query = { query },
-      onQueryChange = { query = it; onQueryChange(it) }
+      onQueryChange = onQueryChange
     ) {
       SortMenuChip(
         selected = uiState.sortPriceRangeUiEnum,

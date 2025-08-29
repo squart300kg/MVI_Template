@@ -62,19 +62,13 @@ fun SearchScreen(
     modifier = modifier,
     uiState = uiState,
     onQueryChange = remember(viewModel) {
-      { query: String ->
-        viewModel.setEvent(SearchUiEvent.OnQueryChange(query))
-      }
+      { viewModel.setEvent(SearchUiEvent.OnQueryChange(it)) }
     },
     onSearch = remember(viewModel) {
-      {
-        viewModel.setEvent(SearchUiEvent.OnSearch)
-      }
+      { viewModel.setEvent(SearchUiEvent.OnSearch) }
     },
     onChangeSort = remember(viewModel) {
-      { uiEnum: SortUiEnum ->
-        viewModel.setEvent(SearchUiEvent.OnChangeSort(uiEnum))
-      }
+      { viewModel.setEvent(SearchUiEvent.OnChangeSort(it)) }
     },
     onClickedBookmark = remember(viewModel) {
       { isbn: String, isBookmarked: Boolean ->
@@ -82,14 +76,10 @@ fun SearchScreen(
       }
     },
     onClickedItem = remember(viewModel) {
-      { isbn: String ->
-        viewModel.setEvent(SearchUiEvent.OnClickedItem(isbn))
-      }
+      { viewModel.setEvent(SearchUiEvent.OnClickedItem(it)) }
     },
     onScrollToEnd = remember(viewModel) {
-      {
-        viewModel.setEvent(SearchUiEvent.OnScrolledToEnd)
-      }
+      { viewModel.setEvent(SearchUiEvent.OnScrolledToEnd) }
     }
   )
 
@@ -108,11 +98,9 @@ fun SearchScreen(
   onScrollToEnd: () -> Unit = {}
 ) {
   Column(modifier = modifier.fillMaxSize()) {
-    var query by rememberSaveable { mutableStateOf("") }
     SearchHeader(
-      query = { query },
-      onQueryChange = { query = it; onQueryChange(it) },
-      onSearch = { onSearch(query) }
+      onQueryChange = onQueryChange,
+      onSearch = onSearch
     ) {
       SortMenuChip(
         selected = uiState.sort,
