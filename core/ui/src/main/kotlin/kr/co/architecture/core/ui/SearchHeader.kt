@@ -39,35 +39,31 @@ import androidx.compose.ui.unit.dp
 import kotlinx.collections.immutable.ImmutableList
 import kr.co.architecture.core.ui.enums.BaseSortUiEnum
 import kr.co.architecture.core.ui.enums.asString
-import kr.co.architecture.core.ui.util.UiText
-import kr.co.architecture.core.ui.util.asString
 import kr.co.architecture.core.ui.R as coreUiR
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SearchHeader(
   modifier: Modifier = Modifier,
-  query: UiText,
+  query: () -> String,
   onQueryChange: (String) -> Unit,
   onSearch: () -> Unit = {},
   trailingActions: @Composable RowScope.() -> Unit
 ) {
-  // TODO: 앱 시작하자마자 키패드 터치하면 이유없이 내려감
   val focusManager = LocalFocusManager.current
-  val keyboardController = LocalSoftwareKeyboardController.current
+  val keyboard = LocalSoftwareKeyboardController.current
 
-  Column(modifier = modifier.padding(horizontal = 16.dp, vertical = 8.dp)) {
-
+  Column(modifier.padding(horizontal = 16.dp, vertical = 8.dp)) {
     OutlinedTextField(
       modifier = Modifier
         .fillMaxWidth()
         .height(60.dp),
-      value = query.asString(),
+      value = query(),
       onValueChange = onQueryChange,
       placeholder = { Text(text = stringResource(coreUiR.string.placeHint)) },
-      leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
+      leadingIcon = { Icon(Icons.Default.Search, null) },
       trailingIcon = {
-        if (query.asString().isNotEmpty()) {
+        if (query().isNotEmpty()) {
           IconButton(onClick = { onQueryChange("") }) {
             Icon(Icons.Outlined.Close, contentDescription = stringResource(coreUiR.string.erase))
           }
@@ -80,7 +76,7 @@ fun SearchHeader(
         onSearch = {
           onSearch()
           focusManager.clearFocus(force = true)
-          keyboardController?.hide()
+          keyboard?.hide()
         }
       )
     )
@@ -90,12 +86,11 @@ fun SearchHeader(
     Row(
       modifier = Modifier.fillMaxWidth(),
       horizontalArrangement = Arrangement.spacedBy(8.dp),
-      verticalAlignment = Alignment.CenterVertically,
-      content = {
-        Spacer(Modifier.weight(1f))
-        trailingActions()
-      }
-    )
+      verticalAlignment = Alignment.CenterVertically
+    ) {
+      Spacer(Modifier.weight(1f))
+      trailingActions()
+    }
   }
 }
 

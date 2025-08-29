@@ -10,7 +10,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
@@ -21,7 +24,6 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
-import kr.co.architecture.core.domain.entity.Pageable
 import kr.co.architecture.core.ui.BookCard
 import kr.co.architecture.core.ui.BookUiModel
 import kr.co.architecture.core.ui.GlobalUiStateEffect
@@ -94,78 +96,23 @@ fun SearchScreen(
   GlobalUiStateEffect(viewModel)
 }
 
-//@Composable
-//fun SearchScreen(
-//  modifier: Modifier = Modifier,
-//  uiState: SearchUiState,
-//  onQueryChange: (String) -> Unit = {},
-//  onSearch: () -> Unit = {},
-//  onChangeSort: (SortUiEnum) -> Unit = {},
-//  onClickedItem: (isbn: String) -> Unit = {},
-//  onClickedBookmark: (isbn: String, isBookmarked: Boolean) -> Unit = { _, _ -> },
-//  onScrollToEnd: () -> Unit = {}
-//) {
-//  Column(modifier = modifier.fillMaxSize()) {
-//    SearchHeader(
-//      query = uiState.query,
-//      onQueryChange = onQueryChange,
-//      onSearch = onSearch,
-//    ) {
-//      SortMenuChip(
-//        selected = uiState.sort,
-//        options = SortUiEnum.entries.toImmutableList(),
-//        onChange = { onChangeSort(it as SortUiEnum) }
-//      )
-//    }
-//
-//    // TODO: 타이핑에따른 리컴포지션 개선하기
-//    when (uiState.uiType) {
-//      SearchUiType.NONE -> {}
-//      SearchUiType.EMPTY_RESULT -> NoResultContent()
-//      SearchUiType.LOADED_RESULT -> {
-//        val listState = rememberLazyListState()
-//        PaginationLoadEffect(
-//          listState = listState,
-//          isEnd = uiState.isPageable,
-//          onScrollToEnd = onScrollToEnd
-//        )
-//        LazyColumn(
-//          state = listState
-//        ) {
-//          items(
-//            items = uiState.bookUiModels
-//          ) { item ->
-//            SideEffect { println("lazyColumnHssh BookCard outter, item: ${item}") }
-//
-//            BookCard(
-//              modifier = Modifier.padding(10.dp),
-//              uiModel = item,
-//              onClickedBookmark = onClickedBookmark,
-//              onClickedItem = onClickedItem
-//            )
-//          }
-//        }
-//      }
-//    }
-//  }
-//}
-
 @Composable
 fun SearchScreen(
   modifier: Modifier = Modifier,
   uiState: SearchUiState,
   onQueryChange: (String) -> Unit = {},
-  onSearch: () -> Unit = {},
+  onSearch: (query: String) -> Unit = {},
   onChangeSort: (SortUiEnum) -> Unit = {},
   onClickedItem: (isbn: String) -> Unit = {},
   onClickedBookmark: (isbn: String, isBookmarked: Boolean) -> Unit = { _, _ -> },
   onScrollToEnd: () -> Unit = {}
 ) {
   Column(modifier = modifier.fillMaxSize()) {
+    var query by rememberSaveable { mutableStateOf("") }
     SearchHeader(
-      query = uiState.query,
-      onQueryChange = onQueryChange,
-      onSearch = onSearch
+      query = { query },
+      onQueryChange = { query = it; onQueryChange(it) },
+      onSearch = { onSearch(query) }
     ) {
       SortMenuChip(
         selected = uiState.sort,

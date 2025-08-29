@@ -17,7 +17,6 @@ class BookmarkUiStatePreviewParam : PreviewParameterProvider<BookmarkUiState> {
     ),
     BookmarkUiState(
       uiType = BookmarkUiType.LOADED_RESULT,
-      query = UiText.DynamicString("코틀린 인액션"),
       bookUiModels = List(10) {
         BookUiModel(
           isbn = "$it",

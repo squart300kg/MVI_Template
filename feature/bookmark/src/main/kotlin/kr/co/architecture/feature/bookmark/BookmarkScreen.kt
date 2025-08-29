@@ -8,6 +8,9 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
@@ -69,9 +72,10 @@ fun BookmarkScreen(
   onChangePriceSort: (SortPriceRangeUiEnum) -> Unit = {},
 ) {
   Column(modifier = modifier.fillMaxSize()) {
+    var query by rememberSaveable { mutableStateOf("") }
     SearchHeader(
-      query = uiState.query,
-      onQueryChange = onQueryChange
+      query = { query },
+      onQueryChange = { query = it; onQueryChange(it) }
     ) {
       SortMenuChip(
         selected = uiState.sortPriceRangeUiEnum,

@@ -7,7 +7,6 @@ import kr.co.architecture.core.ui.UiEvent
 import kr.co.architecture.core.ui.UiSideEffect
 import kr.co.architecture.core.ui.UiState
 import kr.co.architecture.core.ui.enums.SortUiEnum
-import kr.co.architecture.core.ui.util.UiText
 
 enum class SearchUiType {
   NONE,
@@ -17,7 +16,6 @@ enum class SearchUiType {
 
 data class SearchUiState(
   val uiType: SearchUiType = SearchUiType.NONE,
-  val query: UiText = UiText.DynamicString(""),
   val sort: SortUiEnum = SortUiEnum.ACCURACY,
   val bookUiModels: ImmutableList<BookUiModel> = persistentListOf(),
   val page: Int = 1,

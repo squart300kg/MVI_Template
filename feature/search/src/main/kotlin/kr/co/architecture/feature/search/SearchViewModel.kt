@@ -35,6 +35,8 @@ class SearchViewModel @Inject constructor(
   private val moneyTextFormatter: MoneyTextFormatter,
 ) : BaseViewModel<SearchUiState, SearchUiEvent, SearchUiSideEffect>() {
 
+  private var cachedQuery: String = ""
+
   override fun createInitialState() = SearchUiState()
 
   override fun handleEvent(event: SearchUiEvent) {
@@ -64,9 +66,7 @@ class SearchViewModel @Inject constructor(
         }
       }
       is SearchUiEvent.OnQueryChange -> {
-        setState {
-          copy(query = UiText.DynamicString(event.query))
-        }
+        cachedQuery = event.query
       }
       is SearchUiEvent.OnSearch -> {
         setEffect { SearchUiSideEffect.Load.First }
@@ -108,7 +108,7 @@ class SearchViewModel @Inject constructor(
               is SearchUiSideEffect.Load.First -> setStateAndGet { copy(page = 1) }.page
               is SearchUiSideEffect.Load.More -> setStateAndGet { copy(page = page + 1) }.page
             },
-            query = uiState.value.query.value ?: "",
+            query = cachedQuery,
             sortEnum = SortUiEnum.mapperToDomain(uiState.value.sort)
           )
         )

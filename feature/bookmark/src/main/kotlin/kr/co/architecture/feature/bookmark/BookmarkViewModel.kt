@@ -86,11 +86,8 @@ class BookmarkViewModel @Inject constructor(
           }.onFailure { showErrorDialog(it) }
         }
       }
-      // TODO: 람다타입 리컴포지션 확인
       is BookmarkUiEvent.OnQueryChange -> {
-        queryFlow.update { event.query }.also {
-          setState { copy(query = UiText.DynamicString(event.query)) }
-        }
+        queryFlow.update { event.query }
       }
       is BookmarkUiEvent.OnChangeSortDirection -> {
         sortDirectionFlow.update { SortDirectionUiEnum.mapperToDomain(event.uiEnum) }.also {
