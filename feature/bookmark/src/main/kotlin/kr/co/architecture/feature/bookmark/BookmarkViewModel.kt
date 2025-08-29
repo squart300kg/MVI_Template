@@ -41,7 +41,7 @@ class BookmarkViewModel @Inject constructor(
 
   private val queryFlow = MutableStateFlow("")
   private val sortDirFlow = MutableStateFlow(SortDirectionEnum.ASCENDING)
-  private val priceRangeFlow = MutableStateFlow<SortPriceRangeEnum?>(null)
+  private val priceRangeFlow = MutableStateFlow(SortPriceRangeEnum.ALL)
 
   @OptIn(FlowPreview::class)
   private val filterFlow: Flow<BookmarkFilter> =
@@ -91,10 +91,14 @@ class BookmarkViewModel @Inject constructor(
         }.also { queryFlow.update { event.query } }
       }
       is BookmarkUiEvent.OnChangeSortDirection -> {
-        sortDirFlow.update { SortDirectionUiEnum.mapperToDomain(event.uiEnum) }
+        setState {
+          copy(sortDirectionUiEnum = event.uiEnum)
+        }.also { sortDirFlow.update { SortDirectionUiEnum.mapperToDomain(event.uiEnum) } }
       }
       is BookmarkUiEvent.OnChangePriceRange -> {
-        priceRangeFlow.update { SortPriceRangeUiEnum.mapperToDomain(event.uiEnum) }
+        setState {
+          copy(sortPriceRangeUiEnum = event.uiEnum)
+        }.also { priceRangeFlow.update { SortPriceRangeUiEnum.mapperToDomain(event.uiEnum) } }
       }
     }
   }

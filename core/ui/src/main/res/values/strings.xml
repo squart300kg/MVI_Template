@@ -17,4 +17,5 @@
     <string name="descendingByTitle">내람차순(제목)</string>
     <string name="priceRangeLess">%s원 미만</string>
     <string name="priceRangeMore">%s원 이상</string>
+    <string name="sortTypePriceAll">가격(전체)</string>
 </resources>

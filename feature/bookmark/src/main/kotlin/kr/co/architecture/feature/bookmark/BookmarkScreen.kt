@@ -38,11 +38,7 @@ fun BookmarkScreen(
 ) {
   val uiState by viewModel.uiState.collectAsStateWithLifecycle()
   LaunchedEffect(Unit) {
-    viewModel.uiSideEffect.collect { effect ->
-//      when (effect) {
-//        is BookmarkUiSideEffect.Load -> viewModel.fetchData()
-//      }
-    }
+    viewModel.uiSideEffect.collect { effect -> }
   }
   BookmarkScreen(
     modifier = modifier,
@@ -79,17 +75,17 @@ fun BookmarkScreen(
           onQueryChange = onQueryChange
         ) {
           SortMenuChip(
-            selected = uiState.sortDirectionUiEnum,
-            options = SortDirectionUiEnum.entries.toImmutableList(),
-            onChange = {
-              onChangeDirectionSort(it as SortDirectionUiEnum)
-            }
-          )
-          SortMenuChip(
             selected = uiState.sortPriceRangeUiEnum,
             options = SortPriceRangeUiEnum.entries.toImmutableList(),
             onChange = {
               onChangePriceSort(it as SortPriceRangeUiEnum)
+            }
+          )
+          SortMenuChip(
+            selected = uiState.sortDirectionUiEnum,
+            options = SortDirectionUiEnum.entries.toImmutableList(),
+            onChange = {
+              onChangeDirectionSort(it as SortDirectionUiEnum)
             }
           )
         }

@@ -5,9 +5,8 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kr.co.architecture.core.domain.entity.Book
 import kr.co.architecture.core.domain.entity.BookmarkFilter
-import kr.co.architecture.core.domain.entity.Price
-import kr.co.architecture.core.domain.enums.SortDirectionEnum
-import kr.co.architecture.core.domain.enums.SortPriceRangeEnum
+import kr.co.architecture.core.domain.entity.matches
+import kr.co.architecture.core.domain.enums.sortedByTitle
 import kr.co.architecture.core.domain.repository.BookRepository
 import javax.inject.Inject
 
@@ -22,6 +21,7 @@ class ObserveFilteredBookmarksUseCase @Inject constructor(
       .distinctUntilChanged()
 
   private fun List<Book>.applyFilter(filter: BookmarkFilter): List<Book> {
+    // 1) 제목/출판사/저자 기준, 필터링 및 정렬
     val filteredBooksByQuery =
       if (filter.query.isBlank()) this
       else {
@@ -33,23 +33,11 @@ class ObserveFilteredBookmarksUseCase @Inject constructor(
         }
     }
 
-    val filteredBooksByPrice = filter.priceRange
-      ?.let { range ->
-        when (range) {
-          SortPriceRangeEnum.LESS -> filteredBooksByQuery.filter { it.price.toAmount() <  filter.threshold }
-          SortPriceRangeEnum.MORE -> filteredBooksByQuery.filter { it.price.toAmount() >= filter.threshold }
-        }
-      } ?: filteredBooksByQuery
+    // 2) 가격 필터링 및 정렬
+    val filteredBookByPrice = filteredBooksByQuery
+      .filter { it.price.matches(filter.priceRange, filter.threshold) }
 
-    return when (filter.sortDirection) {
-      SortDirectionEnum.ASCENDING  -> filteredBooksByPrice.sortedBy { it.title }
-      SortDirectionEnum.DESCENDING -> filteredBooksByPrice.sortedByDescending { it.title }
-    }
+    // 3) 제목 기준, 오름/내림차순 정렬
+    return filteredBookByPrice.sortedByTitle(filter.sortDirection)
   }
-
-  private fun Price.toAmount(): Int =
-    when (this) {
-      is Price.Discount -> discounted
-      is Price.Origin -> origin
-    }
 }

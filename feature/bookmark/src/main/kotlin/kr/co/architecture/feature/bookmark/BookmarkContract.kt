@@ -19,7 +19,7 @@ data class BookmarkUiState(
   val uiType: BookmarkUiType = BookmarkUiType.NONE,
   val searchHeaderUiModel: SearchHeaderUiModel = SearchHeaderUiModel(),
   val sortDirectionUiEnum: SortDirectionUiEnum = SortDirectionUiEnum.ASCENDING,
-  val sortPriceRangeUiEnum: SortPriceRangeUiEnum = SortPriceRangeUiEnum.LESS_THAN_10000,
+  val sortPriceRangeUiEnum: SortPriceRangeUiEnum = SortPriceRangeUiEnum.ALL,
   val bookUiModels: ImmutableList<BookUiModel> = persistentListOf(),
 ) : UiState
 
