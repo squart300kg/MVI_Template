@@ -29,6 +29,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -38,7 +40,9 @@ import kr.co.architecture.core.ui.CoilAsyncImage
 import kr.co.architecture.core.ui.DetailRoute
 import kr.co.architecture.core.ui.GlobalUiStateEffect
 import kr.co.architecture.core.ui.HtmlText
+import kr.co.architecture.core.ui.theme.BaseTheme
 import kr.co.architecture.core.ui.util.asString
+import kr.co.architecture.feature.detail.preview.DetailUiStatePreviewParam
 import kr.co.architecture.core.ui.R as coreUiR
 
 fun NavGraphBuilder.detailScreen() {
@@ -152,5 +156,18 @@ fun DetailScreen(
         )
       }
     }
+  }
+}
+
+@Preview
+@Composable
+fun SearchScreenPreview(
+  @PreviewParameter(DetailUiStatePreviewParam::class)
+  uiState: DetailUiState
+) {
+  BaseTheme {
+    DetailScreen(
+      uiState = uiState
+    )
   }
 }
