@@ -1,4 +1,4 @@
-package kr.co.architecture.core.common.formatter
+package kr.co.architecture.core.ui.util.formatter
 
 /**
  * 금액을 사용자에게 표시하기 좋은 문자열로 변환하는 포맷터.

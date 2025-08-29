@@ -14,8 +14,8 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kr.co.architecture.core.common.formatter.DateTextFormatter
-import kr.co.architecture.core.common.formatter.MoneyTextFormatter
+import kr.co.architecture.core.ui.util.formatter.DateTextFormatter
+import kr.co.architecture.core.ui.util.formatter.MoneyTextFormatter
 import kr.co.architecture.core.domain.entity.BookmarkFilter
 import kr.co.architecture.core.domain.entity.ISBN
 import kr.co.architecture.core.domain.enums.BookmarkToggleTypeEnum
@@ -28,7 +28,6 @@ import kr.co.architecture.core.ui.BookUiModel
 import kr.co.architecture.core.ui.DetailRoute
 import kr.co.architecture.core.ui.enums.SortDirectionUiEnum
 import kr.co.architecture.core.ui.enums.SortPriceRangeUiEnum
-import kr.co.architecture.core.ui.util.UiText
 import javax.inject.Inject
 
 @OptIn(ExperimentalCoroutinesApi::class)

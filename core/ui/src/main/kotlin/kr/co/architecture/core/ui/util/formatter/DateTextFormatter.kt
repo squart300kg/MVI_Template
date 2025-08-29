@@ -1,4 +1,4 @@
-package kr.co.architecture.core.common.formatter
+package kr.co.architecture.core.ui.util.formatter
 
 import java.util.Date
 

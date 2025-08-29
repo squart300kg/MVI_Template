@@ -1,10 +1,9 @@
 package kr.co.architecture.feature.detail
 
-import kr.co.architecture.core.common.formatter.DateTextFormatter
-import kr.co.architecture.core.common.formatter.MoneyTextFormatter
+import kr.co.architecture.core.ui.util.formatter.DateTextFormatter
+import kr.co.architecture.core.ui.util.formatter.MoneyTextFormatter
 import kr.co.architecture.core.domain.entity.Book
 import kr.co.architecture.core.domain.entity.Price
-import kr.co.architecture.core.ui.R
 import kr.co.architecture.core.ui.UiEvent
 import kr.co.architecture.core.ui.UiSideEffect
 import kr.co.architecture.core.ui.UiState

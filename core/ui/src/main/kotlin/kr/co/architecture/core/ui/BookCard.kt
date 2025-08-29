@@ -16,7 +16,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -24,8 +23,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
-import kr.co.architecture.core.common.formatter.DateTextFormatter
-import kr.co.architecture.core.common.formatter.MoneyTextFormatter
+import kr.co.architecture.core.ui.util.formatter.DateTextFormatter
+import kr.co.architecture.core.ui.util.formatter.MoneyTextFormatter
 import kr.co.architecture.core.domain.entity.Book
 import kr.co.architecture.core.domain.entity.Price
 import kr.co.architecture.core.domain.entity.SearchedBooks
