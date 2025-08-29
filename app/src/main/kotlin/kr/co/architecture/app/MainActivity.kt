@@ -42,6 +42,7 @@ class MainActivity : ComponentActivity() {
       BaseTheme {
         Scaffold(
           bottomBar = {
+            // TODO: 여기 디자인시스템 적용하기
             BaseNavigationBarWithItems(
               currentTab = navigator.currentTab,
               visible = navigator.shouldShowBottomBar(),

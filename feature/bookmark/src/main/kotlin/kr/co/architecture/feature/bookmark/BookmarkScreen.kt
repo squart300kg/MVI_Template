@@ -48,10 +48,12 @@ fun BookmarkScreen(
     modifier = modifier,
     uiState = uiState,
     onQueryChange = { viewModel.setEvent(BookmarkUiEvent.OnQueryChange(it)) },
-    onSearch = { viewModel.setEvent(BookmarkUiEvent.OnSearch) },
     onClickedBookmark = { isbn, isBookmarked ->
-      viewModel.setEvent(BookmarkUiEvent.OnClickedBookmark(isbn, isBookmarked)) },
+      viewModel.setEvent(BookmarkUiEvent.OnClickedBookmark(isbn, isBookmarked))
+    },
     onClickedItem = { viewModel.setEvent(BookmarkUiEvent.OnClickedItem(it)) },
+    onChangeDirectionSort = { viewModel.setEvent(BookmarkUiEvent.OnChangeSortDirection(it)) },
+    onChangePriceSort = { viewModel.setEvent(BookmarkUiEvent.OnChangePriceRange(it)) },
   )
 
   GlobalUiStateEffect(viewModel)
@@ -62,7 +64,6 @@ fun BookmarkScreen(
   modifier: Modifier = Modifier,
   uiState: BookmarkUiState,
   onQueryChange: (String) -> Unit = {},
-  onSearch: () -> Unit = {},
   onClickedItem: (isbn: String) -> Unit = {},
   onClickedBookmark: (isbn: String, isBookmarked: Boolean) -> Unit = { _, _ -> },
   onChangeDirectionSort: (SortDirectionUiEnum) -> Unit = {},
@@ -75,8 +76,7 @@ fun BookmarkScreen(
       Column(modifier = modifier.fillMaxSize()) {
         SearchHeader(
           uiModel = uiState.searchHeaderUiModel,
-          onQueryChange = onQueryChange,
-          onSearch = onSearch,
+          onQueryChange = onQueryChange
         ) {
           SortMenuChip(
             selected = uiState.sortDirectionUiEnum,
@@ -94,10 +94,7 @@ fun BookmarkScreen(
           )
         }
 
-        LazyColumn(
-          modifier = modifier
-//            .background(Color.LightGray)
-        ) {
+        LazyColumn {
           items(
             items = uiState.bookUiModels
           ) { item ->

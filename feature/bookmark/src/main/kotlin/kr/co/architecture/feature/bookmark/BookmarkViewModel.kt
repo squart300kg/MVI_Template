@@ -2,27 +2,63 @@ package kr.co.architecture.feature.bookmark
 
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kr.co.architecture.core.common.formatter.DateTextFormatter
 import kr.co.architecture.core.common.formatter.MoneyTextFormatter
+import kr.co.architecture.core.domain.entity.BookmarkFilter
 import kr.co.architecture.core.domain.entity.ISBN
 import kr.co.architecture.core.domain.enums.BookmarkToggleTypeEnum
-import kr.co.architecture.core.domain.usecase.ObserveBookmarkedBooksUseCase
+import kr.co.architecture.core.domain.enums.SortDirectionEnum
+import kr.co.architecture.core.domain.enums.SortPriceRangeEnum
+import kr.co.architecture.core.domain.usecase.ObserveFilteredBookmarksUseCase
 import kr.co.architecture.core.domain.usecase.ToggleBookmarkUseCase
 import kr.co.architecture.core.ui.BaseViewModel
 import kr.co.architecture.core.ui.BookUiModel
 import kr.co.architecture.core.ui.DetailRoute
+import kr.co.architecture.core.ui.enums.SortDirectionUiEnum
+import kr.co.architecture.core.ui.enums.SortPriceRangeUiEnum
 import javax.inject.Inject
 
+@OptIn(ExperimentalCoroutinesApi::class)
 @HiltViewModel
 class BookmarkViewModel @Inject constructor(
-  observeBookmarkedBooksUseCase: ObserveBookmarkedBooksUseCase,
+  observeFilteredBookmarksUseCase: ObserveFilteredBookmarksUseCase,
   private val toggleBookmarkUseCase: ToggleBookmarkUseCase,
   private val dateTextFormatter: DateTextFormatter,
   private val moneyTextFormatter: MoneyTextFormatter,
 ) : BaseViewModel<BookmarkUiState, BookmarkUiEvent, BookmarkUiSideEffect>() {
+
+  private val queryFlow = MutableStateFlow("")
+  private val sortDirFlow = MutableStateFlow(SortDirectionEnum.ASCENDING)
+  private val priceRangeFlow = MutableStateFlow<SortPriceRangeEnum?>(null)
+
+  @OptIn(FlowPreview::class)
+  private val filterFlow: Flow<BookmarkFilter> =
+    combine(
+      flow = queryFlow
+        .debounce(250)
+        .map { it.trim() }
+        .distinctUntilChanged(),
+      flow2 = sortDirFlow,
+      flow3 = priceRangeFlow
+    ) { query, sortDirection, sortPriceRange ->
+      BookmarkFilter(
+        query = query,
+        sortDirection = sortDirection,
+        priceRange = sortPriceRange
+      )
+    }
 
   override fun createInitialState() = BookmarkUiState()
 
@@ -52,17 +88,19 @@ class BookmarkViewModel @Inject constructor(
       is BookmarkUiEvent.OnQueryChange -> {
         setState {
           copy(searchHeaderUiModel = uiState.value.searchHeaderUiModel.copy(query = { event.query }))
-        }
+        }.also { queryFlow.update { event.query } }
       }
-      is BookmarkUiEvent.OnSearch -> {
-        // TODO: 로컬 검색기능을
-        //  1. 도서이름, 출판사, 저자 로 검색되도록
+      is BookmarkUiEvent.OnChangeSortDirection -> {
+        sortDirFlow.update { SortDirectionUiEnum.mapperToDomain(event.uiEnum) }
+      }
+      is BookmarkUiEvent.OnChangePriceRange -> {
+        priceRangeFlow.update { SortPriceRangeUiEnum.mapperToDomain(event.uiEnum) }
       }
     }
   }
 
   init {
-    observeBookmarkedBooksUseCase()
+    observeFilteredBookmarksUseCase(filterFlow)
       .onEach { book ->
         setState {
           copy(

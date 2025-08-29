@@ -97,9 +97,6 @@ fun SearchScreen(
           onScrollToEnd = onScrollToEnd
         )
         LazyColumn(
-          modifier = modifier
-//            .background(Color.LightGray)
-          ,
           state = listState
         ) {
           items(

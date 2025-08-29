@@ -51,7 +51,7 @@ fun SearchHeader(
   modifier: Modifier = Modifier,
   uiModel: SearchHeaderUiModel,
   onQueryChange: (String) -> Unit,
-  onSearch: () -> Unit,
+  onSearch: () -> Unit = {},
   trailingActions: @Composable RowScope.() -> Unit
 ) {
   val focusManager = LocalFocusManager.current
