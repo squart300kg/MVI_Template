@@ -2,6 +2,7 @@ package kr.co.architecture.feature.detail
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
@@ -79,78 +80,100 @@ fun DetailScreen(
   Scaffold(
     modifier = modifier,
     topBar = {
-      TopAppBar(
-        title = {
-          Text(stringResource(coreUiR.string.back))
-        },
-        navigationIcon = {
-          IconButton(onClick = onClickedBack) {
-            Icon(
-              imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-              contentDescription = null
-            )
-          }
-        },
-        actions = {
-          IconButton(onClick = onClickedBookmark) {
-            Icon(
-              imageVector =
-                if (uiState.isBookmarked) Icons.Filled.Favorite
-                else Icons.Outlined.FavoriteBorder,
-              contentDescription = null
-            )
-          }
-        }
+      DetailTopAppBar(
+        uiState = uiState,
+        onClickedBack = onClickedBack,
+        onClickedBookmark = onClickedBookmark
       )
     }
   ) { innerPadding ->
-    Column(
-      modifier = Modifier
-        .padding(innerPadding)
-        .padding(16.dp)
-        .fillMaxSize()
+    BookDetailContent(
+      modifier = Modifier.padding(innerPadding),
+      uiState = uiState
+    )
+  }
+}
+
+@Composable
+private fun BookDetailContent(
+  modifier: Modifier = Modifier,
+  uiState: DetailUiState
+) {
+  Column(
+    modifier = modifier
+      .padding(16.dp)
+      .fillMaxSize()
+  ) {
+
+    Row(
+      modifier = Modifier.fillMaxWidth(),
+      verticalAlignment = Alignment.Top
     ) {
+      CoilAsyncImage(
+        modifier = Modifier
+          .sizeIn(minWidth = 96.dp)
+          .weight(0.35f, fill = false)
+          .aspectRatio(0.75f),
+        url = uiState.thumbnail
+      )
 
-      Row(
-        modifier = Modifier.fillMaxWidth(),
-        verticalAlignment = Alignment.Top
+      Spacer(Modifier.width(16.dp))
+
+      Column(
+        modifier = Modifier.weight(1f),
+        verticalArrangement = Arrangement.spacedBy(6.dp)
       ) {
-        CoilAsyncImage(
-          modifier = Modifier
-            .sizeIn(minWidth = 96.dp)
-            .weight(0.35f, fill = false)
-            .aspectRatio(0.75f),
-          url = uiState.thumbnail
-        )
-
-        Spacer(Modifier.width(16.dp))
-
-        Column(
-          modifier = Modifier.weight(1f),
-          verticalArrangement = Arrangement.spacedBy(6.dp)
-        ) {
-          HtmlText(inputText = uiState.publisher.asString())
-          HtmlText(inputText = uiState.publishDate.asString())
-          HtmlText(inputText = uiState.price.asString())
-        }
+        HtmlText(inputText = uiState.publisher.asString())
+        HtmlText(inputText = uiState.publishDate.asString())
+        HtmlText(inputText = uiState.price.asString())
       }
+    }
 
-      Spacer(Modifier.height(20.dp))
+    Spacer(Modifier.height(28.dp))
 
-      Spacer(Modifier.height(8.dp))
+    Surface(
+      modifier = Modifier.fillMaxWidth(),
+      shape = RoundedCornerShape(12.dp),
+      tonalElevation = 1.dp
+    ) {
+      Text(
+        text = uiState.contents.asString(),
+        modifier = Modifier.padding(14.dp)
+      )
+    }
+  }
+}
 
-      Surface(
-        modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(12.dp),
-        tonalElevation = 1.dp
-      ) {
-        Text(
-          text = uiState.contents.asString(),
-          modifier = Modifier.padding(14.dp)
+@Composable
+@OptIn(ExperimentalMaterial3Api::class)
+private fun DetailTopAppBar(
+  uiState: DetailUiState,
+  onClickedBack: () -> Unit,
+  onClickedBookmark: () -> Unit
+) {
+  TopAppBar(
+    title = {
+      Text(stringResource(coreUiR.string.back))
+    },
+    navigationIcon = {
+      IconButton(onClick = onClickedBack) {
+        Icon(
+          imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+          contentDescription = null
+        )
+      }
+    },
+    actions = {
+      IconButton(onClick = onClickedBookmark) {
+        Icon(
+          imageVector =
+            if (uiState.isBookmarked) Icons.Filled.Favorite
+            else Icons.Outlined.FavoriteBorder,
+          contentDescription = null
         )
       }
     }
-  }
+  )
 }
 
 @Preview

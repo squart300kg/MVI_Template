@@ -127,8 +127,8 @@ class SearchViewModel @Inject constructor(
                   .addAll(bookUiModel)
               }
             },
-            isPageable = searchedBooks.pageable.isEnd
-          )}
+            isPageable = searchedBooks.pageable.isEnd)
+        }
       }.onFailure { showErrorDialog(it) }
       _loadingState.update { false }
     }
