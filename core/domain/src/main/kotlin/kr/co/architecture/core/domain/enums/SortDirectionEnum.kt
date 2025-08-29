@@ -1,6 +1,6 @@
 package kr.co.architecture.core.domain.enums
 
-enum class SortByDirectionEnum {
+enum class SortDirectionEnum {
   ASCENDING,
   DESCENDING
 }

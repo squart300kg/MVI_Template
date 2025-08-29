@@ -4,7 +4,10 @@ import androidx.annotation.StringRes
 import kr.co.architecture.core.domain.enums.SortEnum
 import kr.co.architecture.core.ui.R
 
-enum class SortUiEnum(@StringRes val resId: Int) {
+enum class SortUiEnum(
+  @StringRes override val resId: Int,
+  override val args: String? = null
+): UiLabeledEnum {
   ACCURACY(R.string.sortTypeAccuracy),
   LATEST(R.string.sortTypeLatest);
 

@@ -17,6 +17,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
+import kotlinx.collections.immutable.toImmutableList
 import kr.co.architecture.core.ui.BookItem
 import kr.co.architecture.core.ui.GlobalUiStateEffect
 import kr.co.architecture.core.ui.PaginationLoadEffect
@@ -80,8 +81,9 @@ fun SearchScreen(
       onSearch = onSearch,
     ) {
       SortMenuChip(
-        selected = uiState.searchHeaderUiModel.sort,
-        onChange = onChangeSort
+        selected = uiState.sort,
+        options = SortUiEnum.entries.toImmutableList(),
+        onChange = { onChangeSort(it as SortUiEnum) }
       )
     }
 

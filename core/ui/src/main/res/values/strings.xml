@@ -15,4 +15,6 @@
     <string name="sortTypeLatest">최신순</string>
     <string name="ascendingByTitle">오름차순(제목)</string>
     <string name="descendingByTitle">내람차순(제목)</string>
+    <string name="priceRangeLess">%s원 미만</string>
+    <string name="priceRangeMore">%s원 이상</string>
 </resources>

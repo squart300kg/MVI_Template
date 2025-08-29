@@ -72,7 +72,7 @@ class SearchViewModel @Inject constructor(
       }
       is SearchUiEvent.OnChangeSort -> {
         setState {
-          copy(searchHeaderUiModel = uiState.value.searchHeaderUiModel.copy(sort = event.sort))
+          copy(sort = event.sort)
         }
         setEffect { SearchUiSideEffect.Load.First }
       }
@@ -86,10 +86,10 @@ class SearchViewModel @Inject constructor(
    *   3. 페이징 o
    *   4. 상세 페이지 이동 o
    * 2. Bookmark
-   *   1. 로컬 리스트 조회
+   *   1. 로컬 리스트 조회 o
    *   2. 검색
-   *   3. 북마크 해제
-   *   4. 상세 페이지 이동
+   *   3. 북마크 해제 o
+   *   4. 상세 페이지 이동 o
    */
   init {
     uiState
@@ -121,7 +121,7 @@ class SearchViewModel @Inject constructor(
               is SearchUiSideEffect.Load.More -> setStateAndGet { copy(page = page + 1) }.page
             },
             query = uiState.value.searchHeaderUiModel.query(),
-            sortEnum = SortUiEnum.mapperToDomain(uiState.value.searchHeaderUiModel.sort)
+            sortEnum = SortUiEnum.mapperToDomain(uiState.value.sort)
           )
         )
         setState {

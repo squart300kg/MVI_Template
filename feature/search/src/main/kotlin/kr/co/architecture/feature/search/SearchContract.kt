@@ -18,6 +18,7 @@ data class SearchUiState(
   val uiType: SearchUiType = SearchUiType.NONE,
   val bookUiModels: ImmutableList<BookUiModel> = persistentListOf(),
   val searchHeaderUiModel: SearchHeaderUiModel = SearchHeaderUiModel(),
+  val sort: SortUiEnum = SortUiEnum.ACCURACY,
   val page: Int = 1,
   val isPageable: Boolean = true,
   val isLoading: Boolean = false

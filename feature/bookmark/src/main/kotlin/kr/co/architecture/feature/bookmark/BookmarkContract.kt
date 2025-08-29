@@ -7,6 +7,8 @@ import kr.co.architecture.core.ui.SearchHeaderUiModel
 import kr.co.architecture.core.ui.UiEvent
 import kr.co.architecture.core.ui.UiSideEffect
 import kr.co.architecture.core.ui.UiState
+import kr.co.architecture.core.ui.enums.SortPriceRangeUiEnum
+import kr.co.architecture.core.ui.enums.SortDirectionUiEnum
 
 enum class BookmarkUiType {
   NONE,
@@ -16,7 +18,8 @@ enum class BookmarkUiType {
 data class BookmarkUiState(
   val uiType: BookmarkUiType = BookmarkUiType.NONE,
   val searchHeaderUiModel: SearchHeaderUiModel = SearchHeaderUiModel(),
-
+  val sortDirectionUiEnum: SortDirectionUiEnum = SortDirectionUiEnum.ASCENDING,
+  val sortPriceRangeUiEnum: SortPriceRangeUiEnum = SortPriceRangeUiEnum.LESS_THAN_10000,
   val bookUiModels: ImmutableList<BookUiModel> = persistentListOf(),
 ) : UiState
 
