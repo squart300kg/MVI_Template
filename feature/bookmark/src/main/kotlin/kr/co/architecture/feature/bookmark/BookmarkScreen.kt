@@ -9,6 +9,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -23,6 +25,8 @@ import kr.co.architecture.core.ui.SearchHeader
 import kr.co.architecture.core.ui.SortMenuChip
 import kr.co.architecture.core.ui.enums.SortPriceRangeUiEnum
 import kr.co.architecture.core.ui.enums.SortDirectionUiEnum
+import kr.co.architecture.core.ui.theme.BaseTheme
+import kr.co.architecture.feature.bookmark.preview.BookmarkUiStatePreviewParam
 
 fun NavGraphBuilder.bookmarkScreen() {
   composable<BookmarkRoute> {
@@ -103,5 +107,18 @@ fun BookmarkScreen(
         }
       }
     }
+  }
+}
+
+@Preview
+@Composable
+fun SearchScreenPreview(
+  @PreviewParameter(BookmarkUiStatePreviewParam::class)
+  uiState: BookmarkUiState
+) {
+  BaseTheme {
+    BookmarkScreen(
+      uiState = uiState
+    )
   }
 }
