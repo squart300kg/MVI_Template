@@ -26,6 +26,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -57,18 +58,11 @@ fun DetailScreen(
   viewModel: DetailViewModel = hiltViewModel()
 ) {
   val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-  LaunchedEffect(Unit) {
-    viewModel.uiSideEffect.collect { effect ->
-      when (effect) {
-        is DetailUiSideEffect.Load -> viewModel.fetchData()
-      }
-    }
-  }
   DetailScreen(
     modifier = modifier,
     uiState = uiState,
-    onClickedBookmark = { viewModel.setEvent(DetailUiEvent.OnClickedBookmark) },
-    onClickedBack = { viewModel.setEvent(DetailUiEvent.OnClickedBack) },
+    onClickedBookmark = remember(viewModel) { { viewModel.setEvent(DetailUiEvent.OnClickedBookmark) } },
+    onClickedBack = remember(viewModel) { { viewModel.setEvent(DetailUiEvent.OnClickedBack) } }
   )
 
   GlobalUiStateEffect(viewModel)

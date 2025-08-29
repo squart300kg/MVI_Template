@@ -140,7 +140,6 @@ fun SearchResultsSection(
         items(
           items = uiModels
         ) { item ->
-          SideEffect { println("lazyColumnHssh BookCard outter, item: ${item}") }
           BookCard(
             modifier = Modifier.padding(10.dp),
             uiModel = item,

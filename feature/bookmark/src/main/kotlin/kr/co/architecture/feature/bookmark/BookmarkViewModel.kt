@@ -2,8 +2,10 @@ package kr.co.architecture.feature.bookmark
 
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
@@ -89,13 +91,19 @@ class BookmarkViewModel @Inject constructor(
         queryFlow.update { event.query }
       }
       is BookmarkUiEvent.OnChangeSortDirection -> {
-        sortDirectionFlow.update { SortDirectionUiEnum.mapperToDomain(event.uiEnum) }.also {
-          setState { copy(sortDirectionUiEnum = event.uiEnum) }
+        setState { copy(bookUiModels = persistentListOf()) }.also {
+          sortDirectionFlow.update { SortDirectionUiEnum.mapperToDomain(event.uiEnum) }.also {
+            setState { copy(sortDirectionUiEnum = event.uiEnum) }
+          }
         }
       }
       is BookmarkUiEvent.OnChangePriceRange -> {
-        sortPriceRangeFlow.update { SortPriceRangeUiEnum.mapperToDomain(event.uiEnum) }.also {
-          setState { copy(sortPriceRangeUiEnum = event.uiEnum) }
+        viewModelScope.launch {
+          setState { copy(bookUiModels = persistentListOf()) }
+          delay(2000)
+          sortPriceRangeFlow.update { SortPriceRangeUiEnum.mapperToDomain(event.uiEnum) }.also {
+            setState { copy(sortPriceRangeUiEnum = event.uiEnum) }
+          }
         }
       }
     }

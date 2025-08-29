@@ -64,7 +64,7 @@ fun SearchHeader(
       leadingIcon = { Icon(Icons.Default.Search, null) },
       trailingIcon = {
         if (query.isNotEmpty()) {
-          IconButton(onClick = { onQueryChange("") }) {
+          IconButton(onClick = { query = ""; onQueryChange("") }) {
             Icon(Icons.Outlined.Close, contentDescription = stringResource(coreUiR.string.erase))
           }
         }

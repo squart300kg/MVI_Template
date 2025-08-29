@@ -41,9 +41,6 @@ fun BookmarkScreen(
   viewModel: BookmarkViewModel = hiltViewModel()
 ) {
   val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-  LaunchedEffect(Unit) {
-    viewModel.uiSideEffect.collect { effect -> }
-  }
   BookmarkScreen(
     modifier = modifier,
     uiState = uiState,

@@ -71,6 +71,4 @@ sealed interface DetailUiEvent : UiEvent {
   data object OnClickedBack: DetailUiEvent
 }
 
-sealed interface DetailUiSideEffect : UiSideEffect {
-  data object Load : DetailUiSideEffect
-}
+sealed interface DetailUiSideEffect : UiSideEffect

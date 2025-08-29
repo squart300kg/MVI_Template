@@ -52,10 +52,6 @@ class DetailViewModel @Inject constructor(
   }
 
   init {
-    setEffect { DetailUiSideEffect.Load }
-  }
-
-  fun fetchData() {
     viewModelScope.launch {
       runCatching {
         val isbn = savedStateHandle.toRoute<DetailRoute>().isbn
