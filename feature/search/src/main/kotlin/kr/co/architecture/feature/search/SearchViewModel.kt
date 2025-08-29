@@ -87,10 +87,10 @@ class SearchViewModel @Inject constructor(
    *   4. 상세 페이지 이동 o
    * 2. Bookmark
    *   1. 로컬 리스트 조회 o
-   *   2. 검색(제목, 저자, 출판사)
-   *   3. 필터링
-   *     1. 오름/내림차순
-   *     2. 금액
+   *   2. 검색(제목, 저자, 출판사) o
+   *   3. 필터링 o
+   *     1. 오름/내림차순 o
+   *     2. 금액 o
    *   3. 북마크 해제 o
    *   4. 상세 페이지 이동 o
    */
@@ -129,7 +129,9 @@ class SearchViewModel @Inject constructor(
         )
         setState {
           copy(
-            uiType = SearchUiType.LOADED,
+            uiType =
+              if (searchedBooks.books.isNotEmpty()) SearchUiType.LOADED_RESULT
+              else SearchUiType.EMPTY_RESULT,
             bookUiModels = run {
               val bookUiModel = BookUiModel.mapperToUi(
                 searchedBooks = searchedBooks,

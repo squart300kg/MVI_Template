@@ -12,7 +12,8 @@ import kr.co.architecture.core.ui.enums.SortDirectionUiEnum
 
 enum class BookmarkUiType {
   NONE,
-  LOADED
+  EMPTY_RESULT,
+  LOADED_RESULT
 }
 
 data class BookmarkUiState(

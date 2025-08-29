@@ -35,9 +35,7 @@ internal fun BaseNavigationBarWithItems(
     enter = fadeIn() + slideIn { IntOffset(0, it.height) },
     exit = fadeOut() + slideOut { IntOffset(0, it.height) }
   ) {
-    NavigationBar(
-      containerColor = Color.White
-    ) {
+    NavigationBar {
       MainBottomTab.entries.forEach { destination ->
         BaseNavigationBarItem(
           onClick = { onClickedBottomTab(destination) },
@@ -61,9 +59,6 @@ fun RowScope.BaseNavigationBarItem(
     selected = selected,
     onClick = onClick,
     alwaysShowLabel = false,
-    colors = NavigationBarItemDefaults.colors(
-      indicatorColor = Color.Transparent
-    ),
     icon = {
       Column {
         Image(

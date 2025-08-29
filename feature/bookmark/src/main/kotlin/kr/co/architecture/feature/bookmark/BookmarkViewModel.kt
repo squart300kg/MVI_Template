@@ -40,8 +40,8 @@ class BookmarkViewModel @Inject constructor(
 ) : BaseViewModel<BookmarkUiState, BookmarkUiEvent, BookmarkUiSideEffect>() {
 
   private val queryFlow = MutableStateFlow("")
-  private val sortDirFlow = MutableStateFlow(SortDirectionEnum.ASCENDING)
-  private val priceRangeFlow = MutableStateFlow(SortPriceRangeEnum.ALL)
+  private val sortDirectionFlow = MutableStateFlow(SortDirectionEnum.ASCENDING)
+  private val sortPriceRangeFlow = MutableStateFlow(SortPriceRangeEnum.ALL)
 
   @OptIn(FlowPreview::class)
   private val filterFlow: Flow<BookmarkFilter> =
@@ -50,8 +50,8 @@ class BookmarkViewModel @Inject constructor(
         .debounce(250)
         .map { it.trim() }
         .distinctUntilChanged(),
-      flow2 = sortDirFlow,
-      flow3 = priceRangeFlow
+      flow2 = sortDirectionFlow,
+      flow3 = sortPriceRangeFlow
     ) { query, sortDirection, sortPriceRange ->
       BookmarkFilter(
         query = query,
@@ -86,19 +86,19 @@ class BookmarkViewModel @Inject constructor(
         }
       }
       is BookmarkUiEvent.OnQueryChange -> {
-        setState {
-          copy(searchHeaderUiModel = uiState.value.searchHeaderUiModel.copy(query = { event.query }))
-        }.also { queryFlow.update { event.query } }
+        queryFlow.update { event.query }.also {
+          setState { copy(searchHeaderUiModel = uiState.value.searchHeaderUiModel.copy(query = { event.query })) }
+        }
       }
       is BookmarkUiEvent.OnChangeSortDirection -> {
-        setState {
-          copy(sortDirectionUiEnum = event.uiEnum)
-        }.also { sortDirFlow.update { SortDirectionUiEnum.mapperToDomain(event.uiEnum) } }
+        sortDirectionFlow.update { SortDirectionUiEnum.mapperToDomain(event.uiEnum) }.also {
+          setState { copy(sortDirectionUiEnum = event.uiEnum) }
+        }
       }
       is BookmarkUiEvent.OnChangePriceRange -> {
-        setState {
-          copy(sortPriceRangeUiEnum = event.uiEnum)
-        }.also { priceRangeFlow.update { SortPriceRangeUiEnum.mapperToDomain(event.uiEnum) } }
+        sortPriceRangeFlow.update { SortPriceRangeUiEnum.mapperToDomain(event.uiEnum) }.also {
+          setState { copy(sortPriceRangeUiEnum = event.uiEnum) }
+        }
       }
     }
   }
@@ -108,7 +108,9 @@ class BookmarkViewModel @Inject constructor(
       .onEach { book ->
         setState {
           copy(
-            uiType = BookmarkUiType.LOADED,
+            uiType =
+              if (book.isNotEmpty()) BookmarkUiType.LOADED_RESULT
+              else BookmarkUiType.EMPTY_RESULT,
             bookUiModels = BookUiModel.mapperToUi(
               book = book,
               dateTextFormatter = dateTextFormatter,

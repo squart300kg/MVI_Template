@@ -1,6 +1,5 @@
 package kr.co.architecture.feature.bookmark
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -10,7 +9,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -20,6 +18,7 @@ import kotlinx.collections.immutable.toImmutableList
 import kr.co.architecture.core.ui.BookCard
 import kr.co.architecture.core.ui.BookmarkRoute
 import kr.co.architecture.core.ui.GlobalUiStateEffect
+import kr.co.architecture.core.ui.NoResultContent
 import kr.co.architecture.core.ui.SearchHeader
 import kr.co.architecture.core.ui.SortMenuChip
 import kr.co.architecture.core.ui.enums.SortPriceRangeUiEnum
@@ -65,31 +64,30 @@ fun BookmarkScreen(
   onChangeDirectionSort: (SortDirectionUiEnum) -> Unit = {},
   onChangePriceSort: (SortPriceRangeUiEnum) -> Unit = {},
 ) {
-
-  when (uiState.uiType) {
-    BookmarkUiType.NONE -> {}
-    BookmarkUiType.LOADED -> {
-      Column(modifier = modifier.fillMaxSize()) {
-        SearchHeader(
-          uiModel = uiState.searchHeaderUiModel,
-          onQueryChange = onQueryChange
-        ) {
-          SortMenuChip(
-            selected = uiState.sortPriceRangeUiEnum,
-            options = SortPriceRangeUiEnum.entries.toImmutableList(),
-            onChange = {
-              onChangePriceSort(it as SortPriceRangeUiEnum)
-            }
-          )
-          SortMenuChip(
-            selected = uiState.sortDirectionUiEnum,
-            options = SortDirectionUiEnum.entries.toImmutableList(),
-            onChange = {
-              onChangeDirectionSort(it as SortDirectionUiEnum)
-            }
-          )
+  Column(modifier = modifier.fillMaxSize()) {
+    SearchHeader(
+      uiModel = uiState.searchHeaderUiModel,
+      onQueryChange = onQueryChange
+    ) {
+      SortMenuChip(
+        selected = uiState.sortPriceRangeUiEnum,
+        options = SortPriceRangeUiEnum.entries.toImmutableList(),
+        onChange = {
+          onChangePriceSort(it as SortPriceRangeUiEnum)
         }
-
+      )
+      SortMenuChip(
+        selected = uiState.sortDirectionUiEnum,
+        options = SortDirectionUiEnum.entries.toImmutableList(),
+        onChange = {
+          onChangeDirectionSort(it as SortDirectionUiEnum)
+        }
+      )
+    }
+    when (uiState.uiType) {
+      BookmarkUiType.NONE -> {}
+      BookmarkUiType.EMPTY_RESULT -> NoResultContent()
+      BookmarkUiType.LOADED_RESULT -> {
         LazyColumn {
           items(
             items = uiState.bookUiModels

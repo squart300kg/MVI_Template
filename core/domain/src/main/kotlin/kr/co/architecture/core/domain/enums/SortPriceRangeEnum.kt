@@ -10,11 +10,4 @@ enum class SortPriceRangeEnum {
     LESS -> amount < threshold
     MORE -> amount >= threshold
   }
-
-  // TODO: 무쓸모 지우기
-  fun inclusiveBounds(threshold: Int = 10_000): Pair<Int?, Int?> = when (this) {
-    ALL -> 0 to null
-    LESS -> null to (threshold - 1)
-    MORE -> threshold to null
-  }
 }

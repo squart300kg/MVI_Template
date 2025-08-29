@@ -17,7 +17,7 @@ fun HtmlText(
   modifier: Modifier = Modifier,
   inputText: String,
   maxLine: Int = 1,
-  style: TextStyle = LocalTextStyle.current.copy(color = Color.Black)
+  style: TextStyle = LocalTextStyle.current
 ) {
   val resolvedColor =
     if (style.color.isSpecified) style.color else MaterialTheme.colorScheme.onSurface

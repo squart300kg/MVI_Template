@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="noResult">검색 결과가 없습니다.</string>
     <string name="won">%s원</string>
     <string name="book">도서</string>
     <string name="publisher"><![CDATA[<b>출판사</b> : %1$s]]></string>

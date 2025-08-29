@@ -11,7 +11,8 @@ import kr.co.architecture.core.ui.enums.SortUiEnum
 
 enum class SearchUiType {
   NONE,
-  LOADED
+  EMPTY_RESULT,
+  LOADED_RESULT
 }
 
 data class SearchUiState(
