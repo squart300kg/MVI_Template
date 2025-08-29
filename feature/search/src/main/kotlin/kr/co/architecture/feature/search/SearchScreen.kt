@@ -8,8 +8,9 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
@@ -55,13 +56,24 @@ fun SearchScreen(
   SearchScreen(
     modifier = modifier,
     uiState = uiState,
-    onQueryChange = { viewModel.setEvent(SearchUiEvent.OnQueryChange(it)) },
-    onSearch = { viewModel.setEvent(SearchUiEvent.OnSearch) },
-    onChangeSort = { viewModel.setEvent(SearchUiEvent.OnChangeSort(it)) },
-    onClickedBookmark = { isbn, isBookmarked ->
-      viewModel.setEvent(SearchUiEvent.OnClickedBookmark(isbn, isBookmarked)) },
-    onClickedItem = { viewModel.setEvent(SearchUiEvent.OnClickedItem(it)) },
-    onScrollToEnd = { viewModel.setEvent(SearchUiEvent.OnScrolledToEnd) }
+    onQueryChange = remember(viewModel) { { query: String ->
+      viewModel.setEvent(SearchUiEvent.OnQueryChange(query))
+    } },
+    onSearch = remember(viewModel) { {
+      viewModel.setEvent(SearchUiEvent.OnSearch)
+    } },
+    onChangeSort = remember(viewModel) { { uiEnum: SortUiEnum ->
+      viewModel.setEvent(SearchUiEvent.OnChangeSort(uiEnum))
+    } },
+    onClickedBookmark = remember(viewModel) { { isbn: String, isBookmarked: Boolean ->
+      viewModel.setEvent(SearchUiEvent.OnClickedBookmark(isbn, isBookmarked))
+    } },
+    onClickedItem = remember(viewModel) { { isbn: String ->
+      viewModel.setEvent(SearchUiEvent.OnClickedItem(isbn))
+    } },
+    onScrollToEnd = remember(viewModel) { {
+      viewModel.setEvent(SearchUiEvent.OnScrolledToEnd)
+    } }
   )
 
   GlobalUiStateEffect(viewModel)
@@ -91,8 +103,6 @@ fun SearchScreen(
       )
     }
 
-    println("lazyColumnHssh uiState: ${uiState}")
-
     // TODO: 타이핑에따른 리컴포지션 개선하기
     when (uiState.uiType) {
       SearchUiType.NONE -> {}
@@ -110,12 +120,11 @@ fun SearchScreen(
           items(
             items = uiState.bookUiModels
           ) { item ->
+            SideEffect { println("lazyColumnHssh BookCard outter, item: ${item}") }
+
             BookCard(
-              modifier = Modifier
-                .padding(10.dp),
-              uiModel = item.also {
-                println("lazyColumnHssh item: ${System.identityHashCode(it)}")
-              },
+              modifier = Modifier.padding(10.dp),
+              uiModel = item,
               onClickedBookmark = onClickedBookmark,
               onClickedItem = onClickedItem
             )
