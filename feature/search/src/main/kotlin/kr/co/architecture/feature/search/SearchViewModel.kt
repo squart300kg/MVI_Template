@@ -113,8 +113,8 @@ class SearchViewModel @Inject constructor(
         setState {
           copy(
             uiType =
-              if (searchedBooks.books.isNotEmpty()) SearchUiType.LOADED_RESULT
-              else SearchUiType.EMPTY_RESULT,
+              if (loadType is SearchUiSideEffect.Load.First && searchedBooks.books.isEmpty()) SearchUiType.EMPTY_RESULT
+              else SearchUiType.LOADED_RESULT,
             bookUiModels = run {
               val bookUiModel = BookUiModel.mapperToUi(
                 searchedBooks = searchedBooks,
