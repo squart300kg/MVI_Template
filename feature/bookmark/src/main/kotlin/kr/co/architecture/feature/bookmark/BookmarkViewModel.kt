@@ -93,12 +93,8 @@ class BookmarkViewModel @Inject constructor(
       is BookmarkUiEvent.OnChangeSortDirection -> {
         viewModelScope.launch {
           setState {
-            copy(
-              bookUiModels = persistentListOf(),
-              sortDirectionUiEnum = event.uiEnum
-            )
+            copy(sortDirectionUiEnum = event.uiEnum)
           }
-          delay(200)
           sortDirectionFlow.update {
             SortDirectionUiEnum.mapperToDomain(event.uiEnum)
           }
@@ -107,11 +103,8 @@ class BookmarkViewModel @Inject constructor(
       is BookmarkUiEvent.OnChangePriceRange -> {
         viewModelScope.launch {
           setState {
-            copy(
-              bookUiModels = persistentListOf(),
-              sortPriceRangeUiEnum = event.uiEnum)
+            copy(sortPriceRangeUiEnum = event.uiEnum)
           }
-          delay(200)
           sortPriceRangeFlow.update {
             SortPriceRangeUiEnum.mapperToDomain(event.uiEnum)
           }

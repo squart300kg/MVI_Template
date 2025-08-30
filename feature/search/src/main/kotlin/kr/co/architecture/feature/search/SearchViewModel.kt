@@ -3,14 +3,12 @@ package kr.co.architecture.feature.search
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.collections.immutable.PersistentList
-import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.flatMapConcat
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kr.co.architecture.core.ui.util.formatter.DateTextFormatter
 import kr.co.architecture.core.ui.util.formatter.MoneyTextFormatter
@@ -69,11 +67,10 @@ class SearchViewModel @Inject constructor(
         cachedQuery = event.query
       }
       is SearchUiEvent.OnSearch -> {
-        setState { copy(bookUiModels = persistentListOf()) }
         setEffect { SearchUiSideEffect.Load.First }
       }
       is SearchUiEvent.OnChangeSort -> {
-        setState { copy(sort = event.sort, bookUiModels = persistentListOf()) }
+        setState { copy(sortUiEnum = event.sort) }
         setEffect { SearchUiSideEffect.Load.First }
       }
     }
@@ -108,7 +105,7 @@ class SearchViewModel @Inject constructor(
               is SearchUiSideEffect.Load.More -> setStateAndGet { copy(page = page + 1) }.page
             },
             query = cachedQuery,
-            sortEnum = SortUiEnum.mapperToDomain(uiState.value.sort)
+            sortEnum = SortUiEnum.mapperToDomain(uiState.value.sortUiEnum)
           )
         )
         setState {

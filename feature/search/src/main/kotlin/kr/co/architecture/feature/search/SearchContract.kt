@@ -16,11 +16,10 @@ enum class SearchUiType {
 
 data class SearchUiState(
   val uiType: SearchUiType = SearchUiType.NONE,
-  val sort: SortUiEnum = SortUiEnum.ACCURACY,
+  val sortUiEnum: SortUiEnum = SortUiEnum.ACCURACY,
   val bookUiModels: ImmutableList<BookUiModel> = persistentListOf(),
   val page: Int = 1,
-  val isPageable: Boolean = true,
-  val isLoading: Boolean = false
+  val isPageable: Boolean = true
 ) : UiState
 
 sealed interface SearchUiEvent : UiEvent {

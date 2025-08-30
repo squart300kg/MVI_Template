@@ -4,12 +4,12 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
@@ -18,10 +18,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
-import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import kr.co.architecture.core.ui.BookCard
-import kr.co.architecture.core.ui.BookUiModel
 import kr.co.architecture.core.ui.NoResultContent
 import kr.co.architecture.core.ui.PaginationLoadEffect
 import kr.co.architecture.core.ui.SearchHeader
@@ -79,21 +77,24 @@ fun SearchScreen(
   onScrollToEnd: () -> Unit = {}
 ) {
   Column(modifier = modifier.fillMaxSize()) {
+    val listState = rememberSaveable(
+      uiState.sortUiEnum, onSearch,
+      saver = LazyListState.Saver
+    ) { LazyListState(0, 0) }
     SearchHeader(
       onQueryChange = onQueryChange,
       onSearch = onSearch
     ) {
       SortMenuChip(
-        selected = uiState.sort,
+        selected = uiState.sortUiEnum,
         options = SortUiEnum.entries.toImmutableList(),
         onChange = { onChangeSort(it as SortUiEnum) }
       )
     }
 
     SearchResultsSection(
-      uiType = uiState.uiType,
-      uiModels = uiState.bookUiModels,
-      isPageable = uiState.isPageable,
+      uiState = uiState,
+      listState = listState,
       onClickedItem = onClickedItem,
       onClickedBookmark = onClickedBookmark,
       onScrollToEnd = onScrollToEnd
@@ -103,23 +104,25 @@ fun SearchScreen(
 
 @Composable
 fun SearchResultsSection(
-  uiType: SearchUiType,
-  uiModels: ImmutableList<BookUiModel>,
-  isPageable: Boolean,
+  uiState: SearchUiState,
+  listState: LazyListState,
   onClickedItem: (String) -> Unit,
   onClickedBookmark: (String, Boolean) -> Unit,
   onScrollToEnd: () -> Unit
 ) {
-  when (uiType) {
+  when (uiState.uiType) {
     SearchUiType.NONE -> Unit
     SearchUiType.EMPTY_RESULT -> NoResultContent()
     SearchUiType.LOADED_RESULT -> {
-      val listState = rememberLazyListState()
-      PaginationLoadEffect(listState, isPageable, onScrollToEnd)
+      PaginationLoadEffect(
+        listState = listState,
+        isEnd = uiState.isPageable,
+        onScrollToEnd = onScrollToEnd
+      )
 
       LazyColumn(state = listState) {
         items(
-          items = uiModels
+          items = uiState.bookUiModels
         ) { item ->
           BookCard(
             modifier = Modifier.padding(10.dp),
