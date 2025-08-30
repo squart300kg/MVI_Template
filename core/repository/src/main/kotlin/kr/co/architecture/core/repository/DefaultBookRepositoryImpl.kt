@@ -1,11 +1,5 @@
 package kr.co.architecture.core.repository
 
-import com.skydoves.sandwich.getOrThrow
-import com.skydoves.sandwich.suspendOnError
-import com.skydoves.sandwich.suspendOnException
-import com.skydoves.sandwich.suspendOnProcedure
-import com.skydoves.sandwich.suspendOnSuccess
-import com.skydoves.sandwich.toSuspendFlow
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.flow.Flow
@@ -79,31 +73,21 @@ class DefaultBookRepositoryImpl @Inject constructor(
       currentKey = newKey
     }
 
-    return try {
-      DomainResult.Success(
-        remoteApi.searchBook(
-          query = params.query,
-          sort = SearchedBookMapper.mapperToDto(params.sortEnum).value,
-          page = params.page
-        )
-          .safeGet()
-          .let(SearchedBookMapper::mapperToDomain)
-          .also { searchedBooks ->
-            cacheMutex.withLock {
-              searchedBooks.books.forEach { book ->
-                cachedSearchedBooks[ISBN(book.isbn)] = book
-              }
+    return executeWithDomainResult {
+      remoteApi.searchBook(
+        query = params.query,
+        sort = SearchedBookMapper.mapperToDto(params.sortEnum).value,
+        page = params.page
+      )
+        .safeGet()
+        .let(SearchedBookMapper::mapperToDomain)
+        .also { searchedBooks ->
+          cacheMutex.withLock {
+            searchedBooks.books.forEach { book ->
+              cachedSearchedBooks[ISBN(book.isbn)] = book
             }
           }
-      )
-    } catch (e: Exception) {
-      when (e) {
-        is KakaoErrorApiResponse -> DomainResult.Error(
-          errorCode = e.errorType,
-          errorMessage = e.message
-        )
-        else -> DomainResult.Error("UNKNOWN", "UNKNOWN")
-      }
+        }
     }
   }
 
@@ -117,6 +101,26 @@ class DefaultBookRepositoryImpl @Inject constructor(
         else cachedBook
       } ?: run { localBooks.find { it.isbn == isbn.value } }
       ?.also { cachedSearchedBooks[isbn] = it }
+  }
+}
+
+// TODO: 이거 패키지 분리
+suspend fun <T> executeWithDomainResult(
+  block: suspend () -> T,
+): DomainResult<T> {
+  return try {
+    DomainResult.Success(block())
+  } catch (e: Throwable) {
+    when (e) {
+      is KakaoErrorApiResponse -> DomainResult.Error(
+        errorCode = e.errorType,
+        errorMessage = e.message
+      )
+      else -> DomainResult.Error(
+        errorCode = e.message ?: "UNKNOWN ERROR",
+        errorMessage = e.stackTraceToString()
+      )
+    }
   }
 }
 
