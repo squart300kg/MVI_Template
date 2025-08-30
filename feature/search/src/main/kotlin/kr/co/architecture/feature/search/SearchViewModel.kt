@@ -69,6 +69,7 @@ class SearchViewModel @Inject constructor(
         cachedQuery = event.query
       }
       is SearchUiEvent.OnSearch -> {
+        setState { copy(bookUiModels = persistentListOf()) }
         setEffect { SearchUiSideEffect.Load.First }
       }
       is SearchUiEvent.OnChangeSort -> {

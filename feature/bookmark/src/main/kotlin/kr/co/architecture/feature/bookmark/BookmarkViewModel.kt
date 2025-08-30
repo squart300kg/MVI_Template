@@ -91,18 +91,29 @@ class BookmarkViewModel @Inject constructor(
         queryFlow.update { event.query }
       }
       is BookmarkUiEvent.OnChangeSortDirection -> {
-        setState { copy(bookUiModels = persistentListOf()) }.also {
-          sortDirectionFlow.update { SortDirectionUiEnum.mapperToDomain(event.uiEnum) }.also {
-            setState { copy(sortDirectionUiEnum = event.uiEnum) }
+        viewModelScope.launch {
+          setState {
+            copy(
+              bookUiModels = persistentListOf(),
+              sortDirectionUiEnum = event.uiEnum
+            )
+          }
+          delay(200)
+          sortDirectionFlow.update {
+            SortDirectionUiEnum.mapperToDomain(event.uiEnum)
           }
         }
       }
       is BookmarkUiEvent.OnChangePriceRange -> {
         viewModelScope.launch {
-          setState { copy(bookUiModels = persistentListOf()) }
-          delay(2000)
-          sortPriceRangeFlow.update { SortPriceRangeUiEnum.mapperToDomain(event.uiEnum) }.also {
-            setState { copy(sortPriceRangeUiEnum = event.uiEnum) }
+          setState {
+            copy(
+              bookUiModels = persistentListOf(),
+              sortPriceRangeUiEnum = event.uiEnum)
+          }
+          delay(200)
+          sortPriceRangeFlow.update {
+            SortPriceRangeUiEnum.mapperToDomain(event.uiEnum)
           }
         }
       }
