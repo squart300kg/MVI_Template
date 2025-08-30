@@ -17,7 +17,7 @@ data class SearchedBookApiResponse(
     @SerializedName("contents")
     val contents: String,
     @SerializedName("datetime")
-    val dateTime: Date,
+    val dateTime: String,
     @SerializedName("isbn")
     val isbn: String,
     @SerializedName("price")

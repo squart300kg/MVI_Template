@@ -16,7 +16,7 @@ data class BookEntity(
     @ColumnInfo(name = "publisher")
     val publisher: String,
     @ColumnInfo(name = "dateTime")
-    val dateTime: Date,
+    val dateTime: String,
     @ColumnInfo(name = "discountedPrice")
     val discountedPrice: Int,
     @ColumnInfo(name = "originPrice")

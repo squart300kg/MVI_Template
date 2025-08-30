@@ -19,8 +19,8 @@ interface DateTextFormatter {
     /**
      * 주어진 [Date] 객체를 포맷팅하여 문자열로 반환한다.
      *
-     * @param date 포맷팅할 날짜
+     * @param raw 포맷팅할 [String]타입의 날짜
      * @return 포맷팅된 문자열 표현 (예: "25년 8월 27일")
      */
-    operator fun invoke(date: Date): String
+    operator fun invoke(raw: String): String
 }
