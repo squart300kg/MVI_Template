@@ -18,12 +18,12 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kr.co.architecture.core.ui.util.formatter.DateTextFormatter
 import kr.co.architecture.core.ui.util.formatter.MoneyTextFormatter
-import kr.co.architecture.core.domain.entity.BookmarkFilter
 import kr.co.architecture.core.domain.entity.ISBN
 import kr.co.architecture.core.domain.enums.BookmarkToggleTypeEnum
 import kr.co.architecture.core.domain.enums.SortDirectionEnum
 import kr.co.architecture.core.domain.enums.SortPriceRangeEnum
 import kr.co.architecture.core.domain.usecase.ObserveFilteredBookmarksUseCase
+import kr.co.architecture.core.domain.usecase.ObserveFilteredBookmarksUseCase.BookmarkFilter
 import kr.co.architecture.core.domain.usecase.ToggleBookmarkUseCase
 import kr.co.architecture.core.ui.BaseViewModel
 import kr.co.architecture.core.ui.BookUiModel

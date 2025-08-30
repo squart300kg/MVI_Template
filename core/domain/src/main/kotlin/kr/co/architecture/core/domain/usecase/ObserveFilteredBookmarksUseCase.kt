@@ -4,8 +4,9 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kr.co.architecture.core.domain.entity.Book
-import kr.co.architecture.core.domain.entity.BookmarkFilter
 import kr.co.architecture.core.domain.entity.matches
+import kr.co.architecture.core.domain.enums.SortDirectionEnum
+import kr.co.architecture.core.domain.enums.SortPriceRangeEnum
 import kr.co.architecture.core.domain.enums.sortedByTitle
 import kr.co.architecture.core.domain.repository.BookRepository
 import javax.inject.Inject
@@ -40,4 +41,11 @@ class ObserveFilteredBookmarksUseCase @Inject constructor(
     // 3) 제목 기준, 오름/내림차순 정렬
     return filteredBookByPrice.sortedByTitle(filter.sortDirection)
   }
+
+  data class BookmarkFilter(
+    val query: String = "",
+    val sortDirection: SortDirectionEnum = SortDirectionEnum.ASCENDING,
+    val priceRange: SortPriceRangeEnum = SortPriceRangeEnum.ALL,
+    val threshold: Int = 10_000
+  )
 }
