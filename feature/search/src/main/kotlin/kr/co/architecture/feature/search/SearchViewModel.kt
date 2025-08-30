@@ -10,6 +10,7 @@ import kotlinx.coroutines.flow.flatMapConcat
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
+import kr.co.architecture.core.domain.entity.DomainResult
 import kr.co.architecture.core.ui.util.formatter.DateTextFormatter
 import kr.co.architecture.core.ui.util.formatter.MoneyTextFormatter
 import kr.co.architecture.core.domain.entity.ISBN
@@ -97,37 +98,42 @@ class SearchViewModel @Inject constructor(
   fun fetchData(loadType: SearchUiSideEffect.Load) {
     viewModelScope.launch {
       globalUiBus.setLoadingState(true)
-      runCatching {
-        val searchedBooks = searchBooksUseCase(
-          params = SearchBooksUseCase.Params(
-            page = when (loadType) {
-              is SearchUiSideEffect.Load.First -> setStateAndGet { copy(page = 1) }.page
-              is SearchUiSideEffect.Load.More -> setStateAndGet { copy(page = page + 1) }.page
-            },
-            query = cachedQuery,
-            sortEnum = SortUiEnum.mapperToDomain(uiState.value.sortUiEnum)
-          )
+      val searchedBooks = searchBooksUseCase(
+        params = SearchBooksUseCase.Params(
+          page = when (loadType) {
+            is SearchUiSideEffect.Load.First -> setStateAndGet { copy(page = 1) }.page
+            is SearchUiSideEffect.Load.More -> setStateAndGet { copy(page = page + 1) }.page
+          },
+          query = cachedQuery,
+          sortEnum = SortUiEnum.mapperToDomain(uiState.value.sortUiEnum)
         )
-        setState {
-          copy(
-            uiType =
-              if (loadType is SearchUiSideEffect.Load.First && searchedBooks.books.isEmpty()) SearchUiType.EMPTY_RESULT
-              else SearchUiType.LOADED_RESULT,
-            bookUiModels = run {
-              val bookUiModel = BookUiModel.mapperToUi(
-                searchedBooks = searchedBooks,
-                dateTextFormatter = dateTextFormatter,
-                moneyTextFormatter = moneyTextFormatter
-              )
-              when (loadType) {
-                is SearchUiSideEffect.Load.First -> bookUiModel
-                is SearchUiSideEffect.Load.More -> (uiState.value.bookUiModels as PersistentList)
-                  .addAll(bookUiModel)
-              }
-            },
-            isPageable = searchedBooks.pageable.isEnd)
+      )
+      when (searchedBooks) {
+        is DomainResult.Error -> {
+          globalUiBus.showErrorDialog(searchedBooks)
         }
-      }.onFailure { globalUiBus.showErrorDialog(it) }
+        is DomainResult.Success -> {
+          setState {
+            copy(
+              uiType =
+                if (loadType is SearchUiSideEffect.Load.First && searchedBooks.data.books.isEmpty()) SearchUiType.EMPTY_RESULT
+                else SearchUiType.LOADED_RESULT,
+              bookUiModels = run {
+                val bookUiModel = BookUiModel.mapperToUi(
+                  searchedBooks = searchedBooks.data,
+                  dateTextFormatter = dateTextFormatter,
+                  moneyTextFormatter = moneyTextFormatter
+                )
+                when (loadType) {
+                  is SearchUiSideEffect.Load.First -> bookUiModel
+                  is SearchUiSideEffect.Load.More -> (uiState.value.bookUiModels as PersistentList)
+                    .addAll(bookUiModel)
+                }
+              },
+              isPageable = searchedBooks.data.pageable.isEnd)
+          }
+        }
+      }
       globalUiBus.setLoadingState(false)
     }
   }

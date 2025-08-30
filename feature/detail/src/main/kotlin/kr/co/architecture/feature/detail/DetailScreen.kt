@@ -64,7 +64,6 @@ fun DetailScreen(
   )
 }
 
-// TODO: Scaffold의 topBar의 활용!?
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DetailScreen(

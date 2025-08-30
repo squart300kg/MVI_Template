@@ -2,6 +2,7 @@ package kr.co.architecture.core.domain.repository
 
 import kotlinx.coroutines.flow.Flow
 import kr.co.architecture.core.domain.entity.Book
+import kr.co.architecture.core.domain.entity.DomainResult
 import kr.co.architecture.core.domain.entity.SearchedBooks
 import kr.co.architecture.core.domain.usecase.SearchBookUseCase
 import kr.co.architecture.core.domain.usecase.SearchBooksUseCase
@@ -13,7 +14,7 @@ interface BookRepository {
 
   suspend fun toggleBookmark(params: ToggleBookmarkUseCase.Params)
 
-  suspend fun searchBooks(params: SearchBooksUseCase.Params): SearchedBooks
+  suspend fun searchBooks(params: SearchBooksUseCase.Params): DomainResult<SearchedBooks>
 
   suspend fun searchBook(params: SearchBookUseCase.Params): Book?
 

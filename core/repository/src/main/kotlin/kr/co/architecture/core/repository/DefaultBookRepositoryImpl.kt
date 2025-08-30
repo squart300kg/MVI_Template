@@ -1,5 +1,11 @@
 package kr.co.architecture.core.repository
 
+import com.skydoves.sandwich.getOrThrow
+import com.skydoves.sandwich.suspendOnError
+import com.skydoves.sandwich.suspendOnException
+import com.skydoves.sandwich.suspendOnProcedure
+import com.skydoves.sandwich.suspendOnSuccess
+import com.skydoves.sandwich.toSuspendFlow
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.flow.Flow
@@ -7,6 +13,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kr.co.architecture.core.database.dao.BookSearchDao
 import kr.co.architecture.core.domain.entity.Book
+import kr.co.architecture.core.domain.entity.DomainResult
 import kr.co.architecture.core.domain.entity.ISBN
 import kr.co.architecture.core.domain.entity.SearchedBooks
 import kr.co.architecture.core.domain.enums.BookmarkToggleTypeEnum
@@ -16,6 +23,7 @@ import kr.co.architecture.core.domain.usecase.SearchBookUseCase
 import kr.co.architecture.core.domain.usecase.SearchBooksUseCase
 import kr.co.architecture.core.domain.usecase.ToggleBookmarkUseCase
 import kr.co.architecture.core.network.RemoteApi
+import kr.co.architecture.core.network.error.KakaoErrorApiResponse
 import kr.co.architecture.core.network.operator.safeGet
 import kr.co.architecture.core.repository.mapper.SearchedBookMapper
 import kr.co.architecture.core.repository.mapper.BookMapper
@@ -62,7 +70,7 @@ class DefaultBookRepositoryImpl @Inject constructor(
     }
   }
 
-  override suspend fun searchBooks(params: SearchBooksUseCase.Params): SearchedBooks {
+  override suspend fun searchBooks(params: SearchBooksUseCase.Params): DomainResult<SearchedBooks> {
     val newKey = QueryKey(params.query, params.sortEnum)
 
     // 다른 쿼리/정렬로 시작하거나 첫 페이지면 캐시 초기화
@@ -71,20 +79,29 @@ class DefaultBookRepositoryImpl @Inject constructor(
       currentKey = newKey
     }
 
-    return remoteApi.searchBook(
-      query = params.query,
-      sort = SearchedBookMapper.mapperToDto(params.sortEnum).value,
-      page = params.page
-    )
-      .safeGet()
-      .let(SearchedBookMapper::mapperToDomain)
-      .also { searchedBooks ->
-        cacheMutex.withLock {
-          searchedBooks.books.forEach { book ->
-            cachedSearchedBooks[ISBN(book.isbn)] = book
+    return try {
+      DomainResult.Success(
+        remoteApi.searchBook(
+          query = params.query,
+          sort = SearchedBookMapper.mapperToDto(params.sortEnum).value,
+          page = params.page
+        )
+          .safeGet()
+          .let(SearchedBookMapper::mapperToDomain)
+          .also { searchedBooks ->
+            cacheMutex.withLock {
+              searchedBooks.books.forEach { book ->
+                cachedSearchedBooks[ISBN(book.isbn)] = book
+              }
+            }
           }
-        }
+      )
+    } catch (e: Exception) {
+      when (e) {
+        is KakaoErrorApiResponse -> DomainResult.Error(e.errorType, e.message)
+        else -> DomainResult.Error("UNKNOWN", "UNKNOWN")
       }
+    }
   }
 
   override suspend fun searchBook(params: SearchBookUseCase.Params): Book? {

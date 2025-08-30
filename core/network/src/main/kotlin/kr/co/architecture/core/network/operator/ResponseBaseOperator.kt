@@ -1,20 +1,25 @@
 package kr.co.architecture.core.network.operator
 
+import com.google.gson.Gson
 import com.skydoves.sandwich.ApiResponse
 import com.skydoves.sandwich.getOrThrow
-import com.skydoves.sandwich.retrofit.raw
+import com.skydoves.sandwich.retrofit.errorBody
 import com.skydoves.sandwich.suspendOnError
 import com.skydoves.sandwich.suspendOnException
-import kr.co.architecture.core.model.ArchitectureSampleHttpException
+import kr.co.architecture.core.network.error.KakaoErrorApiResponse
 
-// TODO: OnException, onError의 처리는 UseCase가 맞음
 suspend fun <ENTITY> ApiResponse<ENTITY>.safeGet(): ENTITY = this
   .suspendOnError {
-    throw ArchitectureSampleHttpException(
-      code = raw.code,
-      message = raw.message,
-    )
+    throw try {
+      Gson().fromJson(errorBody?.string(), KakaoErrorApiResponse::class.java)
+    } catch (e: Exception) { throw e }
   }
-  .suspendOnException { throw this.throwable }
+  .suspendOnException {
+    /**
+     * API의 request / response가 정상적으로 수행되지 않는 경우
+     * 지금 이 블럭에서 예외를 던짐(eg., SSLHandshakeException, UnknownHostException...)
+     */
+    throw this.throwable
+  }
   .getOrThrow()
 
