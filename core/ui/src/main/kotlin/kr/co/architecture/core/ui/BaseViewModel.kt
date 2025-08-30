@@ -10,6 +10,8 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.flow.updateAndGet
@@ -31,12 +33,6 @@ abstract class BaseViewModel<State : UiState, Event : UiEvent, Effect : UiSideEf
 
   private val initialState: State by lazy { createInitialState() }
 
-  protected val _loadingState = MutableStateFlow<Boolean>(false)
-  val loadingState = _loadingState.asStateFlow()
-
-  private val _errorMessageState = MutableSharedFlow<BaseCenterDialogUiModel>()
-  val errorMessageState = _errorMessageState.asSharedFlow()
-
   private val _uiState = MutableStateFlow<State>(initialState)
   val uiState = _uiState.asStateFlow()
 
@@ -48,6 +44,9 @@ abstract class BaseViewModel<State : UiState, Event : UiEvent, Effect : UiSideEf
 
   @Inject
   lateinit var navigator: Navigator
+
+  @Inject
+  lateinit var globalUiBus: GlobalUiBus
 
   @VisibleForTesting
   fun injectNavigator(navigator: Navigator) {
@@ -101,26 +100,5 @@ abstract class BaseViewModel<State : UiState, Event : UiEvent, Effect : UiSideEf
     launchSingleTop: Boolean = false
   ) = viewModelScope.launch {
     navigator.navigate(route, saveState, launchSingleTop)
-  }
-
-  protected suspend fun showErrorDialog(throwable: Throwable?) {
-    _errorMessageState.emit(
-      when (throwable) {
-        is ArchitectureSampleHttpException -> {
-          BaseCenterDialogUiModel(
-            titleMessage = UiText.DynamicString("[${throwable.code}]"),
-            contentMessage = UiText.DynamicString(throwable.message),
-            confirmButtonMessage = UiText.DynamicString("확인"),
-          )
-        }
-        else -> {
-          BaseCenterDialogUiModel(
-            titleMessage = UiText.DynamicString("[알 수 없는 에러]"),
-            contentMessage = UiText.DynamicString(throwable?.stackTraceToString().toString()),
-            confirmButtonMessage = UiText.DynamicString("취소")
-          )
-        }
-      }
-    )
   }
 }

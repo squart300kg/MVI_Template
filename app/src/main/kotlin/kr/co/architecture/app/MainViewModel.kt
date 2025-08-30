@@ -12,8 +12,8 @@ import kr.co.architecture.core.ui.UiState
 import javax.inject.Inject
 
 data class MainUiState(
-  val errorDialog: BaseCenterDialogUiModel? = null,
-  val isLoading: Boolean = false
+  val loadingState: Boolean = false,
+  val errorMessageState: BaseCenterDialogUiModel? = null
 ): UiState
 sealed interface MainUiEvent : UiEvent {
   data class OnClickedBottomTab(val tab: MainBottomTab) : MainUiEvent
@@ -45,16 +45,12 @@ class MainViewModel @Inject constructor(
         }
       }
       is MainUiEvent.OnClickedErrorDialogConfirm -> {
-        setState { copy(errorDialog = null) }
+        globalUiBus.dismissDialog()
       }
     }
   }
 
-  fun showErrorDialog(uiModel: BaseCenterDialogUiModel) {
-    setState { copy(errorDialog = uiModel) }
-  }
+  init {
 
-  fun setLoadingState(isLoading: Boolean) {
-    setState { copy(isLoading = isLoading) }
   }
 }

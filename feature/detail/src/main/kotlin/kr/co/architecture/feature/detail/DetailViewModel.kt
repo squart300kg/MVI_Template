@@ -40,7 +40,7 @@ class DetailViewModel @Inject constructor(
               )
             )
             setState { copy(isBookmarked = !uiState.value.isBookmarked) }
-          }.onFailure { showErrorDialog(it) }
+          }.onFailure { globalUiBus.showErrorDialog(it) }
         }
       }
       is DetailUiEvent.OnClickedBack -> {
@@ -66,7 +66,7 @@ class DetailViewModel @Inject constructor(
             moneyTextFormatter = moneyTextFormatter
           )
         }
-      }.onFailure { showErrorDialog(it) }
+      }.onFailure { globalUiBus.showErrorDialog(it) }
     }
   }
 }

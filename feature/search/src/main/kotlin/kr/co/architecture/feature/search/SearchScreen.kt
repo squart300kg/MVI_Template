@@ -8,12 +8,8 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
@@ -26,7 +22,6 @@ import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import kr.co.architecture.core.ui.BookCard
 import kr.co.architecture.core.ui.BookUiModel
-import kr.co.architecture.core.ui.GlobalUiStateEffect
 import kr.co.architecture.core.ui.NoResultContent
 import kr.co.architecture.core.ui.PaginationLoadEffect
 import kr.co.architecture.core.ui.SearchHeader
@@ -82,8 +77,6 @@ fun SearchScreen(
       { viewModel.setEvent(SearchUiEvent.OnScrolledToEnd) }
     }
   )
-
-  GlobalUiStateEffect(viewModel)
 }
 
 @Composable

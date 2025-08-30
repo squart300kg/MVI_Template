@@ -6,20 +6,20 @@ import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
-import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.NavHost
 import dagger.hilt.android.AndroidEntryPoint
+import jakarta.inject.Inject
 import kr.co.architecture.app.ui.navigation.BaseNavigationBarWithItems
 import kr.co.architecture.app.ui.navigation.MainNavigator
 import kr.co.architecture.app.ui.navigation.rememberMainNavigator
 import kr.co.architecture.core.router.LaunchedRouter
 import kr.co.architecture.core.ui.BaseCenterDialog
 import kr.co.architecture.core.ui.BaseProgressBar
-import kr.co.architecture.core.ui.LocalOnErrorMessageChanged
-import kr.co.architecture.core.ui.LocalOnLoadingStateChanged
+import kr.co.architecture.core.ui.GlobalUiBus
 import kr.co.architecture.core.ui.theme.BaseTheme
 import kr.co.architecture.feature.bookmark.bookmarkScreen
 import kr.co.architecture.feature.detail.detailScreen
@@ -28,13 +28,17 @@ import kr.co.architecture.feature.search.searchScreen
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
+  @Inject
+  lateinit var globalUiBus: GlobalUiBus
+
   private val viewModel by viewModels<MainViewModel>()
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
 
     setContent {
-      val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+      val loadingState by globalUiBus.loadingState.collectAsStateWithLifecycle()
+      val errorMessageState by globalUiBus.errorDialog.collectAsStateWithLifecycle()
       val navigator: MainNavigator = rememberMainNavigator()
 
       LaunchedRouter(navigator.navController)
@@ -52,28 +56,23 @@ class MainActivity : ComponentActivity() {
           },
           // TODO: 네트워크 처리 & 네트워크 에러 다이얼로그 로딩시 무제한 GC처리 후 죽음
           content =  { innerPadding ->
-            CompositionLocalProvider(
-              LocalOnErrorMessageChanged provides { viewModel.showErrorDialog(it) },
-              LocalOnLoadingStateChanged provides { viewModel.setLoadingState(it) },
+            NavHost(
+              modifier = Modifier.padding(innerPadding),
+              navController = navigator.navController,
+              startDestination = navigator.startDestination
             ) {
-              NavHost(
-                modifier = Modifier.padding(innerPadding),
-                navController = navigator.navController,
-                startDestination = navigator.startDestination
-              ) {
-                searchScreen()
+              searchScreen()
 
-                bookmarkScreen()
+              bookmarkScreen()
 
-                detailScreen()
-              }
+              detailScreen()
             }
 
-            BaseProgressBar(uiState.isLoading)
+            BaseProgressBar(loadingState)
 
-            uiState.errorDialog?.let { state ->
+            errorMessageState?.let { errorUiState ->
               BaseCenterDialog(
-                baseCenterDialogUiModel = state,
+                baseCenterDialogUiModel = errorUiState,
                 onClickedConfirm = {
                   viewModel.setEvent(MainUiEvent.OnClickedErrorDialogConfirm)
                 }

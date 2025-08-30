@@ -40,7 +40,6 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import kr.co.architecture.core.ui.CoilAsyncImage
 import kr.co.architecture.core.ui.DetailRoute
-import kr.co.architecture.core.ui.GlobalUiStateEffect
 import kr.co.architecture.core.ui.HtmlText
 import kr.co.architecture.core.ui.theme.BaseTheme
 import kr.co.architecture.core.ui.util.asString
@@ -65,8 +64,6 @@ fun DetailScreen(
     onClickedBookmark = remember(viewModel) { { viewModel.setEvent(DetailUiEvent.OnClickedBookmark) } },
     onClickedBack = remember(viewModel) { { viewModel.setEvent(DetailUiEvent.OnClickedBack) } }
   )
-
-  GlobalUiStateEffect(viewModel)
 }
 
 // TODO: Scaffold의 topBar의 활용!?

@@ -62,7 +62,7 @@ class SearchViewModel @Inject constructor(
                 isbn = ISBN(event.isbn)
               )
             )
-          }.onFailure { showErrorDialog(it) }
+          }.onFailure { globalUiBus.showErrorDialog(it) }
         }
       }
       is SearchUiEvent.OnQueryChange -> {
@@ -98,7 +98,7 @@ class SearchViewModel @Inject constructor(
 
   fun fetchData(loadType: SearchUiSideEffect.Load) {
     viewModelScope.launch {
-      _loadingState.update { true }
+      globalUiBus.setLoadingState(true)
       runCatching {
         val searchedBooks = searchBooksUseCase(
           params = SearchBooksUseCase.Params(
@@ -129,8 +129,8 @@ class SearchViewModel @Inject constructor(
             },
             isPageable = searchedBooks.pageable.isEnd)
         }
-      }.onFailure { showErrorDialog(it) }
-      _loadingState.update { false }
+      }.onFailure { globalUiBus.showErrorDialog(it) }
+      globalUiBus.setLoadingState(false)
     }
   }
 }

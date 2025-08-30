@@ -84,7 +84,7 @@ class BookmarkViewModel @Inject constructor(
                 isbn = ISBN(event.isbn)
               )
             )
-          }.onFailure { showErrorDialog(it) }
+          }.onFailure { globalUiBus.showErrorDialog(it) }
         }
       }
       is BookmarkUiEvent.OnQueryChange -> {

@@ -20,7 +20,6 @@ import androidx.navigation.compose.composable
 import kotlinx.collections.immutable.toImmutableList
 import kr.co.architecture.core.ui.BookCard
 import kr.co.architecture.core.ui.BookmarkRoute
-import kr.co.architecture.core.ui.GlobalUiStateEffect
 import kr.co.architecture.core.ui.NoResultContent
 import kr.co.architecture.core.ui.SearchHeader
 import kr.co.architecture.core.ui.SortMenuChip
@@ -62,8 +61,6 @@ fun BookmarkScreen(
       { viewModel.setEvent(BookmarkUiEvent.OnChangePriceRange(it)) }
     },
   )
-
-  GlobalUiStateEffect(viewModel)
 }
 
 @Composable

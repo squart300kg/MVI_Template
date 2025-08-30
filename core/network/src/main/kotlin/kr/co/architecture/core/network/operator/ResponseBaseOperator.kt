@@ -7,6 +7,7 @@ import com.skydoves.sandwich.suspendOnError
 import com.skydoves.sandwich.suspendOnException
 import kr.co.architecture.core.model.ArchitectureSampleHttpException
 
+// TODO: OnException, onError의 처리는 UseCase가 맞음
 suspend fun <ENTITY> ApiResponse<ENTITY>.safeGet(): ENTITY = this
   .suspendOnError {
     throw ArchitectureSampleHttpException(
