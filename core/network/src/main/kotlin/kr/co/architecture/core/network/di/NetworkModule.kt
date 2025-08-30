@@ -15,7 +15,10 @@ import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.util.concurrent.TimeUnit
 import javax.inject.Singleton
+
+private const val COMMON_TIME_OUT = 10L
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -46,11 +49,16 @@ object NetworkModule {
   @Provides
   @Singleton
   fun provideOkHttpClient(
-    interceptor: Interceptor,
+    baseInterceptor: Interceptor,
     loggingInterceptor: HttpLoggingInterceptor
   ): OkHttpClient {
     return OkHttpClient.Builder()
-      .addInterceptor(interceptor)
+      .connectTimeout(COMMON_TIME_OUT, TimeUnit.SECONDS)
+      .readTimeout(COMMON_TIME_OUT, TimeUnit.SECONDS)
+      .writeTimeout(COMMON_TIME_OUT, TimeUnit.SECONDS)
+      .callTimeout(COMMON_TIME_OUT, TimeUnit.SECONDS)
+      .retryOnConnectionFailure(false)
+      .addInterceptor(baseInterceptor)
       .addInterceptor(loggingInterceptor)
       .build()
   }

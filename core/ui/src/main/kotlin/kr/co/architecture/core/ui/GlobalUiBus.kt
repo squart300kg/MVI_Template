@@ -32,15 +32,17 @@ class GlobalUiBus @Inject constructor() {
   fun showErrorDialog(
     throwable: Throwable,
   ) {
-    _errorDialog.value = BaseCenterDialogUiModel(
-      titleMessage = UiText.DynamicString("[${throwable.message}]"),
-      contentMessage = UiText.DynamicString("[${throwable.stackTraceToString()}]"),
-      confirmButtonMessage = UiText.StringResource(R.string.confirm)
-    )
+    _errorDialog.update {
+      BaseCenterDialogUiModel(
+        titleMessage = UiText.DynamicString("[${throwable.message}]"),
+        contentMessage = UiText.DynamicString("[${throwable.stackTraceToString()}]"),
+        confirmButtonMessage = UiText.StringResource(R.string.confirm)
+      )
+    }
   }
 
-  fun setLoadingState(isLoading: Boolean) {
-    when (isLoading) {
+  fun setLoadingState(loadingState: Boolean) {
+    when (loadingState) {
       true -> _loadingCount.update { it + 1 }
       false -> _loadingCount.update { (it - 1).coerceAtLeast(0) }
     }
