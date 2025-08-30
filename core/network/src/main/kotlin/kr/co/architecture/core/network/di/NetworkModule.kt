@@ -40,7 +40,7 @@ object NetworkModule {
     chain.proceed(
       chain.request()
         .newBuilder()
-        .addHeader(AUTHORIZATION, "$KAKAO_AK ${BuildConfig.API_KEY}")
+        .addHeader(AUTHORIZATION, "$KAKAO_AK ${BuildConfig.API_KEY}asdf")
         .url(chain.request().url)
         .build()
     )

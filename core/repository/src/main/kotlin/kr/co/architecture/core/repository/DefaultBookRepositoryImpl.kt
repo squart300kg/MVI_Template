@@ -98,7 +98,10 @@ class DefaultBookRepositoryImpl @Inject constructor(
       )
     } catch (e: Exception) {
       when (e) {
-        is KakaoErrorApiResponse -> DomainResult.Error(e.errorType, e.message)
+        is KakaoErrorApiResponse -> DomainResult.Error(
+          errorCode = e.errorType,
+          errorMessage = e.message
+        )
         else -> DomainResult.Error("UNKNOWN", "UNKNOWN")
       }
     }

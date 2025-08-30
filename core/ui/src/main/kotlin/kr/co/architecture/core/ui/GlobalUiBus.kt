@@ -12,6 +12,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
+import kr.co.architecture.core.domain.entity.DomainResult
 import kr.co.architecture.core.ui.util.UiText
 
 class GlobalUiBus @Inject constructor() {
@@ -32,10 +33,17 @@ class GlobalUiBus @Inject constructor() {
   fun showErrorDialog(
     throwable: Throwable,
   ) {
+    /**
+     * 실무 요구사항에 따라 다양한 error case 정의 가능
+     */
+    val (title, content) = when (throwable) {
+      is DomainResult.Error -> throwable.errorCode to throwable.errorMessage
+      else -> throwable.message to throwable.stackTraceToString()
+    }
     _errorDialog.update {
       BaseCenterDialogUiModel(
-        titleMessage = UiText.DynamicString("[${throwable.message}]"),
-        contentMessage = UiText.DynamicString("[${throwable.stackTraceToString()}]"),
+        titleMessage = UiText.DynamicString("[$title]"),
+        contentMessage = UiText.DynamicString("$content]"),
         confirmButtonMessage = UiText.StringResource(R.string.confirm)
       )
     }

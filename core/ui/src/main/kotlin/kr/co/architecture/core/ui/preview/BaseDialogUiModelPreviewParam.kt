@@ -1,0 +1,20 @@
+package kr.co.architecture.core.ui.preview
+
+import androidx.compose.ui.tooling.preview.PreviewParameterProvider
+import kr.co.architecture.core.ui.BaseCenterDialogUiModel
+import kr.co.architecture.core.ui.util.UiText
+
+class BaseDialogUiModelPreviewParam : PreviewParameterProvider<BaseCenterDialogUiModel> {
+  override val values: Sequence<BaseCenterDialogUiModel> = sequenceOf(
+    BaseCenterDialogUiModel(
+      titleMessage = UiText.DynamicString("titleMessage"),
+      contentMessage = UiText.DynamicString("contentMessagecontentMessagecontentMessagecontentMessagecontentMessagecontentMessagecontentMessagecontentMessagecontentMessagecontentMessagecontentMessagecontentMessagecontentMessagecontentMessagecontentMessagecontentMessagecontentMessagecontentMessagecontentMessagecontentMessagecontentMessagecontentMessagecontentMessagecontentMessagecontentMessagecontentMessagecontentMessagecontentMessagecontentMessagecontentMessagecontentMessagecontentMessagecontentMessagecontentMessagecontentMessagecontentMessagecontentMessagecontentMessagecontentMessagecontentMessagecontentMessagecontentMessagecontentMessagecontentMessagecontentMessagecontentMessagecontentMessagecontentMessagecontentMessagecontentMessagecontentMessagecontentMessagecontentMessagecontentMessagecontentMessagecontentMessagecontentMessagecontentMessagecontentMessagecontentMessagecontentMessagecontentMessagecontentMessagecontentMessagecontentMessagecontentMessagecontentMessagecontentMessagecontentMessagecontentMessagecontentMessagecontentMessagecontentMessagecontentMessagecontentMessage"),
+      confirmButtonMessage = UiText.DynamicString("confirmButtonMessage")
+    ),
+    BaseCenterDialogUiModel(
+      titleMessage = UiText.DynamicString("titleMessage"),
+      contentMessage = UiText.DynamicString("contentMessage"),
+      confirmButtonMessage = UiText.DynamicString("confirmButtonMessage")
+    )
+  )
+}
