@@ -56,26 +56,14 @@ fun SearchScreen(
   SearchScreen(
     modifier = modifier,
     uiState = uiState,
-    onQueryChange = remember(viewModel) {
-      { viewModel.setEvent(SearchUiEvent.OnQueryChange(it)) }
+    onQueryChange = { viewModel.setEvent(SearchUiEvent.OnQueryChange(it)) },
+    onSearch = { viewModel.setEvent(SearchUiEvent.OnSearch) },
+    onChangeSort = { viewModel.setEvent(SearchUiEvent.OnChangeSort(it)) },
+    onClickedBookmark = { isbn: String, isBookmarked: Boolean ->
+      viewModel.setEvent(SearchUiEvent.OnClickedBookmark(isbn, isBookmarked))
     },
-    onSearch = remember(viewModel) {
-      { viewModel.setEvent(SearchUiEvent.OnSearch) }
-    },
-    onChangeSort = remember(viewModel) {
-      { viewModel.setEvent(SearchUiEvent.OnChangeSort(it)) }
-    },
-    onClickedBookmark = remember(viewModel) {
-      { isbn: String, isBookmarked: Boolean ->
-        viewModel.setEvent(SearchUiEvent.OnClickedBookmark(isbn, isBookmarked))
-      }
-    },
-    onClickedItem = remember(viewModel) {
-      { viewModel.setEvent(SearchUiEvent.OnClickedItem(it)) }
-    },
-    onScrollToEnd = remember(viewModel) {
-      { viewModel.setEvent(SearchUiEvent.OnScrolledToEnd) }
-    }
+    onClickedItem = { viewModel.setEvent(SearchUiEvent.OnClickedItem(it)) },
+    onScrollToEnd = { viewModel.setEvent(SearchUiEvent.OnScrolledToEnd) }
   )
 }
 

@@ -43,23 +43,13 @@ fun BookmarkScreen(
   BookmarkScreen(
     modifier = modifier,
     uiState = uiState,
-    onQueryChange = remember(viewModel) {
-      { viewModel.setEvent(BookmarkUiEvent.OnQueryChange(it)) }
+    onQueryChange = { viewModel.setEvent(BookmarkUiEvent.OnQueryChange(it)) },
+    onClickedBookmark = { isbn, isBookmarked ->
+      viewModel.setEvent(BookmarkUiEvent.OnClickedBookmark(isbn, isBookmarked))
     },
-    onClickedBookmark = remember(viewModel) {
-      { isbn, isBookmarked ->
-        viewModel.setEvent(BookmarkUiEvent.OnClickedBookmark(isbn, isBookmarked))
-      }
-    },
-    onClickedItem = remember(viewModel) {
-      { viewModel.setEvent(BookmarkUiEvent.OnClickedItem(it)) }
-    },
-    onChangeDirectionSort = remember(viewModel) {
-      { viewModel.setEvent(BookmarkUiEvent.OnChangeSortDirection(it)) }
-    },
-    onChangePriceSort = remember(viewModel) {
-      { viewModel.setEvent(BookmarkUiEvent.OnChangePriceRange(it)) }
-    },
+    onClickedItem = { viewModel.setEvent(BookmarkUiEvent.OnClickedItem(it)) },
+    onChangeDirectionSort = { viewModel.setEvent(BookmarkUiEvent.OnChangeSortDirection(it)) },
+    onChangePriceSort = { viewModel.setEvent(BookmarkUiEvent.OnChangePriceRange(it)) },
   )
 }
 
