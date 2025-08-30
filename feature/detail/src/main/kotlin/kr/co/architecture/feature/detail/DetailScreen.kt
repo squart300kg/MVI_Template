@@ -69,6 +69,7 @@ fun DetailScreen(
   GlobalUiStateEffect(viewModel)
 }
 
+// TODO: Scaffold의 topBar의 활용!?
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DetailScreen(

@@ -115,8 +115,8 @@ abstract class BaseViewModel<State : UiState, Event : UiEvent, Effect : UiSideEf
         }
         else -> {
           BaseCenterDialogUiModel(
-            titleMessage = UiText.DynamicString(throwable?.stackTraceToString().toString()),
-            contentMessage = UiText.DynamicString(""),
+            titleMessage = UiText.DynamicString("[알 수 없는 에러]"),
+            contentMessage = UiText.DynamicString(throwable?.stackTraceToString().toString()),
             confirmButtonMessage = UiText.DynamicString("취소")
           )
         }
