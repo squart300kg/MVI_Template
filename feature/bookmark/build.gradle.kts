@@ -16,3 +16,6 @@ android {
     implementation(project(":testing"))
   }
 }
+dependencies {
+  testImplementation(kotlin("test"))
+}

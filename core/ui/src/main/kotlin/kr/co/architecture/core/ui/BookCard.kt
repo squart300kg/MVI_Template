@@ -16,6 +16,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -30,6 +31,7 @@ import kr.co.architecture.core.domain.entity.Price
 import kr.co.architecture.core.domain.entity.SearchedBooks
 import kr.co.architecture.core.ui.util.UiText
 import kr.co.architecture.core.ui.util.asString
+import kr.co.architecture.test.testing.ui.SearchTags
 import kr.co.architecture.core.ui.R as coreUiR
 
 data class BookCardUiModel(
@@ -104,7 +106,9 @@ fun BookCard(
   onClickedItem: (isbn: String) -> Unit = {}
 ) {
   Card(
-    modifier = modifier.fillMaxWidth(),
+    modifier = modifier
+      .fillMaxWidth()
+      .testTag(SearchTags.bookmark(uiModel.isbn)),
     shape = RoundedCornerShape(12.dp),
     elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
     onClick = { onClickedItem(uiModel.isbn) }

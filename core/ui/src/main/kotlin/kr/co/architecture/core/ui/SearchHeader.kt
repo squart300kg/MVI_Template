@@ -33,12 +33,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import kotlinx.collections.immutable.ImmutableList
 import kr.co.architecture.core.ui.enums.BaseSortUiEnum
 import kr.co.architecture.core.ui.enums.asString
+import kr.co.architecture.test.testing.ui.SearchTags
 import kr.co.architecture.core.ui.R as coreUiR
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -57,16 +59,18 @@ fun SearchHeader(
     OutlinedTextField(
       modifier = Modifier
         .fillMaxWidth()
-        .height(60.dp),
+        .height(60.dp)
+        .testTag(SearchTags.HeaderTextField),
       value = query,
       onValueChange = { query = it; onQueryChange(it) },
       placeholder = { Text(text = stringResource(coreUiR.string.placeHint)) },
       leadingIcon = { Icon(Icons.Default.Search, null) },
       trailingIcon = {
         if (query.isNotEmpty()) {
-          IconButton(onClick = { query = ""; onQueryChange("") }) {
-            Icon(Icons.Outlined.Close, contentDescription = stringResource(coreUiR.string.erase))
-          }
+          IconButton(
+            modifier = Modifier.testTag(SearchTags.HeaderClear),
+            onClick = { query = ""; onQueryChange("") }
+          ) { Icon(Icons.Outlined.Close, stringResource(coreUiR.string.erase)) }
         }
       },
       singleLine = true,
@@ -104,15 +108,18 @@ fun SortMenuChip(
   var expanded by rememberSaveable { mutableStateOf(false) }
   Box {
     AssistChip(
+      modifier = Modifier.testTag(SearchTags.SortChip),
       onClick = { expanded = true },
       label = { Text(selected.asString()) },
       leadingIcon = { Icon(Icons.Outlined.KeyboardArrowDown, contentDescription = null) }
     )
     DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
-      options.forEach { opt ->
+      options.forEach { option ->
         DropdownMenuItem(
-          text = { Text(opt.asString()) },
-          onClick = { onChange(opt); expanded = false }
+          modifier = Modifier
+            .testTag(SearchTags.sortItem(option.toString())),
+          text = { Text(option.asString()) },
+          onClick = { onChange(option); expanded = false }
         )
       }
     }
