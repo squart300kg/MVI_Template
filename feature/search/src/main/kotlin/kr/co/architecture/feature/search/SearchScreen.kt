@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -77,10 +78,6 @@ fun SearchScreen(
   onScrollToEnd: () -> Unit = {}
 ) {
   Column(modifier = modifier.fillMaxSize()) {
-    val listState = rememberSaveable(
-      uiState.sortUiEnum, onSearch,
-      saver = LazyListState.Saver
-    ) { LazyListState(0, 0) }
     SearchHeader(
       onQueryChange = onQueryChange,
       onSearch = onSearch
@@ -94,7 +91,6 @@ fun SearchScreen(
 
     SearchResultsSection(
       uiState = uiState,
-      listState = listState,
       onClickedItem = onClickedItem,
       onClickedBookmark = onClickedBookmark,
       onScrollToEnd = onScrollToEnd
@@ -105,7 +101,6 @@ fun SearchScreen(
 @Composable
 fun SearchResultsSection(
   uiState: SearchUiState,
-  listState: LazyListState,
   onClickedItem: (String) -> Unit,
   onClickedBookmark: (String, Boolean) -> Unit,
   onScrollToEnd: () -> Unit
@@ -114,6 +109,7 @@ fun SearchResultsSection(
     SearchUiType.NONE -> Unit
     SearchUiType.EMPTY_RESULT -> NoResultContent()
     SearchUiType.LOADED_RESULT -> {
+      val listState = rememberLazyListState()
       PaginationLoadEffect(
         listState = listState,
         isEnd = uiState.isPageable,

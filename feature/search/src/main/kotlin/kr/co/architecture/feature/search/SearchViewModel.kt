@@ -3,6 +3,7 @@ package kr.co.architecture.feature.search
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.collections.immutable.PersistentList
+import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.filter
@@ -67,10 +68,11 @@ class SearchViewModel @Inject constructor(
         cachedQuery = event.query
       }
       is SearchUiEvent.OnSearch -> {
+        setState { copy(bookCardUiModels = persistentListOf()) }
         setEffect { SearchUiSideEffect.Load.First }
       }
       is SearchUiEvent.OnChangeSort -> {
-        setState { copy(sortUiEnum = event.sort) }
+        setState { copy(sortUiEnum = event.sort, bookCardUiModels = persistentListOf()) }
         setEffect { SearchUiSideEffect.Load.First }
       }
     }
@@ -95,6 +97,7 @@ class SearchViewModel @Inject constructor(
   }
 
   fun fetchData(loadType: SearchUiSideEffect.Load) {
+    println("loadLog: $loadType")
     viewModelScope.launch {
       globalUiBus.setLoadingState(true)
       runCatching {
