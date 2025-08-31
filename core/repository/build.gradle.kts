@@ -12,8 +12,6 @@ android {
     implementation(project(":core:domain"))
     implementation(project(":core:network"))
     implementation(project(":core:database"))
-
-    implementation(libs.com.github.skydoves.sandwich)
   }
 }
 

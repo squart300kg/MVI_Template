@@ -7,7 +7,6 @@ import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kr.co.architecture.core.database.dao.BookSearchDao
 import kr.co.architecture.core.domain.entity.Book
-import kr.co.architecture.core.domain.entity.DomainFailure
 import kr.co.architecture.core.domain.entity.ISBN
 import kr.co.architecture.core.domain.entity.SearchedBooks
 import kr.co.architecture.core.domain.enums.BookmarkToggleTypeEnum
@@ -17,13 +16,19 @@ import kr.co.architecture.core.domain.usecase.SearchBookUseCase
 import kr.co.architecture.core.domain.usecase.SearchBooksUseCase
 import kr.co.architecture.core.domain.usecase.ToggleBookmarkUseCase
 import kr.co.architecture.core.network.RemoteApi
-import kr.co.architecture.core.network.error.KakaoErrorApiResponse
-import kr.co.architecture.core.network.operator.executeWithDomain
+import kr.co.architecture.core.repository.mapper.getOrThrowDomainFailure
 import kr.co.architecture.core.repository.mapper.BookMapper
 import kr.co.architecture.core.repository.mapper.SearchedBookMapper
-import java.net.UnknownHostException
 import javax.inject.Inject
 
+/**
+ * Clean Architecture구조 상, RemoteDataSource / LocalDataSource를 두어야함이 맞으나, 아래 이유로 생략하였습니다.
+ *
+ * 1. 앱 크기
+ * 2. DataSource에 정의되는 mapper가 동일 모델을 파싱하는 용도에 지나지 않음.
+ *
+ * 따라서 `core:network`의 retrofit의 의존성을 `implementation()`이 아닌, `api()`를 통해, `core:repository`로 전파합니다.
+ */
 class DefaultBookRepositoryImpl @Inject constructor(
   private val remoteApi: RemoteApi,
   private val bookSearchDao: BookSearchDao
@@ -74,22 +79,20 @@ class DefaultBookRepositoryImpl @Inject constructor(
       currentKey = newKey
     }
 
-    return runCatchingWithDomain {
-      remoteApi.searchBook(
-        query = params.query,
-        sort = SearchedBookMapper.mapperToDto(params.sortEnum).value,
-        page = params.page
-      )
-        .executeWithDomain()
-        .let(SearchedBookMapper::mapperToDomain)
-        .also { searchedBooks ->
-          cacheMutex.withLock {
-            searchedBooks.books.forEach { book ->
-              cachedSearchedBooks[ISBN(book.isbn)] = book
-            }
+    return remoteApi.searchBook(
+      query = params.query,
+      sort = SearchedBookMapper.mapperToDto(params.sortEnum).value,
+      page = params.page
+    )
+      .getOrThrowDomainFailure()
+      .let(SearchedBookMapper::mapperToDomain)
+      .also { searchedBooks ->
+        cacheMutex.withLock {
+          searchedBooks.books.forEach { book ->
+            cachedSearchedBooks[ISBN(book.isbn)] = book
           }
         }
-    }
+      }
   }
 
   override suspend fun searchBook(params: SearchBookUseCase.Params): Book? {
@@ -102,24 +105,6 @@ class DefaultBookRepositoryImpl @Inject constructor(
         else cachedBook
       } ?: run { localBooks.find { it.isbn == isbn.value } }
       ?.also { cachedSearchedBooks[isbn] = it }
-  }
-}
-
-// TODO: 이거 패키지 분리
-suspend fun <T> runCatchingWithDomain(
-  block: suspend () -> T
-): T {
-  return try {
-    block()
-  } catch (e: Throwable) {
-    throw when (e) {
-      is KakaoErrorApiResponse -> DomainFailure.Error(
-        code = e.errorType,
-        message = e.message
-      )
-      is UnknownHostException -> DomainFailure.Exception.NetworkConnection
-      else -> DomainFailure.Exception.Unknown
-    }
   }
 }
 

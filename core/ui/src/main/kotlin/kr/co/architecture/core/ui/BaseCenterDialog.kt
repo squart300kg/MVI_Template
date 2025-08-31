@@ -20,6 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalWindowInfo
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
@@ -75,7 +76,7 @@ fun BaseCenterDialog(
         ) {
           val title = baseCenterDialogUiModel.titleMessage.asString()
           if (title.isNotEmpty()) {
-            Text(text = title, textAlign = TextAlign.Center)
+            Text(text = title, textAlign = TextAlign.Center, fontWeight = FontWeight.Bold)
           }
 
           val content = baseCenterDialogUiModel.contentMessage.asString()

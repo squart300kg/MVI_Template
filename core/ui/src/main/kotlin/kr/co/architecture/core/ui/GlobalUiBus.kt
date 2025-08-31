@@ -37,7 +37,7 @@ class GlobalUiBus @Inject constructor() {
     /**
      * 실무 요구사항에 따라 다양한 error case 정의 가능
      */
-    val (title, content) = when (throwable) {
+    val (title, contents) = when (throwable) {
       is DomainFailure.Error -> {
         UiText.DynamicString(throwable.code) to
           UiText.DynamicString(throwable.message)
@@ -68,9 +68,8 @@ class GlobalUiBus @Inject constructor() {
 
     _errorDialog.update {
       BaseCenterDialogUiModel(
-        titleMessage = UiText.DynamicString("[$title]"),
-        contentMessage = UiText.DynamicString("$content]"),
-        confirmButtonMessage = UiText.StringResource(R.string.confirm)
+        titleMessage = title,
+        contentMessage = contents
       )
     }
   }
