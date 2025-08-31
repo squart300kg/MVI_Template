@@ -2,10 +2,8 @@ package kr.co.architecture.feature.bookmark
 
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
@@ -84,7 +82,7 @@ class BookmarkViewModel @Inject constructor(
                 isbn = ISBN(event.isbn)
               )
             )
-          }.onFailure { globalUiBus.showErrorDialog(it) }
+          }.onFailure { globalUiBus.showFailureDialog(it) }
         }
       }
       is BookmarkUiEvent.OnQueryChange -> {

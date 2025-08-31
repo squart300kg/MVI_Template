@@ -9,7 +9,6 @@ android {
   defaultConfig { }
 
   dependencies {
-    implementation(project(":core:model"))
     implementation(project(":core:repository"))
 
     implementation(libs.androidx.test.rules)

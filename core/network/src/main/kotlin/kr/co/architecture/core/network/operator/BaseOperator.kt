@@ -8,9 +8,10 @@ import com.skydoves.sandwich.suspendOnError
 import com.skydoves.sandwich.suspendOnException
 import kr.co.architecture.core.network.error.KakaoErrorApiResponse
 
-suspend fun <ENTITY> ApiResponse<ENTITY>.safeGet(): ENTITY = this
+suspend fun <ENTITY> ApiResponse<ENTITY>.executeWithDomain(): ENTITY = this
   .suspendOnError {
     throw try {
+      payload
       Gson().fromJson(errorBody?.string(), KakaoErrorApiResponse::class.java)
     } catch (e: Exception) { throw e }
   }
@@ -19,7 +20,7 @@ suspend fun <ENTITY> ApiResponse<ENTITY>.safeGet(): ENTITY = this
      * API의 request / response가 정상적으로 수행되지 않는 경우
      * 지금 이 블럭에서 예외를 던짐(eg., SSLHandshakeException, UnknownHostException...)
      */
-    throw this.throwable
+    throw throwable
   }
   .getOrThrow()
 

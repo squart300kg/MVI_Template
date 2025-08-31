@@ -1,13 +1,13 @@
 package kr.co.architecture.core.repository
 
-import kotlinx.coroutines.sync.Mutex
-import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import kr.co.architecture.core.database.dao.BookSearchDao
 import kr.co.architecture.core.domain.entity.Book
-import kr.co.architecture.core.domain.entity.DomainResult
+import kr.co.architecture.core.domain.entity.DomainFailure
 import kr.co.architecture.core.domain.entity.ISBN
 import kr.co.architecture.core.domain.entity.SearchedBooks
 import kr.co.architecture.core.domain.enums.BookmarkToggleTypeEnum
@@ -18,9 +18,10 @@ import kr.co.architecture.core.domain.usecase.SearchBooksUseCase
 import kr.co.architecture.core.domain.usecase.ToggleBookmarkUseCase
 import kr.co.architecture.core.network.RemoteApi
 import kr.co.architecture.core.network.error.KakaoErrorApiResponse
-import kr.co.architecture.core.network.operator.safeGet
-import kr.co.architecture.core.repository.mapper.SearchedBookMapper
+import kr.co.architecture.core.network.operator.executeWithDomain
 import kr.co.architecture.core.repository.mapper.BookMapper
+import kr.co.architecture.core.repository.mapper.SearchedBookMapper
+import java.net.UnknownHostException
 import javax.inject.Inject
 
 class DefaultBookRepositoryImpl @Inject constructor(
@@ -64,7 +65,7 @@ class DefaultBookRepositoryImpl @Inject constructor(
     }
   }
 
-  override suspend fun searchBooks(params: SearchBooksUseCase.Params): DomainResult<SearchedBooks> {
+  override suspend fun searchBooks(params: SearchBooksUseCase.Params): SearchedBooks {
     val newKey = QueryKey(params.query, params.sortEnum)
 
     // 다른 쿼리/정렬로 시작하거나 첫 페이지면 캐시 초기화
@@ -73,13 +74,13 @@ class DefaultBookRepositoryImpl @Inject constructor(
       currentKey = newKey
     }
 
-    return executeWithDomainResult {
+    return runCatchingWithDomain {
       remoteApi.searchBook(
         query = params.query,
         sort = SearchedBookMapper.mapperToDto(params.sortEnum).value,
         page = params.page
       )
-        .safeGet()
+        .executeWithDomain()
         .let(SearchedBookMapper::mapperToDomain)
         .also { searchedBooks ->
           cacheMutex.withLock {
@@ -105,21 +106,19 @@ class DefaultBookRepositoryImpl @Inject constructor(
 }
 
 // TODO: 이거 패키지 분리
-suspend fun <T> executeWithDomainResult(
-  block: suspend () -> T,
-): DomainResult<T> {
+suspend fun <T> runCatchingWithDomain(
+  block: suspend () -> T
+): T {
   return try {
-    DomainResult.Success(block())
+    block()
   } catch (e: Throwable) {
-    when (e) {
-      is KakaoErrorApiResponse -> DomainResult.Error(
-        errorCode = e.errorType,
-        errorMessage = e.message
+    throw when (e) {
+      is KakaoErrorApiResponse -> DomainFailure.Error(
+        code = e.errorType,
+        message = e.message
       )
-      else -> DomainResult.Error(
-        errorCode = e.message ?: "UNKNOWN ERROR",
-        errorMessage = e.stackTraceToString()
-      )
+      is UnknownHostException -> DomainFailure.Exception.NetworkConnection
+      else -> DomainFailure.Exception.Unknown
     }
   }
 }

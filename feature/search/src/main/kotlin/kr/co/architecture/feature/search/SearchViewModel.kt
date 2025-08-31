@@ -10,9 +10,6 @@ import kotlinx.coroutines.flow.flatMapConcat
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
-import kr.co.architecture.core.domain.entity.DomainResult
-import kr.co.architecture.core.ui.util.formatter.DateTextFormatter
-import kr.co.architecture.core.ui.util.formatter.MoneyTextFormatter
 import kr.co.architecture.core.domain.entity.ISBN
 import kr.co.architecture.core.domain.enums.BookmarkToggleTypeEnum
 import kr.co.architecture.core.domain.usecase.ObserveBookmarkedBooksUseCase
@@ -22,6 +19,8 @@ import kr.co.architecture.core.ui.BaseViewModel
 import kr.co.architecture.core.ui.BookUiModel
 import kr.co.architecture.core.ui.DetailRoute
 import kr.co.architecture.core.ui.enums.SortUiEnum
+import kr.co.architecture.core.ui.util.formatter.DateTextFormatter
+import kr.co.architecture.core.ui.util.formatter.MoneyTextFormatter
 import javax.inject.Inject
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -61,7 +60,7 @@ class SearchViewModel @Inject constructor(
                 isbn = ISBN(event.isbn)
               )
             )
-          }.onFailure { globalUiBus.showErrorDialog(it) }
+          }.onFailure { globalUiBus.showFailureDialog(it) }
         }
       }
       is SearchUiEvent.OnQueryChange -> {
@@ -98,42 +97,37 @@ class SearchViewModel @Inject constructor(
   fun fetchData(loadType: SearchUiSideEffect.Load) {
     viewModelScope.launch {
       globalUiBus.setLoadingState(true)
-      val searchedBooks = searchBooksUseCase(
-        params = SearchBooksUseCase.Params(
-          page = when (loadType) {
-            is SearchUiSideEffect.Load.First -> setStateAndGet { copy(page = 1) }.page
-            is SearchUiSideEffect.Load.More -> setStateAndGet { copy(page = page + 1) }.page
-          },
-          query = cachedQuery,
-          sortEnum = SortUiEnum.mapperToDomain(uiState.value.sortUiEnum)
+      runCatching {
+        val searchedBooks = searchBooksUseCase(
+          params = SearchBooksUseCase.Params(
+            page = when (loadType) {
+              is SearchUiSideEffect.Load.First -> setStateAndGet { copy(page = 1) }.page
+              is SearchUiSideEffect.Load.More -> setStateAndGet { copy(page = page + 1) }.page
+            },
+            query = cachedQuery,
+            sortEnum = SortUiEnum.mapperToDomain(uiState.value.sortUiEnum)
+          )
         )
-      )
-      when (searchedBooks) {
-        is DomainResult.Error -> {
-          globalUiBus.showErrorDialog(searchedBooks)
+        setState {
+          copy(
+            uiType =
+              if (loadType is SearchUiSideEffect.Load.First && searchedBooks.books.isEmpty()) SearchUiType.EMPTY_RESULT
+              else SearchUiType.LOADED_RESULT,
+            bookUiModels = run {
+              val bookUiModel = BookUiModel.mapperToUi(
+                searchedBooks = searchedBooks,
+                dateTextFormatter = dateTextFormatter,
+                moneyTextFormatter = moneyTextFormatter
+              )
+              when (loadType) {
+                is SearchUiSideEffect.Load.First -> bookUiModel
+                is SearchUiSideEffect.Load.More -> (uiState.value.bookUiModels as PersistentList)
+                  .addAll(bookUiModel)
+              }
+            },
+            isPageable = searchedBooks.pageable.isEnd)
         }
-        is DomainResult.Success -> {
-          setState {
-            copy(
-              uiType =
-                if (loadType is SearchUiSideEffect.Load.First && searchedBooks.data.books.isEmpty()) SearchUiType.EMPTY_RESULT
-                else SearchUiType.LOADED_RESULT,
-              bookUiModels = run {
-                val bookUiModel = BookUiModel.mapperToUi(
-                  searchedBooks = searchedBooks.data,
-                  dateTextFormatter = dateTextFormatter,
-                  moneyTextFormatter = moneyTextFormatter
-                )
-                when (loadType) {
-                  is SearchUiSideEffect.Load.First -> bookUiModel
-                  is SearchUiSideEffect.Load.More -> (uiState.value.bookUiModels as PersistentList)
-                    .addAll(bookUiModel)
-                }
-              },
-              isPageable = searchedBooks.data.pageable.isEnd)
-          }
-        }
-      }
+      }.onFailure { globalUiBus.showFailureDialog(it) }
       globalUiBus.setLoadingState(false)
     }
   }

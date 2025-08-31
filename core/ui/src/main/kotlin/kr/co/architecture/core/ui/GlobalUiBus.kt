@@ -1,7 +1,6 @@
 package kr.co.architecture.core.ui
 
 import jakarta.inject.Inject
-import jakarta.inject.Singleton
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -12,7 +11,9 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
-import kr.co.architecture.core.domain.entity.DomainResult
+import kr.co.architecture.core.domain.entity.DomainFailure
+import kr.co.architecture.core.domain.entity.DomainFailure.Exception.NetworkConnection
+import kr.co.architecture.core.domain.entity.DomainFailure.Exception.Unknown
 import kr.co.architecture.core.ui.util.UiText
 
 class GlobalUiBus @Inject constructor() {
@@ -30,16 +31,41 @@ class GlobalUiBus @Inject constructor() {
   private val _errorDialog = MutableStateFlow<BaseCenterDialogUiModel?>(null)
   val errorDialog = _errorDialog.asStateFlow()
 
-  fun showErrorDialog(
-    throwable: Throwable,
+  fun showFailureDialog(
+    throwable: Throwable
   ) {
     /**
      * 실무 요구사항에 따라 다양한 error case 정의 가능
      */
     val (title, content) = when (throwable) {
-      is DomainResult.Error -> throwable.errorCode to throwable.errorMessage
-      else -> throwable.message to throwable.stackTraceToString()
+      is DomainFailure.Error -> {
+        UiText.DynamicString(throwable.code) to
+          UiText.DynamicString(throwable.message)
+      }
+      is DomainFailure.Exception -> {
+        when (throwable) {
+          is NetworkConnection -> {
+            UiText.StringResource(R.string.networkConnectionErrorTitle) to
+              UiText.StringResource(R.string.networkConnectionErrorContents)
+          }
+          is Unknown -> {
+            (throwable.message?.let {
+              UiText.DynamicString(it)
+            } ?: run {
+              UiText.StringResource(R.string.unknownError)
+            }) to UiText.DynamicString(throwable.stackTraceToString())
+          }
+        }
+      }
+      else -> {
+        (throwable.message?.let {
+          UiText.DynamicString(it)
+        } ?: run {
+          UiText.StringResource(R.string.unknownError)
+        }) to UiText.DynamicString(throwable.stackTraceToString())
+      }
     }
+
     _errorDialog.update {
       BaseCenterDialogUiModel(
         titleMessage = UiText.DynamicString("[$title]"),

@@ -34,7 +34,7 @@ import kr.co.architecture.core.ui.util.asString
 data class BaseCenterDialogUiModel(
   val titleMessage: UiText,
   val contentMessage: UiText,
-  val confirmButtonMessage: UiText
+  val confirmButtonMessage: UiText = UiText.StringResource(R.string.confirm)
 )
 
 @Composable
