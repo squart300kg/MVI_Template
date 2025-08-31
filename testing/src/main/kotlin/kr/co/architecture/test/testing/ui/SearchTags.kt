@@ -1,11 +1,11 @@
 package kr.co.architecture.test.testing.ui
 
 object SearchTags {
-  const val HeaderTextField = "search:text"
-  const val HeaderClear = "search:clear"
-  const val SortChip = "search:sortChip"
+  const val HEADER_TEXT_FIELD = "search:text"
+  const val HEADER_CLEAR = "search:clear"
+  const val SORT_CHIP = "search:sortChip"
+  const val RESULT_LIST = "search:list"
   fun sortItem(name: String) = "search:sort:$name"
-  const val ResultsList = "search:list"
   fun bookCard(isbn: String) = "book:$isbn"
   fun bookmark(isbn: String) = "bookmark:$isbn"
 }

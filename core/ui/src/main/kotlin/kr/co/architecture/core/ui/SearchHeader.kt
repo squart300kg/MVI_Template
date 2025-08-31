@@ -60,7 +60,7 @@ fun SearchHeader(
       modifier = Modifier
         .fillMaxWidth()
         .height(60.dp)
-        .testTag(SearchTags.HeaderTextField),
+        .testTag(SearchTags.HEADER_TEXT_FIELD),
       value = query,
       onValueChange = { query = it; onQueryChange(it) },
       placeholder = { Text(text = stringResource(coreUiR.string.placeHint)) },
@@ -68,7 +68,7 @@ fun SearchHeader(
       trailingIcon = {
         if (query.isNotEmpty()) {
           IconButton(
-            modifier = Modifier.testTag(SearchTags.HeaderClear),
+            modifier = Modifier.testTag(SearchTags.HEADER_CLEAR),
             onClick = { query = ""; onQueryChange("") }
           ) { Icon(Icons.Outlined.Close, stringResource(coreUiR.string.erase)) }
         }
@@ -108,7 +108,7 @@ fun SortMenuChip(
   var expanded by rememberSaveable { mutableStateOf(false) }
   Box {
     AssistChip(
-      modifier = Modifier.testTag(SearchTags.SortChip),
+      modifier = Modifier.testTag(SearchTags.SORT_CHIP),
       onClick = { expanded = true },
       label = { Text(selected.asString()) },
       leadingIcon = { Icon(Icons.Outlined.KeyboardArrowDown, contentDescription = null) }

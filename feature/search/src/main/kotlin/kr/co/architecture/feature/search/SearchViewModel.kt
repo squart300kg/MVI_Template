@@ -126,7 +126,7 @@ class SearchViewModel @Inject constructor(
                 .addAll(bookCardUiModel)
             }
           },
-          isPageable = searchedBooks.pageable.isEnd)
+          isEndPage = searchedBooks.pageable.isEnd)
       }
     }
   }

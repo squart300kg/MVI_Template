@@ -19,7 +19,7 @@ data class SearchUiState(
   val sortUiEnum: SortUiEnum = SortUiEnum.ACCURACY,
   val bookCardUiModels: ImmutableList<BookCardUiModel> = persistentListOf(),
   val page: Int = 1,
-  val isPageable: Boolean = true
+  val isEndPage: Boolean = true
 ) : UiState
 
 sealed interface SearchUiEvent : UiEvent {

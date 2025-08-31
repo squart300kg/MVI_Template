@@ -108,7 +108,7 @@ fun BookCard(
   Card(
     modifier = modifier
       .fillMaxWidth()
-      .testTag(SearchTags.bookmark(uiModel.isbn)),
+      .testTag(SearchTags.bookCard(uiModel.isbn)),
     shape = RoundedCornerShape(12.dp),
     elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
     onClick = { onClickedItem(uiModel.isbn) }
@@ -178,6 +178,7 @@ fun BookCard(
         modifier = Modifier
           .wrapContentWidth(Alignment.End)
           .weight(0.1f)
+          .testTag(SearchTags.bookmark(uiModel.isbn))
           .baseClickable { onClickedBookmark(uiModel.isbn, uiModel.isBookmarked) },
         imageVector =
           if (uiModel.isBookmarked) Icons.Filled.Favorite
