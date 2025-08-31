@@ -95,4 +95,17 @@ abstract class BaseViewModel<State : UiState, Event : UiEvent, Effect : UiSideEf
   ) = viewModelScope.launch {
     navigator.navigate(route, saveState, launchSingleTop)
   }
+
+  fun <T> launchWithLoading(block: suspend () -> T) {
+    viewModelScope.launch {
+      try {
+        globalUiBus.setLoadingState(true)
+        block()
+      } catch (e: Exception) {
+        globalUiBus.showFailureDialog(e)
+      } finally {
+        globalUiBus.setLoadingState(false)
+      }
+    }
+  }
 }

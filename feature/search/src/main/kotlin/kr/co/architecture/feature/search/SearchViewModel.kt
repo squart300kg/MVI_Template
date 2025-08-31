@@ -97,41 +97,37 @@ class SearchViewModel @Inject constructor(
   }
 
   fun fetchData(loadType: SearchUiSideEffect.Load) {
-    println("loadLog: $loadType")
-    viewModelScope.launch {
-      globalUiBus.setLoadingState(true)
-      runCatching {
-        val searchedBooks = searchBooksUseCase(
-          params = SearchBooksUseCase.Params(
-            page = when (loadType) {
-              is SearchUiSideEffect.Load.First -> setStateAndGet { copy(page = 1) }.page
-              is SearchUiSideEffect.Load.More -> setStateAndGet { copy(page = page + 1) }.page
-            },
-            query = cachedQuery,
-            sortEnum = SortUiEnum.mapperToDomain(uiState.value.sortUiEnum)
-          )
+    launchWithLoading {
+      val searchedBooks = searchBooksUseCase(
+        params = SearchBooksUseCase.Params(
+          page = when (loadType) {
+            is SearchUiSideEffect.Load.First -> setStateAndGet { copy(page = 1) }.page
+            is SearchUiSideEffect.Load.More -> setStateAndGet { copy(page = page + 1) }.page
+          },
+          query = cachedQuery,
+          sortEnum = SortUiEnum.mapperToDomain(uiState.value.sortUiEnum)
         )
-        setState {
-          copy(
-            uiType =
-              if (loadType is SearchUiSideEffect.Load.First && searchedBooks.books.isEmpty()) SearchUiType.EMPTY_RESULT
-              else SearchUiType.LOADED_RESULT,
-            bookCardUiModels = run {
-              val bookCardUiModel = BookCardUiModel.mapperToUi(
-                searchedBooks = searchedBooks,
-                dateTextFormatter = dateTextFormatter,
-                moneyTextFormatter = moneyTextFormatter
-              )
-              when (loadType) {
-                is SearchUiSideEffect.Load.First -> bookCardUiModel
-                is SearchUiSideEffect.Load.More -> (uiState.value.bookCardUiModels as PersistentList)
-                  .addAll(bookCardUiModel)
-              }
-            },
-            isPageable = searchedBooks.pageable.isEnd)
-        }
-      }.onFailure { globalUiBus.showFailureDialog(it) }
-      globalUiBus.setLoadingState(false)
+      )
+
+      setState {
+        copy(
+          uiType =
+            if (loadType is SearchUiSideEffect.Load.First && searchedBooks.books.isEmpty()) SearchUiType.EMPTY_RESULT
+            else SearchUiType.LOADED_RESULT,
+          bookCardUiModels = run {
+            val bookCardUiModel = BookCardUiModel.mapperToUi(
+              searchedBooks = searchedBooks,
+              dateTextFormatter = dateTextFormatter,
+              moneyTextFormatter = moneyTextFormatter
+            )
+            when (loadType) {
+              is SearchUiSideEffect.Load.First -> bookCardUiModel
+              is SearchUiSideEffect.Load.More -> (uiState.value.bookCardUiModels as PersistentList)
+                .addAll(bookCardUiModel)
+            }
+          },
+          isPageable = searchedBooks.pageable.isEnd)
+      }
     }
   }
 }

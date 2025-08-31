@@ -8,6 +8,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
@@ -22,9 +23,10 @@ class GlobalUiBus @Inject constructor() {
   private val _loadingCount = MutableStateFlow(0)
   val loadingState: StateFlow<Boolean> = _loadingCount
     .map { it > 0 }
+    .distinctUntilChanged()
     .stateIn(
       scope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate),
-      started = SharingStarted.Eagerly,
+      started = SharingStarted.WhileSubscribed(),
       initialValue = false
     )
 
