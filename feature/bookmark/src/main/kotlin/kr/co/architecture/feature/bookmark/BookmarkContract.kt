@@ -2,7 +2,7 @@ package kr.co.architecture.feature.bookmark
 
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
-import kr.co.architecture.core.ui.BookUiModel
+import kr.co.architecture.core.ui.BookCardUiModel
 import kr.co.architecture.core.ui.UiEvent
 import kr.co.architecture.core.ui.UiSideEffect
 import kr.co.architecture.core.ui.UiState
@@ -19,7 +19,7 @@ data class BookmarkUiState(
   val uiType: BookmarkUiType = BookmarkUiType.NONE,
   val sortDirectionUiEnum: SortDirectionUiEnum = SortDirectionUiEnum.ASCENDING,
   val sortPriceRangeUiEnum: SortPriceRangeUiEnum = SortPriceRangeUiEnum.ALL,
-  val bookUiModels: ImmutableList<BookUiModel> = persistentListOf(),
+  val bookCardUiModels: ImmutableList<BookCardUiModel> = persistentListOf(),
 ) : UiState
 
 sealed interface BookmarkUiEvent : UiEvent {

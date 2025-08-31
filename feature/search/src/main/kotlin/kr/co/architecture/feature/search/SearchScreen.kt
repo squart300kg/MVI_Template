@@ -122,7 +122,7 @@ fun SearchResultsSection(
 
       LazyColumn(state = listState) {
         items(
-          items = uiState.bookUiModels
+          items = uiState.bookCardUiModels
         ) { item ->
           BookCard(
             modifier = Modifier.padding(10.dp),

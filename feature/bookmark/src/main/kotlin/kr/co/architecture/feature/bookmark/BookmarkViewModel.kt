@@ -24,7 +24,7 @@ import kr.co.architecture.core.domain.usecase.ObserveFilteredBookmarksUseCase
 import kr.co.architecture.core.domain.usecase.ObserveFilteredBookmarksUseCase.BookmarkFilter
 import kr.co.architecture.core.domain.usecase.ToggleBookmarkUseCase
 import kr.co.architecture.core.ui.BaseViewModel
-import kr.co.architecture.core.ui.BookUiModel
+import kr.co.architecture.core.ui.BookCardUiModel
 import kr.co.architecture.core.ui.DetailRoute
 import kr.co.architecture.core.ui.enums.SortDirectionUiEnum
 import kr.co.architecture.core.ui.enums.SortPriceRangeUiEnum
@@ -119,7 +119,7 @@ class BookmarkViewModel @Inject constructor(
             uiType =
               if (book.isNotEmpty()) BookmarkUiType.LOADED_RESULT
               else BookmarkUiType.EMPTY_RESULT,
-            bookUiModels = BookUiModel.mapperToUi(
+            bookCardUiModels = BookCardUiModel.mapperToUi(
               book = book,
               dateTextFormatter = dateTextFormatter,
               moneyTextFormatter = moneyTextFormatter

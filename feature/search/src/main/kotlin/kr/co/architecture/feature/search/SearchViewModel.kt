@@ -16,7 +16,7 @@ import kr.co.architecture.core.domain.usecase.ObserveBookmarkedBooksUseCase
 import kr.co.architecture.core.domain.usecase.SearchBooksUseCase
 import kr.co.architecture.core.domain.usecase.ToggleBookmarkUseCase
 import kr.co.architecture.core.ui.BaseViewModel
-import kr.co.architecture.core.ui.BookUiModel
+import kr.co.architecture.core.ui.BookCardUiModel
 import kr.co.architecture.core.ui.DetailRoute
 import kr.co.architecture.core.ui.enums.SortUiEnum
 import kr.co.architecture.core.ui.util.formatter.DateTextFormatter
@@ -78,13 +78,13 @@ class SearchViewModel @Inject constructor(
 
   init {
     uiState
-      .filter { it.bookUiModels.isNotEmpty() }
+      .filter { it.bookCardUiModels.isNotEmpty() }
       .flatMapConcat { uiState ->
         observeBookmarkedBooksUseCase()
           .onEach { bookmarkedBooks ->
             setState {
               copy(
-                bookUiModels = bookUiModels
+                bookCardUiModels = bookCardUiModels
                   .map { uiModel ->
                     uiModel.copy(isBookmarked = bookmarkedBooks.any { it.isbn == uiModel.isbn })
                   }.toImmutableList()
@@ -113,16 +113,16 @@ class SearchViewModel @Inject constructor(
             uiType =
               if (loadType is SearchUiSideEffect.Load.First && searchedBooks.books.isEmpty()) SearchUiType.EMPTY_RESULT
               else SearchUiType.LOADED_RESULT,
-            bookUiModels = run {
-              val bookUiModel = BookUiModel.mapperToUi(
+            bookCardUiModels = run {
+              val bookCardUiModel = BookCardUiModel.mapperToUi(
                 searchedBooks = searchedBooks,
                 dateTextFormatter = dateTextFormatter,
                 moneyTextFormatter = moneyTextFormatter
               )
               when (loadType) {
-                is SearchUiSideEffect.Load.First -> bookUiModel
-                is SearchUiSideEffect.Load.More -> (uiState.value.bookUiModels as PersistentList)
-                  .addAll(bookUiModel)
+                is SearchUiSideEffect.Load.First -> bookCardUiModel
+                is SearchUiSideEffect.Load.More -> (uiState.value.bookCardUiModels as PersistentList)
+                  .addAll(bookCardUiModel)
               }
             },
             isPageable = searchedBooks.pageable.isEnd)

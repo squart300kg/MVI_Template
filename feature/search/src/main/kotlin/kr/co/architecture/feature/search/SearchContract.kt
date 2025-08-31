@@ -2,7 +2,7 @@ package kr.co.architecture.feature.search
 
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
-import kr.co.architecture.core.ui.BookUiModel
+import kr.co.architecture.core.ui.BookCardUiModel
 import kr.co.architecture.core.ui.UiEvent
 import kr.co.architecture.core.ui.UiSideEffect
 import kr.co.architecture.core.ui.UiState
@@ -17,7 +17,7 @@ enum class SearchUiType {
 data class SearchUiState(
   val uiType: SearchUiType = SearchUiType.NONE,
   val sortUiEnum: SortUiEnum = SortUiEnum.ACCURACY,
-  val bookUiModels: ImmutableList<BookUiModel> = persistentListOf(),
+  val bookCardUiModels: ImmutableList<BookCardUiModel> = persistentListOf(),
   val page: Int = 1,
   val isPageable: Boolean = true
 ) : UiState

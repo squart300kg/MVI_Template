@@ -32,7 +32,7 @@ import kr.co.architecture.core.ui.util.UiText
 import kr.co.architecture.core.ui.util.asString
 import kr.co.architecture.core.ui.R as coreUiR
 
-data class BookUiModel(
+data class BookCardUiModel(
   val isbn: String,
   val thumbnail: String,
   val title: UiText,
@@ -48,7 +48,7 @@ data class BookUiModel(
       searchedBooks: SearchedBooks,
       dateTextFormatter: DateTextFormatter,
       moneyTextFormatter: MoneyTextFormatter
-    ): ImmutableList<BookUiModel> {
+    ): ImmutableList<BookCardUiModel> {
       return mapperToUi(
         book = searchedBooks.books,
         dateTextFormatter = dateTextFormatter,
@@ -60,9 +60,9 @@ data class BookUiModel(
       book: List<Book>,
       dateTextFormatter: DateTextFormatter,
       moneyTextFormatter: MoneyTextFormatter
-    ): ImmutableList<BookUiModel> {
+    ): ImmutableList<BookCardUiModel> {
       return book.map {
-        BookUiModel(
+        BookCardUiModel(
           isbn = it.isbn,
           thumbnail = it.thumbnail,
           title = UiText.DynamicString(it.title),
@@ -99,7 +99,7 @@ data class BookUiModel(
 @Composable
 fun BookCard(
   modifier: Modifier = Modifier,
-  uiModel: BookUiModel,
+  uiModel: BookCardUiModel,
   onClickedBookmark: (isbn: String, isBookmarked: Boolean) -> Unit = {_,_->},
   onClickedItem: (isbn: String) -> Unit = {}
 ) {

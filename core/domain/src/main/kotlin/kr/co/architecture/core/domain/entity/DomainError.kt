@@ -1,5 +1,8 @@
 package kr.co.architecture.core.domain.entity
 
+/**
+ * 실무 진행 시엔, 실제 발생 가능 case들 추가 정리 가능
+ */
 sealed class DomainFailure: Exception() {
   data class Error(
     val code: String,

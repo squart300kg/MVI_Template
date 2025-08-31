@@ -24,6 +24,9 @@ data class UiText(
   }
 }
 
+/**
+ * `plus`함수는 UiText.StringResource와 UiText.DynamicString를 '+' 연산자를 통해 합치기 기능을 제공
+ */
 operator fun UiText.plus(other: UiText): UiText =
   UiText.Combined(listOf(this, other))
 

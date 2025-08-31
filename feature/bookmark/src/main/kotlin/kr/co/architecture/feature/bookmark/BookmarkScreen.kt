@@ -7,9 +7,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -96,7 +94,7 @@ fun BookmarkScreen(
           state = listState
         ) {
           items(
-            items = uiState.bookUiModels
+            items = uiState.bookCardUiModels
           ) { item ->
             BookCard(
               modifier = Modifier
