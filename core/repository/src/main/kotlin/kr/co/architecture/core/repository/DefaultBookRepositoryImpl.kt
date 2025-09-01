@@ -12,9 +12,9 @@ import kr.co.architecture.core.domain.entity.SearchedBooks
 import kr.co.architecture.core.domain.enums.BookmarkToggleTypeEnum
 import kr.co.architecture.core.domain.enums.SortEnum
 import kr.co.architecture.core.domain.repository.BookRepository
-import kr.co.architecture.core.domain.usecase.SearchBookUseCase
-import kr.co.architecture.core.domain.usecase.SearchBooksUseCase
-import kr.co.architecture.core.domain.usecase.ToggleBookmarkUseCase
+import kr.co.architecture.core.domain.usecase.SearchBookUseCaseImpl
+import kr.co.architecture.core.domain.usecase.SearchBooksUseCaseImpl
+import kr.co.architecture.core.domain.usecase.ToggleBookmarkUseCaseImpl
 import kr.co.architecture.core.network.RemoteApi
 import kr.co.architecture.core.repository.mapper.getOrThrowDomainFailure
 import kr.co.architecture.core.repository.mapper.BookMapper
@@ -46,8 +46,8 @@ class DefaultBookRepositoryImpl @Inject constructor(
     bookSearchDao.observeBookmarkedBooks()
       .map { it.map(BookMapper::mapperToDomain) }
 
-  override suspend fun toggleBookmark(params: ToggleBookmarkUseCase.Params) {
-    val cachedBook = searchBook(SearchBookUseCase.Params(params.isbn))
+  override suspend fun toggleBookmark(params: ToggleBookmarkUseCaseImpl.Params) {
+    val cachedBook = searchBook(SearchBookUseCaseImpl.Params(params.isbn))
     checkNotNull(cachedBook) {
       "cached UI `Book` and Domain `Book` does not sync"
     }
@@ -70,7 +70,7 @@ class DefaultBookRepositoryImpl @Inject constructor(
     }
   }
 
-  override suspend fun searchBooks(params: SearchBooksUseCase.Params): SearchedBooks {
+  override suspend fun searchBooks(params: SearchBooksUseCaseImpl.Params): SearchedBooks {
     val newKey = QueryKey(params.query, params.sortEnum)
 
     // 다른 쿼리/정렬로 시작하거나 첫 페이지면 캐시 초기화
@@ -95,7 +95,7 @@ class DefaultBookRepositoryImpl @Inject constructor(
       }
   }
 
-  override suspend fun searchBook(params: SearchBookUseCase.Params): Book? {
+  override suspend fun searchBook(params: SearchBookUseCaseImpl.Params): Book? {
     val isbn = params.isbn
     val localBooks = observeBookmarkedBooks().first()
     return cachedSearchedBooks[isbn]

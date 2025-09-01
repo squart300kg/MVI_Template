@@ -20,9 +20,9 @@ import kr.co.architecture.core.domain.entity.ISBN
 import kr.co.architecture.core.domain.enums.BookmarkToggleTypeEnum
 import kr.co.architecture.core.domain.enums.SortDirectionEnum
 import kr.co.architecture.core.domain.enums.SortPriceRangeEnum
-import kr.co.architecture.core.domain.usecase.ObserveFilteredBookmarksUseCase
-import kr.co.architecture.core.domain.usecase.ObserveFilteredBookmarksUseCase.BookmarkFilter
-import kr.co.architecture.core.domain.usecase.ToggleBookmarkUseCase
+import kr.co.architecture.core.domain.usecase.ObserveFilteredBookmarksUseCaseImpl
+import kr.co.architecture.core.domain.usecase.ObserveFilteredBookmarksUseCaseImpl.BookmarkFilter
+import kr.co.architecture.core.domain.usecase.ToggleBookmarkUseCaseImpl
 import kr.co.architecture.core.ui.BaseViewModel
 import kr.co.architecture.core.ui.BookCardUiModel
 import kr.co.architecture.core.ui.DetailRoute
@@ -33,8 +33,8 @@ import javax.inject.Inject
 @OptIn(ExperimentalCoroutinesApi::class)
 @HiltViewModel
 class BookmarkViewModel @Inject constructor(
-  observeFilteredBookmarksUseCase: ObserveFilteredBookmarksUseCase,
-  private val toggleBookmarkUseCase: ToggleBookmarkUseCase,
+  observeFilteredBookmarksUseCase: ObserveFilteredBookmarksUseCaseImpl,
+  private val toggleBookmarkUseCase: ToggleBookmarkUseCaseImpl,
   private val dateTextFormatter: DateTextFormatter,
   private val moneyTextFormatter: MoneyTextFormatter,
 ) : BaseViewModel<BookmarkUiState, BookmarkUiEvent, BookmarkUiSideEffect>() {
@@ -75,7 +75,7 @@ class BookmarkViewModel @Inject constructor(
         viewModelScope.launch {
           runCatching {
             toggleBookmarkUseCase(
-              params = ToggleBookmarkUseCase.Params(
+              params = ToggleBookmarkUseCaseImpl.Params(
                 bookmarkToggleTypeEnum =
                   if (event.isBookmarked) BookmarkToggleTypeEnum.DELETE
                   else BookmarkToggleTypeEnum.SAVE,

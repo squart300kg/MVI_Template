@@ -8,7 +8,7 @@ import kr.co.architecture.core.domain.enums.BookmarkToggleTypeEnum
 import kr.co.architecture.core.domain.repository.BookRepository
 import javax.inject.Inject
 
-class ToggleBookmarkUseCase @Inject constructor(
+class ToggleBookmarkUseCaseImpl @Inject constructor(
   private val bookRepository: BookRepository,
   @IoDispatcher private val  dispatcher: CoroutineDispatcher
 ) {

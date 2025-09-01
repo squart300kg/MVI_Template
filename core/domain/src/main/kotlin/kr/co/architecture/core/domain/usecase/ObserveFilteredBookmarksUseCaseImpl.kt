@@ -11,7 +11,7 @@ import kr.co.architecture.core.domain.enums.sortedByTitle
 import kr.co.architecture.core.domain.repository.BookRepository
 import javax.inject.Inject
 
-class ObserveFilteredBookmarksUseCase @Inject constructor(
+class ObserveFilteredBookmarksUseCaseImpl @Inject constructor(
   private val repository: BookRepository
 ) {
   operator fun invoke(filters: Flow<BookmarkFilter>): Flow<List<Book>> =

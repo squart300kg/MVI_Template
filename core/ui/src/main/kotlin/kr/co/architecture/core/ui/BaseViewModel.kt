@@ -46,6 +46,10 @@ abstract class BaseViewModel<State : UiState, Event : UiEvent, Effect : UiSideEf
   fun injectNavigator(navigator: Navigator) {
     this.navigator = navigator
   }
+  @VisibleForTesting
+  fun injectGlobalUiBus(globalUiBus: GlobalUiBus) {
+    this.globalUiBus = globalUiBus
+  }
 
   init {
     // subscribe event

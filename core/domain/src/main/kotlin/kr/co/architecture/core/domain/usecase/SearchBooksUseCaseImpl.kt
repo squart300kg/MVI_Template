@@ -6,7 +6,7 @@ import kr.co.architecture.core.domain.enums.SortEnum
 import kr.co.architecture.core.domain.repository.BookRepository
 import javax.inject.Inject
 
-class SearchBooksUseCase @Inject constructor(
+class SearchBooksUseCaseImpl @Inject constructor(
   private val bookRepository: BookRepository
 ) {
   @OptIn(ExperimentalCoroutinesApi::class)

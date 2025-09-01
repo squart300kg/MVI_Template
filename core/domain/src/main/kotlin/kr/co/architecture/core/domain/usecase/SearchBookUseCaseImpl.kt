@@ -6,7 +6,7 @@ import kr.co.architecture.core.domain.entity.ISBN
 import kr.co.architecture.core.domain.repository.BookRepository
 import javax.inject.Inject
 
-class SearchBookUseCase @Inject constructor(
+class SearchBookUseCaseImpl @Inject constructor(
   private val bookRepository: BookRepository
 ) {
   @OptIn(ExperimentalCoroutinesApi::class)

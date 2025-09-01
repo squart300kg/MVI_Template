@@ -13,9 +13,9 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import kr.co.architecture.core.domain.entity.ISBN
 import kr.co.architecture.core.domain.enums.BookmarkToggleTypeEnum
-import kr.co.architecture.core.domain.usecase.ObserveBookmarkedBooksUseCase
-import kr.co.architecture.core.domain.usecase.SearchBooksUseCase
-import kr.co.architecture.core.domain.usecase.ToggleBookmarkUseCase
+import kr.co.architecture.core.domain.usecase.ObserveBookmarkedBooksUseCaseImpl
+import kr.co.architecture.core.domain.usecase.SearchBooksUseCaseImpl
+import kr.co.architecture.core.domain.usecase.ToggleBookmarkUseCaseImpl
 import kr.co.architecture.core.ui.BaseViewModel
 import kr.co.architecture.core.ui.BookCardUiModel
 import kr.co.architecture.core.ui.DetailRoute
@@ -27,9 +27,9 @@ import javax.inject.Inject
 @OptIn(ExperimentalCoroutinesApi::class)
 @HiltViewModel
 class SearchViewModel @Inject constructor(
-  private val searchBooksUseCase: SearchBooksUseCase,
-  private val observeBookmarkedBooksUseCase: ObserveBookmarkedBooksUseCase,
-  private val toggleBookmarkUseCase: ToggleBookmarkUseCase,
+  private val searchBooksUseCase: SearchBooksUseCaseImpl,
+  private val observeBookmarkedBooksUseCase: ObserveBookmarkedBooksUseCaseImpl,
+  private val toggleBookmarkUseCase: ToggleBookmarkUseCaseImpl,
   private val dateTextFormatter: DateTextFormatter,
   private val moneyTextFormatter: MoneyTextFormatter,
 ) : BaseViewModel<SearchUiState, SearchUiEvent, SearchUiSideEffect>() {
@@ -54,7 +54,7 @@ class SearchViewModel @Inject constructor(
         viewModelScope.launch {
           runCatching {
             toggleBookmarkUseCase(
-              params = ToggleBookmarkUseCase.Params(
+              params = ToggleBookmarkUseCaseImpl.Params(
                 bookmarkToggleTypeEnum =
                   if (event.isBookmarked) BookmarkToggleTypeEnum.DELETE
                   else BookmarkToggleTypeEnum.SAVE,
@@ -99,7 +99,7 @@ class SearchViewModel @Inject constructor(
   fun fetchData(loadType: SearchUiSideEffect.Load) {
     launchWithLoading {
       val searchedBooks = searchBooksUseCase(
-        params = SearchBooksUseCase.Params(
+        params = SearchBooksUseCaseImpl.Params(
           page = when (loadType) {
             is SearchUiSideEffect.Load.First -> setStateAndGet { copy(page = 1) }.page
             is SearchUiSideEffect.Load.More -> setStateAndGet { copy(page = page + 1) }.page
