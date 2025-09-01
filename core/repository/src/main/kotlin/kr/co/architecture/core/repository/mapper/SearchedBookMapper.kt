@@ -13,8 +13,7 @@ object SearchedBookMapper {
   fun mapperToDomain(apiResponse: SearchedBookApiResponse) =
     SearchedBooks(
       pageable = Pageable(
-        isEnd = apiResponse.meta.isEnd,
-        pageableCount = apiResponse.meta.pageableCount
+        isEnd = apiResponse.meta.isEnd
       ),
       books = apiResponse.documents.map {
         Book(

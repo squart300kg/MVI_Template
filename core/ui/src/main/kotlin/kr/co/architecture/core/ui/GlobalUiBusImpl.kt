@@ -17,7 +17,7 @@ import kr.co.architecture.core.domain.entity.DomainFailure.Exception.NetworkConn
 import kr.co.architecture.core.domain.entity.DomainFailure.Exception.Unknown
 import kr.co.architecture.core.ui.util.UiText
 
-class GlobalUiBusImpl @Inject constructor(): GlobalUiBus {
+internal class GlobalUiBusImpl @Inject constructor(): GlobalUiBus {
 
   // 로딩은 중첩을 허용하는 카운터 방식(동시 요청 대비)
   private val _loadingCount = MutableStateFlow(0)
@@ -36,8 +36,6 @@ class GlobalUiBusImpl @Inject constructor(): GlobalUiBus {
   override fun showFailureDialog(
     throwable: Throwable
   ) {
-    println("gobalUiLog showFailureDialog: ${throwable}")
-
     /**
      * 실무 요구사항에 따라 다양한 error case 정의 가능
      */
@@ -79,7 +77,6 @@ class GlobalUiBusImpl @Inject constructor(): GlobalUiBus {
   }
 
   override fun setLoadingState(loadingState: Boolean) {
-    println("gobalUiLog : $loadingState")
     when (loadingState) {
       true -> _loadingCount.update { it + 1 }
       false -> _loadingCount.update { (it - 1).coerceAtLeast(0) }
