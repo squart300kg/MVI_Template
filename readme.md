@@ -6,12 +6,12 @@
 
 ## 1. 빌드 환경
 해다 과제가 실행된 빌드 환경을 의미합니다. 만약 과제 빌드에 문제가 있을 시, 아래 빌드 환경을 참고하시면 좋습니다.
-![BuildConfig.png](readme-image/BuildConfig.png)
+![BuildConfig.png](readme-img/BuildConfig.png)
 
 ## 2. 아키텍처 구조도
 해당 과제가 실행된 아키텍처 구조입니다. **Android공식 아키텍처**를 사용했으며, UI Layer, Domain Layer, Data Layer에 따라 앱을 구조화 하였습니다.
 또한 각 Layer에는 해당 Model들이 존재합니다. (eg., *.DomainResponse, *.DtoResponse...)
-![Architecture.png](readme-image/Architecture.png)
+![Architecture.png](readme-img/Architecture.png)
 
 ## 3. 테스트 케이스
 해당 과제가 수행된 테스트 케이스로써, UI 테스트와 비즈니스 로직 단위 테스트를 진행하였습니다.
@@ -44,4 +44,4 @@
 
 ## 4. BaselineProfile 성능 측정 결과
 홈 화면의 성능 개선을 위해 BaselineProfile 생성 후, 벤치마크를 측정한 결과입니다.
-![BenchmarkResult.png](readme-image/BenchmarkResult.png)
+![BenchmarkResult.png](readme-img/BenchmarkResult.png)
