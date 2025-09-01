@@ -42,13 +42,29 @@
 | ---------------------- |----------------------------------| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | -- |
 | **BookRepositoryImpl** | `BookRepositoryImplTest` | - toggleBookmark\_호출시\_observeBookmarkedBooks\_스트림이\_변경을\_방출한다<br>- 검색API\_호출한\_상황에서\_toggleBookmark\_SAVE\_이후엔\_searchBook을\_호출하면\_북마크\_true를\_반영해\_반환한다<br>- 캐싱된Book\_조회한\_상황에서\_toggleBookmark\_SAVE\_이후엔\_searchBook을\_호출하면\_북마크\_true를\_반영해\_반환한다 | ✅  |
 
-
 ## 4. BaselineProfile 성능 측정 결과
 홈 화면의 성능 개선을 위해 BaselineProfile 생성 후, 3회 반복을 통한 벤치마크 측정 결과입니다.
 ![BenchmarkResult.png](readme-img/BenchmarkResult.png)
 
 ## 5. 앱 시연 영상
-
 ### 1). 주요 기능 시연
+<p align="center">
+  <video src="readme-img/main.mp4" controls width="1000" muted playsinline>
+    브라우저가 video 태그를 지원하지 않습니다.
+  </video>
+</p>
+
 ### 2). 부가 기능 시연 - 다크/화이트 모드 지원
+<p align="center">
+  <video src="readme-img/sub1.mp4" controls width="1000" muted playsinline>
+    브라우저가 video 태그를 지원하지 않습니다.
+  </video>
+</p>
+
 ### 3). 부가 기능 시연 - 다양한 상황(NetworkConnection, API Error)에서의 에러 대응
+> `hello world`에러의 경우, API 통신 흐름 중간에 임의로 발생시킨 에러입니다.
+<p align="center">
+  <video src="readme-img/sub2.mp4" controls width="1000" muted playsinline>
+    브라우저가 video 태그를 지원하지 않습니다.
+  </video>
+</p>
