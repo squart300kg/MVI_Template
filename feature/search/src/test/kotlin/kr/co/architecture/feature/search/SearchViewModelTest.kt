@@ -2,15 +2,17 @@ package kr.co.architecture.feature.search
 
 import junit.framework.Assert.assertEquals
 import junit.framework.Assert.assertTrue
-import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
+import kr.co.architecture.core.domain.entity.Book
+import kr.co.architecture.core.domain.entity.Pageable
+import kr.co.architecture.core.domain.entity.Price
+import kr.co.architecture.core.domain.entity.SearchedBooks
 import kr.co.architecture.core.domain.enums.BookmarkToggleTypeEnum
-import kr.co.architecture.core.domain.enums.SortEnum
 import kr.co.architecture.core.ui.DetailRoute
 import kr.co.architecture.core.ui.enums.SortUiEnum
 import kr.co.architecture.core.ui.util.formatter.KoreanDateTextFormatter
@@ -20,8 +22,6 @@ import kr.co.architecture.feature.search.fake.FakeNavigator
 import kr.co.architecture.feature.search.fake.FakeObserveBookmarkedBooksUseCase
 import kr.co.architecture.feature.search.fake.FakeSearchBooksUseCase
 import kr.co.architecture.feature.search.fake.FakeToggleBookmarkUseCase
-import kr.co.architecture.feature.search.fake.makeBook
-import kr.co.architecture.feature.search.fake.searchedBooks
 import kr.co.architecture.test.testing.util.MainDispatcherRule
 import org.junit.Before
 import org.junit.Rule
@@ -177,4 +177,25 @@ class SearchViewModelTest {
     val isLoadFirst = effect is SearchUiSideEffect.Load.First
     assertTrue(isLoadFirst)
   }
+
+  fun makeBook(
+    i: Int,
+    bookmarked: Boolean = false
+  ): Book = Book(
+    isbn = "isbn$i",
+    title = "제목 $i",
+    authors = listOf("저자 $i"),
+    publisher = "출판사 $i",
+    dateTime = "2021-01-${"%02d".format(i)}T00:00:00.000+09:00",
+    price = Price.Origin(origin = i * 1000),
+    url = "https://example.com/$i",
+    thumbnail = "",
+    contents = "설명 $i",
+    isBookmarked = bookmarked
+  )
+
+  fun searchedBooks(count: Int, end: Boolean = false) = SearchedBooks(
+    books = (1..count).map { makeBook(it) },
+    pageable = Pageable(isEnd = end)
+  )
 }

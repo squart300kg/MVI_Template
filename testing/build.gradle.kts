@@ -10,6 +10,7 @@ android {
 
   dependencies {
     implementation(project(":core:repository"))
+    implementation(project(":core:domain"))
 
     implementation(libs.androidx.test.rules)
     implementation(libs.kotlinx.coroutines.test)
