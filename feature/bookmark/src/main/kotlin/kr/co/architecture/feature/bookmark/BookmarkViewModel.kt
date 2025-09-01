@@ -14,27 +14,27 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kr.co.architecture.core.ui.util.formatter.DateTextFormatter
-import kr.co.architecture.core.ui.util.formatter.MoneyTextFormatter
 import kr.co.architecture.core.domain.entity.ISBN
 import kr.co.architecture.core.domain.enums.BookmarkToggleTypeEnum
 import kr.co.architecture.core.domain.enums.SortDirectionEnum
 import kr.co.architecture.core.domain.enums.SortPriceRangeEnum
-import kr.co.architecture.core.domain.usecase.ObserveFilteredBookmarksUseCaseImpl
-import kr.co.architecture.core.domain.usecase.ObserveFilteredBookmarksUseCaseImpl.BookmarkFilter
-import kr.co.architecture.core.domain.usecase.ToggleBookmarkUseCaseImpl
+import kr.co.architecture.core.domain.usecase.ObserveFilteredBookmarksUseCase
+import kr.co.architecture.core.domain.usecase.ObserveFilteredBookmarksUseCase.BookmarkFilter
+import kr.co.architecture.core.domain.usecase.ToggleBookmarkUseCase
 import kr.co.architecture.core.ui.BaseViewModel
 import kr.co.architecture.core.ui.BookCardUiModel
 import kr.co.architecture.core.ui.DetailRoute
 import kr.co.architecture.core.ui.enums.SortDirectionUiEnum
 import kr.co.architecture.core.ui.enums.SortPriceRangeUiEnum
+import kr.co.architecture.core.ui.util.formatter.DateTextFormatter
+import kr.co.architecture.core.ui.util.formatter.MoneyTextFormatter
 import javax.inject.Inject
 
 @OptIn(ExperimentalCoroutinesApi::class)
 @HiltViewModel
 class BookmarkViewModel @Inject constructor(
-  observeFilteredBookmarksUseCase: ObserveFilteredBookmarksUseCaseImpl,
-  private val toggleBookmarkUseCase: ToggleBookmarkUseCaseImpl,
+  observeFilteredBookmarksUseCase: ObserveFilteredBookmarksUseCase,
+  private val toggleBookmarkUseCase: ToggleBookmarkUseCase,
   private val dateTextFormatter: DateTextFormatter,
   private val moneyTextFormatter: MoneyTextFormatter,
 ) : BaseViewModel<BookmarkUiState, BookmarkUiEvent, BookmarkUiSideEffect>() {
@@ -75,7 +75,7 @@ class BookmarkViewModel @Inject constructor(
         viewModelScope.launch {
           runCatching {
             toggleBookmarkUseCase(
-              params = ToggleBookmarkUseCaseImpl.Params(
+              params = ToggleBookmarkUseCase.Params(
                 bookmarkToggleTypeEnum =
                   if (event.isBookmarked) BookmarkToggleTypeEnum.DELETE
                   else BookmarkToggleTypeEnum.SAVE,

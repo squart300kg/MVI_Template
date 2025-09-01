@@ -12,13 +12,13 @@ import kr.co.architecture.core.domain.entity.SearchedBooks
 import kr.co.architecture.core.domain.enums.BookmarkToggleTypeEnum
 import kr.co.architecture.core.domain.enums.SortEnum
 import kr.co.architecture.core.domain.repository.BookRepository
-import kr.co.architecture.core.domain.usecase.SearchBookUseCaseImpl
-import kr.co.architecture.core.domain.usecase.SearchBooksUseCaseImpl
-import kr.co.architecture.core.domain.usecase.ToggleBookmarkUseCaseImpl
+import kr.co.architecture.core.domain.usecase.SearchBookUseCase
+import kr.co.architecture.core.domain.usecase.SearchBooksUseCase
+import kr.co.architecture.core.domain.usecase.ToggleBookmarkUseCase
 import kr.co.architecture.core.network.RemoteApi
-import kr.co.architecture.core.repository.mapper.getOrThrowDomainFailure
 import kr.co.architecture.core.repository.mapper.BookMapper
 import kr.co.architecture.core.repository.mapper.SearchedBookMapper
+import kr.co.architecture.core.repository.mapper.getOrThrowDomainFailure
 import javax.inject.Inject
 
 /**
@@ -29,7 +29,7 @@ import javax.inject.Inject
  *
  * 따라서 `core:network`의 retrofit의 의존성을 `implementation()`이 아닌, `api()`를 통해, `core:repository`로 전파합니다.
  */
-class DefaultBookRepositoryImpl @Inject constructor(
+class BookRepositoryImpl @Inject constructor(
   private val remoteApi: RemoteApi,
   private val bookSearchDao: BookSearchDao
 ) : BookRepository {
@@ -46,8 +46,8 @@ class DefaultBookRepositoryImpl @Inject constructor(
     bookSearchDao.observeBookmarkedBooks()
       .map { it.map(BookMapper::mapperToDomain) }
 
-  override suspend fun toggleBookmark(params: ToggleBookmarkUseCaseImpl.Params) {
-    val cachedBook = searchBook(SearchBookUseCaseImpl.Params(params.isbn))
+  override suspend fun toggleBookmark(params: ToggleBookmarkUseCase.Params) {
+    val cachedBook = searchBook(SearchBookUseCase.Params(params.isbn))
     checkNotNull(cachedBook) {
       "cached UI `Book` and Domain `Book` does not sync"
     }
@@ -70,7 +70,7 @@ class DefaultBookRepositoryImpl @Inject constructor(
     }
   }
 
-  override suspend fun searchBooks(params: SearchBooksUseCaseImpl.Params): SearchedBooks {
+  override suspend fun searchBooks(params: SearchBooksUseCase.Params): SearchedBooks {
     val newKey = QueryKey(params.query, params.sortEnum)
 
     // 다른 쿼리/정렬로 시작하거나 첫 페이지면 캐시 초기화
@@ -95,7 +95,7 @@ class DefaultBookRepositoryImpl @Inject constructor(
       }
   }
 
-  override suspend fun searchBook(params: SearchBookUseCaseImpl.Params): Book? {
+  override suspend fun searchBook(params: SearchBookUseCase.Params): Book? {
     val isbn = params.isbn
     val localBooks = observeBookmarkedBooks().first()
     return cachedSearchedBooks[isbn]

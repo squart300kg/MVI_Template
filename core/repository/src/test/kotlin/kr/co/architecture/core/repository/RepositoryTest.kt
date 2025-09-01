@@ -11,7 +11,7 @@ class RepositoryTest {
 
   private val testScope = TestScope(UnconfinedTestDispatcher())
 
-  private lateinit var repository: DefaultBookRepositoryImpl
+  private lateinit var repository: BookRepositoryImpl
 
   private lateinit var remoteApi: RemoteApi
 
