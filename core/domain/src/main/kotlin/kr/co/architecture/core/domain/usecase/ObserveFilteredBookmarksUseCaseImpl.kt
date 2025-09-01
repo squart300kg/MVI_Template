@@ -9,12 +9,13 @@ import kr.co.architecture.core.domain.enums.SortDirectionEnum
 import kr.co.architecture.core.domain.enums.SortPriceRangeEnum
 import kr.co.architecture.core.domain.enums.sortedByTitle
 import kr.co.architecture.core.domain.repository.BookRepository
+import kr.co.architecture.core.domain.usecase.ObserveFilteredBookmarksUseCase.BookmarkFilter
 import javax.inject.Inject
 
 class ObserveFilteredBookmarksUseCaseImpl @Inject constructor(
   private val repository: BookRepository
-) {
-  operator fun invoke(filters: Flow<BookmarkFilter>): Flow<List<Book>> =
+): ObserveFilteredBookmarksUseCase {
+  override operator fun invoke(filters: Flow<BookmarkFilter>): Flow<List<Book>> =
     combine(
       flow = repository.observeBookmarkedBooks(),
       flow2 = filters.distinctUntilChanged()
@@ -41,11 +42,4 @@ class ObserveFilteredBookmarksUseCaseImpl @Inject constructor(
     // 3) 제목 기준, 오름/내림차순 정렬
     return filteredBookByPrice.sortedByTitle(filter.sortDirection)
   }
-
-  data class BookmarkFilter(
-    val query: String = "",
-    val sortDirection: SortDirectionEnum = SortDirectionEnum.ASCENDING,
-    val priceRange: SortPriceRangeEnum = SortPriceRangeEnum.ALL,
-    val threshold: Int = 10_000
-  )
 }

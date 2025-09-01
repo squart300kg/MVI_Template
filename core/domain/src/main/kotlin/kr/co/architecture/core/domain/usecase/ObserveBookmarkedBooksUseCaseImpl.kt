@@ -5,8 +5,8 @@ import javax.inject.Inject
 
 class ObserveBookmarkedBooksUseCaseImpl @Inject constructor(
   private val bookRepository: BookRepository
-) {
-  operator fun invoke() =
+): ObserveBookmarkedBooksUseCase {
+  override operator fun invoke() =
     bookRepository.observeBookmarkedBooks()
 
 }
