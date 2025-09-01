@@ -48,7 +48,6 @@ class MainActivity : ComponentActivity() {
               }
             )
           },
-          // TODO: 네트워크 처리 & 네트워크 에러 다이얼로그 로딩시 무제한 GC처리 후 죽음
           content =  { innerPadding ->
             NavHost(
               modifier = Modifier.padding(innerPadding),

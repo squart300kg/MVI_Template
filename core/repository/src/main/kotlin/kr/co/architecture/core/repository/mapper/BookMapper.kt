@@ -3,8 +3,30 @@ package kr.co.architecture.core.repository.mapper
 import kr.co.architecture.core.database.entity.BookEntity
 import kr.co.architecture.core.domain.entity.Book
 import kr.co.architecture.core.domain.entity.Price
+import kr.co.architecture.core.network.model.NO_EXIST_PRICE
+import kr.co.architecture.core.network.model.SearchedBookApiResponse
 
 object BookMapper {
+  fun mapperToDomain(book: SearchedBookApiResponse.Book) =
+    Book(
+      isbn = book.isbn,
+      title = book.title,
+      authors = book.authors,
+      publisher = book.publisher,
+      dateTime = book.dateTime,
+      price = when (book.salePrice != NO_EXIST_PRICE) {
+        true -> Price.Discount(
+          origin = book.price,
+          discounted = book.salePrice
+        )
+        false -> Price.Origin(book.price)
+      },
+      url = book.url,
+      thumbnail = book.thumbnail,
+      contents = book.contents,
+      isBookmarked = false
+    )
+
   fun mapperToDomain(book: BookEntity) =
     Book(
       isbn = book.isbn,

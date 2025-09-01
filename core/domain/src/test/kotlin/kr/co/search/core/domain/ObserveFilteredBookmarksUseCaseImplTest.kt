@@ -32,36 +32,6 @@ class ObserveFilteredBookmarksUseCaseImplTest {
   private lateinit var repository: FakeBookRepository
   private lateinit var useCase: ObserveFilteredBookmarksUseCaseImpl
 
-  fun makeBook(
-    i: Int,
-    bookmarked: Boolean = false
-  ): Book = Book(
-    isbn = "isbn$i",
-    title = "제목 $i",
-    authors = listOf("저자 $i"),
-    publisher = "출판사 $i",
-    dateTime = "2021-01-${"%02d".format(i)}T00:00:00.000+09:00",
-    price = Price.Origin(origin = i * 1000),
-    url = "https://example.com/$i",
-    thumbnail = "",
-    contents = "설명 $i",
-    isBookmarked = bookmarked
-  )
-
-  /**
-   * 샘플 데이터
-   * - 검색어로써, "심리", "A", "B" 등에 반응하도록 제목·출판사·저자 값을 구성
-   * - 가격은 10,000구간 기준으로 나눔
-   */
-  private val sample = listOf(
-    makeBook(1).copy(publisher = "A 줄판사",title = "심리학의 즐거움", authors = listOf("홍길동"), price = Price.Origin(9_000)),
-    makeBook(2).copy(publisher = "A 줄판사",title = "미움받을 용기", authors = listOf("기시미 이치로"), price = Price.Origin(12_000)),
-    makeBook(3).copy(publisher = "B 줄판사",title = "동물농장", authors = listOf("George Orwell"), price = Price.Origin(25_000)),
-    makeBook(4).copy(publisher = "B 줄판사",title = "Clean Architecture", authors = listOf("Robert C. Martin"), price = Price.Origin(30_000)),
-    makeBook(5).copy(publisher = "C 줄판사",title = "심리 실험", authors = listOf("김철수A"), price = Price.Origin(5_000)),
-    makeBook(6).copy(publisher = "C 줄판사",title = "채식주의자", authors = listOf("한강"), price = Price.Origin(10000)),
-  )
-
   @Before
   fun setup() {
     repository = FakeBookRepository()
@@ -247,4 +217,34 @@ class ObserveFilteredBookmarksUseCaseImplTest {
     val actual = result.map { it.isbn }
     assertEquals(expected, actual)
   }
+
+  fun makeBook(
+    i: Int,
+    bookmarked: Boolean = false
+  ): Book = Book(
+    isbn = "isbn$i",
+    title = "제목 $i",
+    authors = listOf("저자 $i"),
+    publisher = "출판사 $i",
+    dateTime = "2021-01-${"%02d".format(i)}T00:00:00.000+09:00",
+    price = Price.Origin(origin = i * 1000),
+    url = "https://example.com/$i",
+    thumbnail = "",
+    contents = "설명 $i",
+    isBookmarked = bookmarked
+  )
+
+  /**
+   * 샘플 데이터
+   * - 검색어로써, "심리", "A", "B" 등에 반응하도록 제목·출판사·저자 값을 구성
+   * - 가격은 10,000구간 기준으로 나눔
+   */
+  private val sample = listOf(
+    makeBook(1).copy(publisher = "A 줄판사",title = "심리학의 즐거움", authors = listOf("홍길동"), price = Price.Origin(9_000)),
+    makeBook(2).copy(publisher = "A 줄판사",title = "미움받을 용기", authors = listOf("기시미 이치로"), price = Price.Origin(12_000)),
+    makeBook(3).copy(publisher = "B 줄판사",title = "동물농장", authors = listOf("George Orwell"), price = Price.Origin(25_000)),
+    makeBook(4).copy(publisher = "B 줄판사",title = "Clean Architecture", authors = listOf("Robert C. Martin"), price = Price.Origin(30_000)),
+    makeBook(5).copy(publisher = "C 줄판사",title = "심리 실험", authors = listOf("김철수A"), price = Price.Origin(5_000)),
+    makeBook(6).copy(publisher = "C 줄판사",title = "채식주의자", authors = listOf("한강"), price = Price.Origin(10000)),
+  )
 }

@@ -9,6 +9,6 @@ interface SearchBooksUseCase {
   data class Params(
     val page: Int,
     val query: String,
-    val sortEnum: SortEnum
+    val sortEnum: SortEnum = SortEnum.ACCURACY
   )
 }
