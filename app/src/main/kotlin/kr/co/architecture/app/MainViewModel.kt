@@ -11,10 +11,7 @@ import kr.co.architecture.core.ui.UiSideEffect
 import kr.co.architecture.core.ui.UiState
 import javax.inject.Inject
 
-data class MainUiState(
-  val loadingState: Boolean = false,
-  val errorMessageState: BaseCenterDialogUiModel? = null
-): UiState
+data object MainUiState: UiState
 sealed interface MainUiEvent : UiEvent {
   data class OnClickedBottomTab(val tab: MainBottomTab) : MainUiEvent
   data object OnClickedErrorDialogConfirm : MainUiEvent
@@ -26,7 +23,7 @@ class MainViewModel @Inject constructor(
 
 ) : BaseViewModel<MainUiState, MainUiEvent, MainUiSideEffect>() {
 
-  override fun createInitialState() = MainUiState()
+  override fun createInitialState() = MainUiState
 
   override fun handleEvent(event: MainUiEvent) {
     when (event) {

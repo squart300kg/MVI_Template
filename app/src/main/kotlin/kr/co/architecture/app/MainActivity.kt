@@ -28,17 +28,14 @@ import kr.co.architecture.feature.search.searchScreen
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
-  @Inject
-  lateinit var globalUiBus: GlobalUiBus
-
   private val viewModel by viewModels<MainViewModel>()
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
 
     setContent {
-      val loadingState by globalUiBus.loadingState.collectAsStateWithLifecycle()
-      val errorMessageState by globalUiBus.errorDialog.collectAsStateWithLifecycle()
+      val loadingState by viewModel.globalUiBus.loadingState.collectAsStateWithLifecycle()
+      val errorMessageState by viewModel.globalUiBus.errorDialog.collectAsStateWithLifecycle()
       val navigator: MainNavigator = rememberMainNavigator()
 
       LaunchedRouter(navigator.navController)
