@@ -1,4 +1,4 @@
-package kr.co.kurly.benchmarks
+package kr.co.architecture.benchmarks
 
 import androidx.test.uiautomator.BySelector
 import androidx.test.uiautomator.Direction
