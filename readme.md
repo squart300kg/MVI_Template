@@ -47,24 +47,9 @@
 ![BenchmarkResult.png](readme-img/BenchmarkResult.png)
 
 ## 5. 앱 시연 영상
-### 1). 주요 기능 시연
-<p align="center">
-  <video src="readme-img/main.mp4" controls width="1000" muted playsinline>
-    브라우저가 video 태그를 지원하지 않습니다.
-  </video>
-</p>
+### 1). 주요 기능 시연 ([영상 보기](readme-img/main.mp4))
 
-### 2). 부가 기능 시연 - 다크/화이트 모드 지원
-<p align="center">
-  <video src="readme-img/sub1.mp4" controls width="1000" muted playsinline>
-    브라우저가 video 태그를 지원하지 않습니다.
-  </video>
-</p>
+### 2). 부가 기능 시연 - 다크/화이트 모드 지원 ([영상 보기](readme-img/sub1.mp4))
 
-### 3). 부가 기능 시연 - 다양한 상황(NetworkConnection, API Error)에서의 에러 대응
+### 3). 부가 기능 시연 - 다양한 상황(NetworkConnection, API Error)에서의 에러 대응 ([영상 보기](readme-img/sub2.mp4))
 > `hello world`에러의 경우, API 통신 흐름 중간에 임의로 발생시킨 에러입니다.
-<p align="center">
-  <video src="readme-img/sub2.mp4" controls width="1000" muted playsinline>
-    브라우저가 video 태그를 지원하지 않습니다.
-  </video>
-</p>
