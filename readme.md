@@ -49,6 +49,7 @@
 ## 5. 그 외, API 오류
 검색어를 `f`로 설정 후, 필터를 `최신순`으로 설정할 경우, `L'OFFICIER...(A)`, `L'OFFICIER...(B)`이름의 도서 2권이 보입니다. 
 해당 도서는 `isbn`이 동일하여 북마크 클릭 시, 동시에 체크/해제되는 점, 과제 검토시 참고 부탁드립니다.
+![BenchmarkResult.png](readme-img/apiError.png)
 
 ## 6. 앱 시연 영상
 ### 1). 주요 기능 시연 ([영상 보기](readme-img/main.mp4))
