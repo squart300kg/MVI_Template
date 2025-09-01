@@ -13,7 +13,7 @@
 또한 각 Layer에는 해당 Model들이 존재합니다. (eg., *.DomainResponse, *.DtoResponse...)
 ![Architecture.png](readme-img/Architecture.png)
 
-## 3. 테스트 케이스
+## 3. 테스트 케이스 ([PDF로 보기](readme-img/TestCase.pdf))
 해당 과제가 수행된 테스트 케이스로써, UI 테스트와 비즈니스 로직 단위 테스트를 진행하였습니다.
 
 ### UI 테스트
