@@ -32,7 +32,7 @@ class AppListScrollBenchmark {
     packageName = "kr.co.architecture.ssy",
     metrics = listOf(FrameTimingMetric()),
     compilationMode = compilationMode,
-    iterations = 1,
+    iterations = 3,
     startupMode = StartupMode.WARM,
     setupBlock = {
       pressHome()

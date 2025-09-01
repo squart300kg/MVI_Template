@@ -3,6 +3,7 @@
 2. 아키텍처 구조도
 3. 테스트 케이스
 4. BaselineProfile 성능 측정 결과
+5. 앱 시연 영상
 
 ## 1. 빌드 환경
 해다 과제가 실행된 빌드 환경을 의미합니다. 만약 과제 빌드에 문제가 있을 시, 아래 빌드 환경을 참고하시면 좋습니다.
@@ -43,5 +44,11 @@
 
 
 ## 4. BaselineProfile 성능 측정 결과
-홈 화면의 성능 개선을 위해 BaselineProfile 생성 후, 벤치마크를 측정한 결과입니다.
+홈 화면의 성능 개선을 위해 BaselineProfile 생성 후, 3회 반복을 통한 벤치마크 측정 결과입니다.
 ![BenchmarkResult.png](readme-img/BenchmarkResult.png)
+
+## 5. 앱 시연 영상
+
+### 1). 주요 기능 시연
+### 2). 부가 기능 시연 - 다크/화이트 모드 지원
+### 3). 부가 기능 시연 - 다양한 상황(NetworkConnection, API Error)에서의 에러 대응
