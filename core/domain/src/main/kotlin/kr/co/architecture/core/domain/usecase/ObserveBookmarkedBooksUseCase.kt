@@ -3,6 +3,16 @@ package kr.co.architecture.core.domain.usecase
 import kotlinx.coroutines.flow.Flow
 import kr.co.architecture.core.domain.entity.Book
 
+/**
+ * 즐겨찾기 목록을 그대로 관찰하는 유스케이스.
+ * 데이터가 바뀌면 새로운 리스트를 방출합니다.
+ */
 interface ObserveBookmarkedBooksUseCase {
+
+  /**
+   * 실행 연산자.
+   *
+   * @return 즐겨찾기 도서 리스트 스트림
+   */
   operator fun invoke(): Flow<List<Book>>
 }
