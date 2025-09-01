@@ -10,8 +10,6 @@ import kr.co.architecture.core.domain.entity.Book
 interface ObserveBookmarkedBooksUseCase {
 
   /**
-   * 실행 연산자.
-   *
    * @return 즐겨찾기 도서 리스트 스트림
    */
   operator fun invoke(): Flow<List<Book>>

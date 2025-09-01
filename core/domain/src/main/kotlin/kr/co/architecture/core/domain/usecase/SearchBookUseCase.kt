@@ -9,16 +9,12 @@ import kr.co.architecture.core.domain.entity.ISBN
 interface SearchBookUseCase {
 
   /**
-   * 실행 연산자.
-   *
    * @param params 조회 파라미터(ISBN)
    * @return 도서 or `null`
    */
   suspend operator fun invoke(params: Params): Book?
 
   /**
-   * 조회 입력 파라미터.
-   *
    * @property isbn 대상 도서 ISBN
    */
   data class Params(
