@@ -4,8 +4,6 @@ import junit.framework.Assert.assertEquals
 import junit.framework.Assert.assertTrue
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.async
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.*
 import kr.co.architecture.core.domain.entity.Book
 import kr.co.architecture.core.domain.entity.ISBN
@@ -13,21 +11,21 @@ import kr.co.architecture.core.domain.entity.Price
 import kr.co.architecture.core.domain.entity.SearchedBooks
 import kr.co.architecture.core.domain.entity.SearchedBooks.Pageable
 import kr.co.architecture.core.domain.enums.BookmarkToggleTypeEnum
-import kr.co.architecture.core.domain.repository.BookRepository
-import kr.co.architecture.core.domain.usecase.ObserveBookmarkedBooksUseCaseImpl
-import kr.co.architecture.core.domain.usecase.SearchBooksUseCaseImpl
-import kr.co.architecture.core.domain.usecase.ToggleBookmarkUseCaseImpl
-import kr.co.architecture.core.ui.GlobalUiBus
-import kr.co.architecture.core.ui.util.formatter.DateTextFormatter
-import kr.co.architecture.core.ui.util.formatter.MoneyTextFormatter
+import kr.co.architecture.core.ui.GlobalUiBusImpl
+import kr.co.architecture.core.ui.enums.SortUiEnum
+import kr.co.architecture.core.ui.util.formatter.KoreanDateTextFormatter
+import kr.co.architecture.core.ui.util.formatter.KoreanMoneyTextFormatter
 import kr.co.architecture.feature.search.SearchUiSideEffect.Load
+import kr.co.architecture.feature.search.fake.FakeObserveBookmarkedBooksUseCase
+import kr.co.architecture.feature.search.fake.FakeSearchBooksUseCase
+import kr.co.architecture.feature.search.fake.FakeToggleBookmarkUseCase
 import kr.co.architecture.navigation.Navigator
 import kr.co.architecture.navigation.Route
 import kr.co.architecture.navigation.routes.DetailRoute
+import kr.co.architecture.test.testing.util.MainDispatcherRule
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-
 
 @file:OptIn(ExperimentalCoroutinesApi::class)
 class SearchViewModelTest {
@@ -36,11 +34,11 @@ class SearchViewModelTest {
   val mainDispatcherRule = MainDispatcherRule(StandardTestDispatcher())
 
   // fakes
-  private lateinit var fakeSearchBooks: FakeSearchBooksUseCase
-  private lateinit var fakeObserveBookmarked: FakeObserveBookmarkedBooksUseCase
-  private lateinit var fakeToggleBookmark: FakeToggleBookmarkUseCase
-  private lateinit var dateFormatter: DateTextFormatter
-  private lateinit var moneyFormatter: MoneyTextFormatter
+  private val fakeSearchBooks = FakeSearchBooksUseCase()
+  private val fakeObserveBookmarked = FakeObserveBookmarkedBooksUseCase()
+  private val fakeToggleBookmark = FakeToggleBookmarkUseCase()
+  private val dateFormatter = KoreanDateTextFormatter()
+  private val moneyFormatter = KoreanMoneyTextFormatter()
 
   // test doubles
   private lateinit var testNavigator: TestNavigator
@@ -50,17 +48,9 @@ class SearchViewModelTest {
 
   @Before
   fun setup() {
-    fakeSearchBooks = FakeSearchBooksUseCase()
-    fakeObserveBookmarked = FakeObserveBookmarkedBooksUseCase()
-    fakeToggleBookmark = FakeToggleBookmarkUseCase()
-
-    dateFormatter = object : DateTextFormatter {
-      // 테스트 편의상 간단 반환
-      override fun invoke(raw: String): String = raw
-    }
-    moneyFormatter = object : MoneyTextFormatter {
-      override fun invoke(amount: Int): String = amount.toString()
-    }
+    fakeSearchBooks
+    fakeObserveBookmarked
+    fakeToggleBookmark
 
     viewModel = SearchViewModel(
       searchBooksUseCase = fakeSearchBooks,
@@ -282,56 +272,6 @@ class SearchViewModelTest {
 
   // --- Fakes ---
 
-  private class FakeSearchBooksUseCase : SearchBooksUseCaseImpl(
-    bookRepository = object : BookRepository {
-      override fun observeBookmarkedBooks() = flowOf(emptyList<Book>())
-      override suspend fun searchBooks(params: SearchBooksUseCaseImpl.Params): SearchedBooks {
-        throw IllegalStateException("not used directly")
-      }
-      override suspend fun toggleBookmark(params: ToggleBookmarkUseCaseImpl.Params) {}
-      override suspend fun searchBook(params: kr.co.architecture.core.domain.usecase.SearchBookUseCaseImpl.Params): Book? = null
-    }
-  ) {
-    var lastParams: Params? = null
-    var result: SearchedBooks = SearchedBooks(emptyList(), Pageable(isEnd = true))
-
-    override suspend operator fun invoke(params: Params): SearchedBooks {
-      lastParams = params
-      return result
-    }
-  }
-
-  private class FakeObserveBookmarkedBooksUseCase : ObserveBookmarkedBooksUseCaseImpl(
-    bookRepository = object : BookRepository {
-      override fun observeBookmarkedBooks() = flowOf(emptyList<Book>())
-      override suspend fun searchBooks(params: SearchBooksUseCaseImpl.Params): SearchedBooks {
-        throw IllegalStateException("not used")
-      }
-      override suspend fun toggleBookmark(params: ToggleBookmarkUseCaseImpl.Params) {}
-      override suspend fun searchBook(params: kr.co.architecture.core.domain.usecase.SearchBookUseCaseImpl.Params): Book? = null
-    }
-  ) {
-    private val upstream = MutableSharedFlow<List<Book>>(replay = 0, extraBufferCapacity = 16)
-    override operator fun invoke() = upstream
-    suspend fun emit(list: List<Book>) = upstream.emit(list)
-  }
-
-  private class FakeToggleBookmarkUseCase : ToggleBookmarkUseCaseImpl(
-    bookRepository = object : BookRepository {
-      override fun observeBookmarkedBooks() = flowOf(emptyList<Book>())
-      override suspend fun searchBooks(params: SearchBooksUseCaseImpl.Params): SearchedBooks {
-        throw IllegalStateException("not used")
-      }
-      override suspend fun toggleBookmark(params: ToggleBookmarkUseCaseImpl.Params) {}
-      override suspend fun searchBook(params: kr.co.architecture.core.domain.usecase.SearchBookUseCaseImpl.Params): Book? = null
-    },
-    dispatcher = StandardTestDispatcher()
-  ) {
-    var lastParams: Params? = null
-    override suspend operator fun invoke(params: Params) {
-      lastParams = params
-    }
-  }
 
   private class TestNavigator : Navigator {
     var lastNavigatedRoute: Route? = null
@@ -342,7 +282,7 @@ class SearchViewModelTest {
     }
   }
 
-  private class TestGlobalUiBus : GlobalUiBus() {
+  private class TestGlobalUiBus : GlobalUiBusImpl() {
     var loadingOnCount = 0
     var loadingOffCount = 0
     var lastFailure: Throwable? = null
@@ -354,18 +294,5 @@ class SearchViewModelTest {
     override fun showFailureDialog(throwable: Throwable) {
       lastFailure = throwable
     }
-  }
-}
-
-/** JUnit Rule: 메인 디스패처 교체 */
-@OptIn(ExperimentalCoroutinesApi::class)
-class MainDispatcherRule(
-  private val dispatcher: TestDispatcher = UnconfinedTestDispatcher()
-) : TestWatcher() {
-  override fun starting(description: org.junit.runner.Description) {
-    Dispatchers.setMain(dispatcher)
-  }
-  override fun finished(description: org.junit.runner.Description) {
-    Dispatchers.resetMain()
   }
 }

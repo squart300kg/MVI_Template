@@ -1,18 +1,23 @@
 package kr.co.architecture.core.ui.di
 
+import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import javax.inject.Singleton
+import kr.co.architecture.core.domain.repository.BookRepository
 import kr.co.architecture.core.ui.GlobalUiBus
+import javax.inject.Singleton
+import kr.co.architecture.core.ui.GlobalUiBusImpl
 
 @Module
 @InstallIn(SingletonComponent::class)
-object UiModules {
+interface UiModules {
 
-  @Provides
   @Singleton
-  fun provideGlobalUiBus(): GlobalUiBus =
-    GlobalUiBus()
+  @Binds
+  fun bindGlobalUiBus(
+    globalUiBus: GlobalUiBusImpl
+  ): GlobalUiBus
+
 }

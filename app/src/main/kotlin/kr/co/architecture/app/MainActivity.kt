@@ -6,7 +6,6 @@ import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -20,6 +19,7 @@ import kr.co.architecture.core.router.LaunchedRouter
 import kr.co.architecture.core.ui.BaseCenterDialog
 import kr.co.architecture.core.ui.BaseProgressBar
 import kr.co.architecture.core.ui.GlobalUiBus
+import kr.co.architecture.core.ui.GlobalUiBusImpl
 import kr.co.architecture.core.ui.theme.BaseTheme
 import kr.co.architecture.feature.bookmark.bookmarkScreen
 import kr.co.architecture.feature.detail.detailScreen

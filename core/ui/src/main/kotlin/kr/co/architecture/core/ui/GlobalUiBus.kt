@@ -1,89 +1,11 @@
 package kr.co.architecture.core.ui
 
-import jakarta.inject.Inject
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.flow.update
-import kr.co.architecture.core.domain.entity.DomainFailure
-import kr.co.architecture.core.domain.entity.DomainFailure.Exception.NetworkConnection
-import kr.co.architecture.core.domain.entity.DomainFailure.Exception.Unknown
-import kr.co.architecture.core.ui.util.UiText
 
-class GlobalUiBus @Inject constructor() {
-
-  // 로딩은 중첩을 허용하는 카운터 방식(동시 요청 대비)
-  private val _loadingCount = MutableStateFlow(0)
-  val loadingState: StateFlow<Boolean> = _loadingCount
-    .map { it > 0 }
-    .distinctUntilChanged()
-    .stateIn(
-      scope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate),
-      started = SharingStarted.WhileSubscribed(),
-      initialValue = false
-    )
-
-  private val _errorDialog = MutableStateFlow<BaseCenterDialogUiModel?>(null)
-  val errorDialog = _errorDialog.asStateFlow()
-
-  fun showFailureDialog(
-    throwable: Throwable
-  ) {
-    /**
-     * 실무 요구사항에 따라 다양한 error case 정의 가능
-     */
-    val (title, contents) = when (throwable) {
-      is DomainFailure.Error -> {
-        UiText.DynamicString(throwable.code) to
-          UiText.DynamicString(throwable.message)
-      }
-      is DomainFailure.Exception -> {
-        when (throwable) {
-          is NetworkConnection -> {
-            UiText.StringResource(R.string.networkConnectionErrorTitle) to
-              UiText.StringResource(R.string.networkConnectionErrorContents)
-          }
-          is Unknown -> {
-            (throwable.message?.let {
-              UiText.DynamicString(it)
-            } ?: run {
-              UiText.StringResource(R.string.unknownError)
-            }) to UiText.DynamicString(throwable.stackTraceToString())
-          }
-        }
-      }
-      else -> {
-        (throwable.message?.let {
-          UiText.DynamicString(it)
-        } ?: run {
-          UiText.StringResource(R.string.unknownError)
-        }) to UiText.DynamicString(throwable.stackTraceToString())
-      }
-    }
-
-    _errorDialog.update {
-      BaseCenterDialogUiModel(
-        titleMessage = title,
-        contentMessage = contents
-      )
-    }
-  }
-
-  fun setLoadingState(loadingState: Boolean) {
-    when (loadingState) {
-      true -> _loadingCount.update { it + 1 }
-      false -> _loadingCount.update { (it - 1).coerceAtLeast(0) }
-    }
-  }
-
-  fun dismissDialog() {
-    _errorDialog.value = null
-  }
+interface GlobalUiBus {
+  val loadingState: StateFlow<Boolean>
+  val errorDialog: StateFlow<BaseCenterDialogUiModel?>
+  fun showFailureDialog(throwable: Throwable)
+  fun setLoadingState(loadingState: Boolean)
+  fun dismissDialog()
 }
