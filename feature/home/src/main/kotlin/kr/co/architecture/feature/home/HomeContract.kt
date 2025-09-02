@@ -19,9 +19,7 @@ data class UiModel(
   companion object {
     fun mapperToUi(dtos: List<PicsumImageDto>): ImmutableList<UiModel> {
       return dtos
-        .mapIndexed { index, dto ->
-          UiModel(dto.downloadUrl)
-        }
+        .map { UiModel(it.downloadUrl) }
         .toImmutableList()
     }
   }
@@ -29,11 +27,14 @@ data class UiModel(
 
 data class HomeUiState(
   val uiType: HomeUiType = HomeUiType.NONE,
-  val uiModels: ImmutableList<UiModel> = persistentListOf()
+  val uiModels: ImmutableList<UiModel> = persistentListOf(),
+  val page: Int = 1
 ) : UiState
 
-sealed interface HomeUiEvent : UiEvent {}
+sealed interface HomeUiEvent : UiEvent {
+  data object OnScrolledToEnd : HomeUiEvent
+}
 
 sealed interface HomeUiSideEffect : UiSideEffect {
-  data object Load : HomeUiSideEffect
+  data object Load: HomeUiSideEffect
 }

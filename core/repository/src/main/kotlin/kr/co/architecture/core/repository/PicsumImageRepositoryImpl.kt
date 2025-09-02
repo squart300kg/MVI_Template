@@ -9,8 +9,8 @@ class PicsumImageRepositoryImpl @Inject constructor(
   private val remoteApi: RemoteApi
 ) : PicsumImageRepository {
 
-  override suspend fun getPicsumImages(): List<PicsumImageDto> {
-    return remoteApi.getPicsumImages()
+  override suspend fun getPicsumImages(page: Int): List<PicsumImageDto> {
+    return remoteApi.getPicsumImages(page = page)
       .getOrThrowAppFailure()
       .let(PicsumImageDto::mapperToDto)
   }

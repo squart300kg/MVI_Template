@@ -24,9 +24,9 @@ fun CoilAsyncImage(
     .build()
 
   AsyncImage(
+    modifier = modifier,
     model = request,
     contentDescription = contentDescription,
-    contentScale = ContentScale.Crop,
-    modifier = modifier
+    contentScale = ContentScale.Crop
   )
 }

@@ -5,7 +5,7 @@ import kr.co.architecture.test.testing.util.MainDispatcherRule
 import org.junit.Before
 import org.junit.Rule
 
-class FirstViewModelTest {
+class HomeViewModelTest {
   @get:Rule
   val mainDispatcherRule = MainDispatcherRule()
 

@@ -1,6 +1,7 @@
 package kr.co.architecture.feature.home
 
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.collections.immutable.PersistentList
 import kr.co.architecture.core.repository.PicsumImageRepository
 import kr.co.architecture.core.ui.BaseViewModel
 import javax.inject.Inject
@@ -12,17 +13,25 @@ class HomeViewModel @Inject constructor(
 
   override fun createInitialState() = HomeUiState()
 
-  override fun handleEvent(event: HomeUiEvent) {}
+  override fun handleEvent(event: HomeUiEvent) {
+    when (event) {
+      HomeUiEvent.OnScrolledToEnd -> setEffect { HomeUiSideEffect.Load }
+    }
+  }
 
   init { setEffect { HomeUiSideEffect.Load } }
 
   fun fetchData() {
     launchWithLoading {
-      val names = repository.getPicsumImages()
+      val nextPage = uiState.value.page + 1
+      val images = repository.getPicsumImages(nextPage)
+      println("pagingLog : ${images.map { it.id }}")
       setState {
         copy(
           uiType = HomeUiType.LOADED,
-          uiModels = UiModel.mapperToUi(names)
+          uiModels = (uiModels as PersistentList)
+            .addAll(UiModel.mapperToUi(images)),
+          page = nextPage
         )
       }
     }
