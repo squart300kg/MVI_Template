@@ -11,8 +11,6 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kr.co.architecture.core.router.internal.navigator.Navigator
-import kr.co.architecture.core.router.internal.navigator.Route
 import javax.inject.Inject
 
 interface UiState
@@ -26,15 +24,6 @@ abstract class BaseViewModel<State : UiState, Event : UiEvent, Effect : UiSideEf
 
   private val initialState: State by lazy { createInitialState() }
 
-  private val _loadingState = MutableStateFlow<Boolean>(false)
-  val loadingState = _loadingState.asStateFlow()
-
-  private val _refreshState = MutableStateFlow<Boolean>(false)
-  val refreshState = _refreshState.asStateFlow()
-
-  private val _errorMessageState = MutableSharedFlow<BaseCenterDialogUiModel>()
-  val errorMessageState = _errorMessageState.asSharedFlow()
-
   private val _uiState = MutableStateFlow<State>(initialState)
   val uiState = _uiState.asStateFlow()
 
@@ -45,15 +34,7 @@ abstract class BaseViewModel<State : UiState, Event : UiEvent, Effect : UiSideEf
   val uiSideEffect = _uiSideEffect.receiveAsFlow()
 
   @Inject
-  lateinit var navigator: Navigator
-
-  @Inject
   lateinit var globalUiBus: GlobalUiBus
-
-  @VisibleForTesting
-  fun injectNavigator(navigator: Navigator) {
-    this.navigator = navigator
-  }
 
   @VisibleForTesting
   fun injectGlobalUiBus(globalUiBus: GlobalUiBus) {
@@ -86,22 +67,6 @@ abstract class BaseViewModel<State : UiState, Event : UiEvent, Effect : UiSideEf
   protected fun setEffect(builder: () -> Effect) {
     val effectValue = builder()
     viewModelScope.launch { _uiSideEffect.send(effectValue) }
-  }
-
-  fun navigateBack() = viewModelScope.launch {
-    navigator.navigateBack()
-  }
-
-  fun navigateWeb(url: String) = viewModelScope.launch {
-    navigator.navigateWeb(url)
-  }
-
-  fun navigateTo(
-    route: Route,
-    saveState: Boolean = false,
-    launchSingleTop: Boolean = false
-  ) = viewModelScope.launch {
-    navigator.navigate(route, saveState, launchSingleTop)
   }
 
   fun <T> launchWithLoading(block: suspend () -> T) {

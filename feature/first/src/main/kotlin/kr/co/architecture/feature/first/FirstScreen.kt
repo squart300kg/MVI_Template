@@ -17,16 +17,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.navigation.NavGraphBuilder
-import androidx.navigation.compose.composable
-import kr.co.architecture.core.ui.FirstRoute
 import kr.co.architecture.core.ui.util.asString
-
-fun NavGraphBuilder.firstScreen() {
-  composable<FirstRoute> {
-    FirstScreen()
-  }
-}
 
 @Composable
 fun FirstScreen(
@@ -44,16 +35,14 @@ fun FirstScreen(
 
   FirstScreen(
     modifier = modifier,
-    uiState = uiState,
-    onClickedItem = { viewModel.setEvent(FirstUiEvent.OnClickedItem(it)) }
+    uiState = uiState
   )
 }
 
 @Composable
 fun FirstScreen(
   modifier: Modifier = Modifier,
-  uiState: FirstUiState,
-  onClickedItem: (UiModel) -> Unit = {}
+  uiState: FirstUiState
 ) {
 
   when (uiState.uiType) {
@@ -69,8 +58,7 @@ fun FirstScreen(
                 shape = RoundedCornerShape(4.dp),
                 color = Color.LightGray
               )
-              .padding(8.dp)
-              .clickable(onClick = { onClickedItem(item) }),
+              .padding(8.dp),
             text = item.name.asString(),
             style = TextStyle(
               fontSize = 20.sp,

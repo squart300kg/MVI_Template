@@ -3,7 +3,6 @@ package kr.co.architecture.feature.first
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kr.co.architecture.core.domain.GetListUseCase
 import kr.co.architecture.core.ui.BaseViewModel
-import kr.co.architecture.core.ui.DetailRoute
 import javax.inject.Inject
 
 @HiltViewModel
@@ -13,18 +12,7 @@ class FirstViewModel @Inject constructor(
 
   override fun createInitialState() = FirstUiState()
 
-  override fun handleEvent(event: FirstUiEvent) {
-    when (event) {
-      is FirstUiEvent.OnClickedItem -> {
-        navigateTo(
-          route = DetailRoute(
-            id = event.item.id,
-            name = event.item.name.value ?: ""
-          )
-        )
-      }
-    }
-  }
+  override fun handleEvent(event: FirstUiEvent) {}
 
   init { setEffect { FirstUiSideEffect.Load } }
 

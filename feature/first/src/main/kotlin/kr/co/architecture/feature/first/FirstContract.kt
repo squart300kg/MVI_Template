@@ -37,9 +37,7 @@ data class FirstUiState(
   val isLoading: Boolean = false
 ) : UiState
 
-sealed interface FirstUiEvent : UiEvent {
-  data class OnClickedItem(val item: UiModel) : FirstUiEvent
-}
+sealed interface FirstUiEvent : UiEvent {}
 
 sealed interface FirstUiSideEffect : UiSideEffect {
   data object Load : FirstUiSideEffect
