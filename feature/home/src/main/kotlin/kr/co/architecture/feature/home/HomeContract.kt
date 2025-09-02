@@ -1,4 +1,4 @@
-package kr.co.architecture.feature.first
+package kr.co.architecture.feature.home
 
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf

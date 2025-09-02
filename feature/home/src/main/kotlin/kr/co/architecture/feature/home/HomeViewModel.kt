@@ -1,4 +1,4 @@
-package kr.co.architecture.feature.first
+package kr.co.architecture.feature.home
 
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kr.co.architecture.core.repository.PicsumImageRepository

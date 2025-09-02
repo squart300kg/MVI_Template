@@ -10,7 +10,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import kr.co.architecture.core.ui.BaseCenterDialog
 import kr.co.architecture.core.ui.BaseProgressBar
 import kr.co.architecture.core.ui.theme.BaseTheme
-import kr.co.architecture.feature.first.FirstScreen
+import kr.co.architecture.feature.home.FirstScreen
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {

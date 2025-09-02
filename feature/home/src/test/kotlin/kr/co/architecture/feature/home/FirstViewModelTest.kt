@@ -1,4 +1,4 @@
-package kr.co.architecture.feature.first
+package kr.co.architecture.feature.home
 
 import kr.co.testing.TestRepository
 import kr.co.architecture.test.testing.util.MainDispatcherRule

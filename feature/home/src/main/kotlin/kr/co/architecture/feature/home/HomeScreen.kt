@@ -1,4 +1,4 @@
-package kr.co.architecture.feature.first
+package kr.co.architecture.feature.home
 
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
