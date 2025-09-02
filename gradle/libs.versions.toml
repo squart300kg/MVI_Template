@@ -33,7 +33,6 @@ androidxTestRules = "1.5.0"
 immutableCollectionVer = "0.3.7"
 coroutineVersion = "1.8.0"
 glide = "1.0.0-beta01"
-lottie = "6.0.0"
 runtimeTracing = "1.7.8"
 
 # plugins
@@ -108,7 +107,6 @@ kotlinx-coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-cor
 androidx-test-rules = { group = "androidx.test", name = "rules", version.ref = "androidxTestRules" }
 ksp-gradlePlugin = { group = "com.google.devtools.ksp", name = "com.google.devtools.ksp.gradle.plugin", version.ref = "ksp" }
 com-github-bumptech-glide = { group = "com.github.bumptech.glide", name = "compose", version.ref = "glide" }
-com-airbnb-android-lottie-compose = { group = "com.airbnb.android", name = "lottie-compose", version.ref = "lottie" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "androidGradlePlugin" }
