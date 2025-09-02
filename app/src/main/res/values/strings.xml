@@ -1,3 +1,5 @@
 <resources>
     <string name="appName">ArchitectureSampleApp</string>
+    <string name="first">first</string>
+    <string name="second">second</string>
 </resources>
