@@ -33,7 +33,7 @@ class MainActivity : ComponentActivity() {
           BaseCenterDialog(
             baseCenterDialogUiModel = state,
             onClickedConfirm = {
-              viewModel.setEvent(MainUiEvent.OnClickedErrorDialogConfirm)
+              viewModel.globalUiBus.dismissDialog()
             }
           )
         }

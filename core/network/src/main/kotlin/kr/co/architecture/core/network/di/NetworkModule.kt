@@ -51,7 +51,7 @@ object NetworkModule {
     gsonConverterFactory: GsonConverterFactory
   ): RemoteApi {
     return Retrofit.Builder()
-      .baseUrl(BuildConfig.apiUrl)
+      .baseUrl(BuildConfig.API_URL)
       .client(okHttpClient)
       .addCallAdapterFactory(ApiResponseCallAdapterFactory.create())
       .addConverterFactory(gsonConverterFactory)

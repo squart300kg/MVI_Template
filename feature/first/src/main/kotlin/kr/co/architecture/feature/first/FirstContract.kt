@@ -3,42 +3,37 @@ package kr.co.architecture.feature.first
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
+import kr.co.architecture.core.repository.dto.PicsumImageDto
 import kr.co.architecture.core.ui.UiEvent
 import kr.co.architecture.core.ui.UiSideEffect
 import kr.co.architecture.core.ui.UiState
-import kr.co.architecture.core.ui.util.UiText
 
-enum class FirstUiType {
+enum class HomeUiType {
   NONE,
   LOADED
 }
 
 data class UiModel(
-  val id: String,
-  val name: UiText
+  val image: String
 ) {
   companion object {
-    fun mapperToUi(names: List<String>): ImmutableList<UiModel> {
-      return names
-        .mapIndexed { index, name ->
-          UiModel(
-            id = "$index",
-            name = UiText.DynamicString(name)
-          )
+    fun mapperToUi(dtos: List<PicsumImageDto>): ImmutableList<UiModel> {
+      return dtos
+        .mapIndexed { index, dto ->
+          UiModel(dto.downloadUrl)
         }
         .toImmutableList()
     }
   }
 }
 
-data class FirstUiState(
-  val uiType: FirstUiType = FirstUiType.NONE,
-  val uiModels: ImmutableList<UiModel> = persistentListOf(),
-  val isLoading: Boolean = false
+data class HomeUiState(
+  val uiType: HomeUiType = HomeUiType.NONE,
+  val uiModels: ImmutableList<UiModel> = persistentListOf()
 ) : UiState
 
-sealed interface FirstUiEvent : UiEvent {}
+sealed interface HomeUiEvent : UiEvent {}
 
-sealed interface FirstUiSideEffect : UiSideEffect {
-  data object Load : FirstUiSideEffect
+sealed interface HomeUiSideEffect : UiSideEffect {
+  data object Load : HomeUiSideEffect
 }

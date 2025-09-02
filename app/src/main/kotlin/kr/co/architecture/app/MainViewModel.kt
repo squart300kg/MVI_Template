@@ -8,9 +8,7 @@ import kr.co.architecture.core.ui.UiState
 import javax.inject.Inject
 
 data object MainUiState: UiState
-sealed interface MainUiEvent : UiEvent {
-  data object OnClickedErrorDialogConfirm : MainUiEvent
-}
+sealed interface MainUiEvent : UiEvent
 sealed interface MainUiSideEffect : UiSideEffect
 
 @HiltViewModel
@@ -20,11 +18,5 @@ class MainViewModel @Inject constructor(
 
   override fun createInitialState() = MainUiState
 
-  override fun handleEvent(event: MainUiEvent) {
-    when (event) {
-      is MainUiEvent.OnClickedErrorDialogConfirm -> {
-        globalUiBus.dismissDialog()
-      }
-    }
-  }
+  override fun handleEvent(event: MainUiEvent) { }
 }

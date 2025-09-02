@@ -32,14 +32,6 @@ interface GlobalUiBus {
   val errorDialog: StateFlow<BaseCenterDialogUiModel?>
 
   /**
-   * 전역 에러 다이얼로그를 표시합니다.
-   * 구현체는 전달된 예외를 화면 친화적 메시지로 매핑합니다.
-   *
-   * @param throwable 표시할 실패 원인
-   */
-  fun showFailureDialog(throwable: Throwable)
-
-  /**
    * 전역 로딩 상태를 토글합니다.
    * - `true` → 로딩 카운트 +1
    * - `false` → 로딩 카운트 -1 (최소 0)
@@ -47,6 +39,14 @@ interface GlobalUiBus {
    * @param loadingState 추가/감소 여부
    */
   fun setLoadingState(loadingState: Boolean)
+
+  /**
+   * 전역 에러 다이얼로그를 표시합니다.
+   * 구현체는 전달된 예외를 화면 친화적 메시지로 매핑합니다.
+   *
+   * @param throwable 표시할 실패 원인
+   */
+  fun showFailureDialog(throwable: Throwable)
 
   /**
    * 현재 표시 중인 전역 에러 다이얼로그를 닫습니다.
