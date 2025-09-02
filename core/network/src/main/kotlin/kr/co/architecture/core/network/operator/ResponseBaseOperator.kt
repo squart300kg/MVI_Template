@@ -4,7 +4,6 @@ import com.google.gson.Gson
 import com.skydoves.sandwich.ApiResponse
 import com.skydoves.sandwich.getOrThrow
 import com.skydoves.sandwich.retrofit.errorBody
-import com.skydoves.sandwich.retrofit.raw
 import com.skydoves.sandwich.suspendOnError
 import com.skydoves.sandwich.suspendOnException
 import kr.co.architecture.core.model.ArchitectureSampleHttpFailure
@@ -13,7 +12,7 @@ import kr.co.architecture.core.network.model.CommonResponse
 import java.net.UnknownHostException
 
 
-suspend fun <ENTITY> ApiResponse<CommonResponse<ENTITY>>.safeGet(): List<ENTITY> = this
+suspend fun <ENTITY> ApiResponse<CommonResponse<ENTITY>>.getOrThrowAppFailure(): List<ENTITY> = this
   .suspendOnError {
     throw try {
       /**

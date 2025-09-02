@@ -1,7 +1,7 @@
 package kr.co.architecture.core.repository
 
 import kr.co.architecture.core.network.RemoteApi
-import kr.co.architecture.core.network.operator.safeGet
+import kr.co.architecture.core.network.operator.getOrThrowAppFailure
 import kr.co.architecture.core.repository.dto.ArticleDto
 import javax.inject.Inject
 
@@ -11,7 +11,7 @@ class RepositoryImpl @Inject constructor(
 
   override suspend fun getList(): List<ArticleDto> {
     return remoteApi.getList()
-      .safeGet()
+      .getOrThrowAppFailure()
       .let(ArticleDto::mapperToDto)
   }
 }
