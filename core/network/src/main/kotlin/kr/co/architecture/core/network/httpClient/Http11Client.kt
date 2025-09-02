@@ -11,6 +11,7 @@ import kr.co.architecture.core.network.httpClient.HttpHeaderConstants.Property.C
 import kr.co.architecture.core.network.httpClient.HttpHeaderConstants.Property.HOST
 import kr.co.architecture.core.network.httpClient.HttpHeaderConstants.Property.USER_AGENT
 import kr.co.architecture.core.network.httpClient.HttpHeaderConstants.Value.APPLICATION_JSON
+import kr.co.architecture.core.network.httpClient.HttpHeaderConstants.Value.CHUNKED
 import kr.co.architecture.core.network.httpClient.HttpHeaderConstants.Value.GZIP
 import kr.co.architecture.core.network.httpClient.HttpHeaderConstants.Value.KEEP_ALIVE
 import java.io.BufferedInputStream
@@ -139,14 +140,14 @@ class RawHttp11Client(
       val transfer = headerMap["transfer-encoding"]?.lowercase(Locale.US)
       val contentLen = headerMap["content-length"]?.toLongOrNull()
       val rawBody = when {
-        transfer?.contains("chunked") == true -> readChunked(bufferedInputStream)
+        transfer?.contains(CHUNKED) == true -> readChunked(bufferedInputStream)
         contentLen != null -> readFixed(bufferedInputStream, contentLen)
         else -> readToEnd(bufferedInputStream)
       }
 
       // ---- gzip 해제 ----
       val bodyBytes =
-        if (headerMap["content-encoding"]?.lowercase(Locale.US)?.contains("gzip") == true) {
+        if (headerMap["content-encoding"]?.lowercase(Locale.US)?.contains(GZIP) == true) {
           GZIPInputStream(ByteArrayInputStream(rawBody)).use { it.readBytes() }
         } else rawBody
 
