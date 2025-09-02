@@ -24,14 +24,15 @@ class HomeViewModel @Inject constructor(
   fun fetchData() {
     launchWithLoading {
       val nextPage = uiState.value.page + 1
-      val images = repository.getPicsumImages(nextPage)
-      println("pagingLog : ${images.map { it.id }}")
+      val dto = repository.getPicsumImages(nextPage)
+      println("pagingLog : ${dto.items.map { it.id to dto.hasNext }}")
       setState {
         copy(
           uiType = HomeUiType.LOADED,
           uiModels = (uiModels as PersistentList)
-            .addAll(UiModel.mapperToUi(images)),
-          page = nextPage
+            .addAll(UiModel.mapperToUi(dto)),
+          page = nextPage,
+          hasNext = dto.hasNext
         )
       }
     }

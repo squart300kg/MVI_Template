@@ -11,6 +11,7 @@ import androidx.compose.runtime.remember
 fun PaginationLoadEffect(
   listState: LazyGridState,
   onScrollToEnd: () -> Unit,
+  hasNext: Boolean,
   bufferItemCount: Int = 20
 ) {
   val shouldLoadMore by remember {
@@ -25,6 +26,6 @@ fun PaginationLoadEffect(
   }
 
   LaunchedEffect(shouldLoadMore) {
-    if (shouldLoadMore) onScrollToEnd()
+    if (shouldLoadMore && hasNext) onScrollToEnd()
   }
 }

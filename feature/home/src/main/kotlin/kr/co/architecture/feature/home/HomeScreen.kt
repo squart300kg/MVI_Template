@@ -50,6 +50,7 @@ fun FirstScreen(
       PaginationLoadEffect(
         listState = listState,
         onScrollToEnd = onScrollToEnd,
+        hasNext = uiState.hasNext
       )
       LazyVerticalGrid(
         modifier = modifier,
