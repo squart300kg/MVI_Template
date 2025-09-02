@@ -32,7 +32,6 @@ kotlinxCoroutines = "1.8.0"
 androidxTestRules = "1.5.0"
 immutableCollectionVer = "0.3.7"
 coroutineVersion = "1.8.0"
-glide = "1.0.0-beta01"
 runtimeTracing = "1.7.8"
 
 # plugins
@@ -106,7 +105,6 @@ com-github-skydoves-sandwich-retrofit = { group = "com.github.skydoves", name = 
 kotlinx-coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref = "kotlinxCoroutines" }
 androidx-test-rules = { group = "androidx.test", name = "rules", version.ref = "androidxTestRules" }
 ksp-gradlePlugin = { group = "com.google.devtools.ksp", name = "com.google.devtools.ksp.gradle.plugin", version.ref = "ksp" }
-com-github-bumptech-glide = { group = "com.github.bumptech.glide", name = "compose", version.ref = "glide" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "androidGradlePlugin" }

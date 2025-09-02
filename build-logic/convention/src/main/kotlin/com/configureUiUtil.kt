@@ -11,7 +11,7 @@ internal fun Project.configureUiUtil(
 
     dependencies {
       add("implementation", libs.findLibrary("org-jetbrains-kotlinx-collections-immutable").get())
-      add("implementation", libs.findLibrary("com-github-bumptech-glide").get())
+      add("implementation", libs.findLibrary("io-coil-kt").get())
     }
   }
 }
