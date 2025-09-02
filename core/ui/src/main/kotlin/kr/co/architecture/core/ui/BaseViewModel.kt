@@ -3,9 +3,7 @@ package kr.co.architecture.core.ui
 import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
@@ -13,10 +11,8 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kr.co.architecture.core.model.ArchitectureSampleHttpException
 import kr.co.architecture.core.router.internal.navigator.Navigator
 import kr.co.architecture.core.router.internal.navigator.Route
-import kr.co.architecture.core.ui.util.UiText
 import javax.inject.Inject
 
 interface UiState
@@ -51,9 +47,17 @@ abstract class BaseViewModel<State : UiState, Event : UiEvent, Effect : UiSideEf
   @Inject
   lateinit var navigator: Navigator
 
+  @Inject
+  lateinit var globalUiBus: GlobalUiBus
+
   @VisibleForTesting
   fun injectNavigator(navigator: Navigator) {
     this.navigator = navigator
+  }
+
+  @VisibleForTesting
+  fun injectGlobalUiBus(globalUiBus: GlobalUiBus) {
+    this.globalUiBus = globalUiBus
   }
 
   init {
@@ -84,21 +88,6 @@ abstract class BaseViewModel<State : UiState, Event : UiEvent, Effect : UiSideEf
     viewModelScope.launch { _uiSideEffect.send(effectValue) }
   }
 
-  protected fun launchSafetyWithLoading(
-    isPullToRefresh: Boolean = false,
-    block: suspend CoroutineScope.() -> Unit,
-  ) {
-    viewModelScope.launch {
-      if (isPullToRefresh) _refreshState.update { true }
-      else _loadingState.update { true }
-      runCatching {
-        coroutineScope { block() }
-      }.onFailure { showErrorDialog(it) }
-      if (isPullToRefresh) _refreshState.update { false }
-      else _loadingState.update { false }
-    }
-  }
-
   fun navigateBack() = viewModelScope.launch {
     navigator.navigateBack()
   }
@@ -115,24 +104,16 @@ abstract class BaseViewModel<State : UiState, Event : UiEvent, Effect : UiSideEf
     navigator.navigate(route, saveState, launchSingleTop)
   }
 
-  protected suspend fun showErrorDialog(throwable: Throwable?) {
-    _errorMessageState.emit(
-      when (throwable) {
-        is ArchitectureSampleHttpException -> {
-          BaseCenterDialogUiModel(
-            titleMessage = UiText.DynamicString("[${throwable.code}]"),
-            contentMessage = UiText.DynamicString(throwable.message),
-            confirmButtonMessage = UiText.DynamicString("확인"),
-          )
-        }
-        else -> {
-          BaseCenterDialogUiModel(
-            titleMessage = UiText.DynamicString(throwable?.stackTraceToString().toString()),
-            contentMessage = UiText.DynamicString(""),
-            confirmButtonMessage = UiText.DynamicString("취소")
-          )
-        }
+  fun <T> launchWithLoading(block: suspend () -> T) {
+    viewModelScope.launch {
+      try {
+        globalUiBus.setLoadingState(true)
+        block()
+      } catch (e: Exception) {
+        globalUiBus.showFailureDialog(e)
+      } finally {
+        globalUiBus.setLoadingState(false)
       }
-    )
+    }
   }
 }

@@ -19,10 +19,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
-import kotlinx.serialization.Serializable
-import kr.co.architecture.core.router.internal.navigator.Route
 import kr.co.architecture.core.ui.FirstRoute
-import kr.co.architecture.core.ui.GlobalUiStateEffect
 import kr.co.architecture.core.ui.util.asString
 
 fun NavGraphBuilder.firstScreen() {
@@ -50,8 +47,6 @@ fun FirstScreen(
     uiState = uiState,
     onClickedItem = { viewModel.setEvent(FirstUiEvent.OnClickedItem(it)) }
   )
-
-  GlobalUiStateEffect(viewModel)
 }
 
 @Composable

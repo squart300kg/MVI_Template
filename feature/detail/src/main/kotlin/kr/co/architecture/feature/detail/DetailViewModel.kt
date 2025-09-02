@@ -13,9 +13,7 @@ class DetailViewModel @Inject constructor(
   private val savedStateHandle: SavedStateHandle
 ) : BaseViewModel<DetailUiState, DetailUiEvent, DetailUiSideEffect>() {
 
-  override fun createInitialState(): DetailUiState {
-    return DetailUiState()
-  }
+  override fun createInitialState() = DetailUiState()
 
   override fun handleEvent(event: DetailUiEvent) {
     when (event) {
@@ -28,7 +26,7 @@ class DetailViewModel @Inject constructor(
   }
 
   fun fetchData() {
-    launchSafetyWithLoading {
+    launchWithLoading {
       val id = savedStateHandle.toRoute<DetailRoute>().id
       val name = savedStateHandle.toRoute<DetailRoute>().name
 

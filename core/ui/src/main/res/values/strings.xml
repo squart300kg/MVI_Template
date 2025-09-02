@@ -1,3 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources xmlns:tools="http://schemas.android.com/tools">
+<resources>
+    <string name="confirm">확인</string>
+    <string name="networkConnectionErrorTitle">네트워크가 연결되어있지 않습니다.</string>
+    <string name="networkConnectionErrorContents">네트워크 연결을 확인해주세요.</string>
+    <string name="unknownError">알 수 없는 에러</string>
 </resources>

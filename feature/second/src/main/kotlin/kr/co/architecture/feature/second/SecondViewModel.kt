@@ -17,9 +17,7 @@ class SecondViewModel @Inject constructor(
   private val getListUseCase: GetListUseCase
 ) : BaseViewModel<SecondUiState, SecondUiEvent, SecondUiSideEffect>() {
 
-  override fun createInitialState(): SecondUiState {
-    return SecondUiState()
-  }
+  override fun createInitialState() = SecondUiState()
 
   override fun handleEvent(event: SecondUiEvent) {
     when (event) {
@@ -30,7 +28,7 @@ class SecondViewModel @Inject constructor(
   init { setEffect { SecondUiSideEffect.Load } }
 
   fun fetchData() {
-    launchSafetyWithLoading {
+    launchWithLoading {
       val names = getListUseCase()
       setState {
         copy(

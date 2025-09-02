@@ -17,11 +17,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
-import androidx.navigation.toRoute
-import kotlinx.serialization.Serializable
-import kr.co.architecture.core.router.internal.navigator.Route
 import kr.co.architecture.core.ui.DetailRoute
-import kr.co.architecture.core.ui.GlobalUiStateEffect
 import kr.co.architecture.core.ui.util.asString
 
 fun NavGraphBuilder.detailScreen() {
@@ -47,8 +43,6 @@ fun DetailScreen(
     uiState = uiState,
     modifier = modifier,
   )
-
-  GlobalUiStateEffect(viewModel)
 }
 
 @Composable
