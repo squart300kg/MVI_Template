@@ -1,6 +1,7 @@
 package kr.co.architecture.core.repository
 
 import kr.co.architecture.core.network.PicsumApi
+import kr.co.architecture.core.network.PicsumApiImpl
 import kr.co.architecture.core.network.RemoteApi
 import kr.co.architecture.core.repository.dto.PicsumImagesDto
 import kr.co.architecture.core.repository.dto.PicsumImagesDto.Image
@@ -11,8 +12,14 @@ class PicsumImageRepositoryImpl @Inject constructor(
 ) : PicsumImageRepository {
 
   override suspend fun getPicsumImages(page: Int): PicsumImagesDto {
-    val api = PicsumApi()
-    val response = api.getList(1, 30)
+    val remoteApi: PicsumApi = PicsumApiImpl(
+      url = "https://picsum.photos"
+    )
+    val response = remoteApi.getPicsumImages(
+      path = "/v2/list",
+      page = 1,
+      limit = 30
+    )
     return PicsumImagesDto(
       items = response.items.map {
         Image(
