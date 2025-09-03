@@ -1,6 +1,14 @@
 package kr.co.architecture.core.network.httpClient
 
 object HttpHeaderConstants {
+  object Method {
+    const val GET = "GET"
+    const val HEAD = "HEAD"
+    const val POST = "POST"
+    const val PUT = "PUT"
+    const val DELETE = "DELETE"
+  }
+
   const val HTTPS = "https"
   const val HTTP = "http"
   const val HTTP_1_1 = "HTTP/1.1"
@@ -15,6 +23,7 @@ object HttpHeaderConstants {
     const val CONTENT_ENCODING = "Content-Encoding"
     const val TRANSFER_ENCODING = "Transfer-Encoding"
     const val LOCATION = "LOCATION"
+    const val LINK = "Link"
   }
   object Value {
     const val APPLICATION_JSON = "application/json"

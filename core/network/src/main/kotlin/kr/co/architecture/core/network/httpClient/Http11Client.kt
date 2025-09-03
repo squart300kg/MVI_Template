@@ -4,6 +4,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kr.co.architecture.core.network.httpClient.HttpHeaderConstants.HTTPS
 import kr.co.architecture.core.network.httpClient.HttpHeaderConstants.HTTP_1_1
+import kr.co.architecture.core.network.httpClient.HttpHeaderConstants.Method.GET
 import kr.co.architecture.core.network.httpClient.HttpHeaderConstants.Property.ACCEPT
 import kr.co.architecture.core.network.httpClient.HttpHeaderConstants.Property.ACCEPT_ENCODING
 import kr.co.architecture.core.network.httpClient.HttpHeaderConstants.Property.CONNECTION
@@ -26,6 +27,7 @@ import javax.net.ssl.SNIHostName
 import javax.net.ssl.SSLSocket
 import javax.net.ssl.SSLSocketFactory
 
+// TODO: 아래 모델 없애기
 data class PicsumItem(
   val id: String,
   val author: String,
@@ -48,6 +50,7 @@ data class HttpResponse(
   val body: ByteArray
 )
 
+// TODO: 정규식 없애기
 private val LINK_REGEX = Regex("""<([^>]+)>\s*;\s*rel="([^"]+)"""")
 fun parseLinkHeader(header: String?): Map<String, String> {
   if (header.isNullOrBlank()) return emptyMap()
@@ -61,7 +64,7 @@ class RawHttp11Client(
 ) {
 
   suspend fun get(url: String, headers: Map<String, String> = emptyMap()): HttpResponse =
-    request(method = "GET", url = URL(url), header = headers, body = null, redirectDepth = 0)
+    request(method = GET, url = URL(url), header = headers, body = null, redirectDepth = 0)
 
   private suspend fun request(
     method: String,

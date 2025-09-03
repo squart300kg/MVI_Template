@@ -1,10 +1,10 @@
 package kr.co.architecture.core.network
 
 import kr.co.architecture.core.network.httpClient.HttpHeaderConstants.Value.APPLICATION_JSON
-import kr.co.architecture.core.network.httpClient.PageResult
-import kr.co.architecture.core.network.httpClient.PicsumItem
 import kr.co.architecture.core.network.httpClient.RawHttp11Client
 import kr.co.architecture.core.network.httpClient.parseLinkHeader
+import kr.co.architecture.core.network.model.ApiResponse
+import kr.co.architecture.core.network.model.PicsumImagesApiResponse
 import org.json.JSONArray
 import org.json.JSONObject
 import java.io.IOException
@@ -20,7 +20,7 @@ class PicsumApiImpl(
     path: String,
     page: Int,
     limit: Int
-  ): PageResult {
+  ): ApiResponse<PicsumImagesApiResponse> {
     val url = "$url$path?page=$page&limit=$limit"
     val response = rawHttp11Client.get(
       url = url,
@@ -48,7 +48,7 @@ class PicsumApiImpl(
       for (i in 0 until jsonArray.length()) {
         val jsonObject: JSONObject = jsonArray.getJSONObject(i)
         add(
-          PicsumItem(
+          PicsumImagesApiResponse.PicsumImagesApiResponseItem(
             id = jsonObject.getString("id"),
             author = jsonObject.getString("author"),
             width = jsonObject.getInt("width"),
@@ -59,6 +59,26 @@ class PicsumApiImpl(
         )
       }
     }
-    return PageResult(items = items, prev = prev, next = next)
+    val result = PicsumImagesApiResponse().apply {
+      for (i in 0 until jsonArray.length()) {
+        val jsonObject: JSONObject = jsonArray.getJSONObject(i)
+        add(
+          PicsumImagesApiResponse.PicsumImagesApiResponseItem(
+            id = jsonObject.getString("id"),
+            author = jsonObject.getString("author"),
+            width = jsonObject.getInt("width"),
+            height = jsonObject.getInt("height"),
+            url = jsonObject.getString("url"),
+            downloadUrl = jsonObject.getString("download_url")
+          )
+        )
+      }
+    }
+    return ApiResponse(
+      code = response.code,
+      message = response.message,
+      header = response.headers,
+      body = result
+    )
   }
 }

@@ -1,7 +1,7 @@
 package kr.co.architecture.core.repository.dto
 
-import com.skydoves.sandwich.ApiResponse
-import com.skydoves.sandwich.retrofit.headers
+import kr.co.architecture.core.network.httpClient.HttpHeaderConstants.Property.LINK
+import kr.co.architecture.core.network.model.ApiResponse
 import kr.co.architecture.core.network.model.PicsumImagesApiResponse
 
 data class PicsumImagesDto(
@@ -17,9 +17,9 @@ data class PicsumImagesDto(
     val url: String
   )
   companion object {
-    fun mapperToDto(apiResponse: ApiResponse.Success<PicsumImagesApiResponse>) =
+    fun mapperToDto(apiResponse: ApiResponse<PicsumImagesApiResponse>) =
       PicsumImagesDto(
-        items = apiResponse.data.map {
+        items = apiResponse.body.map {
           Image(
             author = it.author,
             downloadUrl = it.downloadUrl,
@@ -29,9 +29,8 @@ data class PicsumImagesDto(
             url = it.url
           )
         },
-        hasNext = apiResponse.headers.values("link")
-          .joinToString()
-          .contains("rel=\"next\"")
+        hasNext = apiResponse.header[LINK]
+          ?.contains("rel=\"next\"") == true
       )
   }
 }

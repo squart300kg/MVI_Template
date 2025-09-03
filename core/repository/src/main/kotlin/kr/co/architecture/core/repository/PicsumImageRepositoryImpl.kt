@@ -4,7 +4,6 @@ import kr.co.architecture.core.network.PicsumApi
 import kr.co.architecture.core.network.PicsumApiImpl
 import kr.co.architecture.core.network.RemoteApi
 import kr.co.architecture.core.repository.dto.PicsumImagesDto
-import kr.co.architecture.core.repository.dto.PicsumImagesDto.Image
 import javax.inject.Inject
 
 class PicsumImageRepositoryImpl @Inject constructor(
@@ -13,29 +12,13 @@ class PicsumImageRepositoryImpl @Inject constructor(
 
   override suspend fun getPicsumImages(page: Int): PicsumImagesDto {
     val remoteApi: PicsumApi = PicsumApiImpl(
-      url = "https://picsum.photos"
+      url = "https://picsum.photos/"
     )
-    val response = remoteApi.getPicsumImages(
-      path = "/v2/list",
+    return remoteApi.getPicsumImages(
+      path = "v2/list",
       page = 1,
       limit = 30
-    )
-    return PicsumImagesDto(
-      items = response.items.map {
-        Image(
-          author = it.author,
-          downloadUrl = it.downloadUrl,
-          width = it.width,
-          height = it.height,
-          id = it.id,
-          url = it.url
-        )
-      },
-      hasNext = response.next?.isNotEmpty() == true,
-    )
-//    return remoteApi.getPicsumImages(page = page)
-//      .getOrThrowAppFailure()
-//      .let(PicsumImagesDto::mapperToDto)
+    ).let(PicsumImagesDto::mapperToDto)
   }
 }
 
