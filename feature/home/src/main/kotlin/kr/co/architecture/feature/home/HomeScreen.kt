@@ -30,9 +30,9 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import kr.co.architecture.core.network.httpClient.RawHttp11Client
 import kr.co.architecture.core.ui.BaseProgressBar
 import kr.co.architecture.core.ui.PaginationLoadEffect
+import kr.co.architecture.custom.http.client.RawHttp11Client
 import java.io.File
 import java.io.FileOutputStream
 import java.security.MessageDigest

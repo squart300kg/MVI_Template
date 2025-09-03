@@ -1,8 +1,8 @@
 package kr.co.architecture.core.repository.dto
 
-import kr.co.architecture.core.network.httpClient.HttpHeaderConstants.Property.LINK
 import kr.co.architecture.core.network.model.ApiResponse
 import kr.co.architecture.core.network.model.PicsumImagesApiResponse
+import kr.co.architecture.custom.http.client.HttpHeaderConstants.Property.LINK
 
 data class PicsumImagesDto(
   val items: List<Image>,

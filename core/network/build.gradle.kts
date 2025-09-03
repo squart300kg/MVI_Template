@@ -17,6 +17,7 @@ android {
 
   dependencies {
     implementation(project(":core:model"))
+    api(project(":custom-http-client"))
   }
 }
 

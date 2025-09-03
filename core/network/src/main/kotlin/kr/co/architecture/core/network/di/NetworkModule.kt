@@ -9,8 +9,8 @@ import dagger.hilt.components.SingletonComponent
 import kr.co.architecture.core.network.BuildConfig
 import kr.co.architecture.core.network.PicsumApi
 import kr.co.architecture.core.network.PicsumApiImpl
-import kr.co.architecture.core.network.httpClient.RawHttp11Client
-import kr.co.architecture.core.network.interceptor.CustomHttpLogger
+import kr.co.architecture.custom.http.client.RawHttp11Client
+import kr.co.architecture.custom.http.client.interceptor.CustomHttpLogger
 import javax.inject.Singleton
 
 @Module

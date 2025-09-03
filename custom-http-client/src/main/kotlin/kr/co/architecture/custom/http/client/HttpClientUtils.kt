@@ -1,7 +1,5 @@
-package kr.co.architecture.core.network.httpClient
+package kr.co.architecture.custom.http.client
 
-import kr.co.architecture.core.network.httpClient.HttpHeaderConstants.HTTPS
-import kr.co.architecture.core.network.httpClient.HttpHeaderConstants.HTTP_1_1
 import java.io.ByteArrayOutputStream
 import java.io.EOFException
 import java.io.IOException
@@ -11,8 +9,6 @@ import java.net.URL
 import javax.net.ssl.SNIHostName
 import javax.net.ssl.SSLSocket
 import javax.net.ssl.SSLSocketFactory
-import kotlin.collections.component1
-import kotlin.collections.component2
 
 internal fun readLineAscii(ins: InputStream): String? {
   val baos = ByteArrayOutputStream(64)
@@ -95,7 +91,7 @@ internal fun getSocket(
   readTimeoutMs: Int
 ): Socket {
   val port = url.extractPort()
-  return when (url.protocol.equals(HTTPS)) {
+  return when (url.protocol.equals(HttpHeaderConstants.HTTPS)) {
     true -> {
       (SSLSocketFactory.getDefault().createSocket(url.host, port) as SSLSocket).apply {
         soTimeout = readTimeoutMs
@@ -103,7 +99,7 @@ internal fun getSocket(
         try {
           sslParameters = sslParameters.apply {
             serverNames = listOf(SNIHostName(url.host))
-            endpointIdentificationAlgorithm = HTTPS
+            endpointIdentificationAlgorithm = HttpHeaderConstants.HTTPS
           }
         } catch (_: Throwable) { /* 일부 구형 기기 호환 */
         }

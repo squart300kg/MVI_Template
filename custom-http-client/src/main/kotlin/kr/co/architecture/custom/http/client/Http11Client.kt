@@ -1,24 +1,8 @@
-package kr.co.architecture.core.network.httpClient
+package kr.co.architecture.custom.http.client
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import kr.co.architecture.core.network.httpClient.HttpHeaderConstants.HTTP_1_1
-import kr.co.architecture.core.network.httpClient.HttpHeaderConstants.Method.GET
-import kr.co.architecture.core.network.httpClient.HttpHeaderConstants.Property.ACCEPT
-import kr.co.architecture.core.network.httpClient.HttpHeaderConstants.Property.ACCEPT_ENCODING
-import kr.co.architecture.core.network.httpClient.HttpHeaderConstants.Property.CONNECTION
-import kr.co.architecture.core.network.httpClient.HttpHeaderConstants.Property.CONTENT_ENCODING
-import kr.co.architecture.core.network.httpClient.HttpHeaderConstants.Property.CONTENT_LENGTH
-import kr.co.architecture.core.network.httpClient.HttpHeaderConstants.Property.CONTENT_TYPE
-import kr.co.architecture.core.network.httpClient.HttpHeaderConstants.Property.HOST
-import kr.co.architecture.core.network.httpClient.HttpHeaderConstants.Property.LOCATION
-import kr.co.architecture.core.network.httpClient.HttpHeaderConstants.Property.TRANSFER_ENCODING
-import kr.co.architecture.core.network.httpClient.HttpHeaderConstants.Property.USER_AGENT
-import kr.co.architecture.core.network.httpClient.HttpHeaderConstants.Value.APPLICATION_JSON
-import kr.co.architecture.core.network.httpClient.HttpHeaderConstants.Value.CHUNKED
-import kr.co.architecture.core.network.httpClient.HttpHeaderConstants.Value.GZIP
-import kr.co.architecture.core.network.httpClient.HttpHeaderConstants.Value.KEEP_ALIVE
-import kr.co.architecture.core.network.interceptor.CustomHttpLogger
+import kr.co.architecture.custom.http.client.interceptor.CustomHttpLogger
 import java.io.BufferedInputStream
 import java.io.BufferedOutputStream
 import java.io.ByteArrayInputStream
@@ -112,23 +96,23 @@ class RawHttp11Client(
           // TODO: 왜 LinkedMap을 썼는지?
           //  단순 StringBuilder로
           val requestHeader = linkedMapOf(
-            HOST to host,
-            USER_AGENT to userAgent,
-            ACCEPT to APPLICATION_JSON,
+            HttpHeaderConstants.Property.HOST to host,
+            HttpHeaderConstants.Property.USER_AGENT to userAgent,
+            HttpHeaderConstants.Property.ACCEPT to HttpHeaderConstants.Value.APPLICATION_JSON,
             // TODO: GZIP이 정말 필요한가? 요청/응답 성능 개선이 확실한가?
             //  이거 설정에 따른 벤치마크 측정하기
-            ACCEPT_ENCODING to GZIP,
-            CONNECTION to KEEP_ALIVE
+            HttpHeaderConstants.Property.ACCEPT_ENCODING to HttpHeaderConstants.Value.GZIP,
+            HttpHeaderConstants.Property.CONNECTION to HttpHeaderConstants.Value.KEEP_ALIVE
           ).apply {
-            if (body != null) put(CONTENT_LENGTH, "${body.size}")
+            if (body != null) put(HttpHeaderConstants.Property.CONTENT_LENGTH, "${body.size}")
           }
 
-          httpLogger?.printRequestStartLog(method, "$url", HTTP_1_1)
+          httpLogger?.printRequestStartLog(method, "$url", HttpHeaderConstants.HTTP_1_1)
           httpLogger?.printRequestHeaderLog(requestHeader)
           httpLogger?.printRequestBodyLog()
 
           val requestHeaderString = buildString {
-            append("$method $pathAndQuery $HTTP_1_1\r\n")
+            append("$method $pathAndQuery ${HttpHeaderConstants.HTTP_1_1}\r\n")
             requestHeader.forEach { (k, v) -> append("$k: $v\r\n") }
             append("\r\n")
           }
@@ -166,10 +150,10 @@ class RawHttp11Client(
           //  302만 오는게 아닌지 체크
           if (code in listOf(301, 302, 303, 307, 308)) {
             // TODO: 무슨뜻이지?
-            val location = responseHeader[LOCATION] ?: throw IOException("Redirect without Location")
+            val location = responseHeader[HttpHeaderConstants.Property.LOCATION] ?: throw IOException("Redirect without Location")
             val redirectUrl = URL(url, location) // 상대/절대 모두 처리
             return@withContext request(
-              method = if (code == 303) GET else method,
+              method = if (code == 303) HttpHeaderConstants.Method.GET else method,
               url = redirectUrl,
               body = if (code >= 307) body else null,
               redirectDepth = redirectDepth + 1,
@@ -180,10 +164,10 @@ class RawHttp11Client(
           }
 
           // ---- 바디 경계 판별 ----
-          val transfer = responseHeader[TRANSFER_ENCODING]
-          val contentLen = responseHeader[CONTENT_LENGTH]?.toLongOrNull()
+          val transfer = responseHeader[HttpHeaderConstants.Property.TRANSFER_ENCODING]
+          val contentLen = responseHeader[HttpHeaderConstants.Property.CONTENT_LENGTH]?.toLongOrNull()
           val rawBody = when {
-            transfer?.contains(CHUNKED) == true -> readChunked(bufferedInputStream)
+            transfer?.contains(HttpHeaderConstants.Value.CHUNKED) == true -> readChunked(bufferedInputStream)
             contentLen != null -> readFixed(bufferedInputStream, contentLen)
             else -> readToEnd(bufferedInputStream)
           }
@@ -200,12 +184,14 @@ class RawHttp11Client(
           }
 
           // ---- gzip 해제 ----
-          val isGzip = responseHeader[CONTENT_ENCODING]?.contains(GZIP) == true
+          val isGzip = responseHeader[HttpHeaderConstants.Property.CONTENT_ENCODING]?.contains(
+            HttpHeaderConstants.Value.GZIP
+          ) == true
           val bodyBytes =
             if (isGzip) GZIPInputStream(ByteArrayInputStream(rawBody)).use { it.readBytes() }
             else rawBody
 
-          val contentType = responseHeader[CONTENT_TYPE]
+          val contentType = responseHeader[HttpHeaderConstants.Property.CONTENT_TYPE]
           httpLogger?.printResponseBodyLog(
             body = bodyBytes,
             contentType = contentType,

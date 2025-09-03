@@ -1,4 +1,4 @@
-package kr.co.architecture.core.network.httpClient
+package kr.co.architecture.custom.http.client
 
 object HttpHeaderConstants {
   object Method {

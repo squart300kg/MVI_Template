@@ -3,8 +3,6 @@ package kr.co.architecture.core.network
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.first
-import kr.co.architecture.core.network.httpClient.HttpHeaderConstants.Method.GET
-import kr.co.architecture.core.network.httpClient.RawHttp11Client
 import kr.co.architecture.core.network.model.ApiResponse
 import kr.co.architecture.core.network.model.PicsumImagesApiResponse
 import org.json.JSONArray
@@ -17,6 +15,8 @@ import kr.co.architecture.core.network.model.PicsumImagesApiResponseField.HEIGHT
 import kr.co.architecture.core.network.model.PicsumImagesApiResponseField.WIDTH
 import kr.co.architecture.core.network.model.PicsumImagesApiResponseField.ID
 import kr.co.architecture.core.network.model.PicsumImagesApiResponseField.URL
+import kr.co.architecture.custom.http.client.HttpHeaderConstants.Method.GET
+import kr.co.architecture.custom.http.client.RawHttp11Client
 
 class PicsumApiImpl(
   val rawHttp11Client: RawHttp11Client = RawHttp11Client(),

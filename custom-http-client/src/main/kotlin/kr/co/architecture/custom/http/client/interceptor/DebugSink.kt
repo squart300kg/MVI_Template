@@ -1,4 +1,4 @@
-package kr.co.architecture.core.network.interceptor
+package kr.co.architecture.custom.http.client.interceptor
 
 import org.json.JSONArray
 import org.json.JSONObject
