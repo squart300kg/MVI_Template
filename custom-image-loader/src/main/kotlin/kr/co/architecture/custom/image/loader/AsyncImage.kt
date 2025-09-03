@@ -1,5 +1,6 @@
 package kr.co.architecture.custom.image.loader
 
+import android.content.Context
 import android.graphics.BitmapFactory
 import androidx.compose.foundation.Image
 import androidx.compose.runtime.Composable
@@ -14,18 +15,29 @@ import androidx.compose.ui.platform.LocalContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kr.co.architecture.custom.http.client.RawHttp11Client
+import kr.co.architecture.custom.http.client.interceptor.CustomHttpLogger
 
 @Composable
 fun AsyncImage(
   modifier: Modifier = Modifier,
   placeholderContent: @Composable () -> Unit = {},
   url: String,
-  contentScale: ContentScale = ContentScale.Crop
+  contentScale: ContentScale = ContentScale.Crop,
+  context: Context = LocalContext.current
 ) {
-  val context = LocalContext.current
-  val client = remember { RawHttp11Client() }
+  // TODO: 의존주입 방법 고민해보기
+  val versionName = context
+    .packageManager
+    .getPackageInfo(context.packageName, 0)
+    .versionName
+  // TODO: UserAgent 주입방식 고민하기
+  val client = remember {
+    RawHttp11Client(
+      userAgent = "GalleryApp-${versionName}-RawHttp11/0.1",
+      httpLogger = CustomHttpLogger()
+    )
+  }
   val diskCache = remember { ImageDiskCache.create(context, maxBytes = 64L * 1024 * 1024) }
-
   val imageState by produceState<ImageBitmap?>(initialValue = null, url) {
     // 1) 메모리 캐시
     MemoryImageCache[url]?.let { value = it; return@produceState }
