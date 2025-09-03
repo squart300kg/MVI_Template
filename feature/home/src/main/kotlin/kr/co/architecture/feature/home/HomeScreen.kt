@@ -1,5 +1,6 @@
 package kr.co.architecture.feature.home
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -14,6 +15,10 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kr.co.architecture.core.ui.CoilAsyncImage
 import kr.co.architecture.core.ui.PaginationLoadEffect
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
+import androidx.compose.ui.unit.dp
 
 @Composable
 fun FirstScreen(
@@ -58,9 +63,15 @@ fun FirstScreen(
         state = listState
       ) {
         items(uiState.uiModels) { item ->
-          CoilAsyncImage(
-            modifier = Modifier.aspectRatio(1f),
-            url = item.image)
+          Surface(
+            modifier = Modifier
+              .aspectRatio(1f),
+            border = BorderStroke(1.dp, MaterialTheme.colorScheme.onSurface),
+            shape = RoundedCornerShape(4.dp)
+          ) {
+            CoilAsyncImage(
+              url = item.image)
+          }
         }
       }
     }
