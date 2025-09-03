@@ -17,10 +17,7 @@ object NetworkModule {
 
   @Provides
   @Singleton
-  fun provideHttpLogger() = CustomHttpLogger(
-  enabled = BuildConfig.DEBUG,
-//  maxBodyChars = 8_192
-  )
+  fun provideHttpLogger() = CustomHttpLogger()
 
   @Provides
   @Singleton

@@ -78,10 +78,9 @@ class RawHttp11Client(
         header.forEach { (k, v) -> put(k, v) }
       }
 
-      // ---- REQUEST LOG (BODY 레벨 고정) ----
-      httpLogger?.onRequestStart(method, url.toString(), HTTP_1_1)
+      httpLogger?.onRequestStart(method, "$url", HTTP_1_1)
       httpLogger?.onRequestHeaders(reqHeaders)
-      httpLogger?.onRequestBody(body)
+      httpLogger?.onRequestBody()
 
       val head = buildString {
         append("$method $pathAndQuery $HTTP_1_1\r\n")
@@ -104,20 +103,18 @@ class RawHttp11Client(
       val headerMap = mutableMapOf<String, String>()
       while (true) {
         val line = readLineAscii(bufferedInputStream) ?: break
-        if (line.isEmpty()) break // 빈 줄 == 헤더 끝
+        if (line.isEmpty()) break
         val idx = line.indexOf(':')
         if (idx > 0) {
           val k = line.substring(0, idx).trim().lowercase(Locale.US)
           val v = line.substring(idx + 1).trim()
-          // 같은 키가 중복되면 마지막 값으로 (필요 시 append)
           headerMap[k] = v
         }
       }
 
       val tookMs = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - startNs)
 
-      // ---- RESPONSE LOG (status+headers) ----
-      httpLogger?.onResponseStart(code, message, url.toString(), tookMs)
+      httpLogger?.onResponseStart(code, message, "$url", tookMs)
       httpLogger?.onResponseHeaders(headerMap)
 
       // ---- 리다이렉트 처리 ----
