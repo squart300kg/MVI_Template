@@ -117,10 +117,8 @@ class RawHttp11Client(
           // ---- 상태줄 ----
           val statusLine = readLineAscii(bufferedInputStream) ?: throw IOException("No status line")
           val parts = statusLine.split(' ', limit = 3)
-          val code = 400
-//          val code = parts.getOrNull(1)?.toIntOrNull() ?: throw IOException("Bad status: $statusLine")
-          val message = "parts.getOrNull(2) ?: "
-//          val message = parts.getOrNull(2) ?: ""
+          val code = parts.getOrNull(1)?.toIntOrNull() ?: throw IOException("Bad status: $statusLine")
+          val message = parts.getOrNull(2) ?: ""
 
           // ---- 헤더 ----
           val responseHeader = mutableMapOf<String, String>()
@@ -166,9 +164,10 @@ class RawHttp11Client(
               HttpResponse(
                 code = code,
                 message = message,
-                body = """{"code":"Failure","message":"helloworld"}""".toByteArray(Charsets.UTF_8)
+                body = rawBody
               )
             )
+            return@withContext
           }
 
           // ---- gzip 해제 ----
