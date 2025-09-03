@@ -17,9 +17,9 @@ data class PicsumImagesDto(
     val url: String
   )
   companion object {
-    fun mapperToDto(apiResponse: ApiResponse<PicsumImagesApiResponse>) =
+    fun mapperToDto(apiResponse: ApiResponse.Success<PicsumImagesApiResponse>) =
       PicsumImagesDto(
-        items = apiResponse.body.map {
+        items = apiResponse.data.map {
           Image(
             author = it.author,
             downloadUrl = it.downloadUrl,

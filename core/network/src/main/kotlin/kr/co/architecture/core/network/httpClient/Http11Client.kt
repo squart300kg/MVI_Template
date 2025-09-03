@@ -42,13 +42,20 @@ class RawHttp11Client(
   private val httpLogger: CustomHttpLogger? = null
 ) {
 
-  suspend fun get(url: String, headers: Map<String, String> = emptyMap()): HttpResponse =
-    request(method = GET, url = URL(url), header = headers, body = null, redirectDepth = 0)
+  suspend fun callApi(
+    method: String,
+    url: String,
+  ): HttpResponse =
+    request(
+      method = method,
+      url = URL(url),
+      body = null,
+      redirectDepth = 0
+    )
 
   private suspend fun request(
     method: String,
     url: URL,
-    header: Map<String, String>,
     body: ByteArray?,
     redirectDepth: Int
   ): HttpResponse = withContext(Dispatchers.IO) {
@@ -80,7 +87,6 @@ class RawHttp11Client(
         CONNECTION to KEEP_ALIVE
       ).apply {
         if (body != null) put(CONTENT_LENGTH, "${body.size}")
-        header.forEach { (k, v) -> put(k, v) }
       }
 
       httpLogger?.printRequestStartLog(method, "$url", HTTP_1_1)
@@ -129,7 +135,6 @@ class RawHttp11Client(
         return@withContext request(
           method = if (code == 303) GET else method,
           url = redirectUrl,
-          header = header,
           body = if (code >= 307) body else null,
           redirectDepth = redirectDepth + 1
         )
@@ -158,7 +163,12 @@ class RawHttp11Client(
         rawSize = if (isGzip) rawBody.size else null
       )
 
-      HttpResponse(code, message, responseHeader, bodyBytes)
+      HttpResponse(
+        code = code,
+        message = message,
+        headers = responseHeader,
+        body = bodyBytes
+      )
     }
   }
 }

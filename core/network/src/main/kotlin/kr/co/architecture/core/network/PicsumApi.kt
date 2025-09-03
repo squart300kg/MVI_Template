@@ -5,6 +5,10 @@ import kr.co.architecture.core.network.model.PicsumImagesApiResponse
 
 interface PicsumApi {
 
-  suspend fun getPicsumImages(path: String, page: Int, limit: Int): ApiResponse<PicsumImagesApiResponse>
+  suspend fun getPicsumImages(
+    path: String,
+    page: Int,
+    limit: Int = 30
+  ): ApiResponse<PicsumImagesApiResponse>
 
 }

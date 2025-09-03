@@ -1,9 +1,8 @@
 package kr.co.architecture.core.network.operator
 
 import com.google.gson.Gson
-import com.skydoves.sandwich.ApiResponse
-import com.skydoves.sandwich.retrofit.errorBody
 import kr.co.architecture.core.model.ArchitectureSampleHttpFailure
+import kr.co.architecture.core.network.model.ApiResponse
 import kr.co.architecture.core.network.model.PicsumErrorApiResponse
 import kr.co.architecture.core.network.model.PicsumImagesApiResponse
 import java.net.UnknownHostException
@@ -11,17 +10,17 @@ import java.net.UnknownHostException
 fun ApiResponse<PicsumImagesApiResponse>.getOrThrowAppFailure(): ApiResponse.Success<PicsumImagesApiResponse> =
   when (this) {
     is ApiResponse.Success -> this
-    is ApiResponse.Failure.Error -> {
+    is ApiResponse.Error -> {
       /**
        * API의 error case맞게 모델 파싱
        * 실무 진행 시엔, 실제 발생 가능한 error case를 해당 블럭에서 정의 및 분기처리
        */
       throw try {
-        Gson().fromJson(errorBody?.string(), PicsumErrorApiResponse::class.java)
+        Gson().fromJson(errorBody, PicsumErrorApiResponse::class.java)
       } catch (e: Exception) { throw e }
     }
 
-    is ApiResponse.Failure.Exception -> {
+    is ApiResponse.Exception -> {
       /**
        * API의 request / response가 정상적으로 수행되지 않는 경우
        * 지금 이 블럭에서 예외를 던짐(eg., `SSLHandshakeException`, `UnknownHostException`...)
