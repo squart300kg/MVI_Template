@@ -15,11 +15,14 @@ fun ApiResponse<PicsumImagesApiResponse>.getOrThrowAppFailure(): ApiResponse.Suc
        * API의 error case맞게 모델 파싱
        * 실무 진행 시엔, 실제 발생 가능한 error case를 해당 블럭에서 정의 및 분기처리
        */
-      throw try {
+      val errorApiResponse = try {
         Gson().fromJson(errorBody, PicsumErrorApiResponse::class.java)
       } catch (e: Exception) { throw e }
+      throw ArchitectureSampleHttpFailure.Error(
+        code = errorApiResponse.code,
+        message = errorApiResponse.message
+      )
     }
-
     is ApiResponse.Exception -> {
       /**
        * API의 request / response가 정상적으로 수행되지 않는 경우
@@ -27,11 +30,7 @@ fun ApiResponse<PicsumImagesApiResponse>.getOrThrowAppFailure(): ApiResponse.Suc
        *
        * 실무 진행 시엔, 실제 발생 가능한 exception case를 해당 블럭에서 정의 및 분기처리
        */
-      throw when (val e = throwable) {
-        is PicsumErrorApiResponse -> ArchitectureSampleHttpFailure.Error(
-          code = e.code,
-          message = e.message
-        )
+      throw when (throwable) {
         is UnknownHostException -> ArchitectureSampleHttpFailure.Exception.NetworkConnection
         else -> ArchitectureSampleHttpFailure.Exception.Unknown
       }
