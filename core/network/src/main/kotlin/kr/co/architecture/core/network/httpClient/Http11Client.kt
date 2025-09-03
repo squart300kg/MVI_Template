@@ -2,7 +2,6 @@ package kr.co.architecture.core.network.httpClient
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import kr.co.architecture.core.network.httpClient.HttpHeaderConstants.HTTPS
 import kr.co.architecture.core.network.httpClient.HttpHeaderConstants.HTTP_1_1
 import kr.co.architecture.core.network.httpClient.HttpHeaderConstants.Method.GET
 import kr.co.architecture.core.network.httpClient.HttpHeaderConstants.Property.ACCEPT
@@ -15,33 +14,15 @@ import kr.co.architecture.core.network.httpClient.HttpHeaderConstants.Value.APPL
 import kr.co.architecture.core.network.httpClient.HttpHeaderConstants.Value.CHUNKED
 import kr.co.architecture.core.network.httpClient.HttpHeaderConstants.Value.GZIP
 import kr.co.architecture.core.network.httpClient.HttpHeaderConstants.Value.KEEP_ALIVE
+import kr.co.architecture.core.network.interceptor.CustomHttpLogger
 import java.io.BufferedInputStream
 import java.io.BufferedOutputStream
 import java.io.ByteArrayInputStream
 import java.io.IOException
-import java.net.Socket
 import java.net.URL
 import java.util.Locale
+import java.util.concurrent.TimeUnit
 import java.util.zip.GZIPInputStream
-import javax.net.ssl.SNIHostName
-import javax.net.ssl.SSLSocket
-import javax.net.ssl.SSLSocketFactory
-
-// TODO: 아래 모델 없애기
-data class PicsumItem(
-  val id: String,
-  val author: String,
-  val width: Int,
-  val height: Int,
-  val url: String,
-  val downloadUrl: String
-)
-
-data class PageResult(
-  val items: List<PicsumItem>,
-  val prev: String?,
-  val next: String?
-)
 
 data class HttpResponse(
   val code: Int,
@@ -50,17 +31,11 @@ data class HttpResponse(
   val body: ByteArray
 )
 
-// TODO: 정규식 없애기
-private val LINK_REGEX = Regex("""<([^>]+)>\s*;\s*rel="([^"]+)"""")
-fun parseLinkHeader(header: String?): Map<String, String> {
-  if (header.isNullOrBlank()) return emptyMap()
-  return LINK_REGEX.findAll(header).associate { it.groupValues[2] to it.groupValues[1] }
-}
-
 class RawHttp11Client(
   private val userAgent: String = "RawHttp11/0.1",
   private val readTimeoutMs: Int = 10_000,
-  private val maxRedirects: Int = 5
+  private val maxRedirects: Int = 5,
+  private val httpLogger: CustomHttpLogger? = null
 ) {
 
   suspend fun get(url: String, headers: Map<String, String> = emptyMap()): HttpResponse =
@@ -75,6 +50,8 @@ class RawHttp11Client(
   ): HttpResponse = withContext(Dispatchers.IO) {
     require(redirectDepth <= maxRedirects) { "Too many redirects" }
 
+    val startNs = System.nanoTime()
+
     val host = url.host
     val pathAndQuery = url.buildPathAndQuery()
 
@@ -88,19 +65,31 @@ class RawHttp11Client(
       val bufferedInputStream = BufferedInputStream(s.getInputStream())
 
       // ---- 요청 라인 + 헤더 ----
-      val sb = StringBuilder().apply {
+      val reqHeaders = linkedMapOf(
+        HOST to host,
+        // TODO: userAgent설정 이대로 괜찮은가?
+        USER_AGENT to userAgent,
+        ACCEPT to APPLICATION_JSON,
+        // TODO: GZIP이 정말 필요한가?
+        ACCEPT_ENCODING to GZIP,
+        CONNECTION to KEEP_ALIVE
+      ).apply {
+        if (body != null) put(CONTENT_LENGTH, body.size.toString())
+        header.forEach { (k, v) -> put(k, v) }
+      }
+
+      // ---- REQUEST LOG (BODY 레벨 고정) ----
+      httpLogger?.onRequestStart(method, url.toString(), HTTP_1_1)
+      httpLogger?.onRequestHeaders(reqHeaders)
+      httpLogger?.onRequestBody(body)
+
+      val head = buildString {
         append("$method $pathAndQuery $HTTP_1_1\r\n")
-        append("${HOST}: $host\r\n")
-        append("$USER_AGENT: $userAgent\r\n")
-        append("$ACCEPT: $APPLICATION_JSON\r\n")
-        append("$ACCEPT_ENCODING: $GZIP\r\n") // 서버가 gzip으로 줄 수 있음(네가 올린 로그와 일치)
-        append("$CONNECTION: $KEEP_ALIVE\r\n") // 구현 단순화 (필요 시 keep-alive로 변경 가능)
-        header.forEach { (key, value) -> append("$key: $value\r\n") }
-        if (body != null) append("$CONTENT_LENGTH: ${body.size}\r\n")
+        reqHeaders.forEach { (k,v) -> append("$k: $v\r\n") }
         append("\r\n")
       }
       bufferedOutputStream.run {
-        write(sb.toString().toByteArray(Charsets.US_ASCII))
+        write(head.toByteArray(Charsets.US_ASCII))
         if (body != null) write(body)
         flush()
       }
@@ -125,11 +114,17 @@ class RawHttp11Client(
         }
       }
 
+      val tookMs = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - startNs)
+
+      // ---- RESPONSE LOG (status+headers) ----
+      httpLogger?.onResponseStart(code, message, url.toString(), tookMs)
+      httpLogger?.onResponseHeaders(headerMap)
+
       // ---- 리다이렉트 처리 ----
       if (code in listOf(301, 302, 303, 307, 308)) {
         val location = headerMap["location"] ?: throw IOException("Redirect without Location")
         val next = URL(url, location) // 상대/절대 모두 처리
-        val nextMethod = if (code == 303) "GET" else method
+        val nextMethod = if (code == 303) GET else method
         return@withContext request(
           nextMethod,
           next,
@@ -149,10 +144,18 @@ class RawHttp11Client(
       }
 
       // ---- gzip 해제 ----
+      val isGzip = headerMap["content-encoding"]?.lowercase(Locale.US)?.contains(GZIP) == true
       val bodyBytes =
-        if (headerMap["content-encoding"]?.lowercase(Locale.US)?.contains(GZIP) == true) {
-          GZIPInputStream(ByteArrayInputStream(rawBody)).use { it.readBytes() }
-        } else rawBody
+        if (isGzip) GZIPInputStream(ByteArrayInputStream(rawBody)).use { it.readBytes() }
+        else rawBody
+
+      val contentType = headerMap["content-type"]
+      httpLogger?.onResponseBody(
+        body = bodyBytes,
+        contentType = contentType,
+        wasGzip = isGzip,
+        rawSize = if (isGzip) rawBody.size else null
+      )
 
       HttpResponse(code, message, headerMap, bodyBytes)
     }

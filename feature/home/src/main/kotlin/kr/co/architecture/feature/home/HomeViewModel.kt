@@ -25,7 +25,6 @@ class HomeViewModel @Inject constructor(
     launchWithLoading {
       val nextPage = uiState.value.page + 1
       val dto = repository.getPicsumImages(nextPage)
-      println("pagingLog : ${dto.items.map { it.id to dto.hasNext }}")
       setState {
         copy(
           uiType = HomeUiType.LOADED,

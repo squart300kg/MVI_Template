@@ -1,62 +1,48 @@
 package kr.co.architecture.core.network.di
 
-import android.util.Log
-import com.skydoves.sandwich.retrofit.adapters.ApiResponseCallAdapterFactory
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import kr.co.architecture.core.network.BuildConfig
-import kr.co.architecture.core.network.RemoteApi
-import okhttp3.OkHttpClient
-import okhttp3.logging.HttpLoggingInterceptor
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
+import kr.co.architecture.core.network.PicsumApi
+import kr.co.architecture.core.network.PicsumApiImpl
+import kr.co.architecture.core.network.httpClient.RawHttp11Client
+import kr.co.architecture.core.network.interceptor.CustomHttpLogger
 import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
 object NetworkModule {
 
-  @Singleton
   @Provides
-  fun provideDebugInterceptor(): HttpLoggingInterceptor {
-    return HttpLoggingInterceptor { message ->
-      Log.d("API", message)
-    }.apply {
-      level = HttpLoggingInterceptor.Level.BODY
-    }
+  @Singleton
+  fun provideHttpLogger() = CustomHttpLogger(
+  enabled = BuildConfig.DEBUG,
+//  maxBodyChars = 8_192
+  )
+
+  @Provides
+  @Singleton
+  fun provideRawHttp11Client(
+    httpLogger: CustomHttpLogger
+  ): RawHttp11Client {
+    return RawHttp11Client(
+      userAgent = "RawHttp11/0.1",
+      readTimeoutMs = 60_000,
+      maxRedirects = 5,
+      httpLogger = httpLogger
+    )
   }
 
   @Provides
   @Singleton
-  fun provideOkHttpClient(
-    loggingInterceptor: HttpLoggingInterceptor
-  ): OkHttpClient {
-    return OkHttpClient.Builder()
-      .addInterceptor(loggingInterceptor)
-      .build()
+  fun providePicsumApi(
+    rawHttp11Client: RawHttp11Client
+  ): PicsumApi {
+    return PicsumApiImpl(
+      rawHttp11Client = rawHttp11Client,
+      url = BuildConfig.API_URL
+    )
   }
-
-  @Provides
-  @Singleton
-  fun provideGsonConverter(): GsonConverterFactory {
-    return GsonConverterFactory.create()
-  }
-
-  @Provides
-  @Singleton
-  fun provideMarbleCharacterApi(
-    okHttpClient: OkHttpClient,
-    gsonConverterFactory: GsonConverterFactory
-  ): RemoteApi {
-    return Retrofit.Builder()
-      .baseUrl(BuildConfig.API_URL)
-      .client(okHttpClient)
-      .addCallAdapterFactory(ApiResponseCallAdapterFactory.create())
-      .addConverterFactory(gsonConverterFactory)
-      .build()
-      .create(RemoteApi::class.java)
-  }
-
 }
