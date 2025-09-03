@@ -1,7 +1,7 @@
 plugins {
   alias(libs.plugins.android.library)
   alias(libs.plugins.architecture.sample.base.setting)
-  alias(libs.plugins.org.jetbrains.kotlin.plugin.serialization)
+  alias(libs.plugins.architecture.sample.ui)
 }
 
 android {
@@ -9,5 +9,7 @@ android {
 
   defaultConfig { }
 
-  dependencies { }
+  dependencies {
+    implementation(project(":custom-http-client"))
+  }
 }

@@ -30,6 +30,7 @@ class PicsumApiImpl(
   ): ApiResponse<PicsumImagesApiResponse> {
     return try {
       callbackFlow {
+        // TODO: 코드를 더 간소화할 순 없을까?
         rawHttp11Client.callApi(
           method = GET,
           url = "$url$path?page=$page&limit=$limit",
