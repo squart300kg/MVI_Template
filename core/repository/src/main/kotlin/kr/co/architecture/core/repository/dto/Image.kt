@@ -34,5 +34,3 @@ data class PicsumImagesDto(
       )
   }
 }
-
-

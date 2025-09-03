@@ -10,7 +10,7 @@ android {
 
   dependencies {
     implementation(project(":core:model"))
-    implementation(project(":core:network"))
+    api(project(":core:network"))
     implementation(project(":core:database"))
   }
 }
