@@ -10,6 +10,13 @@ import kr.co.architecture.core.network.model.PicsumImagesApiResponse
 import org.json.JSONArray
 import org.json.JSONObject
 import java.nio.charset.Charset
+import kr.co.architecture.core.network.model.PicsumImagesApiResponse.PicsumImagesApiResponseItem
+import kr.co.architecture.core.network.model.PicsumImagesApiResponseField.AUTHOR
+import kr.co.architecture.core.network.model.PicsumImagesApiResponseField.DOWNLOAD_URL
+import kr.co.architecture.core.network.model.PicsumImagesApiResponseField.HEIGHT
+import kr.co.architecture.core.network.model.PicsumImagesApiResponseField.WIDTH
+import kr.co.architecture.core.network.model.PicsumImagesApiResponseField.ID
+import kr.co.architecture.core.network.model.PicsumImagesApiResponseField.URL
 
 class PicsumApiImpl(
   val rawHttp11Client: RawHttp11Client = RawHttp11Client(),
@@ -32,13 +39,13 @@ class PicsumApiImpl(
               for (i in 0 until jsonArray.length()) {
                 val jsonObject: JSONObject = jsonArray.getJSONObject(i)
                 add(
-                  PicsumImagesApiResponse.PicsumImagesApiResponseItem(
-                    id = jsonObject.getString("id"),
-                    author = jsonObject.getString("author"),
-                    width = jsonObject.getInt("width"),
-                    height = jsonObject.getInt("height"),
-                    url = jsonObject.getString("url"),
-                    downloadUrl = jsonObject.getString("download_url")
+                  PicsumImagesApiResponseItem(
+                    id = jsonObject.getString(ID),
+                    author = jsonObject.getString(AUTHOR),
+                    width = jsonObject.getInt(WIDTH),
+                    height = jsonObject.getInt(HEIGHT),
+                    url = jsonObject.getString(URL),
+                    downloadUrl = jsonObject.getString(DOWNLOAD_URL)
                   )
                 )
               }

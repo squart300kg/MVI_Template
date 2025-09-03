@@ -33,7 +33,29 @@ data class HttpResponse(
   val message: String,
   val headers: Map<String, String> = emptyMap(),
   val body: ByteArray = byteArrayOf()
-)
+) {
+  override fun equals(other: Any?): Boolean {
+    if (this === other) return true
+    if (javaClass != other?.javaClass) return false
+
+    other as HttpResponse
+
+    if (code != other.code) return false
+    if (message != other.message) return false
+    if (headers != other.headers) return false
+    if (!body.contentEquals(other.body)) return false
+
+    return true
+  }
+
+  override fun hashCode(): Int {
+    var result = code
+    result = 31 * result + message.hashCode()
+    result = 31 * result + headers.hashCode()
+    result = 31 * result + body.contentHashCode()
+    return result
+  }
+}
 
 class RawHttp11Client(
   private val userAgent: String = "RawHttp11/0.1",
@@ -66,10 +88,11 @@ class RawHttp11Client(
     onResponseSuccess: suspend (HttpResponse) -> Unit = {},
     onResponseError: suspend (HttpResponse) -> Unit = {},
     onResponseException: suspend (Throwable) -> Unit = {}
-  )  {
+  ) {
     withContext(Dispatchers.IO) {
       try {
-// TODO: 필요한가? 만약 설정한다 헀을 때, maxRedirects의 설정 기준은?
+        // TODO: 필요한가? 만약 설정한다 헀을 때, maxRedirects의 설정 기준은?
+        //  고민해보기
         require(redirectDepth <= maxRedirects) { "Too many redirects" }
 
         val startNs = System.nanoTime()
@@ -87,12 +110,13 @@ class RawHttp11Client(
 
           // ---- 요청 라인 + 헤더 ----
           // TODO: 왜 LinkedMap을 썼는지?
+          //  단순 StringBuilder로
           val requestHeader = linkedMapOf(
             HOST to host,
-            // TODO: userAgent설정 하드코딩해도 괜찮은가?
             USER_AGENT to userAgent,
             ACCEPT to APPLICATION_JSON,
             // TODO: GZIP이 정말 필요한가? 요청/응답 성능 개선이 확실한가?
+            //  이거 설정에 따른 벤치마크 측정하기
             ACCEPT_ENCODING to GZIP,
             CONNECTION to KEEP_ALIVE
           ).apply {
@@ -115,10 +139,10 @@ class RawHttp11Client(
           }
 
           // ---- 상태줄 ----
-          val statusLine = readLineAscii(bufferedInputStream) ?: throw IOException("No status line")
-          val parts = statusLine.split(' ', limit = 3)
-          val code = parts.getOrNull(1)?.toIntOrNull() ?: throw IOException("Bad status: $statusLine")
-          val message = parts.getOrNull(2) ?: ""
+          val statusLine = readLineAscii(bufferedInputStream) ?: throw IOException("abnormal status line")
+          val statusParts = statusLine.split(' ', limit = 3)
+          val code = statusParts.getOrNull(1)?.toIntOrNull() ?: throw IOException("http status code is not number: $statusLine")
+          val message = statusParts.getOrNull(2) ?: ""
 
           // ---- 헤더 ----
           val responseHeader = mutableMapOf<String, String>()
@@ -127,7 +151,7 @@ class RawHttp11Client(
             if (line.isEmpty()) break
             val splitIndex = line.indexOf(':')
             if (splitIndex > 0) {
-              val property = line.substring(0, splitIndex).trim().lowercase(Locale.US)
+              val property = line.substring(0, splitIndex).trim().lowercase(Locale.ROOT)
               val value = line.substring(splitIndex + 1).trim()
               responseHeader[property] = value
             }
@@ -138,6 +162,8 @@ class RawHttp11Client(
           httpLogger?.printResponseHeaderLog(responseHeader)
 
           // ---- 리다이렉트 처리 ----
+          // TODO: 30x응답이 이렇게 많이 오는게 확실한가?
+          //  302만 오는게 아닌지 체크
           if (code in listOf(301, 302, 303, 307, 308)) {
             // TODO: 무슨뜻이지?
             val location = responseHeader[LOCATION] ?: throw IOException("Redirect without Location")
@@ -146,7 +172,10 @@ class RawHttp11Client(
               method = if (code == 303) GET else method,
               url = redirectUrl,
               body = if (code >= 307) body else null,
-              redirectDepth = redirectDepth + 1
+              redirectDepth = redirectDepth + 1,
+              onResponseSuccess = onResponseSuccess,
+              onResponseError = onResponseError,
+              onResponseException = onResponseException
             )
           }
 

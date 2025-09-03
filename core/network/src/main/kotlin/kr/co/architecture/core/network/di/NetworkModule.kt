@@ -1,8 +1,10 @@
 package kr.co.architecture.core.network.di
 
+import android.content.Context
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import kr.co.architecture.core.network.BuildConfig
 import kr.co.architecture.core.network.PicsumApi
@@ -22,10 +24,15 @@ object NetworkModule {
   @Provides
   @Singleton
   fun provideRawHttp11Client(
+    @ApplicationContext context: Context,
     httpLogger: CustomHttpLogger
   ): RawHttp11Client {
+    val versionName = context
+      .packageManager
+      .getPackageInfo(context.packageName, 0)
+      .versionName
     return RawHttp11Client(
-      userAgent = "RawHttp11/0.1",
+      userAgent = "GalleryApp-${versionName}-RawHttp11/0.1",
       readTimeoutMs = 60_000,
       maxRedirects = 5,
       httpLogger = httpLogger

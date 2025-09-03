@@ -1,6 +1,7 @@
 package kr.co.architecture.core.network.httpClient
 
 import kr.co.architecture.core.network.httpClient.HttpHeaderConstants.HTTPS
+import kr.co.architecture.core.network.httpClient.HttpHeaderConstants.HTTP_1_1
 import java.io.ByteArrayOutputStream
 import java.io.EOFException
 import java.io.IOException
@@ -10,6 +11,8 @@ import java.net.URL
 import javax.net.ssl.SNIHostName
 import javax.net.ssl.SSLSocket
 import javax.net.ssl.SSLSocketFactory
+import kotlin.collections.component1
+import kotlin.collections.component2
 
 internal fun readLineAscii(ins: InputStream): String? {
   val baos = ByteArrayOutputStream(64)
@@ -82,7 +85,7 @@ internal fun URL.extractPort(): Int = when {
   else -> throw IOException("Unsupported scheme: $protocol")
 }
 
-fun URL.buildPathAndQuery() = buildString {
+internal fun URL.buildPathAndQuery() = buildString {
   append(if (path.isNullOrEmpty()) "/" else path)
   if (!query.isNullOrEmpty()) append('?').append(query)
 }
