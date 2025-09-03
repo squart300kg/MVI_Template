@@ -7,29 +7,28 @@ import java.util.Locale
 class CustomHttpLogger(
   private val maxBodyChars: Int = 16_384
 ) {
-
-  fun onRequestStart(method: String, url: String, httpVersion: String) {
+  fun printRequestStartLog(method: String, url: String, httpVersion: String) {
     println("--> $method $url $httpVersion")
   }
 
-  fun onRequestHeaders(headers: Map<String, String>) {
+  fun printRequestHeaderLog(headers: Map<String, String>) {
     headers.forEach { (k, v) -> println("$k: $v") }
   }
 
-  fun onRequestBody() {
+  fun printRequestBodyLog() {
     println("")
     println("--> END (no body)")
   }
 
-  fun onResponseStart(code: Int, message: String, url: String, tookMs: Long) {
+  fun printResponseStartLog(code: Int, message: String, url: String, tookMs: Long) {
     println("<-- $code $message $url (${tookMs}ms)")
   }
 
-  fun onResponseHeaders(headers: Map<String, String>) {
+  fun printResponseHeaderLog(headers: Map<String, String>) {
     headers.forEach { (k, v) -> println("$k: $v") }
   }
 
-  fun onResponseBody(
+  fun printResponseBodyLog(
     body: ByteArray,
     contentType: String?,
     wasGzip: Boolean,

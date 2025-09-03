@@ -14,16 +14,17 @@ object HttpHeaderConstants {
   const val HTTP_1_1 = "HTTP/1.1"
 
   object Property {
-    const val HOST = "Host"
-    const val USER_AGENT = "User-Agent"
-    const val ACCEPT = "Accept"
-    const val ACCEPT_ENCODING = "Accept-Encoding"
-    const val CONNECTION = "Connection"
-    const val CONTENT_LENGTH = "Content-Length"
-    const val CONTENT_ENCODING = "Content-Encoding"
-    const val TRANSFER_ENCODING = "Transfer-Encoding"
-    const val LOCATION = "LOCATION"
-    const val LINK = "Link"
+    const val HOST = "host"
+    const val USER_AGENT = "user-agent"
+    const val ACCEPT = "accept"
+    const val ACCEPT_ENCODING = "accept-encoding"
+    const val CONNECTION = "connection"
+    const val CONTENT_TYPE = "content-type"
+    const val CONTENT_LENGTH = "content-length"
+    const val CONTENT_ENCODING = "content-encoding"
+    const val TRANSFER_ENCODING = "transfer-encoding"
+    const val LOCATION = "location"
+    const val LINK = "link"
   }
   object Value {
     const val APPLICATION_JSON = "application/json"

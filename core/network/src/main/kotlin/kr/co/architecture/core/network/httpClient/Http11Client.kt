@@ -7,8 +7,12 @@ import kr.co.architecture.core.network.httpClient.HttpHeaderConstants.Method.GET
 import kr.co.architecture.core.network.httpClient.HttpHeaderConstants.Property.ACCEPT
 import kr.co.architecture.core.network.httpClient.HttpHeaderConstants.Property.ACCEPT_ENCODING
 import kr.co.architecture.core.network.httpClient.HttpHeaderConstants.Property.CONNECTION
+import kr.co.architecture.core.network.httpClient.HttpHeaderConstants.Property.CONTENT_ENCODING
 import kr.co.architecture.core.network.httpClient.HttpHeaderConstants.Property.CONTENT_LENGTH
+import kr.co.architecture.core.network.httpClient.HttpHeaderConstants.Property.CONTENT_TYPE
 import kr.co.architecture.core.network.httpClient.HttpHeaderConstants.Property.HOST
+import kr.co.architecture.core.network.httpClient.HttpHeaderConstants.Property.LOCATION
+import kr.co.architecture.core.network.httpClient.HttpHeaderConstants.Property.TRANSFER_ENCODING
 import kr.co.architecture.core.network.httpClient.HttpHeaderConstants.Property.USER_AGENT
 import kr.co.architecture.core.network.httpClient.HttpHeaderConstants.Value.APPLICATION_JSON
 import kr.co.architecture.core.network.httpClient.HttpHeaderConstants.Value.CHUNKED
@@ -48,13 +52,13 @@ class RawHttp11Client(
     body: ByteArray?,
     redirectDepth: Int
   ): HttpResponse = withContext(Dispatchers.IO) {
+    // TODO: 필요한가? 만약 설정한다 헀을 때, maxRedirects의 설정 기준은?
     require(redirectDepth <= maxRedirects) { "Too many redirects" }
 
     val startNs = System.nanoTime()
 
     val host = url.host
     val pathAndQuery = url.buildPathAndQuery()
-
     val socket = getSocket(
       url = url,
       readTimeoutMs = readTimeoutMs
@@ -65,30 +69,31 @@ class RawHttp11Client(
       val bufferedInputStream = BufferedInputStream(s.getInputStream())
 
       // ---- 요청 라인 + 헤더 ----
-      val reqHeaders = linkedMapOf(
+      // TODO: 왜 LinkedMap을 썼는지?
+      val requestHeader = linkedMapOf(
         HOST to host,
-        // TODO: userAgent설정 이대로 괜찮은가?
+        // TODO: userAgent설정 하드코딩해도 괜찮은가?
         USER_AGENT to userAgent,
         ACCEPT to APPLICATION_JSON,
-        // TODO: GZIP이 정말 필요한가?
+        // TODO: GZIP이 정말 필요한가? 요청/응답 성능 개선이 확실한가?
         ACCEPT_ENCODING to GZIP,
         CONNECTION to KEEP_ALIVE
       ).apply {
-        if (body != null) put(CONTENT_LENGTH, body.size.toString())
+        if (body != null) put(CONTENT_LENGTH, "${body.size}")
         header.forEach { (k, v) -> put(k, v) }
       }
 
-      httpLogger?.onRequestStart(method, "$url", HTTP_1_1)
-      httpLogger?.onRequestHeaders(reqHeaders)
-      httpLogger?.onRequestBody()
+      httpLogger?.printRequestStartLog(method, "$url", HTTP_1_1)
+      httpLogger?.printRequestHeaderLog(requestHeader)
+      httpLogger?.printRequestBodyLog()
 
-      val head = buildString {
+      val requestHeaderString = buildString {
         append("$method $pathAndQuery $HTTP_1_1\r\n")
-        reqHeaders.forEach { (k,v) -> append("$k: $v\r\n") }
+        requestHeader.forEach { (k,v) -> append("$k: $v\r\n") }
         append("\r\n")
       }
       bufferedOutputStream.run {
-        write(head.toByteArray(Charsets.US_ASCII))
+        write(requestHeaderString.toByteArray(Charsets.US_ASCII))
         if (body != null) write(body)
         flush()
       }
@@ -100,40 +105,39 @@ class RawHttp11Client(
       val message = parts.getOrNull(2) ?: ""
 
       // ---- 헤더 ----
-      val headerMap = mutableMapOf<String, String>()
+      val responseHeader = mutableMapOf<String, String>()
       while (true) {
         val line = readLineAscii(bufferedInputStream) ?: break
         if (line.isEmpty()) break
-        val idx = line.indexOf(':')
-        if (idx > 0) {
-          val k = line.substring(0, idx).trim().lowercase(Locale.US)
-          val v = line.substring(idx + 1).trim()
-          headerMap[k] = v
+        val splitIndex = line.indexOf(':')
+        if (splitIndex > 0) {
+          val property = line.substring(0, splitIndex).trim().lowercase(Locale.US)
+          val value = line.substring(splitIndex + 1).trim()
+          responseHeader[property] = value
         }
       }
 
       val tookMs = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - startNs)
-
-      httpLogger?.onResponseStart(code, message, "$url", tookMs)
-      httpLogger?.onResponseHeaders(headerMap)
+      httpLogger?.printResponseStartLog(code, message, "$url", tookMs)
+      httpLogger?.printResponseHeaderLog(responseHeader)
 
       // ---- 리다이렉트 처리 ----
       if (code in listOf(301, 302, 303, 307, 308)) {
-        val location = headerMap["location"] ?: throw IOException("Redirect without Location")
-        val next = URL(url, location) // 상대/절대 모두 처리
-        val nextMethod = if (code == 303) GET else method
+        // TODO: 무슨뜻이지?
+        val location = responseHeader[LOCATION] ?: throw IOException("Redirect without Location")
+        val redirectUrl = URL(url, location) // 상대/절대 모두 처리
         return@withContext request(
-          nextMethod,
-          next,
-          header,
-          if (code >= 307) body else null,
-          redirectDepth + 1
+          method = if (code == 303) GET else method,
+          url = redirectUrl,
+          header = header,
+          body = if (code >= 307) body else null,
+          redirectDepth = redirectDepth + 1
         )
       }
 
       // ---- 바디 경계 판별 ----
-      val transfer = headerMap["transfer-encoding"]?.lowercase(Locale.US)
-      val contentLen = headerMap["content-length"]?.toLongOrNull()
+      val transfer = responseHeader[TRANSFER_ENCODING]
+      val contentLen = responseHeader[CONTENT_LENGTH]?.toLongOrNull()
       val rawBody = when {
         transfer?.contains(CHUNKED) == true -> readChunked(bufferedInputStream)
         contentLen != null -> readFixed(bufferedInputStream, contentLen)
@@ -141,20 +145,20 @@ class RawHttp11Client(
       }
 
       // ---- gzip 해제 ----
-      val isGzip = headerMap["content-encoding"]?.lowercase(Locale.US)?.contains(GZIP) == true
+      val isGzip = responseHeader[CONTENT_ENCODING]?.contains(GZIP) == true
       val bodyBytes =
         if (isGzip) GZIPInputStream(ByteArrayInputStream(rawBody)).use { it.readBytes() }
         else rawBody
 
-      val contentType = headerMap["content-type"]
-      httpLogger?.onResponseBody(
+      val contentType = responseHeader[CONTENT_TYPE]
+      httpLogger?.printResponseBodyLog(
         body = bodyBytes,
         contentType = contentType,
         wasGzip = isGzip,
         rawSize = if (isGzip) rawBody.size else null
       )
 
-      HttpResponse(code, message, headerMap, bodyBytes)
+      HttpResponse(code, message, responseHeader, bodyBytes)
     }
   }
 }
