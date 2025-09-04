@@ -25,6 +25,12 @@ object HttpHeaderConstants {
     const val TRANSFER_ENCODING = "transfer-encoding"
     const val LOCATION = "location"
     const val LINK = "link"
+    const val IF_NONE_MATCH = "if-none-match"
+    const val IF_MODIFIED_SINCE = "if-modified-since"
+    const val CACHE_CONTROL = "cache-control"
+    const val ETAG = "etag"
+    const val LAST_MODIFIED = "last-modified"
+    const val AGE = "age"
   }
   object Value {
     const val APPLICATION_JSON = "application/json"

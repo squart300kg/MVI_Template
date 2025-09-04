@@ -1,21 +1,17 @@
 package kr.co.architecture.custom.image.loader.domain
 
 import android.content.Context
+import kr.co.architecture.custom.http.client.HttpHeaderConstants.Property.CACHE_CONTROL
+import kr.co.architecture.custom.http.client.HttpHeaderConstants.Property.ETAG
+import kr.co.architecture.custom.http.client.HttpHeaderConstants.Property.LAST_MODIFIED
+import kr.co.architecture.custom.http.client.HttpHeaderConstants.Property.AGE
+import kr.co.architecture.custom.image.loader.domain.model.CachePolicy
 import java.io.*
 import java.security.MessageDigest
 import java.util.Properties
 import java.util.Locale
 
 // --------- Cache-Control 모델 ----------
-data class CachePolicy(
-  val noStore: Boolean = false,
-  val noCache: Boolean = false,
-  val mustRevalidate: Boolean = false,
-  val immutable: Boolean = false,
-  val maxAgeSeconds: Long? = null,
-  val staleWhileRevalidateSeconds: Long? = null,
-  val staleIfErrorSeconds: Long? = null
-)
 
 data class Meta(
   val storedAtMillis: Long,
@@ -77,7 +73,7 @@ class ImageDiskCache private constructor(
   }
 
   fun putHttpResponse(url: String, body: ByteArray, header: Map<String, String>) {
-    val policy = parseCacheControl(header["cache-control"])
+    val policy = parseCacheControl(header[CACHE_CONTROL])
     if (policy.noStore) return // 저장 금지
 
     val now = System.currentTimeMillis()
@@ -91,8 +87,8 @@ class ImageDiskCache private constructor(
       // TODO: String들 상수로 정의
       storedAtMillis = now,
       expiresAtMillis = expiresAt,
-      etag = header["etag"],
-      lastModified = header["last-modified"],
+      etag = header[ETAG],
+      lastModified = header[LAST_MODIFIED],
       policy = policy
     )
     writeAtomic(url, body, meta)
@@ -102,9 +98,9 @@ class ImageDiskCache private constructor(
   fun updateMetaOn304(url: String, header: Map<String, String>) {
     val metaFile = metaFile(url)
     val old = readMeta(metaFile) ?: return
-    val policy = parseCacheControl(header["cache-control"]) // 304에도 새 CC가 올 수 있음
+    val policy = parseCacheControl(header[CACHE_CONTROL]) // 304에도 새 CC가 올 수 있음
     val now = System.currentTimeMillis()
-    val age = header["age"]?.toLongOrNull() ?: 0L
+    val age = header[AGE]?.toLongOrNull() ?: 0L
 
     val newExpiresAt = when {
       policy.noStore -> null
@@ -116,9 +112,9 @@ class ImageDiskCache private constructor(
     val newMeta = old.copy(
       storedAtMillis = now,
       expiresAtMillis = newExpiresAt,
-      etag = header["etag"] ?: old.etag,
-      lastModified = header["last-modified"] ?: old.lastModified,
-      policy = if (header["cache-control"] != null) policy else old.policy
+      etag = header[ETAG] ?: old.etag,
+      lastModified = header[LAST_MODIFIED] ?: old.lastModified,
+      policy = if (header[CACHE_CONTROL] != null) policy else old.policy
     )
     // TODO: CRUD하는 로직 DataLayer로 분리
     writeMeta(metaFile, newMeta)
@@ -177,20 +173,20 @@ class ImageDiskCache private constructor(
   }
 
   private fun readMeta(file: File): Meta? = runCatching {
-    Properties().useAndLoad(file).let { p ->
+    Properties().useAndLoad(file).let { property ->
       Meta(
-        storedAtMillis = p.getProperty("storedAt").toLong(),
-        expiresAtMillis = p.getProperty("expiresAt")?.toLong(),
-        etag = p.getProperty("etag"),
-        lastModified = p.getProperty("lastModified"),
+        storedAtMillis = property.getProperty("storedAt").toLong(),
+        expiresAtMillis = property.getProperty("expiresAt")?.toLong(),
+        etag = property.getProperty("etag"),
+        lastModified = property.getProperty("lastModified"),
         policy = CachePolicy(
-          noStore = p.getProperty("cc.noStore") == "1",
-          noCache = p.getProperty("cc.noCache") == "1",
-          mustRevalidate = p.getProperty("cc.mustRevalidate") == "1",
-          immutable = p.getProperty("cc.immutable") == "1",
-          maxAgeSeconds = p.getProperty("cc.maxAge")?.toLong(),
-          staleWhileRevalidateSeconds = p.getProperty("cc.swr")?.toLong(),
-          staleIfErrorSeconds = p.getProperty("cc.sie")?.toLong()
+          noStore = property.getProperty("cc.noStore") == "1",
+          noCache = property.getProperty("cc.noCache") == "1",
+          mustRevalidate = property.getProperty("cc.mustRevalidate") == "1",
+          immutable = property.getProperty("cc.immutable") == "1",
+          maxAgeSeconds = property.getProperty("cc.maxAge")?.toLong(),
+          staleWhileRevalidateSeconds = property.getProperty("cc.swr")?.toLong(),
+          staleIfErrorSeconds = property.getProperty("cc.sie")?.toLong()
         )
       )
     }

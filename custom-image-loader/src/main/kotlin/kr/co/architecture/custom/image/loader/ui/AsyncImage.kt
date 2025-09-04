@@ -14,7 +14,7 @@ import kr.co.architecture.custom.http.client.interceptor.CustomHttpLogger
 import kr.co.architecture.custom.image.loader.domain.ImageDiskCache
 import kr.co.architecture.custom.image.loader.domain.ImageMemoryCache
 import kr.co.architecture.custom.image.loader.domain.ImageEngine
-import kr.co.architecture.custom.image.loader.network.RawHttp11ClientAdapter
+import kr.co.architecture.custom.image.loader.network.HttpClientImpl
 
 // ui/AsyncImage.kt
 @Composable
@@ -32,7 +32,7 @@ fun AsyncImage(
       httpLogger = CustomHttpLogger()
     )
   }
-  val httpClient = remember(rawClient) { RawHttp11ClientAdapter(rawClient) }
+  val httpClient = remember(rawClient) { HttpClientImpl(rawClient) }
   val diskCache = remember { ImageDiskCache.create(context, maxBytes = 64L * 1024 * 1024) }
   val engine = remember { ImageEngine(imageMemoryCache = ImageMemoryCache, imageDiskCache = diskCache, httpClient = httpClient) }
 
