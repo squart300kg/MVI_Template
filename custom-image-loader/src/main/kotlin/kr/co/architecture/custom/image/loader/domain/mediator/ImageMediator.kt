@@ -1,4 +1,4 @@
-package kr.co.architecture.custom.image.loader.domain
+package kr.co.architecture.custom.image.loader.domain.mediator
 
 import android.graphics.BitmapFactory
 import androidx.compose.ui.graphics.ImageBitmap
@@ -8,14 +8,13 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.withContext
-import kr.co.architecture.custom.http.client.HttpStatusCode.NOT_MODIFIED
-import kr.co.architecture.custom.http.client.HttpStatusCode.SUCCESS
-import kr.co.architecture.custom.http.client.HttpHeaderConstants.Property.IF_NONE_MATCH
-import kr.co.architecture.custom.http.client.HttpHeaderConstants.Property.IF_MODIFIED_SINCE
+import kr.co.architecture.custom.http.client.HttpHeaderConstants
+import kr.co.architecture.custom.http.client.HttpStatusCode
+import kr.co.architecture.custom.image.loader.domain.model.Meta
 import kr.co.architecture.custom.image.loader.network.HttpClient
 import java.util.Locale
 
-class ImageEngine(
+class ImageMediator(
   private val imageMemoryCache: ImageMemoryCache?,
   private val imageDiskCache: ImageDiskCache?,
   private val httpClient: HttpClient
@@ -26,10 +25,10 @@ class ImageEngine(
     flow {
       val now = System.currentTimeMillis()
 
-      // 1) 메모리 히트
+      // 1) 메모리 캐시
       imageMemoryCache?.get(url)?.let { emit(it); return@flow }
 
-      // 2) 디스크 히트 (fresh or SWR)
+      // 2) 디스크 캐시
       val cachedDiskEntry = imageDiskCache?.getEntry(url)
       if (cachedDiskEntry != null) {
         val diskCachedImageBitmap = cachedDiskEntry.bytes.decodeToImageBitmap()
@@ -40,9 +39,9 @@ class ImageEngine(
             return@flow
           }
 
-          // MaxAge ~ SWR 확인.
-          //  true -> 캐싱된 이미지를 메모리 캐싱 후, 다운스트림. 그 후, SWR 재검증
-          //  false -> 네트워크 호출
+          // 2-1) MaxAge ~ SWR 확인.
+          //        true -> 캐싱된 이미지를 메모리 캐싱 후, 다운스트림. 그 후, SWR 재검증
+          //        false -> 네트워크 호출
           if (cachedDiskEntry.meta.canServeStaleWhileRevalidate(now)) {
             imageMemoryCache?.put(url, diskCachedImageBitmap)
             emit(diskCachedImageBitmap)
@@ -56,18 +55,22 @@ class ImageEngine(
         }
       }
 
-      // 3) 네트워크(조건부 요청) – 디스크 메타가 있으면 etag/lastModified 붙임
+      // 3) 네트워크 캐시 – 디스크 메타가 있으면 etag/lastModified 붙임
       val requestHeader = mutableMapOf<String, String>()
-      cachedDiskEntry?.meta?.etag?.let { requestHeader[IF_NONE_MATCH] = it }
-      cachedDiskEntry?.meta?.lastModified?.let { requestHeader[IF_MODIFIED_SINCE] = it }
+      cachedDiskEntry?.meta?.etag?.let {
+        requestHeader[HttpHeaderConstants.Property.IF_NONE_MATCH] = it
+      }
+      cachedDiskEntry?.meta?.lastModified?.let {
+        requestHeader[HttpHeaderConstants.Property.IF_MODIFIED_SINCE] = it
+      }
 
       val apiResponse = httpClient.get(
         url = url,
         header = requestHeader
       )
       when {
-        // 200: 본문 저장 → 디코딩 후 emit
-        apiResponse.code == SUCCESS && apiResponse.body != null -> {
+        // 200: 디코딩 -> 메모리/디스크 캐싱 -> 이미지 발행
+        apiResponse.code == HttpStatusCode.SUCCESS && apiResponse.body != null -> {
           val imageBitmap = apiResponse.body.decodeToImageBitmap() ?: return@flow
           imageMemoryCache?.put(url, imageBitmap)
           imageDiskCache?.putHttpResponse(
@@ -80,8 +83,8 @@ class ImageEngine(
           )
           emit(imageBitmap)
         }
-        // 304: 메타만 갱신하고, 캐시 본문 디코드 후 emit
-        apiResponse.code == NOT_MODIFIED && cachedDiskEntry != null -> {
+        // 304: 디코딩 -> 메모리 캐싱/디스크 캐싱(메타만 갱신) -> 이미지 발행
+        apiResponse.code == HttpStatusCode.NOT_MODIFIED && cachedDiskEntry != null -> {
           val imageBitmap = cachedDiskEntry.bytes.decodeToImageBitmap() ?: return@flow
           imageMemoryCache?.put(url, imageBitmap)
           imageDiskCache.updateMetaOn304(
@@ -90,9 +93,9 @@ class ImageEngine(
           )
           emit(imageBitmap)
         }
-        // 에러: stale-if-error 허용되면 스테일 폴백
+        // 서버 에러(eg., 40x, 50x..): soe 범위 내, 메모리 캐싱 -> 이미지 발행
         cachedDiskEntry?.meta?.canServeStaleOnError() == true -> {
-          val imageBitmap =cachedDiskEntry.bytes.decodeToImageBitmap() ?: return@flow
+          val imageBitmap = cachedDiskEntry.bytes.decodeToImageBitmap() ?: return@flow
           imageMemoryCache?.put(url, imageBitmap)
           emit(imageBitmap)
         }
@@ -108,12 +111,12 @@ class ImageEngine(
   /** SWR 재검증: 200이면 디스크/메모리 갱신용 바디 반환, 304면 null */
   private suspend fun revalidateWhenSWR(url: String, meta: Meta): ByteArray? {
     val header = buildMap {
-      meta.etag?.let { put(IF_NONE_MATCH, it) }
-      meta.lastModified?.let { put(IF_MODIFIED_SINCE, it) }
+      meta.etag?.let { put(HttpHeaderConstants.Property.IF_NONE_MATCH, it) }
+      meta.lastModified?.let { put(HttpHeaderConstants.Property.IF_MODIFIED_SINCE, it) }
     }
     val apiResponse = httpClient.get(url = url, header = header)
     return when {
-      apiResponse.code == SUCCESS && apiResponse.body != null -> {
+      apiResponse.code == HttpStatusCode.SUCCESS && apiResponse.body != null -> {
         apiResponse.body.also {
           imageDiskCache?.putHttpResponse(
             url = url,
@@ -125,7 +128,7 @@ class ImageEngine(
           )
         }
       }
-      apiResponse.code == NOT_MODIFIED -> {
+      apiResponse.code == HttpStatusCode.NOT_MODIFIED -> {
         null.also {
           imageDiskCache?.updateMetaOn304(url, apiResponse.header)
         }

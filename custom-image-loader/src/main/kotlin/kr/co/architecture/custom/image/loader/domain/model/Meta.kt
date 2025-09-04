@@ -7,6 +7,15 @@ data class Meta(
   val lastModified: String?,
   val policy: CachePolicy
 ) {
+  data class CachePolicy(
+    val noStore: Boolean = false,
+    val noCache: Boolean = false,
+    val mustRevalidate: Boolean = false,
+    val immutable: Boolean = false,
+    val maxAgeSeconds: Long? = null,
+    val staleWhileRevalidateSeconds: Long? = null,
+    val staleIfErrorSeconds: Long? = null
+  )
   fun isFresh(now: Long = System.currentTimeMillis()): Boolean {
     if (policy.noCache || policy.mustRevalidate) return false
     if (expiresAtMillis == Long.MAX_VALUE) return true

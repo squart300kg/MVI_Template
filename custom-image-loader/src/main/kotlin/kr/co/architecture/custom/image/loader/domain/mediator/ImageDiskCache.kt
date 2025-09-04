@@ -1,47 +1,17 @@
-package kr.co.architecture.custom.image.loader.domain
+package kr.co.architecture.custom.image.loader.domain.mediator
 
 import android.content.Context
 import kr.co.architecture.custom.http.client.HttpHeaderConstants.Property.CACHE_CONTROL
 import kr.co.architecture.custom.http.client.HttpHeaderConstants.Property.ETAG
 import kr.co.architecture.custom.http.client.HttpHeaderConstants.Property.LAST_MODIFIED
 import kr.co.architecture.custom.http.client.HttpHeaderConstants.Property.AGE
-import kr.co.architecture.custom.image.loader.domain.model.CachePolicy
+import kr.co.architecture.custom.image.loader.domain.model.DiskEntry
+import kr.co.architecture.custom.image.loader.domain.model.Meta
+import kr.co.architecture.custom.image.loader.domain.model.Meta.CachePolicy
 import java.io.*
 import java.security.MessageDigest
 import java.util.Properties
 import java.util.Locale
-
-// --------- Cache-Control 모델 ----------
-
-data class Meta(
-  val storedAtMillis: Long,
-  val expiresAtMillis: Long?,
-  val etag: String?,
-  val lastModified: String?,
-  val policy: CachePolicy
-) {
-  fun isFresh(now: Long = System.currentTimeMillis()): Boolean {
-    if (policy.noCache || policy.mustRevalidate) return false
-    if (expiresAtMillis == Long.MAX_VALUE) return true
-    return expiresAtMillis?.let { now < it } ?: false
-  }
-
-  fun canServeStaleWhileRevalidate(now: Long = System.currentTimeMillis()): Boolean {
-    val exp = expiresAtMillis ?: return false
-    val swr = policy.staleWhileRevalidateSeconds ?: return false
-    // 만료 이후(exp ≤ now)이고, SWR 윈도우 내
-    return now >= exp && now < exp + swr * 1000
-  }
-
-  fun canServeStaleOnError(now: Long = System.currentTimeMillis()): Boolean {
-    val exp = expiresAtMillis ?: return false
-    val sie = policy.staleIfErrorSeconds ?: 0
-    // 만료 이후(exp ≤ now)이고, SiE 윈도우 내
-    return now >= exp && now < exp + sie * 1000
-  }
-}
-
-data class DiskEntry(val bytes: ByteArray, val meta: Meta)
 
 class ImageDiskCache private constructor(
   private val directory: File,
@@ -98,7 +68,7 @@ class ImageDiskCache private constructor(
   fun updateMetaOn304(url: String, header: Map<String, String>) {
     val metaFile = metaFile(url)
     val old = readMeta(metaFile) ?: return
-    val policy = parseCacheControl(header[CACHE_CONTROL]) // 304에도 새 CC가 올 수 있음
+    val policy = parseCacheControl(header[CACHE_CONTROL])
     val now = System.currentTimeMillis()
     val age = header[AGE]?.toLongOrNull() ?: 0L
 
@@ -116,9 +86,7 @@ class ImageDiskCache private constructor(
       lastModified = header[LAST_MODIFIED] ?: old.lastModified,
       policy = if (header[CACHE_CONTROL] != null) policy else old.policy
     )
-    // TODO: CRUD하는 로직 DataLayer로 분리
     writeMeta(metaFile, newMeta)
-    // LRU touch
     dataFile(url).setLastModified(now)
     metaFile.setLastModified(now)
   }

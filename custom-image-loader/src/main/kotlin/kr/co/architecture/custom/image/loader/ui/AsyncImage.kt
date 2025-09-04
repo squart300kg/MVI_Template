@@ -11,9 +11,9 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import kr.co.architecture.custom.http.client.RawHttp11Client
 import kr.co.architecture.custom.http.client.interceptor.CustomHttpLogger
-import kr.co.architecture.custom.image.loader.domain.ImageDiskCache
-import kr.co.architecture.custom.image.loader.domain.ImageMemoryCache
-import kr.co.architecture.custom.image.loader.domain.ImageEngine
+import kr.co.architecture.custom.image.loader.domain.mediator.ImageDiskCache
+import kr.co.architecture.custom.image.loader.domain.mediator.ImageMemoryCache
+import kr.co.architecture.custom.image.loader.domain.mediator.ImageMediator
 import kr.co.architecture.custom.image.loader.network.HttpClientImpl
 
 // ui/AsyncImage.kt
@@ -33,8 +33,16 @@ fun AsyncImage(
     )
   }
   val httpClient = remember(rawClient) { HttpClientImpl(rawClient) }
-  val diskCache = remember { ImageDiskCache.create(context, maxBytes = 64L * 1024 * 1024) }
-  val engine = remember { ImageEngine(imageMemoryCache = ImageMemoryCache, imageDiskCache = diskCache, httpClient = httpClient) }
+  val diskCache = remember {
+    ImageDiskCache.create(context, maxBytes = 64L * 1024 * 1024)
+  }
+  val engine = remember {
+    ImageMediator(
+      imageMemoryCache = ImageMemoryCache,
+      imageDiskCache = diskCache,
+      httpClient = httpClient
+    )
+  }
 
   // 2) 엔진 스트림 수집 → 상태 표시
   val imageBitmap by remember(url) {

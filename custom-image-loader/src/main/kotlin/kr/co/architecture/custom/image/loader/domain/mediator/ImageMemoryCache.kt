@@ -1,4 +1,4 @@
-package kr.co.architecture.custom.image.loader.domain
+package kr.co.architecture.custom.image.loader.domain.mediator
 
 import android.graphics.Bitmap
 import android.util.LruCache
