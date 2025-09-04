@@ -6,9 +6,25 @@ import kotlinx.coroutines.flow.first
 import kr.co.architecture.custom.http.client.HttpHeaderConstants.Method.GET
 import kr.co.architecture.custom.http.client.RawHttp11Client
 
-class HttpClientImpl(
+class HttpClientImpl private constructor(
   private val client: RawHttp11Client
 ) : HttpClient {
+
+  companion object {
+    @Volatile
+    private var INSTANCE: HttpClient? = null
+
+    @JvmStatic
+    fun getInstance(
+      client: RawHttp11Client
+    ): HttpClient {
+      return INSTANCE ?: synchronized(this) {
+        INSTANCE ?: HttpClientImpl(
+          client = client
+        ).also { INSTANCE = it }
+      }
+    }
+  }
 
   override suspend fun get(url: String, header: Map<String, String>): HttpClient.Response {
     return callbackFlow {

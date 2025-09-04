@@ -6,9 +6,25 @@ import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.graphics.asImageBitmap
 
-class ImageMemoryCacheImpl(
+class ImageMemoryCacheImpl private constructor(
   private val maxBytes: Int = 16 * 1024 * 1024
 ): ImageMemoryCache {
+
+  companion object {
+    @Volatile
+    private var INSTANCE: ImageMemoryCache? = null
+
+    @JvmStatic
+    fun getInstance(
+      maxBytes: Int = 16 * 1024 * 1024
+    ): ImageMemoryCache {
+      return INSTANCE ?: synchronized(this) {
+        INSTANCE ?: ImageMemoryCacheImpl(
+          maxBytes = maxBytes
+        ).also { INSTANCE = it }
+      }
+    }
+  }
 
   private val cache = object : LruCache<String, Bitmap>(maxBytes) {
     override fun sizeOf(key: String, value: Bitmap): Int = value.allocationByteCount

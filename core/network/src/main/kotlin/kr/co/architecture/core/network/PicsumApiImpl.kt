@@ -19,7 +19,7 @@ import kr.co.architecture.custom.http.client.HttpHeaderConstants.Method.GET
 import kr.co.architecture.custom.http.client.RawHttp11Client
 
 class PicsumApiImpl(
-  val rawHttp11Client: RawHttp11Client = RawHttp11Client(),
+  val rawHttp11Client: RawHttp11Client,
   val url: String
 ) : PicsumApi {
 

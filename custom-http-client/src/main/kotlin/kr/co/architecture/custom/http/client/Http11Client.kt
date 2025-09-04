@@ -41,12 +41,34 @@ data class HttpResponse(
   }
 }
 
-class RawHttp11Client(
+class RawHttp11Client private constructor(
   private val userAgent: String = "RawHttp11/0.1",
   private val readTimeoutMs: Int = 10_000,
   private val maxRedirects: Int = 5,
   private val httpLogger: CustomHttpLogger? = null
 ) {
+
+  companion object {
+    @Volatile
+    private var INSTANCE: RawHttp11Client? = null
+
+    @JvmStatic
+    fun getInstance(
+      userAgent: String = "RawHttp11/0.1",
+      readTimeoutMs: Int = 10_000,
+      maxRedirects: Int = 5,
+      httpLogger: CustomHttpLogger? = null
+    ): RawHttp11Client {
+      return INSTANCE ?: synchronized(this) {
+        INSTANCE ?: RawHttp11Client(
+          userAgent = userAgent,
+          readTimeoutMs = readTimeoutMs,
+          maxRedirects = maxRedirects,
+          httpLogger = httpLogger,
+        ).also { INSTANCE = it }
+      }
+    }
+  }
 
   suspend fun callApi(
     method: String,
@@ -121,9 +143,11 @@ class RawHttp11Client(
           }
 
           // ---- 상태줄 ----
-          val statusLine = readLineAscii(bufferedInputStream) ?: throw IOException("abnormal status line")
+          val statusLine =
+            readLineAscii(bufferedInputStream) ?: throw IOException("abnormal status line")
           val statusParts = statusLine.split(' ', limit = 3)
-          val code = statusParts.getOrNull(1)?.toIntOrNull() ?: throw IOException("http status code is not number: $statusLine")
+          val code = statusParts.getOrNull(1)?.toIntOrNull()
+            ?: throw IOException("http status code is not number: $statusLine")
           val message = statusParts.getOrNull(2) ?: ""
 
           // ---- 헤더 ----
@@ -147,7 +171,8 @@ class RawHttp11Client(
           // TODO: 30x응답이 이렇게 많이 오는게 확실한가?
           //  302만 오는게 아닌지 체크
           if (code in listOf(301, 302, 303, 307, 308)) {
-            val location = responseHeader[HttpHeaderConstants.Property.LOCATION] ?: throw IOException("Redirect without Location")
+            val location = responseHeader[HttpHeaderConstants.Property.LOCATION]
+              ?: throw IOException("Redirect without Location")
             val redirectUrl = URL(url, location)
             return@withContext request(
               method = if (code == 303) HttpHeaderConstants.Method.GET else method,
@@ -163,10 +188,13 @@ class RawHttp11Client(
 
           // ---- 바디 ----
           val transfer = responseHeader[HttpHeaderConstants.Property.TRANSFER_ENCODING]
-          val contentLen = responseHeader[HttpHeaderConstants.Property.CONTENT_LENGTH]?.toLongOrNull()
+          val contentLen =
+            responseHeader[HttpHeaderConstants.Property.CONTENT_LENGTH]?.toLongOrNull()
           val rawBody = when {
             code == 304 -> ByteArray(0) // 조건부 요청 성공(본문 없음)
-            transfer?.contains(HttpHeaderConstants.Value.CHUNKED) == true -> readChunked(bufferedInputStream)
+            transfer?.contains(HttpHeaderConstants.Value.CHUNKED) == true -> readChunked(
+              bufferedInputStream
+            )
             contentLen != null -> readFixed(bufferedInputStream, contentLen)
             else -> readToEnd(bufferedInputStream)
           }
@@ -199,7 +227,9 @@ class RawHttp11Client(
             )
           )
         }
-      } catch (e: Exception) { onResponseException(e) }
+      } catch (e: Exception) {
+        onResponseException(e)
+      }
     }
   }
 }

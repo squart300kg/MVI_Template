@@ -15,11 +15,29 @@ import java.security.MessageDigest
 import java.util.Locale
 import java.util.Properties
 
-class ImageDiskCacheImpl constructor(
+class ImageDiskCacheImpl private constructor(
   context: Context,
   subDirectory: String = "gallery-app-disk-cache",
   private val maxBytes: Long = 64L * 1024 * 1024
-): ImageDiskCache {
+) : ImageDiskCache {
+
+  companion object {
+    @Volatile
+    private var INSTANCE: ImageDiskCache? = null
+
+    @JvmStatic
+    fun getInstance(
+      context: Context,
+      subDirectory: String = "gallery-app-disk-cache",
+    ): ImageDiskCache {
+      return INSTANCE ?: synchronized(this) {
+        INSTANCE ?: ImageDiskCacheImpl(
+          context = context.applicationContext,
+          subDirectory = subDirectory
+        ).also { INSTANCE = it }
+      }
+    }
+  }
 
   private var directory =
     File(context.cacheDir, subDirectory).apply { mkdirs() }
@@ -99,8 +117,12 @@ class ImageDiskCacheImpl constructor(
       writeMeta(metaTmp, meta)
 
       // 원자적 교체
-      if (!dataTmp.renameTo(dataDst)) { dataDst.delete(); dataTmp.renameTo(dataDst) }
-      if (!metaTmp.renameTo(metaDst)) { metaDst.delete(); metaTmp.renameTo(metaDst) }
+      if (!dataTmp.renameTo(dataDst)) {
+        dataDst.delete(); dataTmp.renameTo(dataDst)
+      }
+      if (!metaTmp.renameTo(metaDst)) {
+        metaDst.delete(); metaTmp.renameTo(metaDst)
+      }
       val now = System.currentTimeMillis()
       dataDst.setLastModified(now)
       metaDst.setLastModified(now)
@@ -128,7 +150,8 @@ class ImageDiskCacheImpl constructor(
         token == "must-revalidate" -> mustRevalidate = true
         token == "immutable" -> immutable = true
         token.startsWith("max-age=") -> maxAge = token.substringAfter('=').toLongOrNull()
-        token.startsWith("stale-while-revalidate=") -> swr = token.substringAfter('=').toLongOrNull()
+        token.startsWith("stale-while-revalidate=") -> swr =
+          token.substringAfter('=').toLongOrNull()
         token.startsWith("stale-if-error=") -> sie = token.substringAfter('=').toLongOrNull()
       }
     }

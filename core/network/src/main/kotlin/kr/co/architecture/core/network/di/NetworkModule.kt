@@ -27,7 +27,7 @@ object NetworkModule {
     @ApplicationContext context: Context,
     httpLogger: CustomHttpLogger
   ): RawHttp11Client {
-    return RawHttp11Client(
+    return RawHttp11Client.getInstance(
       userAgent = "GalleryApp-RawHttp11",
       readTimeoutMs = 60_000,
       maxRedirects = 5,

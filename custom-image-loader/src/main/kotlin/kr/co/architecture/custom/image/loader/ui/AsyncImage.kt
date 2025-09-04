@@ -6,6 +6,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -26,20 +27,19 @@ fun AsyncImage(
 ) {
   // 1) 네트워크 클라이언트 + 디스크/메모리 캐시 준비
   val rawClient = remember {
-    RawHttp11Client(
+    RawHttp11Client.getInstance(
       userAgent = "Custom-Image-Loader-RawHttp11",
       httpLogger = CustomHttpLogger()
     )
   }
-  val httpClient = remember(rawClient) { HttpClientImpl(rawClient) }
+  val httpClient = remember(rawClient) {
+    HttpClientImpl.getInstance(rawClient)
+  }
   val memoryCache = remember {
-    ImageMemoryCacheImpl()
+    ImageMemoryCacheImpl.getInstance()
   }
   val diskCache = remember {
-    ImageDiskCacheImpl(
-      context = context,
-      maxBytes = 64L * 1024 * 1024
-    )
+    ImageDiskCacheImpl.getInstance(context)
   }
   val imageMediator = remember {
     ImageMediatorImpl(
