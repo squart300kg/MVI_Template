@@ -28,7 +28,7 @@ object NetworkModule {
     httpLogger: CustomHttpLogger
   ): RawHttp11Client {
     return RawHttp11Client(
-      userAgent = "GalleryApp-RawHttp11/0.1",
+      userAgent = "GalleryApp-RawHttp11",
       readTimeoutMs = 60_000,
       maxRedirects = 5,
       httpLogger = httpLogger

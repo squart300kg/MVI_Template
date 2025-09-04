@@ -7,49 +7,51 @@ import java.util.Properties
 import java.util.Locale
 import java.util.concurrent.TimeUnit
 
+// --------- Cache-Control 모델 ----------
+data class CachePolicy(
+  val noStore: Boolean = false,
+  val noCache: Boolean = false,
+  val mustRevalidate: Boolean = false,
+  val immutable: Boolean = false,
+  val maxAgeSeconds: Long? = null,
+  val staleWhileRevalidateSeconds: Long? = null,
+  val staleIfErrorSeconds: Long? = null
+)
+
+data class Meta(
+  val storedAtMillis: Long,
+  val expiresAtMillis: Long?,
+  val etag: String?,
+  val lastModified: String?,
+  val policy: CachePolicy
+) {
+  fun isFresh(now: Long = System.currentTimeMillis()): Boolean {
+    if (policy.noCache || policy.mustRevalidate) return false
+    if (expiresAtMillis == Long.MAX_VALUE) return true
+    return expiresAtMillis?.let { now < it } ?: false
+  }
+
+  fun canServeStaleWhileRevalidate(now: Long = System.currentTimeMillis()): Boolean {
+    val exp = expiresAtMillis ?: return false
+    val swr = policy.staleWhileRevalidateSeconds ?: return false
+    // 만료 이후(exp ≤ now)이고, SWR 윈도우 내
+    return now >= exp && now < exp + swr * 1000
+  }
+
+  fun canServeStaleOnError(now: Long = System.currentTimeMillis()): Boolean {
+    val exp = expiresAtMillis ?: return false
+    val sie = policy.staleIfErrorSeconds ?: 0
+    // 만료 이후(exp ≤ now)이고, SiE 윈도우 내
+    return now >= exp && now < exp + sie * 1000
+  }
+}
+
+data class DiskEntry(val bytes: ByteArray, val meta: Meta)
+
 class ImageDiskCache private constructor(
   private val directory: File,
   private val maxBytes: Long
 ) {
-
-  // --------- Cache-Control 모델 ----------
-  data class CachePolicy(
-    val noStore: Boolean = false,
-    val noCache: Boolean = false,
-    val mustRevalidate: Boolean = false,
-    val immutable: Boolean = false,
-    val maxAgeSeconds: Long? = null,
-    val staleWhileRevalidateSeconds: Long? = null,
-    val staleIfErrorSeconds: Long? = null
-  )
-
-  data class Meta(
-    val storedAtMillis: Long,
-    val expiresAtMillis: Long?,
-    val etag: String?,
-    val lastModified: String?,
-    val policy: CachePolicy
-  ) {
-    fun isFresh(now: Long = System.currentTimeMillis()): Boolean {
-      if (policy.noCache || policy.mustRevalidate) return false
-      if (expiresAtMillis == Long.MAX_VALUE) return true
-      return expiresAtMillis?.let { now < it } ?: false
-    }
-
-    fun canServeStaleWhileRevalidate(now: Long = System.currentTimeMillis()): Boolean {
-      val exp = expiresAtMillis ?: return false
-      val swr = policy.staleWhileRevalidateSeconds ?: return false
-      return now < exp + swr * 1000
-    }
-
-    fun canServeStaleOnError(now: Long = System.currentTimeMillis()): Boolean {
-      val exp = expiresAtMillis ?: return false
-      val sie = policy.staleIfErrorSeconds ?: 0
-      return now < exp + sie * 1000
-    }
-  }
-
-  data class DiskEntry(val bytes: ByteArray, val meta: Meta)
 
   companion object {
     fun create(
@@ -69,14 +71,12 @@ class ImageDiskCache private constructor(
     if (!data.exists() || !meta.exists()) return null
     val m = readMeta(meta) ?: return null
     val bytes = runCatching { data.readBytes() }.getOrNull() ?: return null
-    // LRU 효과: 접근 시 갱신(데이터/메타 동시)
     val now = System.currentTimeMillis()
     data.setLastModified(now)
     meta.setLastModified(now)
     return DiskEntry(bytes, m)
   }
 
-  /** HTTP 200 응답 바디/헤더를 저장 */
   fun putHttpResponse(url: String, body: ByteArray, headers: Map<String, String>) {
     val policy = parseCacheControl(headers["cache-control"])
     if (policy.noStore) return // 저장 금지
@@ -89,6 +89,7 @@ class ImageDiskCache private constructor(
       else -> null // 명시적 만료 없음 → 항상 재검증 대상으로 취급
     }
     val meta = Meta(
+      // TODO: String들 상수로 정의
       storedAtMillis = now,
       expiresAtMillis = expiresAt,
       etag = headers["etag"],
@@ -99,7 +100,6 @@ class ImageDiskCache private constructor(
     evictIfNeeded()
   }
 
-  /** 조건부 요청 304 응답 시 메타만 갱신 */
   fun updateMetaOn304(url: String, headers: Map<String, String>) {
     val metaFile = metaFile(url)
     val old = readMeta(metaFile) ?: return
@@ -111,7 +111,7 @@ class ImageDiskCache private constructor(
       policy.noStore -> null
       policy.immutable -> Long.MAX_VALUE
       policy.maxAgeSeconds != null -> now + maxOf(0, policy.maxAgeSeconds - age) * 1000
-      else -> old.expiresAtMillis // 없으면 이전 정책 유지
+      else -> old.expiresAtMillis
     }
 
     val newMeta = old.copy(
@@ -121,21 +121,12 @@ class ImageDiskCache private constructor(
       lastModified = headers["last-modified"] ?: old.lastModified,
       policy = if (headers["cache-control"] != null) policy else old.policy
     )
+    // TODO: CRUD하는 로직 DataLayer로 분리
     writeMeta(metaFile, newMeta)
     // LRU touch
     dataFile(url).setLastModified(now)
     metaFile.setLastModified(now)
   }
-
-  fun clear() {
-    directory.listFiles()?.forEach { it.delete() }
-  }
-
-  // ---- 기존 호환(단순 바이트 접근) ----
-  fun getBytes(url: String): ByteArray? = getEntry(url)?.bytes
-  fun putBytes(url: String, bytes: ByteArray) = writeAtomic(url, bytes, // 기본 메타: 항상 재검증
-    Meta(System.currentTimeMillis(), null, null, null, CachePolicy(noCache = true))
-  )
 
   // ---- 내부 구현 ----
   private fun writeAtomic(url: String, bytes: ByteArray, meta: Meta) {

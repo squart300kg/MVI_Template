@@ -29,7 +29,7 @@ fun AsyncImage(
   // 실제 앱에선 DI/CompositionLocal로 제공 권장
   val client = remember {
     RawHttp11Client(
-      userAgent = "Custom-Image-Loader-RawHttp11/0.1",
+      userAgent = "Custom-Image-Loader-RawHttp11",
       httpLogger = CustomHttpLogger()
     )
   }
@@ -46,14 +46,18 @@ fun AsyncImage(
       val bitmap = BitmapFactory.decodeByteArray(cached.bytes, 0, cached.bytes.size)
       if (bitmap != null) {
         val imageBitmap = bitmap.asImageBitmap()
-        MemoryImageCache.put(url, imageBitmap)
-        value = imageBitmap
 
-        // (a) fresh → 바로 종료
-        if (cached.meta.isFresh(now)) return@produceState
+        // (a) fresh → 바로 표시 후 종료
+        if (cached.meta.isFresh(now)) {
+          MemoryImageCache.put(url, imageBitmap)
+          value = imageBitmap
+          return@produceState
+        }
 
-        // (b) stale-while-revalidate → 보여주면서 백그라운드 재검증
+        // (b) SWR 구간 → UI 먼저 표시하고 백그라운드 재검증
         if (cached.meta.canServeStaleWhileRevalidate(now)) {
+          MemoryImageCache.put(url, imageBitmap)
+          value = imageBitmap
           withContext(Dispatchers.IO) {
             revalidateIfNeeded(
               client = client,
@@ -61,21 +65,23 @@ fun AsyncImage(
               diskCache = diskCache,
               meta = cached.meta,
               onUpdated = { newBytes ->
-                val bitmap = BitmapFactory.decodeByteArray(newBytes, 0, newBytes.size)
-                if (bitmap != null) {
-                  val imageBitmap = bitmap.asImageBitmap()
-                  MemoryImageCache.put(url, imageBitmap)
-                  value = imageBitmap
+                val bmp2 = BitmapFactory.decodeByteArray(newBytes, 0, newBytes.size)
+                if (bmp2 != null) {
+                  val img2 = bmp2.asImageBitmap()
+                  MemoryImageCache.put(url, img2)
+                  value = img2
                 }
               }
             )
           }
           return@produceState
         }
+
+        // (c) SWR 밖 → 스테일을 UI에 그리지 않고 네트워크로 진행
       }
     }
 
-    // 3) 네트워크 로드: 조건부 요청(ETag / Last-Modified) 적용
+    // 3) 네트워크 로드(조건부 요청)
     withContext(Dispatchers.IO) {
       val headers = mutableMapOf<String, String>()
       cached?.meta?.etag?.let { headers["If-None-Match"] = it }
@@ -97,7 +103,6 @@ fun AsyncImage(
               } else value = null
             }
             304 -> {
-              // 본문은 없지만 신선도만 갱신
               diskCache.updateMetaOn304(url, headers = this.headers)
               val bitmap = cached?.bytes?.let { BitmapFactory.decodeByteArray(it, 0, it.size) }
               if (bitmap != null) {
@@ -110,14 +115,24 @@ fun AsyncImage(
           }
         },
         onResponseError = {
-          // 에러 시 stale-if-error 허용이면 기존 캐시를 계속 사용
+          // 에러 시에만 stale-if-error 허용 범위면 스테일로 폴백
           if (cached?.meta?.canServeStaleOnError(now) == true) {
-            // value는 이미 캐시 이미지로 세팅됨
+            val bmp = cached.bytes.let { BitmapFactory.decodeByteArray(it, 0, it.size) }
+            if (bmp != null) {
+              val img = bmp.asImageBitmap()
+              MemoryImageCache.put(url, img)
+              value = img
+            }
           } else value = null
         },
         onResponseException = {
           if (cached?.meta?.canServeStaleOnError(now) == true) {
-            // 그대로 유지
+            val bmp = cached.bytes.let { BitmapFactory.decodeByteArray(it, 0, it.size) }
+            if (bmp != null) {
+              val img = bmp.asImageBitmap()
+              MemoryImageCache.put(url, img)
+              value = img
+            }
           } else value = null
         }
       )
@@ -142,7 +157,7 @@ private suspend fun revalidateIfNeeded(
   client: RawHttp11Client,
   url: String,
   diskCache: ImageDiskCache,
-  meta: ImageDiskCache.Meta,
+  meta: Meta,
   onUpdated: (ByteArray) -> Unit
 ) {
   val headers = mutableMapOf<String, String>()
