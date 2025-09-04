@@ -17,8 +17,7 @@ android {
 
   dependencies {
     implementation(project(":core:model"))
-    // TODO: API로 노출 안하는법 없을까
-    api(project(":custom-http-client"))
+    implementation(project(":custom-http-client"))
   }
 }
 

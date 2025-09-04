@@ -27,12 +27,8 @@ object NetworkModule {
     @ApplicationContext context: Context,
     httpLogger: CustomHttpLogger
   ): RawHttp11Client {
-    val versionName = context
-      .packageManager
-      .getPackageInfo(context.packageName, 0)
-      .versionName
     return RawHttp11Client(
-      userAgent = "GalleryApp-${versionName}-RawHttp11/0.1",
+      userAgent = "GalleryApp-RawHttp11/0.1",
       readTimeoutMs = 60_000,
       maxRedirects = 5,
       httpLogger = httpLogger

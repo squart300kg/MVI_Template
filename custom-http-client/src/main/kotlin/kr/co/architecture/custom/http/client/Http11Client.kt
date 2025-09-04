@@ -51,6 +51,7 @@ class RawHttp11Client(
   suspend fun callApi(
     method: String,
     url: String,
+    headers: Map<String, String> = emptyMap(),
     onResponseSuccess: suspend HttpResponse.() -> Unit = {},
     onResponseError: suspend HttpResponse.() -> Unit = {},
     onResponseException: suspend Throwable.() -> Unit = {},
@@ -58,6 +59,7 @@ class RawHttp11Client(
     method = method,
     url = URL(url),
     body = null,
+    extraHeaders = headers,
     redirectDepth = 0,
     onResponseSuccess = onResponseSuccess,
     onResponseError = onResponseError,
@@ -68,6 +70,7 @@ class RawHttp11Client(
     method: String,
     url: URL,
     body: ByteArray?,
+    extraHeaders: Map<String, String> = emptyMap(),
     redirectDepth: Int,
     onResponseSuccess: suspend (HttpResponse) -> Unit = {},
     onResponseError: suspend (HttpResponse) -> Unit = {},
@@ -78,15 +81,11 @@ class RawHttp11Client(
         // TODO: 필요한가? 만약 설정한다 헀을 때, maxRedirects의 설정 기준은?
         //  고민해보기
         require(redirectDepth <= maxRedirects) { "Too many redirects" }
-
         val startNs = System.nanoTime()
 
         val host = url.host
         val pathAndQuery = url.buildPathAndQuery()
-        val socket = getSocket(
-          url = url,
-          readTimeoutMs = readTimeoutMs
-        )
+        val socket = getSocket(url = url, readTimeoutMs = readTimeoutMs)
 
         socket.use { s ->
           val bufferedOutputStream = BufferedOutputStream(s.getOutputStream())
@@ -98,13 +97,12 @@ class RawHttp11Client(
           val requestHeader = linkedMapOf(
             HttpHeaderConstants.Property.HOST to host,
             HttpHeaderConstants.Property.USER_AGENT to userAgent,
-            HttpHeaderConstants.Property.ACCEPT to HttpHeaderConstants.Value.APPLICATION_JSON,
-            // TODO: GZIP이 정말 필요한가? 요청/응답 성능 개선이 확실한가?
-            //  이거 설정에 따른 벤치마크 측정하기
+            HttpHeaderConstants.Property.ACCEPT to "image/*", // ★ 이미지 요청에 적합
             HttpHeaderConstants.Property.ACCEPT_ENCODING to HttpHeaderConstants.Value.GZIP,
             HttpHeaderConstants.Property.CONNECTION to HttpHeaderConstants.Value.KEEP_ALIVE
           ).apply {
             if (body != null) put(HttpHeaderConstants.Property.CONTENT_LENGTH, "${body.size}")
+            extraHeaders.forEach { (k, v) -> putIfAbsent(k, v) }
           }
 
           httpLogger?.printRequestStartLog(method, "$url", HttpHeaderConstants.HTTP_1_1)
@@ -145,17 +143,17 @@ class RawHttp11Client(
           httpLogger?.printResponseStartLog(code, message, "$url", tookMs)
           httpLogger?.printResponseHeaderLog(responseHeader)
 
-          // ---- 리다이렉트 처리 ----
+          // ---- 리다이렉트 ----
           // TODO: 30x응답이 이렇게 많이 오는게 확실한가?
           //  302만 오는게 아닌지 체크
           if (code in listOf(301, 302, 303, 307, 308)) {
-            // TODO: 무슨뜻이지?
             val location = responseHeader[HttpHeaderConstants.Property.LOCATION] ?: throw IOException("Redirect without Location")
-            val redirectUrl = URL(url, location) // 상대/절대 모두 처리
+            val redirectUrl = URL(url, location)
             return@withContext request(
               method = if (code == 303) HttpHeaderConstants.Method.GET else method,
               url = redirectUrl,
               body = if (code >= 307) body else null,
+              extraHeaders = extraHeaders,
               redirectDepth = redirectDepth + 1,
               onResponseSuccess = onResponseSuccess,
               onResponseError = onResponseError,
@@ -163,10 +161,11 @@ class RawHttp11Client(
             )
           }
 
-          // ---- 바디 경계 판별 ----
+          // ---- 바디 ----
           val transfer = responseHeader[HttpHeaderConstants.Property.TRANSFER_ENCODING]
           val contentLen = responseHeader[HttpHeaderConstants.Property.CONTENT_LENGTH]?.toLongOrNull()
           val rawBody = when {
+            code == 304 -> ByteArray(0) // 조건부 요청 성공(본문 없음)
             transfer?.contains(HttpHeaderConstants.Value.CHUNKED) == true -> readChunked(bufferedInputStream)
             contentLen != null -> readFixed(bufferedInputStream, contentLen)
             else -> readToEnd(bufferedInputStream)
@@ -188,16 +187,8 @@ class RawHttp11Client(
             HttpHeaderConstants.Value.GZIP
           ) == true
           val bodyBytes =
-            if (isGzip) GZIPInputStream(ByteArrayInputStream(rawBody)).use { it.readBytes() }
+            if (code != 304 && isGzip) GZIPInputStream(ByteArrayInputStream(rawBody)).use { it.readBytes() }
             else rawBody
-
-          val contentType = responseHeader[HttpHeaderConstants.Property.CONTENT_TYPE]
-          httpLogger?.printResponseBodyLog(
-            body = bodyBytes,
-            contentType = contentType,
-            wasGzip = isGzip,
-            rawSize = if (isGzip) rawBody.size else null
-          )
 
           onResponseSuccess(
             HttpResponse(

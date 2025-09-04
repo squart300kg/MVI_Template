@@ -1,15 +1,56 @@
 package kr.co.architecture.custom.image.loader
 
 import android.content.Context
-import java.io.File
-import java.io.FileOutputStream
+import java.io.*
 import java.security.MessageDigest
+import java.util.Properties
+import java.util.Locale
 import java.util.concurrent.TimeUnit
 
 class ImageDiskCache private constructor(
   private val directory: File,
   private val maxBytes: Long
 ) {
+
+  // --------- Cache-Control 모델 ----------
+  data class CachePolicy(
+    val noStore: Boolean = false,
+    val noCache: Boolean = false,
+    val mustRevalidate: Boolean = false,
+    val immutable: Boolean = false,
+    val maxAgeSeconds: Long? = null,
+    val staleWhileRevalidateSeconds: Long? = null,
+    val staleIfErrorSeconds: Long? = null
+  )
+
+  data class Meta(
+    val storedAtMillis: Long,
+    val expiresAtMillis: Long?,
+    val etag: String?,
+    val lastModified: String?,
+    val policy: CachePolicy
+  ) {
+    fun isFresh(now: Long = System.currentTimeMillis()): Boolean {
+      if (policy.noCache || policy.mustRevalidate) return false
+      if (expiresAtMillis == Long.MAX_VALUE) return true
+      return expiresAtMillis?.let { now < it } ?: false
+    }
+
+    fun canServeStaleWhileRevalidate(now: Long = System.currentTimeMillis()): Boolean {
+      val exp = expiresAtMillis ?: return false
+      val swr = policy.staleWhileRevalidateSeconds ?: return false
+      return now < exp + swr * 1000
+    }
+
+    fun canServeStaleOnError(now: Long = System.currentTimeMillis()): Boolean {
+      val exp = expiresAtMillis ?: return false
+      val sie = policy.staleIfErrorSeconds ?: 0
+      return now < exp + sie * 1000
+    }
+  }
+
+  data class DiskEntry(val bytes: ByteArray, val meta: Meta)
+
   companion object {
     fun create(
       context: Context,
@@ -21,37 +62,175 @@ class ImageDiskCache private constructor(
     }
   }
 
-  fun getBytes(url: String): ByteArray? {
-    val file = fileFor(url)
-    if (!file.exists()) return null
-    // LRU 효과: 접근 시 갱신
-    file.setLastModified(System.currentTimeMillis())
-    return runCatching { file.readBytes() }.getOrNull()
+  // ---- 외부에 노출하는 API ----
+  fun getEntry(url: String): DiskEntry? {
+    val data = dataFile(url)
+    val meta = metaFile(url)
+    if (!data.exists() || !meta.exists()) return null
+    val m = readMeta(meta) ?: return null
+    val bytes = runCatching { data.readBytes() }.getOrNull() ?: return null
+    // LRU 효과: 접근 시 갱신(데이터/메타 동시)
+    val now = System.currentTimeMillis()
+    data.setLastModified(now)
+    meta.setLastModified(now)
+    return DiskEntry(bytes, m)
   }
 
-  fun putBytes(url: String, bytes: ByteArray) {
-    val tempFile = File(directory, hash(url) + ".tmp")
-    val destinationFile = fileFor(url)
-    runCatching {
-      FileOutputStream(tempFile).use { it.write(bytes) }
-      if (!tempFile.renameTo(destinationFile)) {
-        // 실패시 덮어쓰기
-        destinationFile.delete()
-        tempFile.renameTo(destinationFile)
-      }
-      destinationFile.setLastModified(System.currentTimeMillis())
-      evictIfNeeded()
-    }.onFailure {
-      // 실패하면 임시파일 정리
-      tempFile.delete()
+  /** HTTP 200 응답 바디/헤더를 저장 */
+  fun putHttpResponse(url: String, body: ByteArray, headers: Map<String, String>) {
+    val policy = parseCacheControl(headers["cache-control"])
+    if (policy.noStore) return // 저장 금지
+
+    val now = System.currentTimeMillis()
+    val age = headers["age"]?.toLongOrNull() ?: 0L
+    val expiresAt = when {
+      policy.immutable -> Long.MAX_VALUE
+      policy.maxAgeSeconds != null -> now + maxOf(0, policy.maxAgeSeconds - age) * 1000
+      else -> null // 명시적 만료 없음 → 항상 재검증 대상으로 취급
     }
+    val meta = Meta(
+      storedAtMillis = now,
+      expiresAtMillis = expiresAt,
+      etag = headers["etag"],
+      lastModified = headers["last-modified"],
+      policy = policy
+    )
+    writeAtomic(url, body, meta)
+    evictIfNeeded()
+  }
+
+  /** 조건부 요청 304 응답 시 메타만 갱신 */
+  fun updateMetaOn304(url: String, headers: Map<String, String>) {
+    val metaFile = metaFile(url)
+    val old = readMeta(metaFile) ?: return
+    val policy = parseCacheControl(headers["cache-control"]) // 304에도 새 CC가 올 수 있음
+    val now = System.currentTimeMillis()
+    val age = headers["age"]?.toLongOrNull() ?: 0L
+
+    val newExpiresAt = when {
+      policy.noStore -> null
+      policy.immutable -> Long.MAX_VALUE
+      policy.maxAgeSeconds != null -> now + maxOf(0, policy.maxAgeSeconds - age) * 1000
+      else -> old.expiresAtMillis // 없으면 이전 정책 유지
+    }
+
+    val newMeta = old.copy(
+      storedAtMillis = now,
+      expiresAtMillis = newExpiresAt,
+      etag = headers["etag"] ?: old.etag,
+      lastModified = headers["last-modified"] ?: old.lastModified,
+      policy = if (headers["cache-control"] != null) policy else old.policy
+    )
+    writeMeta(metaFile, newMeta)
+    // LRU touch
+    dataFile(url).setLastModified(now)
+    metaFile.setLastModified(now)
   }
 
   fun clear() {
     directory.listFiles()?.forEach { it.delete() }
   }
 
-  private fun fileFor(url: String) = File(directory, hash(url) + ".bin")
+  // ---- 기존 호환(단순 바이트 접근) ----
+  fun getBytes(url: String): ByteArray? = getEntry(url)?.bytes
+  fun putBytes(url: String, bytes: ByteArray) = writeAtomic(url, bytes, // 기본 메타: 항상 재검증
+    Meta(System.currentTimeMillis(), null, null, null, CachePolicy(noCache = true))
+  )
+
+  // ---- 내부 구현 ----
+  private fun writeAtomic(url: String, bytes: ByteArray, meta: Meta) {
+    val base = hash(url)
+    val dataTmp = File(directory, "$base.bin.tmp")
+    val metaTmp = File(directory, "$base.meta.tmp")
+    val dataDst = File(directory, "$base.bin")
+    val metaDst = File(directory, "$base.meta")
+
+    runCatching {
+      FileOutputStream(dataTmp).use { it.write(bytes) }
+      writeMeta(metaTmp, meta)
+
+      // 원자적 교체
+      if (!dataTmp.renameTo(dataDst)) { dataDst.delete(); dataTmp.renameTo(dataDst) }
+      if (!metaTmp.renameTo(metaDst)) { metaDst.delete(); metaTmp.renameTo(metaDst) }
+      val now = System.currentTimeMillis()
+      dataDst.setLastModified(now)
+      metaDst.setLastModified(now)
+      evictIfNeeded()
+    }.onFailure {
+      dataTmp.delete(); metaTmp.delete()
+    }
+  }
+
+  private fun parseCacheControl(header: String?): CachePolicy {
+    if (header.isNullOrBlank()) return CachePolicy()
+    var noStore = false
+    var noCache = false
+    var mustRevalidate = false
+    var immutable = false
+    var maxAge: Long? = null
+    var swr: Long? = null
+    var sie: Long? = null
+
+    header.split(',').forEach { raw ->
+      val token = raw.trim().lowercase(Locale.ROOT)
+      when {
+        token == "no-store" -> noStore = true
+        token == "no-cache" -> noCache = true
+        token == "must-revalidate" -> mustRevalidate = true
+        token == "immutable" -> immutable = true
+        token.startsWith("max-age=") -> maxAge = token.substringAfter('=').toLongOrNull()
+        token.startsWith("stale-while-revalidate=") -> swr = token.substringAfter('=').toLongOrNull()
+        token.startsWith("stale-if-error=") -> sie = token.substringAfter('=').toLongOrNull()
+      }
+    }
+    return CachePolicy(noStore, noCache, mustRevalidate, immutable, maxAge, swr, sie)
+  }
+
+  private fun readMeta(file: File): Meta? = runCatching {
+    Properties().useAndLoad(file).let { p ->
+      Meta(
+        storedAtMillis = p.getProperty("storedAt").toLong(),
+        expiresAtMillis = p.getProperty("expiresAt")?.toLong(),
+        etag = p.getProperty("etag"),
+        lastModified = p.getProperty("lastModified"),
+        policy = CachePolicy(
+          noStore = p.getProperty("cc.noStore") == "1",
+          noCache = p.getProperty("cc.noCache") == "1",
+          mustRevalidate = p.getProperty("cc.mustRevalidate") == "1",
+          immutable = p.getProperty("cc.immutable") == "1",
+          maxAgeSeconds = p.getProperty("cc.maxAge")?.toLong(),
+          staleWhileRevalidateSeconds = p.getProperty("cc.swr")?.toLong(),
+          staleIfErrorSeconds = p.getProperty("cc.sie")?.toLong()
+        )
+      )
+    }
+  }.getOrNull()
+
+  private fun writeMeta(file: File, meta: Meta) {
+    val p = Properties().apply {
+      setProperty("storedAt", meta.storedAtMillis.toString())
+      meta.expiresAtMillis?.let { setProperty("expiresAt", it.toString()) }
+      meta.etag?.let { setProperty("etag", it) }
+      meta.lastModified?.let { setProperty("lastModified", it) }
+      setProperty("cc.noStore", if (meta.policy.noStore) "1" else "0")
+      setProperty("cc.noCache", if (meta.policy.noCache) "1" else "0")
+      setProperty("cc.mustRevalidate", if (meta.policy.mustRevalidate) "1" else "0")
+      setProperty("cc.immutable", if (meta.policy.immutable) "1" else "0")
+      meta.policy.maxAgeSeconds?.let { setProperty("cc.maxAge", it.toString()) }
+      meta.policy.staleWhileRevalidateSeconds?.let { setProperty("cc.swr", it.toString()) }
+      meta.policy.staleIfErrorSeconds?.let { setProperty("cc.sie", it.toString()) }
+    }
+    FileOutputStream(file).use { out -> p.store(out, null) }
+  }
+
+  private fun Properties.useAndLoad(file: File): Properties {
+    FileInputStream(file).use { load(it) }
+    return this
+  }
+
+  private fun fileBase(url: String) = hash(url)
+  private fun dataFile(url: String) = File(directory, "${fileBase(url)}.bin")
+  private fun metaFile(url: String) = File(directory, "${fileBase(url)}.meta")
 
   private fun hash(s: String): String {
     val md = MessageDigest.getInstance("SHA-256")
@@ -70,18 +249,19 @@ class ImageDiskCache private constructor(
     var total = files.sumOf { it.length() }
     if (total <= maxBytes) return
 
-    // 오래된 파일부터 삭제(LRU: lastModified 오름차순)
-    val sorted = files.sortedBy { it.lastModified() }
-    val now = System.currentTimeMillis()
+    // 오래된 파일부터(data/meta 쌍을 함께 제거)
+    val grouped = files.groupBy { it.nameWithoutExtension.substringBefore('.') } // base 구하기
+    val sorted = grouped.values
+      .map { it.maxByOrNull { f -> f.lastModified() }!! } // 대표(최신 mtime) 선택
+      .sortedBy { it.lastModified() }
+
     var i = 0
     while (total > maxBytes && i < sorted.size) {
-      val f = sorted[i++]
-      total -= f.length()
-      // 너무 미래 시각으로 찍힌 파일 방어
-      if (f.lastModified() > now + TimeUnit.MINUTES.toMillis(1)) {
-        f.setLastModified(now)
-      }
-      f.delete()
+      val base = sorted[i++].nameWithoutExtension.substringBefore('.')
+      val ds = File(directory, "$base.bin")
+      val ms = File(directory, "$base.meta")
+      total -= (ds.length() + ms.length())
+      ds.delete(); ms.delete()
     }
   }
 }
