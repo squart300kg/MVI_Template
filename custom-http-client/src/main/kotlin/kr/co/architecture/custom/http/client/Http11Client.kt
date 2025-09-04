@@ -15,7 +15,7 @@ import java.util.zip.GZIPInputStream
 data class HttpResponse(
   val code: Int,
   val message: String,
-  val headers: Map<String, String> = emptyMap(),
+  val header: Map<String, String> = emptyMap(),
   val body: ByteArray = byteArrayOf()
 ) {
   override fun equals(other: Any?): Boolean {
@@ -26,7 +26,7 @@ data class HttpResponse(
 
     if (code != other.code) return false
     if (message != other.message) return false
-    if (headers != other.headers) return false
+    if (header != other.header) return false
     if (!body.contentEquals(other.body)) return false
 
     return true
@@ -35,7 +35,7 @@ data class HttpResponse(
   override fun hashCode(): Int {
     var result = code
     result = 31 * result + message.hashCode()
-    result = 31 * result + headers.hashCode()
+    result = 31 * result + header.hashCode()
     result = 31 * result + body.contentHashCode()
     return result
   }
@@ -194,7 +194,7 @@ class RawHttp11Client(
             HttpResponse(
               code = code,
               message = message,
-              headers = responseHeader,
+              header = responseHeader,
               body = bodyBytes
             )
           )

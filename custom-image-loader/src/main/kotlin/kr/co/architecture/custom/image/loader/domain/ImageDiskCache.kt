@@ -1,11 +1,10 @@
-package kr.co.architecture.custom.image.loader
+package kr.co.architecture.custom.image.loader.domain
 
 import android.content.Context
 import java.io.*
 import java.security.MessageDigest
 import java.util.Properties
 import java.util.Locale
-import java.util.concurrent.TimeUnit
 
 // --------- Cache-Control 모델 ----------
 data class CachePolicy(
@@ -77,12 +76,12 @@ class ImageDiskCache private constructor(
     return DiskEntry(bytes, m)
   }
 
-  fun putHttpResponse(url: String, body: ByteArray, headers: Map<String, String>) {
-    val policy = parseCacheControl(headers["cache-control"])
+  fun putHttpResponse(url: String, body: ByteArray, header: Map<String, String>) {
+    val policy = parseCacheControl(header["cache-control"])
     if (policy.noStore) return // 저장 금지
 
     val now = System.currentTimeMillis()
-    val age = headers["age"]?.toLongOrNull() ?: 0L
+    val age = header["age"]?.toLongOrNull() ?: 0L
     val expiresAt = when {
       policy.immutable -> Long.MAX_VALUE
       policy.maxAgeSeconds != null -> now + maxOf(0, policy.maxAgeSeconds - age) * 1000
@@ -92,20 +91,20 @@ class ImageDiskCache private constructor(
       // TODO: String들 상수로 정의
       storedAtMillis = now,
       expiresAtMillis = expiresAt,
-      etag = headers["etag"],
-      lastModified = headers["last-modified"],
+      etag = header["etag"],
+      lastModified = header["last-modified"],
       policy = policy
     )
     writeAtomic(url, body, meta)
     evictIfNeeded()
   }
 
-  fun updateMetaOn304(url: String, headers: Map<String, String>) {
+  fun updateMetaOn304(url: String, header: Map<String, String>) {
     val metaFile = metaFile(url)
     val old = readMeta(metaFile) ?: return
-    val policy = parseCacheControl(headers["cache-control"]) // 304에도 새 CC가 올 수 있음
+    val policy = parseCacheControl(header["cache-control"]) // 304에도 새 CC가 올 수 있음
     val now = System.currentTimeMillis()
-    val age = headers["age"]?.toLongOrNull() ?: 0L
+    val age = header["age"]?.toLongOrNull() ?: 0L
 
     val newExpiresAt = when {
       policy.noStore -> null
@@ -117,9 +116,9 @@ class ImageDiskCache private constructor(
     val newMeta = old.copy(
       storedAtMillis = now,
       expiresAtMillis = newExpiresAt,
-      etag = headers["etag"] ?: old.etag,
-      lastModified = headers["last-modified"] ?: old.lastModified,
-      policy = if (headers["cache-control"] != null) policy else old.policy
+      etag = header["etag"] ?: old.etag,
+      lastModified = header["last-modified"] ?: old.lastModified,
+      policy = if (header["cache-control"] != null) policy else old.policy
     )
     // TODO: CRUD하는 로직 DataLayer로 분리
     writeMeta(metaFile, newMeta)

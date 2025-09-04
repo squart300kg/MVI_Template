@@ -1,4 +1,4 @@
-package kr.co.architecture.custom.image.loader
+package kr.co.architecture.custom.image.loader.domain
 
 import android.graphics.Bitmap
 import android.util.LruCache
@@ -7,7 +7,7 @@ import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.graphics.asImageBitmap
 
 
-object MemoryImageCache {
+object ImageMemoryCache {
   private const val MAX_BYTES = 16 * 1024 * 1024
 
   private val cache = object : LruCache<String, Bitmap>(MAX_BYTES) {
@@ -20,19 +20,7 @@ object MemoryImageCache {
     cache.get(key)?.asImageBitmap()
 
   @Synchronized
-  fun getBitmap(key: String): Bitmap? =
-    cache.get(key)
-
-  @Synchronized
-  fun put(key: String, bitmap: Bitmap) {
-    cache.put(key, bitmap)
-  }
-
-  @Synchronized
   fun put(key: String, image: ImageBitmap) {
     cache.put(key, image.asAndroidBitmap())
   }
-
-  @Synchronized
-  fun clear() = cache.evictAll()
 }

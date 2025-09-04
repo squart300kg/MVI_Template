@@ -18,7 +18,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kr.co.architecture.core.ui.BaseProgressBar
 import kr.co.architecture.core.ui.PaginationLoadEffect
-import kr.co.architecture.custom.image.loader.AsyncImage
+import kr.co.architecture.custom.image.loader.ui.AsyncImage
 
 @Composable
 fun FirstScreen(
