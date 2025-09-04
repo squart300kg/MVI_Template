@@ -11,12 +11,11 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import kr.co.architecture.custom.http.client.RawHttp11Client
 import kr.co.architecture.custom.http.client.interceptor.CustomHttpLogger
-import kr.co.architecture.custom.image.loader.domain.mediator.ImageDiskCache
-import kr.co.architecture.custom.image.loader.domain.mediator.ImageMemoryCache
-import kr.co.architecture.custom.image.loader.domain.mediator.ImageMediator
+import kr.co.architecture.custom.image.loader.domain.mediator.ImageDiskCacheImpl
+import kr.co.architecture.custom.image.loader.domain.mediator.ImageMediatorImpl
+import kr.co.architecture.custom.image.loader.domain.mediator.ImageMemoryCacheImpl
 import kr.co.architecture.custom.image.loader.network.HttpClientImpl
 
-// ui/AsyncImage.kt
 @Composable
 fun AsyncImage(
   modifier: Modifier = Modifier,
@@ -33,12 +32,18 @@ fun AsyncImage(
     )
   }
   val httpClient = remember(rawClient) { HttpClientImpl(rawClient) }
-  val diskCache = remember {
-    ImageDiskCache.create(context, maxBytes = 64L * 1024 * 1024)
+  val memoryCache = remember {
+    ImageMemoryCacheImpl()
   }
-  val engine = remember {
-    ImageMediator(
-      imageMemoryCache = ImageMemoryCache,
+  val diskCache = remember {
+    ImageDiskCacheImpl(
+      context = context,
+      maxBytes = 64L * 1024 * 1024
+    )
+  }
+  val imageMediator = remember {
+    ImageMediatorImpl(
+      imageMemoryCache = memoryCache,
       imageDiskCache = diskCache,
       httpClient = httpClient
     )
@@ -46,7 +51,7 @@ fun AsyncImage(
 
   // 2) 엔진 스트림 수집 → 상태 표시
   val imageBitmap by remember(url) {
-    engine.imageFlow(url)
+    imageMediator.imageFlow(url)
   }.collectAsState(initial = null)
 
   imageBitmap?.let { img ->

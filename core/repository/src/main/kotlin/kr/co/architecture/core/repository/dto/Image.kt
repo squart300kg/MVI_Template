@@ -2,7 +2,6 @@ package kr.co.architecture.core.repository.dto
 
 import kr.co.architecture.core.network.model.ApiResponse
 import kr.co.architecture.core.network.model.PicsumImagesApiResponse
-import kr.co.architecture.custom.http.client.HttpHeaderConstants.Property.LINK
 
 data class PicsumImagesDto(
   val items: List<Image>,
@@ -29,7 +28,8 @@ data class PicsumImagesDto(
             url = it.url
           )
         },
-        hasNext = apiResponse.header[LINK]
+        // TODO: 상수로 잘 보관하는법 찾기
+        hasNext = apiResponse.header["link"]
           ?.contains("rel=\"next\"") == true
       )
   }

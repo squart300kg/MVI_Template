@@ -1,221 +1,96 @@
 package kr.co.architecture.custom.image.loader.domain.mediator
 
-import android.content.Context
-import kr.co.architecture.custom.http.client.HttpHeaderConstants.Property.CACHE_CONTROL
-import kr.co.architecture.custom.http.client.HttpHeaderConstants.Property.ETAG
-import kr.co.architecture.custom.http.client.HttpHeaderConstants.Property.LAST_MODIFIED
-import kr.co.architecture.custom.http.client.HttpHeaderConstants.Property.AGE
-import kr.co.architecture.custom.image.loader.domain.model.DiskEntry
 import kr.co.architecture.custom.image.loader.domain.model.Meta
-import kr.co.architecture.custom.image.loader.domain.model.Meta.CachePolicy
-import java.io.*
-import java.security.MessageDigest
-import java.util.Properties
-import java.util.Locale
 
-class ImageDiskCache private constructor(
-  private val directory: File,
-  private val maxBytes: Long
-) {
+/**
+ * 영속(디스크) 이미지 캐시 인터페이스.
+ *
+ * 개요
+ * - URL을 키로 **원본 바이트(body)** 와 **메타데이터([Meta])** 를 저장/조회합니다.
+ * - 200 응답은 본문+메타를 저장하고, 304 응답은 **메타만** 갱신합니다.
+ * - LRU 기반의 용량 관리(예: 64MB)와 **원자적 쓰기**(tmp → rename)를 권장합니다.
+ *
+ * 계약(Contract)
+ * - **스레드 안전**해야 합니다. (다중 코루틴/스레드 접근 가능)
+ * - 메서드는 **블로킹 디스크 I/O**를 수행할 수 있으므로 호출 측에서 `Dispatchers.IO`에서 실행하세요.
+ * - `header`의 키는 **소문자-하이픈** 형식으로 정규화되어 있다고 가정합니다
+ *   (예: `"cache-control"`, `"etag"`, `"last-modified"`, `"age"`).
+ * - `Cache-Control: no-store` 응답은 저장하지 않습니다.
+ * - `max-age`/`immutable`/`age` 등을 활용해 만료 시각을 계산하고,
+ *   `stale-while-revalidate`/`stale-if-error` 값도 메타에 반영합니다.
+ *
+ * 사용 시나리오(일반적 구현 기준)
+ * 1) 네트워크 200:
+ *    - `putHttpResponse(url, body, header)` 호출 → 본문과 메타 저장
+ * 2) 네트워크 304:
+ *    - `updateMetaOn304(url, header)` 호출 → 메타만 갱신(본문 유지)
+ * 3) 조회:
+ *    - `getEntry(url)` → `null`(미스/손상) 또는 [DiskEntry] 반환
+ *
+ * 에러 처리 권장
+ * - `getEntry`는 예외 대신 `null`을 반환(실패-소거)하도록 합니다.
+ * - `putHttpResponse`/`updateMetaOn304`는 구현에 따라 내부 처리/로그 후 무시 또는 예외 전파를 일관되게 택하세요.
+ *
+ * 예시
+ * ```
+ * // 200 응답 처리
+ * imageDiskCache.putHttpResponse(url, body, mergedHeader)
+ *
+ * // 304 응답 처리
+ * imageDiskCache.updateMetaOn304(url, responseHeader)
+ *
+ * // 조회
+ * val entry = imageDiskCache.getEntry(url)
+ * if (entry != null && entry.meta.isFresh()) {
+ *   // entry.bytes를 디코드하여 사용
+ * }
+ * ```
+ */
+interface ImageDiskCache {
 
-  companion object {
-    fun create(
-      context: Context,
-      subDirectory: String = "gallery-app-disk-cache",
-      maxBytes: Long = 64L * 1024 * 1024
-    ): ImageDiskCache {
-      val file = File(context.cacheDir, subDirectory).apply { mkdirs() }
-      return ImageDiskCache(file, maxBytes)
-    }
-  }
+  /**
+   * 디스크에서 [url]에 해당하는 엔트리를 조회합니다.
+   *
+   * 구현 가이드:
+   * - 데이터 파일과 메타 파일이 모두 존재하고 파싱 가능할 때 [DiskEntry]를 반환합니다.
+   * - LRU 최신화를 위해 파일의 `lastModified`를 touch(접근 시각 갱신)하는 것을 권장합니다.
+   * - 파일 누락/손상/파싱 실패 등 오류는 **예외 대신** `null`을 반환하세요.
+   */
+  fun getEntry(url: String): DiskEntry?
 
-  // ---- 외부에 노출하는 API ----
-  fun getEntry(url: String): DiskEntry? {
-    val data = dataFile(url)
-    val meta = metaFile(url)
-    if (!data.exists() || !meta.exists()) return null
-    val m = readMeta(meta) ?: return null
-    val bytes = runCatching { data.readBytes() }.getOrNull() ?: return null
-    val now = System.currentTimeMillis()
-    data.setLastModified(now)
-    meta.setLastModified(now)
-    return DiskEntry(bytes, m)
-  }
+  /**
+   * HTTP **200(OK)** 응답 기반으로 [url]의 본문 [body]와 [header]를 저장합니다.
+   *
+   * 구현 가이드:
+   * - `Cache-Control: no-store`면 저장하지 않습니다.
+   * - `Cache-Control(max-age, immutable)` + `Age`로 만료 시각을 계산해 [Meta.expiresAtMillis]에 기록합니다.
+   * - `ETag`/`Last-Modified`를 메타에 기록하고, `stale-while-revalidate`/`stale-if-error` 값도 반영합니다.
+   * - 부분 손상 방지를 위해 **원자적 쓰기**(tmp → rename)를 사용하고, 저장 후 필요 시 **eviction**을 수행하세요.
+   *
+   * @param url 캐시 키로 사용할 절대 URL(파일 매핑 시 해시 사용 권장)
+   * @param body HTTP 200 응답의 원본 바이트
+   * @param header 요청/응답을 병합한 최종 헤더 맵(키는 소문자-하이픈)
+   */
+  fun putHttpResponse(url: String, body: ByteArray, header: Map<String, String>)
 
-  fun putHttpResponse(url: String, body: ByteArray, header: Map<String, String>) {
-    val policy = parseCacheControl(header[CACHE_CONTROL])
-    if (policy.noStore) return // 저장 금지
+  /**
+   * HTTP **304(Not Modified)** 응답을 반영하여 [url]의 **메타데이터만** 갱신합니다.
+   *
+   * 구현 가이드:
+   * - 본문 파일은 변경하지 않고, 304 응답의 `Cache-Control`/`Age`로 만료 시각을 재계산해 메타만 업데이트합니다.
+   * - 304에도 새로운 `Cache-Control`이 올 수 있으므로 있으면 **새 정책을 우선 적용**하세요.
+   * - LRU 최신화를 위해 데이터/메타 파일의 `lastModified`를 touch하는 것을 권장합니다.
+   *
+   * @param url 캐시 키로 사용할 절대 URL
+   * @param header 304 응답 헤더(키는 소문자-하이픈)
+   */
+  fun updateMetaOn304(url: String, header: Map<String, String>)
 
-    val now = System.currentTimeMillis()
-    val age = header["age"]?.toLongOrNull() ?: 0L
-    val expiresAt = when {
-      policy.immutable -> Long.MAX_VALUE
-      policy.maxAgeSeconds != null -> now + maxOf(0, policy.maxAgeSeconds - age) * 1000
-      else -> null // 명시적 만료 없음 → 항상 재검증 대상으로 취급
-    }
-    val meta = Meta(
-      // TODO: String들 상수로 정의
-      storedAtMillis = now,
-      expiresAtMillis = expiresAt,
-      etag = header[ETAG],
-      lastModified = header[LAST_MODIFIED],
-      policy = policy
-    )
-    writeAtomic(url, body, meta)
-    evictIfNeeded()
-  }
-
-  fun updateMetaOn304(url: String, header: Map<String, String>) {
-    val metaFile = metaFile(url)
-    val old = readMeta(metaFile) ?: return
-    val policy = parseCacheControl(header[CACHE_CONTROL])
-    val now = System.currentTimeMillis()
-    val age = header[AGE]?.toLongOrNull() ?: 0L
-
-    val newExpiresAt = when {
-      policy.noStore -> null
-      policy.immutable -> Long.MAX_VALUE
-      policy.maxAgeSeconds != null -> now + maxOf(0, policy.maxAgeSeconds - age) * 1000
-      else -> old.expiresAtMillis
-    }
-
-    val newMeta = old.copy(
-      storedAtMillis = now,
-      expiresAtMillis = newExpiresAt,
-      etag = header[ETAG] ?: old.etag,
-      lastModified = header[LAST_MODIFIED] ?: old.lastModified,
-      policy = if (header[CACHE_CONTROL] != null) policy else old.policy
-    )
-    writeMeta(metaFile, newMeta)
-    dataFile(url).setLastModified(now)
-    metaFile.setLastModified(now)
-  }
-
-  // ---- 내부 구현 ----
-  private fun writeAtomic(url: String, bytes: ByteArray, meta: Meta) {
-    val base = hash(url)
-    val dataTmp = File(directory, "$base.bin.tmp")
-    val metaTmp = File(directory, "$base.meta.tmp")
-    val dataDst = File(directory, "$base.bin")
-    val metaDst = File(directory, "$base.meta")
-
-    runCatching {
-      FileOutputStream(dataTmp).use { it.write(bytes) }
-      writeMeta(metaTmp, meta)
-
-      // 원자적 교체
-      if (!dataTmp.renameTo(dataDst)) { dataDst.delete(); dataTmp.renameTo(dataDst) }
-      if (!metaTmp.renameTo(metaDst)) { metaDst.delete(); metaTmp.renameTo(metaDst) }
-      val now = System.currentTimeMillis()
-      dataDst.setLastModified(now)
-      metaDst.setLastModified(now)
-      evictIfNeeded()
-    }.onFailure {
-      dataTmp.delete(); metaTmp.delete()
-    }
-  }
-
-  private fun parseCacheControl(header: String?): CachePolicy {
-    if (header.isNullOrBlank()) return CachePolicy()
-    var noStore = false
-    var noCache = false
-    var mustRevalidate = false
-    var immutable = false
-    var maxAge: Long? = null
-    var swr: Long? = null
-    var sie: Long? = null
-
-    header.split(',').forEach { raw ->
-      val token = raw.trim().lowercase(Locale.ROOT)
-      when {
-        token == "no-store" -> noStore = true
-        token == "no-cache" -> noCache = true
-        token == "must-revalidate" -> mustRevalidate = true
-        token == "immutable" -> immutable = true
-        token.startsWith("max-age=") -> maxAge = token.substringAfter('=').toLongOrNull()
-        token.startsWith("stale-while-revalidate=") -> swr = token.substringAfter('=').toLongOrNull()
-        token.startsWith("stale-if-error=") -> sie = token.substringAfter('=').toLongOrNull()
-      }
-    }
-    return CachePolicy(noStore, noCache, mustRevalidate, immutable, maxAge, swr, sie)
-  }
-
-  private fun readMeta(file: File): Meta? = runCatching {
-    Properties().useAndLoad(file).let { property ->
-      Meta(
-        storedAtMillis = property.getProperty("storedAt").toLong(),
-        expiresAtMillis = property.getProperty("expiresAt")?.toLong(),
-        etag = property.getProperty("etag"),
-        lastModified = property.getProperty("lastModified"),
-        policy = CachePolicy(
-          noStore = property.getProperty("cc.noStore") == "1",
-          noCache = property.getProperty("cc.noCache") == "1",
-          mustRevalidate = property.getProperty("cc.mustRevalidate") == "1",
-          immutable = property.getProperty("cc.immutable") == "1",
-          maxAgeSeconds = property.getProperty("cc.maxAge")?.toLong(),
-          staleWhileRevalidateSeconds = property.getProperty("cc.swr")?.toLong(),
-          staleIfErrorSeconds = property.getProperty("cc.sie")?.toLong()
-        )
-      )
-    }
-  }.getOrNull()
-
-  private fun writeMeta(file: File, meta: Meta) {
-    val p = Properties().apply {
-      setProperty("storedAt", meta.storedAtMillis.toString())
-      meta.expiresAtMillis?.let { setProperty("expiresAt", it.toString()) }
-      meta.etag?.let { setProperty("etag", it) }
-      meta.lastModified?.let { setProperty("lastModified", it) }
-      setProperty("cc.noStore", if (meta.policy.noStore) "1" else "0")
-      setProperty("cc.noCache", if (meta.policy.noCache) "1" else "0")
-      setProperty("cc.mustRevalidate", if (meta.policy.mustRevalidate) "1" else "0")
-      setProperty("cc.immutable", if (meta.policy.immutable) "1" else "0")
-      meta.policy.maxAgeSeconds?.let { setProperty("cc.maxAge", it.toString()) }
-      meta.policy.staleWhileRevalidateSeconds?.let { setProperty("cc.swr", it.toString()) }
-      meta.policy.staleIfErrorSeconds?.let { setProperty("cc.sie", it.toString()) }
-    }
-    FileOutputStream(file).use { out -> p.store(out, null) }
-  }
-
-  private fun Properties.useAndLoad(file: File): Properties {
-    FileInputStream(file).use { load(it) }
-    return this
-  }
-
-  private fun fileBase(url: String) = hash(url)
-  private fun dataFile(url: String) = File(directory, "${fileBase(url)}.bin")
-  private fun metaFile(url: String) = File(directory, "${fileBase(url)}.meta")
-
-  private fun hash(s: String): String {
-    val md = MessageDigest.getInstance("SHA-256")
-    val bytes = md.digest(s.toByteArray(Charsets.UTF_8))
-    val sb = StringBuilder(bytes.size * 2)
-    for (b in bytes) {
-      val v = b.toInt() and 0xFF
-      if (v < 16) sb.append('0')
-      sb.append(Integer.toHexString(v))
-    }
-    return sb.toString()
-  }
-
-  private fun evictIfNeeded() {
-    val files = directory.listFiles() ?: return
-    var total = files.sumOf { it.length() }
-    if (total <= maxBytes) return
-
-    // 오래된 파일부터(data/meta 쌍을 함께 제거)
-    val grouped = files.groupBy { it.nameWithoutExtension.substringBefore('.') } // base 구하기
-    val sorted = grouped.values
-      .map { it.maxByOrNull { f -> f.lastModified() }!! } // 대표(최신 mtime) 선택
-      .sortedBy { it.lastModified() }
-
-    var i = 0
-    while (total > maxBytes && i < sorted.size) {
-      val base = sorted[i++].nameWithoutExtension.substringBefore('.')
-      val ds = File(directory, "$base.bin")
-      val ms = File(directory, "$base.meta")
-      total -= (ds.length() + ms.length())
-      ds.delete(); ms.delete()
-    }
-  }
+  /**
+   * 디스크 캐시 엔트리.
+   *
+   * @property bytes 저장된 원본 바이트(보통 HTTP 200 바디)
+   * @property meta  저장 시점/만료/검증 토큰(ETag/Last-Modified)/캐시 정책 파생값을 담은 메타데이터
+   */
+  data class DiskEntry(val bytes: ByteArray, val meta: Meta)
 }
