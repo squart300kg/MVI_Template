@@ -2,6 +2,14 @@ package kr.co.architecture.custom.http.client
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import kr.co.architecture.custom.http.client.HttpHeaderConstants.Property.ACCEPT
+import kr.co.architecture.custom.http.client.HttpHeaderConstants.Property.ACCEPT_ENCODING
+import kr.co.architecture.custom.http.client.HttpHeaderConstants.Property.CONNECTION
+import kr.co.architecture.custom.http.client.HttpHeaderConstants.Property.HOST
+import kr.co.architecture.custom.http.client.HttpHeaderConstants.Property.USER_AGENT
+import kr.co.architecture.custom.http.client.HttpHeaderConstants.Value.GZIP
+import kr.co.architecture.custom.http.client.HttpHeaderConstants.Value.IMAGE_ALL
+import kr.co.architecture.custom.http.client.HttpHeaderConstants.Value.KEEP_ALIVE
 import kr.co.architecture.custom.http.client.interceptor.CustomHttpLogger
 import kr.co.architecture.custom.http.client.model.Bytes
 import kr.co.architecture.custom.http.client.model.toBytes
@@ -22,10 +30,10 @@ data class HttpResponse(
 )
 
 class RawHttp11Client private constructor(
-  private val userAgent: String = "RawHttp11/0.1",
-  private val readTimeoutMs: Int = 10_000,
-  private val maxRedirects: Int = 5,
-  private val httpLogger: CustomHttpLogger? = null
+  private val userAgent: String,
+  private val readTimeoutMs: Int,
+  private val maxRedirects: Int,
+  private val httpLogger: CustomHttpLogger?
 ) {
 
   companion object {
@@ -80,9 +88,7 @@ class RawHttp11Client private constructor(
   ) {
     withContext(Dispatchers.IO) {
       try {
-        // TODO: 필요한가? 만약 설정한다 헀을 때, maxRedirects의 설정 기준은?
-        //  고민해보기
-        require(redirectDepth <= maxRedirects) { "Too many redirects" }
+        require(redirectDepth <= maxRedirects) { "redirects count is max($maxRedirects)" }
         val startNs = System.nanoTime()
 
         val host = url.host
@@ -97,11 +103,11 @@ class RawHttp11Client private constructor(
           // TODO: 왜 LinkedMap을 썼는지?
           //  단순 StringBuilder로
           val requestHeader = linkedMapOf(
-            HttpHeaderConstants.Property.HOST to host,
-            HttpHeaderConstants.Property.USER_AGENT to userAgent,
-            HttpHeaderConstants.Property.ACCEPT to "image/*", // ★ 이미지 요청에 적합
-            HttpHeaderConstants.Property.ACCEPT_ENCODING to HttpHeaderConstants.Value.GZIP,
-            HttpHeaderConstants.Property.CONNECTION to HttpHeaderConstants.Value.KEEP_ALIVE
+            HOST to host,
+            USER_AGENT to userAgent,
+            ACCEPT to IMAGE_ALL,
+            ACCEPT_ENCODING to GZIP,
+            CONNECTION to KEEP_ALIVE
           ).apply {
             if (body != null) put(HttpHeaderConstants.Property.CONTENT_LENGTH, "${body.size}")
             extraHeaders.forEach { (k, v) -> putIfAbsent(k, v) }

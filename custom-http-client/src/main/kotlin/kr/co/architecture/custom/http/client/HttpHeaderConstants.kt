@@ -38,5 +38,6 @@ object HttpHeaderConstants {
     const val CLOSE = "close"
     const val KEEP_ALIVE = "keep-alive"
     const val CHUNKED = "chunked"
+    const val IMAGE_ALL = "image/*"
   }
 }
