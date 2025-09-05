@@ -1,5 +1,6 @@
 package kr.co.architecture.custom.image.loader.domain.mediator
 
+import kr.co.architecture.custom.http.client.model.Bytes
 import kr.co.architecture.custom.image.loader.domain.model.Meta
 
 /**
@@ -17,7 +18,7 @@ interface ImageDiskCache {
   /**
    * 디스크에서 [url]에 해당하는 엔트리를 [DiskEntry]를 조회합니다.
    */
-  fun getEntry(url: String): DiskEntry?
+  fun getCachedEntry(url: String): DiskEntry?
 
   /**
    * HTTP **200(OK)** 응답 기반으로 [url]의 본문 [body]와 [header]를 저장합니다.
@@ -40,5 +41,5 @@ interface ImageDiskCache {
    * @property bytes 저장된 원본 바이트(보통 HTTP 200 바디)
    * @property meta  저장 시점/만료/검증 토큰(ETag/Last-Modified)/캐시 정책 파생값을 담은 메타데이터
    */
-  data class DiskEntry(val bytes: ByteArray, val meta: Meta)
+  data class DiskEntry(val bytes: Bytes, val meta: Meta)
 }

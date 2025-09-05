@@ -3,7 +3,6 @@ package kr.co.architecture.custom.image.loader.domain.mediator
 import android.content.Context
 import kr.co.architecture.custom.http.client.HttpHeaderConstants.Property.AGE
 import kr.co.architecture.custom.http.client.HttpHeaderConstants.Property.CACHE_CONTROL
-import kr.co.architecture.custom.http.client.HttpHeaderConstants.Property.LAST_MODIFIED
 import kr.co.architecture.custom.http.client.HttpHeaderConstants.Value.IMMUTABLE
 import kr.co.architecture.custom.http.client.HttpHeaderConstants.Value.MAX_AGE
 import kr.co.architecture.custom.http.client.HttpHeaderConstants.Value.MUST_REVALIDATE
@@ -11,12 +10,14 @@ import kr.co.architecture.custom.http.client.HttpHeaderConstants.Value.NO_CACHE
 import kr.co.architecture.custom.http.client.HttpHeaderConstants.Value.NO_STORE
 import kr.co.architecture.custom.http.client.HttpHeaderConstants.Value.STALE_IF_ERROR
 import kr.co.architecture.custom.http.client.HttpHeaderConstants.Value.STALE_WHILE_REVALIDATE
+import kr.co.architecture.custom.http.client.model.toBytes
 import kr.co.architecture.custom.image.loader.domain.mediator.ImageDiskCache.DiskEntry
 import kr.co.architecture.custom.image.loader.domain.model.DiskCacheConstants.Formatter._BIN
 import kr.co.architecture.custom.image.loader.domain.model.DiskCacheConstants.Formatter._META
 import kr.co.architecture.custom.image.loader.domain.model.DiskCacheConstants.Formatter._TEMP
 import kr.co.architecture.custom.image.loader.domain.model.DiskCacheConstants.Key.CC_IMMUTABLE
 import kr.co.architecture.custom.image.loader.domain.model.DiskCacheConstants.Key.CC_MAX_AGE
+import kr.co.architecture.custom.image.loader.domain.model.DiskCacheConstants.Key.LAST_MODIFIED
 import kr.co.architecture.custom.image.loader.domain.model.DiskCacheConstants.Key.CC_MUST_REVALIDATE
 import kr.co.architecture.custom.image.loader.domain.model.DiskCacheConstants.Key.CC_NO_CACHE
 import kr.co.architecture.custom.image.loader.domain.model.DiskCacheConstants.Key.CC_NO_STORE
@@ -29,9 +30,8 @@ import kr.co.architecture.custom.image.loader.domain.model.DiskCacheConstants.Va
 import kr.co.architecture.custom.image.loader.domain.model.DiskCacheConstants.Value.TRUE
 import kr.co.architecture.custom.image.loader.domain.model.Meta
 import kr.co.architecture.custom.image.loader.domain.model.Meta.CachePolicy
+import kr.co.architecture.custom.image.loader.util.hashSha256
 import java.io.File
-import java.io.FileOutputStream
-import java.security.MessageDigest
 import java.util.Locale
 import java.util.Properties
 
@@ -64,16 +64,24 @@ class ImageDiskCacheImpl private constructor(
   private var directory =
     File(context.cacheDir, subDirectory).apply { mkdirs() }
 
-  override fun getEntry(url: String): DiskEntry? {
-    val data = File(directory, "${hash(url)}$_BIN")
-    val meta = File(directory, "${hash(url)}$_META")
-    if (!data.exists() || !meta.exists()) return null
-    val m = readMeta(meta) ?: return null
-    val bytes = runCatching { data.readBytes() }.getOrNull() ?: return null
-    val now = System.currentTimeMillis()
-    data.setLastModified(now)
-    meta.setLastModified(now)
-    return DiskEntry(bytes, m)
+  override fun getCachedEntry(url: String): DiskEntry? {
+    val dataFile = File(directory, "${hashSha256(url)}$_BIN")
+    val metaFile = File(directory, "${hashSha256(url)}$_META")
+    if (!dataFile.exists() || !metaFile.exists()) return null
+
+    val meta = readMeta(metaFile) ?: return null
+
+    val bytes = runCatching { dataFile.readBytes() }.getOrNull() ?: return null
+
+    System.currentTimeMillis().also { now ->
+      dataFile.setLastModified(now)
+      metaFile.setLastModified(now)
+    }
+
+    return DiskEntry(
+      bytes = bytes.toBytes(),
+      meta = meta
+    )
   }
 
   override fun cacheBodyAndMeta(url: String, body: ByteArray, header: Map<String, String>) {
@@ -87,19 +95,23 @@ class ImageDiskCacheImpl private constructor(
       policy.maxAgeSeconds != null -> now + maxOf(0, policy.maxAgeSeconds - age) * 1000
       else -> null // 명시적 만료 없음 → 항상 재검증 대상으로 취급
     }
-    val meta = Meta(
-      storedAtMillis = now,
-      expiresAtMillis = expiresAt,
-      etag = header[ETAG],
-      lastModified = header[LAST_MODIFIED],
-      policy = policy
+
+    writeAtomic(
+      url = url,
+      bytes = body,
+      meta = Meta(
+        storedAtMillis = now,
+        expiresAtMillis = expiresAt,
+        etag = header[ETAG],
+        lastModified = header[LAST_MODIFIED],
+        policy = policy
+      )
     )
-    writeAtomic(url, body, meta)
-    evictIfNeeded()
+    removeByLru()
   }
 
   override fun cacheMeta(url: String, header: Map<String, String>) {
-    val metaFile = File(directory, "${hash(url)}$_META")
+    val metaFile = File(directory, "${hashSha256(url)}$_META")
     val old = readMeta(metaFile) ?: return
     val policy = parseCacheControl(header[CACHE_CONTROL]) ?: return
     val now = System.currentTimeMillis()
@@ -120,34 +132,38 @@ class ImageDiskCacheImpl private constructor(
       policy = if (header[CACHE_CONTROL] != null) policy else old.policy
     )
     writeMeta(metaFile, newMeta)
-    File(directory, "${hash(url)}$_BIN").setLastModified(now)
+    File(directory, "${hashSha256(url)}$_BIN").setLastModified(now)
     metaFile.setLastModified(now)
   }
 
   private fun writeAtomic(url: String, bytes: ByteArray, meta: Meta) {
-    val base = hash(url)
+    val base = hashSha256(url)
     val dataTmp = File(directory, "$base$_BIN$_TEMP")
     val metaTmp = File(directory, "$base$_META$_TEMP")
     val dataDst = File(directory, "$base$_BIN")
     val metaDst = File(directory, "$base$_META")
 
     runCatching {
-      FileOutputStream(dataTmp).use { it.write(bytes) }
+      dataTmp.outputStream().use { it.write(bytes) }
       writeMeta(metaTmp, meta)
 
       // 원자적 교체
       if (!dataTmp.renameTo(dataDst)) {
-        dataDst.delete(); dataTmp.renameTo(dataDst)
+        dataDst.delete()
+        dataTmp.renameTo(dataDst)
       }
       if (!metaTmp.renameTo(metaDst)) {
-        metaDst.delete(); metaTmp.renameTo(metaDst)
+        metaDst.delete()
+        metaTmp.renameTo(metaDst)
       }
-      val now = System.currentTimeMillis()
-      dataDst.setLastModified(now)
-      metaDst.setLastModified(now)
-      evictIfNeeded()
+      System.currentTimeMillis().also { now ->
+        dataDst.setLastModified(now)
+        metaDst.setLastModified(now)
+      }
+      removeByLru()
     }.onFailure {
-      dataTmp.delete(); metaTmp.delete()
+      dataTmp.delete()
+      metaTmp.delete()
     }
   }
 
@@ -229,38 +245,31 @@ class ImageDiskCacheImpl private constructor(
       }
   }
 
-
-  private fun hash(s: String): String {
-    val md = MessageDigest.getInstance("SHA-256")
-    val bytes = md.digest(s.toByteArray(Charsets.UTF_8))
-    val sb = StringBuilder(bytes.size * 2)
-    for (b in bytes) {
-      val v = b.toInt() and 0xFF
-      if (v < 16) sb.append('0')
-      sb.append(Integer.toHexString(v))
-    }
-    return sb.toString()
-  }
-
-  private fun evictIfNeeded() {
-    val files = directory.listFiles() ?: return
-    var total = files.sumOf { it.length() }
+  private fun removeByLru() {
+    val files = directory.listFiles().orEmpty()
+    var total = files.sumOf(File::length)
     if (total <= maxBytes) return
 
-    // 오래된 파일부터(data/meta 쌍을 함께 제거)
-    val grouped = files.groupBy { it.nameWithoutExtension.substringBefore('.') } // base 구하기
+    // 오래된 파일부터 (data/meta 쌍을 함께 제거)
+    val grouped = files.groupBy { it.nameWithoutExtension.substringBefore('.') }
     val sorted = grouped.values
-      // TODO: 강제언랩핑 제거
-      .map { it.maxByOrNull { f -> f.lastModified() }!! } // 대표(최신 mtime) 선택
-      .sortedBy { it.lastModified() }
+      .mapNotNull { group -> group.maxByOrNull(File::lastModified) } // 대표(최신 mtime) 선택
+      .sortedBy(File::lastModified)
 
-    var i = 0
-    while (total > maxBytes && i < sorted.size) {
-      val base = sorted[i++].nameWithoutExtension.substringBefore('.')
-      val ds = File(directory, "$base$_BIN")
-      val ms = File(directory, "$base$_META")
-      total -= (ds.length() + ms.length())
-      ds.delete(); ms.delete()
+    for (rep in sorted) {
+      if (total <= maxBytes) break
+      val base = rep.nameWithoutExtension.substringBefore('.')
+      val data = File(directory, "$base$_BIN")
+      val meta = File(directory, "$base$_META")
+
+      val reduced =
+        (data.takeIf { it.exists() }?.length() ?: 0L) +
+          (meta.takeIf { it.exists() }?.length() ?: 0L)
+
+      data.delete()
+      meta.delete()
+      total -= reduced
     }
   }
+
 }

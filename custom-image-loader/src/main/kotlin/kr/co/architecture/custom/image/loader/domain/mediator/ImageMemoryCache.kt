@@ -22,10 +22,10 @@ interface ImageMemoryCache {
   fun get(key: String): ImageBitmap?
 
   /**
-   * [key]로 [image]를 저장합니다.
+   * [key]로 [image]를 캐싱합니다.
    *
-   * - 동일 키가 이미 존재하면 새 값으로 교체될 수 있습니다.
-   * - 캐시 정책/LRU에 따라 다른 항목이 퇴출될 수 있습니다.
+   * - 동일 키 이미 존재 시, 새 값으로 교체됩니다.
+   * - LRU캐시 정책을 따릅니다.
    */
-  fun put(key: String, image: ImageBitmap)
+  fun cache(key: String, image: ImageBitmap)
 }

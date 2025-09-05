@@ -36,7 +36,7 @@ class ImageMemoryCacheImpl private constructor(
     cache.get(key)?.asImageBitmap()
 
   @Synchronized
-  override fun put(key: String, image: ImageBitmap) {
+  override fun cache(key: String, image: ImageBitmap) {
     cache.put(key, image.asAndroidBitmap())
   }
 }

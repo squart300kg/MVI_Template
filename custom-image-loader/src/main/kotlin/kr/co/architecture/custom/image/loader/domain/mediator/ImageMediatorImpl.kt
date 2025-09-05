@@ -31,12 +31,12 @@ class ImageMediatorImpl(
       imageMemoryCache?.get(url)?.let { emit(ImageState.Success(it)); return@flow }
 
       // 2) 디스크 캐시
-      val cachedDiskEntry = imageDiskCache?.getEntry(url)
+      val cachedDiskEntry = imageDiskCache?.getCachedEntry(url)
       if (cachedDiskEntry != null) {
-        val diskCachedImageBitmap = cachedDiskEntry.bytes.decodeToImageBitmap()
+        val diskCachedImageBitmap = cachedDiskEntry.bytes.data.decodeToImageBitmap()
         if (diskCachedImageBitmap != null) {
           if (cachedDiskEntry.meta.isFresh(now)) {
-            imageMemoryCache?.put(url, diskCachedImageBitmap)
+            imageMemoryCache?.cache(url, diskCachedImageBitmap)
             emit(ImageState.Success(diskCachedImageBitmap))
             return@flow
           }
@@ -45,12 +45,12 @@ class ImageMediatorImpl(
           //        true -> 캐싱된 이미지를 메모리 캐싱 후, 다운스트림. 그 후, SWR 재검증
           //        false -> 네트워크 호출
           if (cachedDiskEntry.meta.canServeStaleWhileRevalidate(now)) {
-            imageMemoryCache?.put(url, diskCachedImageBitmap)
+            imageMemoryCache?.cache(url, diskCachedImageBitmap)
             emit(ImageState.Success(diskCachedImageBitmap))
 
             val freshImageBytes = revalidateWhenSWR(url, cachedDiskEntry.meta) ?: return@flow
             val freshImageBitmap = freshImageBytes.decodeToImageBitmap() ?: return@flow
-            imageMemoryCache?.put(url, freshImageBitmap)
+            imageMemoryCache?.cache(url, freshImageBitmap)
             emit(ImageState.Success(freshImageBitmap))
             return@flow
           }
@@ -74,7 +74,7 @@ class ImageMediatorImpl(
         // 200: 디코딩 -> 메모리/디스크 캐싱 -> 이미지 발행
         apiResponse.code == HttpStatusCode.SUCCESS && apiResponse.body != null -> {
           val imageBitmap = apiResponse.body.data.decodeToImageBitmap() ?: return@flow
-          imageMemoryCache?.put(url, imageBitmap)
+          imageMemoryCache?.cache(url, imageBitmap)
           imageDiskCache?.cacheBodyAndMeta(
             url = url,
             body = apiResponse.body.data,
@@ -87,8 +87,8 @@ class ImageMediatorImpl(
         }
         // 304: 디코딩 -> 메모리 캐싱/디스크 캐싱(메타만 갱신) -> 이미지 발행
         apiResponse.code == HttpStatusCode.NOT_MODIFIED && cachedDiskEntry != null -> {
-          val imageBitmap = cachedDiskEntry.bytes.decodeToImageBitmap() ?: return@flow
-          imageMemoryCache?.put(url, imageBitmap)
+          val imageBitmap = cachedDiskEntry.bytes.data.decodeToImageBitmap() ?: return@flow
+          imageMemoryCache?.cache(url, imageBitmap)
           imageDiskCache.cacheMeta(
             url = url,
             header = apiResponse.header
@@ -97,8 +97,8 @@ class ImageMediatorImpl(
         }
         // 서버 에러(eg., 40x, 50x..): soe 범위 내, 메모리 캐싱 -> 이미지 발행
         cachedDiskEntry?.meta?.canServeStaleOnError() == true -> {
-          val imageBitmap = cachedDiskEntry.bytes.decodeToImageBitmap() ?: return@flow
-          imageMemoryCache?.put(url, imageBitmap)
+          val imageBitmap = cachedDiskEntry.bytes.data.decodeToImageBitmap() ?: return@flow
+          imageMemoryCache?.cache(url, imageBitmap)
           emit(ImageState.Success(imageBitmap))
         }
         else -> emit(ImageState.Failure)
