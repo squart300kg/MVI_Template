@@ -1,5 +1,6 @@
 package kr.co.architecture.core.network.model
 
+import com.google.gson.Gson
 import com.google.gson.annotations.SerializedName
 import kr.co.architecture.core.network.model.PicsumImagesApiResponse.PicsumImagesApiResponseItem
 import kr.co.architecture.core.network.model.PicsumImagesApiResponseField.AUTHOR
@@ -8,6 +9,7 @@ import kr.co.architecture.core.network.model.PicsumImagesApiResponseField.HEIGHT
 import kr.co.architecture.core.network.model.PicsumImagesApiResponseField.WIDTH
 import kr.co.architecture.core.network.model.PicsumImagesApiResponseField.ID
 import kr.co.architecture.core.network.model.PicsumImagesApiResponseField.URL
+import java.nio.charset.Charset
 
 class PicsumImagesApiResponse : ArrayList<PicsumImagesApiResponseItem>() {
   data class PicsumImagesApiResponseItem(
@@ -24,6 +26,12 @@ class PicsumImagesApiResponse : ArrayList<PicsumImagesApiResponseItem>() {
     @SerializedName(URL)
     val url: String
   )
+  companion object {
+    fun mapperToApiResponse(byteArray: ByteArray) = Gson().fromJson(
+      byteArray.toString(Charset.forName("UTF-8")),
+      PicsumImagesApiResponse::class.java
+    )
+  }
 }
 
 internal object PicsumImagesApiResponseField {

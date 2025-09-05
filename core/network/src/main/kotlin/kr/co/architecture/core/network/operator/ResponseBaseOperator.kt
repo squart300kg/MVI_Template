@@ -7,7 +7,7 @@ import kr.co.architecture.core.network.model.PicsumErrorApiResponse
 import kr.co.architecture.core.network.model.PicsumImagesApiResponse
 import java.net.UnknownHostException
 
-fun ApiResponse<PicsumImagesApiResponse>.getOrThrowAppFailure(): ApiResponse.Success<PicsumImagesApiResponse> =
+fun ApiResponse<PicsumImagesApiResponse, PicsumErrorApiResponse>.getOrThrowAppFailure(): ApiResponse.Success<PicsumImagesApiResponse> =
   when (this) {
     is ApiResponse.Success -> this
     is ApiResponse.Error -> {
@@ -15,13 +15,7 @@ fun ApiResponse<PicsumImagesApiResponse>.getOrThrowAppFailure(): ApiResponse.Suc
        * API의 error case맞게 모델 파싱
        * 실무 진행 시엔, 실제 발생 가능한 error case를 해당 블럭에서 정의 및 분기처리
        */
-      val errorApiResponse = try {
-        Gson().fromJson(errorBody, PicsumErrorApiResponse::class.java)
-      } catch (e: Exception) { throw e }
-      throw ArchitectureSampleHttpFailure.Error(
-        code = errorApiResponse.code,
-        message = errorApiResponse.message
-      )
+      throw this.data
     }
     is ApiResponse.Exception -> {
       /**
