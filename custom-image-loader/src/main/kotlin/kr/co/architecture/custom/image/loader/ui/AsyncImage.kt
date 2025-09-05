@@ -35,9 +35,9 @@ fun AsyncImage(
       httpLogger = CustomHttpLogger()
     )
   }
-  val httpClient = remember(rawClient) {
-    HttpClientImpl.getInstance(rawClient)
-  }
+  val httpClient =
+    remember(rawClient) { HttpClientImpl.getInstance(rawClient) }
+
   val imageMemoryCache =
     if (enableMemoryCache) remember { ImageMemoryCacheImpl.getInstance() }
     else null

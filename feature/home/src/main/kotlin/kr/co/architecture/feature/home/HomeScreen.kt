@@ -87,6 +87,8 @@ fun FirstScreen(
               loadingPlaceholderContent = {
                 BaseProgressBar(true)
               },
+              // TODO: 에러 종류에 따라 실패 이미지를 다르게 보여준다.
+              // TODO: 재시도 누를 수 있도록 ui 구성
               errorPlaceholderContent = {
                 ImageLoadingFailure()
               }

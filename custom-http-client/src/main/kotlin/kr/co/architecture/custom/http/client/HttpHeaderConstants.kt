@@ -39,5 +39,12 @@ object HttpHeaderConstants {
     const val KEEP_ALIVE = "keep-alive"
     const val CHUNKED = "chunked"
     const val IMAGE_ALL = "image/*"
+    const val NO_STORE = "no-store"
+    const val NO_CACHE = "no-cache"
+    const val MUST_REVALIDATE = "must-revalidate"
+    const val IMMUTABLE = "immutable"
+    const val MAX_AGE = "max-age"
+    const val STALE_WHILE_REVALIDATE = "stale-while-revalidate"
+    const val STALE_IF_ERROR = "stale-if-error"
   }
 }

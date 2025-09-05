@@ -9,7 +9,10 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.withContext
 import kr.co.architecture.custom.http.client.HttpHeaderConstants
+import kr.co.architecture.custom.http.client.HttpHeaderConstants.Property.IF_MODIFIED_SINCE
+import kr.co.architecture.custom.http.client.HttpHeaderConstants.Property.IF_NONE_MATCH
 import kr.co.architecture.custom.http.client.HttpStatusCode
+import kr.co.architecture.custom.http.client.HttpStatusCode.SUCCESS
 import kr.co.architecture.custom.image.loader.domain.model.Meta
 import kr.co.architecture.custom.image.loader.network.HttpClient
 import java.util.Locale
@@ -58,10 +61,10 @@ class ImageMediatorImpl(
       // 3) 네트워크 캐시 – 디스크 메타가 있으면 etag/lastModified 붙임
       val requestHeader = mutableMapOf<String, String>()
       cachedDiskEntry?.meta?.etag?.let {
-        requestHeader[HttpHeaderConstants.Property.IF_NONE_MATCH] = it
+        requestHeader[IF_NONE_MATCH] = it
       }
       cachedDiskEntry?.meta?.lastModified?.let {
-        requestHeader[HttpHeaderConstants.Property.IF_MODIFIED_SINCE] = it
+        requestHeader[IF_MODIFIED_SINCE] = it
       }
 
       val apiResponse = httpClient.get(
@@ -111,12 +114,12 @@ class ImageMediatorImpl(
   /** SWR 재검증: 200이면 디스크/메모리 갱신용 바디 반환, 304면 null */
   private suspend fun revalidateWhenSWR(url: String, meta: Meta): ByteArray? {
     val header = buildMap {
-      meta.etag?.let { put(HttpHeaderConstants.Property.IF_NONE_MATCH, it) }
-      meta.lastModified?.let { put(HttpHeaderConstants.Property.IF_MODIFIED_SINCE, it) }
+      meta.etag?.let { put(IF_NONE_MATCH, it) }
+      meta.lastModified?.let { put(IF_MODIFIED_SINCE, it) }
     }
     val apiResponse = httpClient.get(url = url, header = header)
     return when {
-      apiResponse.code == HttpStatusCode.SUCCESS && apiResponse.body != null -> {
+      apiResponse.code == SUCCESS && apiResponse.body != null -> {
         apiResponse.body.data.also { byteArrayResponse ->
           imageDiskCache?.putHttpResponse(
             url = url,

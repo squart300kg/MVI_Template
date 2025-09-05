@@ -4,26 +4,30 @@ import kr.co.architecture.custom.http.client.HttpBufferConfig.BODY_MAX_ACCUMULAT
 import kr.co.architecture.custom.http.client.HttpBufferConfig.HEADER_LINE_INITIAL_CAPACITY_BYTES
 import kr.co.architecture.custom.http.client.HttpBufferConfig.HEADER_LINE_MAX_BYTES
 import kr.co.architecture.custom.http.client.HttpBufferConfig.STREAM_COPY_BUFFER_BYTES
+import kr.co.architecture.custom.http.client.HttpHeaderConstants.HTTP
+import kr.co.architecture.custom.http.client.HttpHeaderConstants.HTTPS
 import java.io.ByteArrayOutputStream
 import java.io.EOFException
 import java.io.IOException
 import java.io.InputStream
 import java.net.Socket
 import java.net.URL
+import javax.net.ssl.HttpsURLConnection
 import javax.net.ssl.SNIHostName
+import javax.net.ssl.SSLPeerUnverifiedException
 import javax.net.ssl.SSLSocket
 import javax.net.ssl.SSLSocketFactory
 
 private object HttpBufferConfig {
   /** 헤더 한 줄 읽기 시작 시 BAOS 초기 용량 */
-  const val HEADER_LINE_INITIAL_CAPACITY_BYTES: Int = 64
+  const val HEADER_LINE_INITIAL_CAPACITY_BYTES: Int = 64 // 64B
   /** 헤더 한 줄 최대 허용 바이트(가드) */
-  const val HEADER_LINE_MAX_BYTES: Int = 16 * 1024
+  const val HEADER_LINE_MAX_BYTES: Int = 16 * 1024 // 16KB
 
   /** 스트림 copy용 임시 버퍼 크기 */
-  const val STREAM_COPY_BUFFER_BYTES: Int = 8 * 1024
+  const val STREAM_COPY_BUFFER_BYTES: Int = 8 * 1024 // 8KB
   /** 본문 누적 최대 허용 바이트(가드) */
-  const val BODY_MAX_ACCUMULATED_BYTES: Int = 32 * 1024 * 1024
+  const val BODY_MAX_ACCUMULATED_BYTES: Int = 32 * 1024 * 1024 // 32MB
 }
 
 internal fun readLineAscii(inputStream: InputStream): String? {
@@ -94,8 +98,8 @@ internal fun readChunked(ins: InputStream): ByteArray {
 internal fun URL.extractPort(): Int = when {
   port in 1..65535 -> port
   // URL.port가 명시돼있지 않은 경우. 기본 -1
-  protocol.equals("https", true) -> 443
-  protocol.equals("http", true) -> 80
+  protocol.equals(HTTPS, true) -> 443
+  protocol.equals(HTTP, true) -> 80
   else -> throw IOException("Unsupported scheme: $protocol")
 }
 
@@ -109,18 +113,14 @@ internal fun getSocket(
   readTimeoutMs: Int
 ): Socket {
   val port = url.extractPort()
-  return when (url.protocol.equals(HttpHeaderConstants.HTTPS)) {
+  return when (url.protocol.equals(HTTPS)) {
     true -> {
-      // TODO: 여기 왜 이렇게 짬?
       (SSLSocketFactory.getDefault().createSocket(url.host, port) as SSLSocket).apply {
         soTimeout = readTimeoutMs
-        // SNI + 호스트네임 검증 활성화
-        try {
-          sslParameters = sslParameters.apply {
-            serverNames = listOf(SNIHostName(url.host))
-            endpointIdentificationAlgorithm = HttpHeaderConstants.HTTPS
-          }
-        } catch (_: Throwable) { /* 일부 구형 기기 호환 */ }
+        sslParameters.apply {
+          serverNames = listOf(SNIHostName(url.host))
+          endpointIdentificationAlgorithm = HTTPS
+        }
         startHandshake()
       }
     }
