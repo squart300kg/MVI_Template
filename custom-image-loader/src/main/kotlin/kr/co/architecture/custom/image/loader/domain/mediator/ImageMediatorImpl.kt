@@ -8,7 +8,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.withContext
-import kr.co.architecture.custom.http.client.HttpHeaderConstants
 import kr.co.architecture.custom.http.client.HttpHeaderConstants.Property.IF_MODIFIED_SINCE
 import kr.co.architecture.custom.http.client.HttpHeaderConstants.Property.IF_NONE_MATCH
 import kr.co.architecture.custom.http.client.HttpStatusCode
@@ -76,7 +75,7 @@ class ImageMediatorImpl(
         apiResponse.code == HttpStatusCode.SUCCESS && apiResponse.body != null -> {
           val imageBitmap = apiResponse.body.data.decodeToImageBitmap() ?: return@flow
           imageMemoryCache?.put(url, imageBitmap)
-          imageDiskCache?.putHttpResponse(
+          imageDiskCache?.cacheBodyAndMeta(
             url = url,
             body = apiResponse.body.data,
             header = mergedHeader(
@@ -90,7 +89,7 @@ class ImageMediatorImpl(
         apiResponse.code == HttpStatusCode.NOT_MODIFIED && cachedDiskEntry != null -> {
           val imageBitmap = cachedDiskEntry.bytes.decodeToImageBitmap() ?: return@flow
           imageMemoryCache?.put(url, imageBitmap)
-          imageDiskCache.updateMetaOn304(
+          imageDiskCache.cacheMeta(
             url = url,
             header = apiResponse.header
           )
@@ -121,7 +120,7 @@ class ImageMediatorImpl(
     return when {
       apiResponse.code == SUCCESS && apiResponse.body != null -> {
         apiResponse.body.data.also { byteArrayResponse ->
-          imageDiskCache?.putHttpResponse(
+          imageDiskCache?.cacheBodyAndMeta(
             url = url,
             body = byteArrayResponse,
             header = mergedHeader(
@@ -133,7 +132,7 @@ class ImageMediatorImpl(
       }
       apiResponse.code == HttpStatusCode.NOT_MODIFIED -> {
         null.also {
-          imageDiskCache?.updateMetaOn304(url, apiResponse.header)
+          imageDiskCache?.cacheMeta(url, apiResponse.header)
         }
       }
       else -> null

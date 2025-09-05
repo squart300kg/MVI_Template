@@ -25,14 +25,14 @@ interface ImageDiskCache {
    * @param body HTTP 200 응답의 원본 바이트
    * @param header 요청/응답을 병합한 최종 헤더 맵(키는 소문자-하이픈)
    */
-  fun putHttpResponse(url: String, body: ByteArray, header: Map<String, String>)
+  fun cacheBodyAndMeta(url: String, body: ByteArray, header: Map<String, String>)
 
   /**
    * HTTP **304(Not Modified)** 응답을 반영하여 [url]의 **메타데이터만** 갱신합니다.
    * @param url 캐시 키로 사용할 절대 URL
    * @param header 304 응답 헤더(키는 소문자-하이픈)
    */
-  fun updateMetaOn304(url: String, header: Map<String, String>)
+  fun cacheMeta(url: String, header: Map<String, String>)
 
   /**
    * 디스크 캐시 엔트리.

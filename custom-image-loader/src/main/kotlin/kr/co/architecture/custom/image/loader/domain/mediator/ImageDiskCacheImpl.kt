@@ -30,7 +30,6 @@ import kr.co.architecture.custom.image.loader.domain.model.DiskCacheConstants.Va
 import kr.co.architecture.custom.image.loader.domain.model.Meta
 import kr.co.architecture.custom.image.loader.domain.model.Meta.CachePolicy
 import java.io.File
-import java.io.FileInputStream
 import java.io.FileOutputStream
 import java.security.MessageDigest
 import java.util.Locale
@@ -66,8 +65,8 @@ class ImageDiskCacheImpl private constructor(
     File(context.cacheDir, subDirectory).apply { mkdirs() }
 
   override fun getEntry(url: String): DiskEntry? {
-    val data = dataFile(url)
-    val meta = metaFile(url)
+    val data = File(directory, "${hash(url)}$_BIN")
+    val meta = File(directory, "${hash(url)}$_META")
     if (!data.exists() || !meta.exists()) return null
     val m = readMeta(meta) ?: return null
     val bytes = runCatching { data.readBytes() }.getOrNull() ?: return null
@@ -77,9 +76,9 @@ class ImageDiskCacheImpl private constructor(
     return DiskEntry(bytes, m)
   }
 
-  override fun putHttpResponse(url: String, body: ByteArray, header: Map<String, String>) {
+  override fun cacheBodyAndMeta(url: String, body: ByteArray, header: Map<String, String>) {
     val policy = parseCacheControl(header[CACHE_CONTROL]) ?: return
-    if (policy.noStore) return // 저장 금지
+    if (policy.noStore) return
 
     val now = System.currentTimeMillis()
     val age = header[AGE]?.toLongOrNull() ?: 0L
@@ -99,8 +98,8 @@ class ImageDiskCacheImpl private constructor(
     evictIfNeeded()
   }
 
-  override fun updateMetaOn304(url: String, header: Map<String, String>) {
-    val metaFile = metaFile(url)
+  override fun cacheMeta(url: String, header: Map<String, String>) {
+    val metaFile = File(directory, "${hash(url)}$_META")
     val old = readMeta(metaFile) ?: return
     val policy = parseCacheControl(header[CACHE_CONTROL]) ?: return
     val now = System.currentTimeMillis()
@@ -121,7 +120,7 @@ class ImageDiskCacheImpl private constructor(
       policy = if (header[CACHE_CONTROL] != null) policy else old.policy
     )
     writeMeta(metaFile, newMeta)
-    dataFile(url).setLastModified(now)
+    File(directory, "${hash(url)}$_BIN").setLastModified(now)
     metaFile.setLastModified(now)
   }
 
@@ -170,7 +169,8 @@ class ImageDiskCacheImpl private constructor(
         token == MUST_REVALIDATE -> mustRevalidate = true
         token == IMMUTABLE -> immutable = true
         token.startsWith("$MAX_AGE=") -> maxAge = token.substringAfter('=').toLongOrNull()
-        token.startsWith("$STALE_WHILE_REVALIDATE=") -> swr = token.substringAfter('=').toLongOrNull()
+        token.startsWith("$STALE_WHILE_REVALIDATE=") -> swr =
+          token.substringAfter('=').toLongOrNull()
         token.startsWith("$STALE_IF_ERROR=") -> sie = token.substringAfter('=').toLongOrNull()
       }
     }
@@ -186,51 +186,49 @@ class ImageDiskCacheImpl private constructor(
   }
 
   private fun readMeta(file: File): Meta? = runCatching {
-    Properties().useAndLoad(file).let { property ->
-      Meta(
-        storedAtMillis = property.getProperty(STORED_AT).toLong(),
-        expiresAtMillis = property.getProperty(EXPIRES_AT)?.toLong(),
-        etag = property.getProperty(ETAG),
-        lastModified = property.getProperty(LAST_MODIFIED),
-        policy = CachePolicy(
-          noStore = property.getProperty(CC_NO_STORE) == TRUE,
-          noCache = property.getProperty(CC_NO_CACHE) == TRUE,
-          mustRevalidate = property.getProperty(CC_MUST_REVALIDATE) == TRUE,
-          immutable = property.getProperty(CC_IMMUTABLE) == TRUE,
-          maxAgeSeconds = property.getProperty(CC_MAX_AGE)?.toLong(),
-          staleWhileRevalidateSeconds = property.getProperty(CC_STALE_WHILE_REVALIDATE)?.toLong(),
-          staleIfErrorSeconds = property.getProperty(CC_STALE_IF_ERROR)?.toLong()
+    file
+      .inputStream()
+      .use { fileInputStream -> Properties().apply { load(fileInputStream) } }
+      .run {
+        Meta(
+          storedAtMillis = getProperty(STORED_AT).toLong(),
+          expiresAtMillis = getProperty(EXPIRES_AT)?.toLong(),
+          etag = getProperty(ETAG),
+          lastModified = getProperty(LAST_MODIFIED),
+          policy = CachePolicy(
+            noStore = getProperty(CC_NO_STORE) == TRUE,
+            noCache = getProperty(CC_NO_CACHE) == TRUE,
+            mustRevalidate = getProperty(CC_MUST_REVALIDATE) == TRUE,
+            immutable = getProperty(CC_IMMUTABLE) == TRUE,
+            maxAgeSeconds = getProperty(CC_MAX_AGE)?.toLong(),
+            staleWhileRevalidateSeconds = getProperty(CC_STALE_WHILE_REVALIDATE)?.toLong(),
+            staleIfErrorSeconds = getProperty(CC_STALE_IF_ERROR)?.toLong()
+          )
         )
-      )
-    }
+      }
   }.getOrNull()
 
-  // TODO: 상수로 정의
   private fun writeMeta(file: File, meta: Meta) {
-    val property = Properties().apply {
-      meta.expiresAtMillis?.let { setProperty(STORED_AT, it.toString()) }
-      meta.etag?.let { setProperty(ETAG, it) }
-      meta.lastModified?.let { setProperty(LAST_MODIFIED, it) }
-      meta.policy.maxAgeSeconds?.let { setProperty(CC_MAX_AGE, it.toString()) }
-      meta.policy.staleWhileRevalidateSeconds?.let { setProperty(CC_STALE_WHILE_REVALIDATE, it.toString()) }
-      meta.policy.staleIfErrorSeconds?.let { setProperty(CC_STALE_IF_ERROR, it.toString()) }
-      setProperty(STORED_AT, meta.storedAtMillis.toString())
-      setProperty(CC_NO_STORE, if (meta.policy.noStore) TRUE else FALSE)
-      setProperty(CC_NO_CACHE, if (meta.policy.noCache) TRUE else FALSE)
-      setProperty(CC_MUST_REVALIDATE, if (meta.policy.mustRevalidate) TRUE else FALSE)
-      setProperty(CC_IMMUTABLE, if (meta.policy.immutable) TRUE else FALSE)
-    }
-    FileOutputStream(file).use { property.store(it, null) }
+    file
+      .outputStream()
+      .buffered()
+      .use { out ->
+        Properties().apply {
+          setProperty(STORED_AT, meta.storedAtMillis.toString())
+          meta.expiresAtMillis?.let { setProperty(EXPIRES_AT, it.toString()) }
+          meta.etag?.let { setProperty(ETAG, it) }
+          meta.lastModified?.let { setProperty(LAST_MODIFIED, it) }
+          meta.policy.maxAgeSeconds?.let { setProperty(CC_MAX_AGE, it.toString()) }
+          meta.policy.staleWhileRevalidateSeconds?.let { setProperty(CC_STALE_WHILE_REVALIDATE, it.toString()) }
+          meta.policy.staleIfErrorSeconds?.let { setProperty(CC_STALE_IF_ERROR, it.toString()) }
+          setProperty(CC_NO_STORE, if (meta.policy.noStore) TRUE else FALSE)
+          setProperty(CC_NO_CACHE, if (meta.policy.noCache) TRUE else FALSE)
+          setProperty(CC_MUST_REVALIDATE, if (meta.policy.mustRevalidate) TRUE else FALSE)
+          setProperty(CC_IMMUTABLE, if (meta.policy.immutable) TRUE else FALSE)
+        }.store(out, null)
+      }
   }
 
-  private fun Properties.useAndLoad(file: File): Properties {
-    FileInputStream(file).use { load(it) }
-    return this
-  }
-
-  private fun fileBase(url: String) = hash(url)
-  private fun dataFile(url: String) = File(directory, "${fileBase(url)}$_BIN")
-  private fun metaFile(url: String) = File(directory, "${fileBase(url)}$_META")
 
   private fun hash(s: String): String {
     val md = MessageDigest.getInstance("SHA-256")
