@@ -10,68 +10,69 @@ import javax.net.ssl.SNIHostName
 import javax.net.ssl.SSLSocket
 import javax.net.ssl.SSLSocketFactory
 
-// TODO: 정리
-internal fun readLineAscii(ins: InputStream): String? {
-  val baos = ByteArrayOutputStream(64)
+internal fun readLineAscii(inputStream: InputStream): String? {
+  val lineBuffer = ByteArrayOutputStream(64)
   while (true) {
-    val b = ins.read()
-    if (b == -1) return if (baos.size() == 0) null else baos.toString(Charsets.US_ASCII.name())
-    if (b == '\n'.code) {
-      val arr = baos.toByteArray()
-      val len =
-        if (arr.isNotEmpty() && arr.last() == '\r'.code.toByte()) arr.size - 1 else arr.size
-      return String(arr, 0, len, Charsets.US_ASCII)
+    val byteRead = inputStream.read()
+    if (byteRead == -1) {
+      return if (lineBuffer.size() == 0) null else lineBuffer.toString(Charsets.US_ASCII.name())
     }
-    baos.write(b)
-    if (baos.size() > 16 * 1024) throw IOException("Header line too long")
+    if (byteRead == '\n'.code) {
+      val lineBytes = lineBuffer.toByteArray()
+      val lineLength =
+        if (lineBytes.isNotEmpty() && lineBytes.last() == '\r'.code.toByte()) lineBytes.size - 1
+        else lineBytes.size
+      return String(lineBytes, 0, lineLength, Charsets.US_ASCII)
+    }
+    lineBuffer.write(byteRead)
+    if (lineBuffer.size() > 16 * 1024) throw IOException("Header line too long")
   }
 }
 
 internal fun readFixed(ins: InputStream, len: Long): ByteArray {
   if (len < 0 || len > Int.MAX_VALUE) throw IOException("Unsupported content-length: $len")
-  val buf = ByteArray(len.toInt())
-  var off = 0
-  while (off < buf.size) {
-    val r = ins.read(buf, off, buf.size - off)
-    if (r == -1) throw EOFException("Unexpected EOF")
-    off += r
+  val buffer = ByteArray(len.toInt())
+  var offset = 0
+  while (offset < buffer.size) {
+    val readCount = ins.read(buffer, offset, buffer.size - offset)
+    if (readCount == -1) throw EOFException("Unexpected EOF")
+    offset += readCount
   }
-  return buf
+  return buffer
 }
 
 internal fun readToEnd(ins: InputStream): ByteArray {
-  val baos = ByteArrayOutputStream()
-  val buf = ByteArray(8 * 1024)
+  val outBuffer = ByteArrayOutputStream()
+  val tempBuffer = ByteArray(8 * 1024)
   while (true) {
-    val r = ins.read(buf)
-    if (r <= 0) break
-    baos.write(buf, 0, r)
-    if (baos.size() > 32 * 1024 * 1024) throw IOException("Body too large") // 32MB 가드
+    val readCount = ins.read(tempBuffer)
+    if (readCount <= 0) break
+    outBuffer.write(tempBuffer, 0, readCount)
+    if (outBuffer.size() > 32 * 1024 * 1024) throw IOException("Body too large") // 32MB guard
   }
-  return baos.toByteArray()
+  return outBuffer.toByteArray()
 }
 
 internal fun readChunked(ins: InputStream): ByteArray {
-  val baos = ByteArrayOutputStream()
+  val outBuffer = ByteArrayOutputStream()
   while (true) {
-    val sizeLine = readLineAscii(ins) ?: throw IOException("Missing chunk size")
-    val semi = sizeLine.indexOf(';') // 확장 파라미터 무시
-    val hex = if (semi >= 0) sizeLine.substring(0, semi) else sizeLine
-    val size = hex.trim().toInt(16)
-    if (size == 0) {
-      // 트레일러 헤더 스킵
+    val chunkSizeLine = readLineAscii(ins) ?: throw IOException("Missing chunk size")
+    val semicolonPos = chunkSizeLine.indexOf(';') // ignore chunk extensions
+    val hexSizeStr = if (semicolonPos >= 0) chunkSizeLine.substring(0, semicolonPos) else chunkSizeLine
+    val chunkSize = hexSizeStr.trim().toInt(16)
+    if (chunkSize == 0) {
+      // skip trailer headers
       while (true) {
-        val trailer = readLineAscii(ins) ?: break
-        if (trailer.isEmpty()) break
+        val trailerLine = readLineAscii(ins) ?: break
+        if (trailerLine.isEmpty()) break
       }
       break
     }
-    baos.write(readFixed(ins, size.toLong()))
-    // 청크 뒤의 CRLF 소비
-    val crlf = readLineAscii(ins) // 빈 줄이어야 함
-    if (crlf == null) throw IOException("Missing CRLF after chunk")
+    outBuffer.write(readFixed(ins, chunkSize.toLong()))
+    val chunkCrlf = readLineAscii(ins)
+    if (chunkCrlf == null) throw IOException("Missing CRLF after chunk")
   }
-  return baos.toByteArray()
+  return outBuffer.toByteArray()
 }
 
 internal fun URL.extractPort(): Int = when {

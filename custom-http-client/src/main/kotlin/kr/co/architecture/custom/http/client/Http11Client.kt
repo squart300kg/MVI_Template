@@ -94,6 +94,7 @@ class RawHttp11Client private constructor(
         require(redirectDepth <= maxRedirects) { "redirects count is max($maxRedirects)" }
         val startNs = System.nanoTime()
 
+        // ---- hand shake 및 연결 ----
         val host = url.host
         val pathAndQuery = url.extractPathAndQuery()
         val socket = getSocket(
@@ -101,9 +102,9 @@ class RawHttp11Client private constructor(
           readTimeoutMs = readTimeoutMs
         )
 
-        socket.use { s ->
-          val bufferedOutputStream = BufferedOutputStream(s.getOutputStream())
-          val bufferedInputStream = BufferedInputStream(s.getInputStream())
+        socket.use { socket ->
+          val bufferedOutputStream = BufferedOutputStream(socket.getOutputStream())
+          val bufferedInputStream = BufferedInputStream(socket.getInputStream())
 
           // ---- 요청 헤더 ----
           val requestHeader = buildString {
