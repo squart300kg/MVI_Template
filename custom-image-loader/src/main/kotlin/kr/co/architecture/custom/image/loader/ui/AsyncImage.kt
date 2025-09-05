@@ -3,12 +3,12 @@ package kr.co.architecture.custom.image.loader.ui
 import android.content.Context
 import androidx.compose.foundation.Image
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kr.co.architecture.custom.http.client.RawHttp11Client
 import kr.co.architecture.custom.http.client.interceptor.CustomHttpLogger
 import kr.co.architecture.custom.image.loader.domain.mediator.ImageDiskCacheImpl
@@ -20,6 +20,8 @@ import kr.co.architecture.custom.image.loader.network.HttpClientImpl
 @Composable
 fun AsyncImage(
   modifier: Modifier = Modifier,
+  enableMemoryCache: Boolean = false,
+  enableDiskCache: Boolean = false,
   loadingPlaceholderContent: (@Composable () -> Unit)? = null,
   errorPlaceholderContent: (@Composable () -> Unit)? = null,
   url: String,
@@ -36,32 +38,32 @@ fun AsyncImage(
   val httpClient = remember(rawClient) {
     HttpClientImpl.getInstance(rawClient)
   }
-  val memoryCache = remember {
-    ImageMemoryCacheImpl.getInstance()
-  }
-  val diskCache = remember {
-    ImageDiskCacheImpl.getInstance(context)
-  }
+  val imageMemoryCache =
+    if (enableMemoryCache) remember { ImageMemoryCacheImpl.getInstance() }
+    else null
+
+  val diskMemoryCache =
+    if (enableDiskCache) remember { ImageDiskCacheImpl.getInstance(context) }
+    else null
+
   val imageMediator = remember {
     ImageMediatorImpl(
-      imageMemoryCache = memoryCache,
-      imageDiskCache = diskCache,
+      imageMemoryCache = imageMemoryCache,
+      imageDiskCache = diskMemoryCache,
       httpClient = httpClient
     )
   }
 
   // 2) 엔진 스트림 수집 → 상태 표시
-  val imageBitmap by remember(url) {
+  val imageState by remember(url) {
     imageMediator.imageFlow(url)
-  }.collectAsState(initial = ImageState.Loading)
+  }.collectAsStateWithLifecycle(ImageState.Loading)
 
-  // TODO: 상태에 따른 분기처리
-  when (imageBitmap) {
+  when (val state = imageState) {
     is ImageState.Success -> {
-      val img = (imageBitmap as ImageState.Success).imageBitmap
       Image(
         modifier = modifier,
-        bitmap = img,
+        bitmap = state.imageBitmap,
         contentDescription = null,
         contentScale = contentScale
       )

@@ -3,6 +3,7 @@ package kr.co.architecture.feature.home
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.collections.immutable.PersistentList
 import kr.co.architecture.core.repository.PicsumImageRepository
+import kr.co.architecture.core.repository.dto.PicsumImagesDtoRequest
 import kr.co.architecture.core.ui.BaseViewModel
 import javax.inject.Inject
 
@@ -21,17 +22,22 @@ class HomeViewModel @Inject constructor(
 
   init { setEffect { HomeUiSideEffect.Load } }
 
-  fun fetchData() {
+  fun fetchData(requestSize: Int) {
     launchWithLoading {
       val nextPage = uiState.value.page + 1
-      val dto = repository.getPicsumImages(nextPage)
+      val dtoResponse = repository.getPicsumImages(
+        dtoRequest = PicsumImagesDtoRequest(
+          page = nextPage,
+          requestSize = requestSize
+        )
+      )
       setState {
         copy(
           uiType = HomeUiType.LOADED,
           uiModels = (uiModels as PersistentList)
-            .addAll(UiModel.mapperToUi(dto)),
+            .addAll(UiModel.mapperToUi(dtoResponse)),
           page = nextPage,
-          hasNext = dto.hasNext
+          hasNext = dtoResponse.hasNext
         )
       }
     }

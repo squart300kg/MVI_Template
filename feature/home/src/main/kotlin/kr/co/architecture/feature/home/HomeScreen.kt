@@ -12,7 +12,11 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalWindowInfo
+import androidx.compose.ui.platform.WindowInfo
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -24,13 +28,17 @@ import kr.co.architecture.custom.image.loader.ui.AsyncImage
 @Composable
 fun FirstScreen(
   modifier: Modifier = Modifier,
+  windowInfo: WindowInfo =  LocalWindowInfo.current,
   viewModel: HomeViewModel = hiltViewModel()
 ) {
   val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+  val requestSize by remember {
+    mutableIntStateOf(windowInfo.containerSize.width / 2)
+  }
   LaunchedEffect(Unit) {
     viewModel.uiSideEffect.collect { effect ->
       when (effect) {
-        is HomeUiSideEffect.Load -> viewModel.fetchData()
+        is HomeUiSideEffect.Load -> viewModel.fetchData(requestSize)
       }
     }
   }
@@ -74,6 +82,8 @@ fun FirstScreen(
           ) {
             AsyncImage(
               url = item.image,
+              enableMemoryCache = true,
+              enableDiskCache = true,
               loadingPlaceholderContent = {
                 BaseProgressBar(true)
               },

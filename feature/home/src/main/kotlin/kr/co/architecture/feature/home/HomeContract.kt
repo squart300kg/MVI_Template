@@ -3,7 +3,7 @@ package kr.co.architecture.feature.home
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
-import kr.co.architecture.core.repository.dto.PicsumImagesDto
+import kr.co.architecture.core.repository.dto.PicsumImagesDtoResponse
 import kr.co.architecture.core.ui.UiEvent
 import kr.co.architecture.core.ui.UiSideEffect
 import kr.co.architecture.core.ui.UiState
@@ -17,7 +17,7 @@ data class UiModel(
   val image: String
 ) {
   companion object {
-    fun mapperToUi(dto: PicsumImagesDto): ImmutableList<UiModel> {
+    fun mapperToUi(dto: PicsumImagesDtoResponse): ImmutableList<UiModel> {
       return dto.items
         .map { UiModel(it.downloadUrl) }
         .toImmutableList()

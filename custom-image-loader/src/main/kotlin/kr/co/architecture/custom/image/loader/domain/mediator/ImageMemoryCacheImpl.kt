@@ -7,7 +7,7 @@ import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.graphics.asImageBitmap
 
 class ImageMemoryCacheImpl private constructor(
-  private val maxBytes: Int = 16 * 1024 * 1024
+  private val maxBytes: Int
 ): ImageMemoryCache {
 
   companion object {

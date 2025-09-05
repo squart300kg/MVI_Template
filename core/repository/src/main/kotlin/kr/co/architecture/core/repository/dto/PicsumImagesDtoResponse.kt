@@ -2,8 +2,9 @@ package kr.co.architecture.core.repository.dto
 
 import kr.co.architecture.core.network.model.ApiResponse
 import kr.co.architecture.core.network.model.PicsumImagesApiResponse
+import java.net.URL
 
-data class PicsumImagesDto(
+data class PicsumImagesDtoResponse(
   val items: List<Image>,
   val hasNext: Boolean
 ) {
@@ -16,12 +17,21 @@ data class PicsumImagesDto(
     val url: String
   )
   companion object {
-    fun mapperToDto(apiResponse: ApiResponse.Success<PicsumImagesApiResponse>) =
-      PicsumImagesDto(
+    fun mapperToDto(
+      apiResponse: ApiResponse.Success<PicsumImagesApiResponse>,
+      dtoRequest: PicsumImagesDtoRequest
+    ) =
+      PicsumImagesDtoResponse(
         items = apiResponse.data.map {
           Image(
             author = it.author,
-            downloadUrl = it.downloadUrl,
+            downloadUrl = with(URL(it.downloadUrl)) {
+              val segments = path.split('/')
+              val idKey = segments.getOrNull(1)
+              val idValue = segments.getOrNull(2)
+              if (idKey != null && idValue != null) "$protocol://$host/${idKey}/${idValue}/${dtoRequest.requestSize}/${dtoRequest.requestSize}"
+              else it.downloadUrl
+            },
             width = it.width,
             height = it.height,
             id = it.id,

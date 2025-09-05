@@ -1,9 +1,10 @@
 package kr.co.architecture.core.repository
 
-import kr.co.architecture.core.repository.dto.PicsumImagesDto
+import kr.co.architecture.core.repository.dto.PicsumImagesDtoRequest
+import kr.co.architecture.core.repository.dto.PicsumImagesDtoResponse
 
 interface PicsumImageRepository {
 
-  suspend fun getPicsumImages(page: Int): PicsumImagesDto
+  suspend fun getPicsumImages(dtoRequest: PicsumImagesDtoRequest): PicsumImagesDtoResponse
 
 }
