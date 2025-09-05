@@ -82,7 +82,7 @@ internal fun URL.extractPort(): Int = when {
   else -> throw IOException("Unsupported scheme: $protocol")
 }
 
-internal fun URL.buildPathAndQuery() = buildString {
+internal fun URL.extractPathAndQuery() = buildString {
   append(if (path.isNullOrEmpty()) "/" else path)
   if (!query.isNullOrEmpty()) append('?').append(query)
 }
@@ -94,6 +94,7 @@ internal fun getSocket(
   val port = url.extractPort()
   return when (url.protocol.equals(HttpHeaderConstants.HTTPS)) {
     true -> {
+      // TODO: 여기 왜 이렇게 짬?
       (SSLSocketFactory.getDefault().createSocket(url.host, port) as SSLSocket).apply {
         soTimeout = readTimeoutMs
         // SNI + 호스트네임 검증 활성화
@@ -102,8 +103,7 @@ internal fun getSocket(
             serverNames = listOf(SNIHostName(url.host))
             endpointIdentificationAlgorithm = HttpHeaderConstants.HTTPS
           }
-        } catch (_: Throwable) { /* 일부 구형 기기 호환 */
-        }
+        } catch (_: Throwable) { /* 일부 구형 기기 호환 */ }
         startHandshake()
       }
     }

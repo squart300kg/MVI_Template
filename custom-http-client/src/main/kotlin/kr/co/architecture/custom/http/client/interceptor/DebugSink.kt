@@ -11,8 +11,8 @@ class CustomHttpLogger(
     println("--> $method $url $httpVersion")
   }
 
-  fun printRequestHeaderLog(headers: Map<String, String>) {
-    headers.forEach { (k, v) -> println("$k: $v") }
+  fun printRequestHeaderLog(headers: String) {
+    println(headers)
   }
 
   fun printRequestBodyLog() {
