@@ -14,13 +14,6 @@ import kr.co.architecture.custom.image.loader.domain.model.Meta
 import kr.co.architecture.custom.image.loader.network.HttpClient
 import java.util.Locale
 
-sealed interface ImageState {
-  @JvmInline
-  value class Success(val imageBitmap: ImageBitmap): ImageState
-  data object Loading: ImageState
-  data object Failure: ImageState
-}
-
 class ImageMediatorImpl(
   private val imageMemoryCache: ImageMemoryCache?,
   private val imageDiskCache: ImageDiskCache?,

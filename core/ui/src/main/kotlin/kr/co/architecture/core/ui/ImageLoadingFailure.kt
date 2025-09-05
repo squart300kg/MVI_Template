@@ -8,9 +8,11 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Clear
 import androidx.compose.material3.DrawerDefaults.scrimColor
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.unit.dp
 
 @Composable
@@ -25,6 +27,7 @@ fun ImageLoadingFailure() {
     Image(
       imageVector = Icons.Outlined.Clear,
       contentDescription = null,
+      colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onSurfaceVariant),
       modifier = Modifier.size(48.dp)
     )
   }
