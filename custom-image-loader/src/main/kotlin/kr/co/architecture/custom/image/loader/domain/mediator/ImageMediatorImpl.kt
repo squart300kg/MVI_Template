@@ -14,6 +14,13 @@ import kr.co.architecture.custom.image.loader.domain.model.Meta
 import kr.co.architecture.custom.image.loader.network.HttpClient
 import java.util.Locale
 
+sealed interface ImageState {
+  @JvmInline
+  value class Success(val imageBitmap: ImageBitmap): ImageState
+  data object Loading: ImageState
+  data object Failure: ImageState
+}
+
 class ImageMediatorImpl(
   private val imageMemoryCache: ImageMemoryCache?,
   private val imageDiskCache: ImageDiskCache?,
@@ -21,12 +28,12 @@ class ImageMediatorImpl(
 ): ImageMediator {
 
   /** 캐시 상태에 맞춰 1~2번 이미지를 흘려보냄 (ex. SWR이면 stale → fresh 순서로 2회 emit) */
-  override fun imageFlow(url: String): Flow<ImageBitmap?> =
+  override fun imageFlow(url: String): Flow<ImageState> =
     flow {
       val now = System.currentTimeMillis()
 
       // 1) 메모리 캐시
-      imageMemoryCache?.get(url)?.let { emit(it); return@flow }
+      imageMemoryCache?.get(url)?.let { emit(ImageState.Success(it)); return@flow }
 
       // 2) 디스크 캐시
       val cachedDiskEntry = imageDiskCache?.getEntry(url)
@@ -35,7 +42,7 @@ class ImageMediatorImpl(
         if (diskCachedImageBitmap != null) {
           if (cachedDiskEntry.meta.isFresh(now)) {
             imageMemoryCache?.put(url, diskCachedImageBitmap)
-            emit(diskCachedImageBitmap)
+            emit(ImageState.Success(diskCachedImageBitmap))
             return@flow
           }
 
@@ -44,12 +51,12 @@ class ImageMediatorImpl(
           //        false -> 네트워크 호출
           if (cachedDiskEntry.meta.canServeStaleWhileRevalidate(now)) {
             imageMemoryCache?.put(url, diskCachedImageBitmap)
-            emit(diskCachedImageBitmap)
+            emit(ImageState.Success(diskCachedImageBitmap))
 
             val freshImageBytes = revalidateWhenSWR(url, cachedDiskEntry.meta) ?: return@flow
             val freshImageBitmap = freshImageBytes.decodeToImageBitmap() ?: return@flow
             imageMemoryCache?.put(url, freshImageBitmap)
-            emit(freshImageBitmap)
+            emit(ImageState.Success(freshImageBitmap))
             return@flow
           }
         }
@@ -81,7 +88,7 @@ class ImageMediatorImpl(
               responseHeader = apiResponse.header
             )
           )
-          emit(imageBitmap)
+          emit(ImageState.Success(imageBitmap))
         }
         // 304: 디코딩 -> 메모리 캐싱/디스크 캐싱(메타만 갱신) -> 이미지 발행
         apiResponse.code == HttpStatusCode.NOT_MODIFIED && cachedDiskEntry != null -> {
@@ -91,15 +98,15 @@ class ImageMediatorImpl(
             url = url,
             header = apiResponse.header
           )
-          emit(imageBitmap)
+          emit(ImageState.Success(imageBitmap))
         }
         // 서버 에러(eg., 40x, 50x..): soe 범위 내, 메모리 캐싱 -> 이미지 발행
         cachedDiskEntry?.meta?.canServeStaleOnError() == true -> {
           val imageBitmap = cachedDiskEntry.bytes.decodeToImageBitmap() ?: return@flow
           imageMemoryCache?.put(url, imageBitmap)
-          emit(imageBitmap)
+          emit(ImageState.Success(imageBitmap))
         }
-        else -> emit(null)
+        else -> emit(ImageState.Failure)
       }
     }.flowOn(Dispatchers.IO)
 

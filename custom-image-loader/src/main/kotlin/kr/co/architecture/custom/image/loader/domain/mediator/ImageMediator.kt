@@ -46,5 +46,6 @@ interface ImageMediator {
    * @param url 로딩할 원본 이미지의 절대 URL.
    * @return [ImageBitmap] 또는 `null`을 0~2회 방출하는 [Flow].
    */
-  fun imageFlow(url: String): Flow<ImageBitmap?>
+  // TODO: doc수정
+  fun imageFlow(url: String): Flow<ImageState>
 }

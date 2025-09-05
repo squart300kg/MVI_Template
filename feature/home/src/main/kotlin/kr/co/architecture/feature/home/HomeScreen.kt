@@ -17,6 +17,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kr.co.architecture.core.ui.BaseProgressBar
+import kr.co.architecture.core.ui.ImageLoadingFailure
 import kr.co.architecture.core.ui.PaginationLoadEffect
 import kr.co.architecture.custom.image.loader.ui.AsyncImage
 
@@ -73,8 +74,11 @@ fun FirstScreen(
           ) {
             AsyncImage(
               url = item.image,
-              placeholderContent = {
+              loadingPlaceholderContent = {
                 BaseProgressBar(true)
+              },
+              errorPlaceholderContent = {
+                ImageLoadingFailure()
               }
             )
           }

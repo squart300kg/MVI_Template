@@ -6,7 +6,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -15,12 +14,14 @@ import kr.co.architecture.custom.http.client.interceptor.CustomHttpLogger
 import kr.co.architecture.custom.image.loader.domain.mediator.ImageDiskCacheImpl
 import kr.co.architecture.custom.image.loader.domain.mediator.ImageMediatorImpl
 import kr.co.architecture.custom.image.loader.domain.mediator.ImageMemoryCacheImpl
+import kr.co.architecture.custom.image.loader.domain.mediator.ImageState
 import kr.co.architecture.custom.image.loader.network.HttpClientImpl
 
 @Composable
 fun AsyncImage(
   modifier: Modifier = Modifier,
-  placeholderContent: @Composable () -> Unit = {},
+  loadingPlaceholderContent: (@Composable () -> Unit)? = null,
+  errorPlaceholderContent: (@Composable () -> Unit)? = null,
   url: String,
   contentScale: ContentScale = ContentScale.Crop,
   context: Context = LocalContext.current
@@ -52,14 +53,28 @@ fun AsyncImage(
   // 2) 엔진 스트림 수집 → 상태 표시
   val imageBitmap by remember(url) {
     imageMediator.imageFlow(url)
-  }.collectAsState(initial = null)
+  }.collectAsState(initial = ImageState.Loading)
 
-  imageBitmap?.let { img ->
-    Image(
-      modifier = modifier,
-      bitmap = img,
-      contentDescription = null,
-      contentScale = contentScale
-    )
-  } ?: placeholderContent()
+  // TODO: 상태에 따른 분기처리
+  when (imageBitmap) {
+    is ImageState.Success -> {
+      val img = (imageBitmap as ImageState.Success).imageBitmap
+      Image(
+        modifier = modifier,
+        bitmap = img,
+        contentDescription = null,
+        contentScale = contentScale
+      )
+    }
+    is ImageState.Loading -> {
+      loadingPlaceholderContent
+        ?.let { it() }
+        ?: run { /** 기본 로딩 이미지 **/ }
+    }
+    is ImageState.Failure -> {
+      errorPlaceholderContent
+        ?.let { it() }
+        ?:run { /**기본 에러 이미지**/ }
+    }
+  }
 }

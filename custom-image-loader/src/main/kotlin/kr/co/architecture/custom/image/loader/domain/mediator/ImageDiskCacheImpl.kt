@@ -42,7 +42,6 @@ class ImageDiskCacheImpl private constructor(
   private var directory =
     File(context.cacheDir, subDirectory).apply { mkdirs() }
 
-  // ---- 외부에 노출하는 API ----
   override fun getEntry(url: String): DiskEntry? {
     val data = dataFile(url)
     val meta = metaFile(url)
@@ -104,7 +103,6 @@ class ImageDiskCacheImpl private constructor(
     metaFile.setLastModified(now)
   }
 
-  // ---- 내부 구현 ----
   private fun writeAtomic(url: String, bytes: ByteArray, meta: Meta) {
     val base = hash(url)
     val dataTmp = File(directory, "$base.bin.tmp")
@@ -178,21 +176,22 @@ class ImageDiskCacheImpl private constructor(
     }
   }.getOrNull()
 
+  // TODO: 상수로 정의
   private fun writeMeta(file: File, meta: Meta) {
     val property = Properties().apply {
-      setProperty("storedAt", meta.storedAtMillis.toString())
       meta.expiresAtMillis?.let { setProperty("expiresAt", it.toString()) }
       meta.etag?.let { setProperty("etag", it) }
       meta.lastModified?.let { setProperty("lastModified", it) }
+      meta.policy.maxAgeSeconds?.let { setProperty("cc.maxAge", it.toString()) }
+      meta.policy.staleWhileRevalidateSeconds?.let { setProperty("cc.swr", it.toString()) }
+      meta.policy.staleIfErrorSeconds?.let { setProperty("cc.sie", it.toString()) }
+      setProperty("storedAt", meta.storedAtMillis.toString())
       setProperty("cc.noStore", if (meta.policy.noStore) "1" else "0")
       setProperty("cc.noCache", if (meta.policy.noCache) "1" else "0")
       setProperty("cc.mustRevalidate", if (meta.policy.mustRevalidate) "1" else "0")
       setProperty("cc.immutable", if (meta.policy.immutable) "1" else "0")
-      meta.policy.maxAgeSeconds?.let { setProperty("cc.maxAge", it.toString()) }
-      meta.policy.staleWhileRevalidateSeconds?.let { setProperty("cc.swr", it.toString()) }
-      meta.policy.staleIfErrorSeconds?.let { setProperty("cc.sie", it.toString()) }
     }
-    FileOutputStream(file).use { out -> property.store(out, null) }
+    FileOutputStream(file).use { property.store(it, null) }
   }
 
   private fun Properties.useAndLoad(file: File): Properties {
