@@ -7,18 +7,13 @@ import kotlinx.coroutines.flow.Flow
  * 이미지 로딩을 오케스트레이션하는 중재자(Mediator).
  *
  * 역할
- * - 메모리/디스크/네트워크 소스를 순서대로 확인하고, 적절한 정책(SWR, stale-if-error 등)에 따라 이미지를 흘려보냅니다.
- * - (구현체 선택) ETag/Last-Modified 기반 조건부 요청과 메타데이터 갱신을 처리할 수 있습니다.
- * - (구현체 선택) 성공한 로딩 결과를 메모리/디스크 캐시에 기록합니다.
+ * - 성공한 로딩 결과를 메모리/디스크 캐시에 기록합니다.
+ * - 메모리/디스크/네트워크 소스를 순서대로 확인하고, 정책(SWR, stale-if-error 등)에 따라 이미지를 흘려보냅니다.
+ * - ETag/Last-Modified 기반 조건부 요청과 메타데이터 갱신을 처리할 수 있습니다.
  *
  * 동작 특성
  * - 반환하는 Flow는 **cold** 입니다. 수집할 때마다 로딩이 수행됩니다.
  * - SWR(stale-while-revalidate)이 활성인 경우, **최대 2회** 방출될 수 있습니다(예: stale → fresh).
- * - 수집이 취소되면, 구현체는 가능하면 네트워크/디스크 작업도 취소하는 것이 좋습니다.
- *
- * 스레드/성능 권장 (구현 가이드)
- * - 디스크/네트워크 I/O는 `Dispatchers.IO`, 이미지 디코딩은 `Dispatchers.Default`에서 수행하는 것을 권장합니다.
- * - 다중 수집자에게 동일 데이터를 공유하려면 호출측에서 `shareIn`/`stateIn` 등을 사용하세요.
  *
  * 예시
  * ```
@@ -31,7 +26,7 @@ interface ImageMediator {
   /**
    * 주어진 [url]의 이미지를 비동기로 로딩해 방출하는 **cold** [Flow].
    *
-   * 방출 규칙(일반적인 구현 기준)
+   * 방출 규칙
    * - 메모리 캐시 히트: 즉시 1회 [ImageBitmap] 방출 후 완료.
    * - 디스크 캐시 **fresh**: 디코드 후 1회 방출 후 완료.
    * - 디스크 캐시 **stale + SWR 윈도우**: stale을 즉시 1회 방출 → 재검증 성공 시 fresh를 **추가 1회** 방출.
@@ -47,7 +42,6 @@ interface ImageMediator {
    * 주의
    * - Flow가 **cold** 이므로 동일 URL을 여러 곳에서 동시에 수집하면 각자 로딩합니다.
    *   공유/중복 방지를 원하면 호출측에서 `shareIn(scope, …, replay = 1)` 등을 적용하세요.
-   * - 다양한 크기로 같은 URL을 표시한다면, 구현체에서 **메모리 키 전략**(예: `"$url@${width}x${height}"`)을 분리하는 것이 좋습니다.
    *
    * @param url 로딩할 원본 이미지의 절대 URL.
    * @return [ImageBitmap] 또는 `null`을 0~2회 방출하는 [Flow].
