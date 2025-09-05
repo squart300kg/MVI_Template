@@ -15,8 +15,8 @@ import kr.co.architecture.custom.image.loader.network.HttpClient
 import java.util.Locale
 
 class ImageMediatorImpl(
-  private val imageMemoryCache: ImageMemoryCache?,
-  private val imageDiskCache: ImageDiskCache?,
+  private val imageMemoryCache: ImageMemoryCache? = null,
+  private val imageDiskCache: ImageDiskCache? = null,
   private val httpClient: HttpClient
 ): ImageMediator {
 
