@@ -34,11 +34,15 @@ class PicsumImagesApiResponse : ArrayList<PicsumImagesApiResponseItem>() {
   }
 }
 
-internal object PicsumImagesApiResponseField {
+object PicsumImagesApiResponseField {
   const val AUTHOR = "author"
   const val DOWNLOAD_URL = "download_url"
   const val WIDTH = "width"
   const val HEIGHT = "height"
   const val ID = "id"
   const val URL = "url"
+}
+
+object PicsumImagesApiHeaderField {
+  const val LINK = "link"
 }

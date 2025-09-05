@@ -1,8 +1,5 @@
 package kr.co.architecture.core.network.model
 
-import com.google.gson.Gson
-import java.nio.charset.Charset
-
 sealed interface ApiResponse<out S, out E> {
   data class Success<S>(
     val data: S,

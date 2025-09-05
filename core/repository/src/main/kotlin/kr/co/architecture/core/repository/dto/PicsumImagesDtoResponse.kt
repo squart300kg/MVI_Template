@@ -1,6 +1,7 @@
 package kr.co.architecture.core.repository.dto
 
 import kr.co.architecture.core.network.model.ApiResponse
+import kr.co.architecture.core.network.model.PicsumImagesApiHeaderField.LINK
 import kr.co.architecture.core.network.model.PicsumImagesApiResponse
 import java.net.URL
 
@@ -38,8 +39,7 @@ data class PicsumImagesDtoResponse(
             url = it.url
           )
         },
-        // TODO: 상수로 잘 보관하는법 찾기
-        hasNext = apiResponse.header["link"]
+        hasNext = apiResponse.header[LINK]
           ?.contains("rel=\"next\"") == true
       )
   }
