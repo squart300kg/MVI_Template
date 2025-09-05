@@ -30,7 +30,7 @@ class PicsumApiImpl(
                 code = code,
                 message = message,
                 header = header,
-                data = PicsumImagesApiResponse.mapperToApiResponse(body)
+                data = PicsumImagesApiResponse.mapperToApiResponse(body.data)
               )
             )
           },
@@ -38,7 +38,7 @@ class PicsumApiImpl(
             send(
               element = ApiResponse.Error(
                 header = header,
-                data = PicsumErrorApiResponse.mapperToApiResponse(body)
+                data = PicsumErrorApiResponse.mapperToApiResponse(body.data)
               )
             )
           },

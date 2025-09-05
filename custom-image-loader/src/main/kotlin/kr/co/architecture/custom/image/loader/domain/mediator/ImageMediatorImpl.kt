@@ -71,11 +71,11 @@ class ImageMediatorImpl(
       when {
         // 200: 디코딩 -> 메모리/디스크 캐싱 -> 이미지 발행
         apiResponse.code == HttpStatusCode.SUCCESS && apiResponse.body != null -> {
-          val imageBitmap = apiResponse.body.decodeToImageBitmap() ?: return@flow
+          val imageBitmap = apiResponse.body.data.decodeToImageBitmap() ?: return@flow
           imageMemoryCache?.put(url, imageBitmap)
           imageDiskCache?.putHttpResponse(
             url = url,
-            body = apiResponse.body,
+            body = apiResponse.body.data,
             header = mergedHeader(
               requestHeader = requestHeader,
               responseHeader = apiResponse.header
@@ -117,10 +117,10 @@ class ImageMediatorImpl(
     val apiResponse = httpClient.get(url = url, header = header)
     return when {
       apiResponse.code == HttpStatusCode.SUCCESS && apiResponse.body != null -> {
-        apiResponse.body.also {
+        apiResponse.body.data.also { byteArrayResponse ->
           imageDiskCache?.putHttpResponse(
             url = url,
-            body = apiResponse.body,
+            body = byteArrayResponse,
             header = mergedHeader(
               requestHeader = header,
               responseHeader = apiResponse.header

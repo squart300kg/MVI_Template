@@ -10,6 +10,7 @@ import javax.net.ssl.SNIHostName
 import javax.net.ssl.SSLSocket
 import javax.net.ssl.SSLSocketFactory
 
+// TODO: 정리
 internal fun readLineAscii(ins: InputStream): String? {
   val baos = ByteArrayOutputStream(64)
   while (true) {

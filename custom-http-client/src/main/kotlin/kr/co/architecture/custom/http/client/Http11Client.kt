@@ -3,6 +3,8 @@ package kr.co.architecture.custom.http.client
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kr.co.architecture.custom.http.client.interceptor.CustomHttpLogger
+import kr.co.architecture.custom.http.client.model.Bytes
+import kr.co.architecture.custom.http.client.model.toBytes
 import java.io.BufferedInputStream
 import java.io.BufferedOutputStream
 import java.io.ByteArrayInputStream
@@ -16,30 +18,8 @@ data class HttpResponse(
   val code: Int,
   val message: String,
   val header: Map<String, String> = emptyMap(),
-  val body: ByteArray = byteArrayOf()
-) {
-  override fun equals(other: Any?): Boolean {
-    if (this === other) return true
-    if (javaClass != other?.javaClass) return false
-
-    other as HttpResponse
-
-    if (code != other.code) return false
-    if (message != other.message) return false
-    if (header != other.header) return false
-    if (!body.contentEquals(other.body)) return false
-
-    return true
-  }
-
-  override fun hashCode(): Int {
-    var result = code
-    result = 31 * result + message.hashCode()
-    result = 31 * result + header.hashCode()
-    result = 31 * result + body.contentHashCode()
-    return result
-  }
-}
+  val body: Bytes = Bytes(byteArrayOf())
+)
 
 class RawHttp11Client private constructor(
   private val userAgent: String = "RawHttp11/0.1",
@@ -204,13 +184,14 @@ class RawHttp11Client private constructor(
               HttpResponse(
                 code = code,
                 message = message,
-                body = rawBody
+                body = rawBody.toBytes()
               )
             )
             return@withContext
           }
 
           // ---- gzip 해제 ----
+          val contentType = responseHeader[HttpHeaderConstants.Property.CONTENT_TYPE]
           val isGzip = responseHeader[HttpHeaderConstants.Property.CONTENT_ENCODING]?.contains(
             HttpHeaderConstants.Value.GZIP
           ) == true
@@ -218,12 +199,19 @@ class RawHttp11Client private constructor(
             if (code != 304 && isGzip) GZIPInputStream(ByteArrayInputStream(rawBody)).use { it.readBytes() }
             else rawBody
 
+          httpLogger?.printResponseBodyLog(
+            body = bodyBytes,
+            contentType = contentType,
+            wasGzip = isGzip,
+            rawSize = if (isGzip) rawBody.size else null
+          )
+
           onResponseSuccess(
             HttpResponse(
               code = code,
               message = message,
               header = responseHeader,
-              body = bodyBytes
+              body = bodyBytes.toBytes()
             )
           )
         }
