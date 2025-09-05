@@ -1,5 +1,9 @@
 package kr.co.architecture.custom.http.client
 
+import kr.co.architecture.custom.http.client.HttpBufferConfig.BODY_MAX_ACCUMULATED_BYTES
+import kr.co.architecture.custom.http.client.HttpBufferConfig.HEADER_LINE_INITIAL_CAPACITY_BYTES
+import kr.co.architecture.custom.http.client.HttpBufferConfig.HEADER_LINE_MAX_BYTES
+import kr.co.architecture.custom.http.client.HttpBufferConfig.STREAM_COPY_BUFFER_BYTES
 import java.io.ByteArrayOutputStream
 import java.io.EOFException
 import java.io.IOException
@@ -10,8 +14,20 @@ import javax.net.ssl.SNIHostName
 import javax.net.ssl.SSLSocket
 import javax.net.ssl.SSLSocketFactory
 
+private object HttpBufferConfig {
+  /** 헤더 한 줄 읽기 시작 시 BAOS 초기 용량 */
+  const val HEADER_LINE_INITIAL_CAPACITY_BYTES: Int = 64
+  /** 헤더 한 줄 최대 허용 바이트(가드) */
+  const val HEADER_LINE_MAX_BYTES: Int = 16 * 1024
+
+  /** 스트림 copy용 임시 버퍼 크기 */
+  const val STREAM_COPY_BUFFER_BYTES: Int = 8 * 1024
+  /** 본문 누적 최대 허용 바이트(가드) */
+  const val BODY_MAX_ACCUMULATED_BYTES: Int = 32 * 1024 * 1024
+}
+
 internal fun readLineAscii(inputStream: InputStream): String? {
-  val lineBuffer = ByteArrayOutputStream(64)
+  val lineBuffer = ByteArrayOutputStream(HEADER_LINE_INITIAL_CAPACITY_BYTES)
   while (true) {
     val byteRead = inputStream.read()
     if (byteRead == -1) {
@@ -25,30 +41,30 @@ internal fun readLineAscii(inputStream: InputStream): String? {
       return String(lineBytes, 0, lineLength, Charsets.US_ASCII)
     }
     lineBuffer.write(byteRead)
-    if (lineBuffer.size() > 16 * 1024) throw IOException("Header line too long")
+    if (lineBuffer.size() > HEADER_LINE_MAX_BYTES) throw IOException("Header line too long")
   }
 }
 
-internal fun readFixed(ins: InputStream, len: Long): ByteArray {
-  if (len < 0 || len > Int.MAX_VALUE) throw IOException("Unsupported content-length: $len")
-  val buffer = ByteArray(len.toInt())
+internal fun readFixed(inputStream: InputStream, contentLength: Long): ByteArray {
+  if (contentLength < 0 || contentLength > Int.MAX_VALUE) throw IOException("Unsupported content-length: $contentLength")
+  val buffer = ByteArray(contentLength.toInt())
   var offset = 0
   while (offset < buffer.size) {
-    val readCount = ins.read(buffer, offset, buffer.size - offset)
+    val readCount = inputStream.read(buffer, offset, buffer.size - offset)
     if (readCount == -1) throw EOFException("Unexpected EOF")
     offset += readCount
   }
   return buffer
 }
 
-internal fun readToEnd(ins: InputStream): ByteArray {
+internal fun readToEnd(inputStream: InputStream): ByteArray {
   val outBuffer = ByteArrayOutputStream()
-  val tempBuffer = ByteArray(8 * 1024)
+  val tempBuffer = ByteArray(STREAM_COPY_BUFFER_BYTES)
   while (true) {
-    val readCount = ins.read(tempBuffer)
+    val readCount = inputStream.read(tempBuffer)
     if (readCount <= 0) break
     outBuffer.write(tempBuffer, 0, readCount)
-    if (outBuffer.size() > 32 * 1024 * 1024) throw IOException("Body too large") // 32MB guard
+    if (outBuffer.size() > BODY_MAX_ACCUMULATED_BYTES) throw IOException("Body too large") // 32MB guard
   }
   return outBuffer.toByteArray()
 }
