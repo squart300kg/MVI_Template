@@ -60,8 +60,6 @@ fun FirstScreen(
   when (uiState.uiType) {
     HomeUiType.NONE -> {}
     HomeUiType.LOADED -> {
-      // TODO: 손가락 줌인/줌아웃에 따른 이미지 조정 레이아웃 구축
-      // TODO: 구성변경 대응 로직
       val listState = rememberLazyGridState()
       PaginationLoadEffect(
         listState = listState,

@@ -25,10 +25,13 @@ class ImageMemoryCacheImpl private constructor(
     }
   }
 
+  private val lruCache = object : LruCache<String, Bitmap>(LRU_CACHE_NATIVE_HEAP_MAX_SIZE) {
+    override fun sizeOf(key: String, value: Bitmap): Int = value.allocationByteCount
+  }
+
   @Synchronized
   override fun get(key: String): ImageBitmap? =
     lruCache.get(key)?.asImageBitmap()
-
   @Synchronized
   override fun cache(key: String, image: ImageBitmap) {
     val imageBitmap = image.asAndroidBitmap()
@@ -43,7 +46,4 @@ class ImageMemoryCacheImpl private constructor(
     lruCache.put(key, imageBitmap)
   }
 
-  private val lruCache = object : LruCache<String, Bitmap>(LRU_CACHE_NATIVE_HEAP_MAX_SIZE) {
-    override fun sizeOf(key: String, value: Bitmap): Int = value.allocationByteCount
-  }
 }

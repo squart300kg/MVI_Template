@@ -4,24 +4,26 @@ import android.graphics.BitmapFactory
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asImageBitmap
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.withContext
 import kr.co.architecture.custom.http.client.HttpHeaderConstants.Property.IF_MODIFIED_SINCE
 import kr.co.architecture.custom.http.client.HttpHeaderConstants.Property.IF_NONE_MATCH
-import kr.co.architecture.custom.http.client.HttpStatusCode
+import kr.co.architecture.custom.http.client.HttpStatusCode.NOT_MODIFIED
 import kr.co.architecture.custom.http.client.HttpStatusCode.SUCCESS
 import kr.co.architecture.custom.image.loader.domain.model.Meta
 import kr.co.architecture.custom.image.loader.network.HttpClient
 import java.util.Locale
-import kotlin.time.measureTime
 
 class ImageMediatorImpl(
   private val imageMemoryCache: ImageMemoryCache? = null,
   private val imageDiskCache: ImageDiskCache? = null,
   private val httpClient: HttpClient
-): ImageMediator {
+) : ImageMediator {
 
   /** 캐시 상태에 맞춰 1~2번 이미지를 흘려보냄 (ex. SWR이면 stale → fresh 순서로 2회 emit) */
   override fun imageFlow(url: String): Flow<ImageState> =
@@ -49,8 +51,31 @@ class ImageMediatorImpl(
             imageMemoryCache?.cache(url, diskCachedImageBitmap)
             emit(ImageState.Success(diskCachedImageBitmap))
 
-            val freshImageBytes = revalidateWhenSWR(url, cachedDiskEntry.meta) ?: return@flow
-            val freshImageBitmap = freshImageBytes.decodeToImageBitmap() ?: return@flow
+            // TODO: 여기 반환타입 재정의해야함
+            val freshImageBytes = callbackFlow {
+              revalidateWhenSWR(
+                url = url,
+                meta = cachedDiskEntry.meta,
+                onSuccess = { header, body ->
+                  send(body).also {
+                    imageDiskCache.cacheBodyAndMeta(
+                      url = url,
+                      body = body,
+                      header = header
+                    )
+                  }
+                },
+                onNotFound = { header ->
+                  send(null).also {
+                    imageDiskCache.cacheMeta(url, header)
+                  }
+                },
+                onFailure = { send(null) }
+              )
+              awaitClose()
+            }.first()
+
+            val freshImageBitmap = freshImageBytes?.decodeToImageBitmap() ?: return@flow
             imageMemoryCache?.cache(url, freshImageBitmap)
             emit(ImageState.Success(freshImageBitmap))
             return@flow
@@ -73,7 +98,7 @@ class ImageMediatorImpl(
       )
       when {
         // 200: 디코딩 -> 메모리/디스크 캐싱 -> 이미지 발행
-        apiResponse.code == HttpStatusCode.SUCCESS && apiResponse.body != null -> {
+        apiResponse.code == SUCCESS && apiResponse.body != null -> {
           val imageBitmap = apiResponse.body.data.decodeToImageBitmap() ?: return@flow
           imageMemoryCache?.cache(url, imageBitmap)
           imageDiskCache?.cacheBodyAndMeta(
@@ -87,7 +112,7 @@ class ImageMediatorImpl(
           emit(ImageState.Success(imageBitmap))
         }
         // 304: 디코딩 -> 메모리 캐싱/디스크 캐싱(메타만 갱신) -> 이미지 발행
-        apiResponse.code == HttpStatusCode.NOT_MODIFIED && cachedDiskEntry != null -> {
+        apiResponse.code == NOT_MODIFIED && cachedDiskEntry != null -> {
           val imageBitmap = cachedDiskEntry.bytes.data.decodeToImageBitmap() ?: return@flow
           imageMemoryCache?.cache(url, imageBitmap)
           imageDiskCache.cacheMeta(
@@ -111,35 +136,36 @@ class ImageMediatorImpl(
       BitmapFactory.decodeByteArray(this@decodeToImageBitmap, 0, size)?.asImageBitmap()
     }
 
+  // TODO: 네트워크쪽으로 이동?
   /** SWR 재검증: 200이면 디스크/메모리 갱신용 바디 반환, 304면 null */
-  private suspend fun revalidateWhenSWR(url: String, meta: Meta): ByteArray? {
+  private suspend fun revalidateWhenSWR(
+    url: String,
+    meta: Meta,
+    onSuccess: suspend (header: Map<String, String>, body: ByteArray) -> Unit = {_,_->},
+    onNotFound: suspend (header: Map<String, String>) -> Unit = {},
+    onFailure: suspend () -> Unit = {}
+  ) {
     val header = buildMap {
       meta.etag?.let { put(IF_NONE_MATCH, it) }
       meta.lastModified?.let { put(IF_MODIFIED_SINCE, it) }
     }
     val apiResponse = httpClient.get(url = url, header = header)
-    return when {
+    when {
       apiResponse.code == SUCCESS && apiResponse.body != null -> {
-        apiResponse.body.data.also { byteArrayResponse ->
-          imageDiskCache?.cacheBodyAndMeta(
-            url = url,
-            body = byteArrayResponse,
-            header = mergedHeader(
-              requestHeader = header,
-              responseHeader = apiResponse.header
-            )
-          )
-        }
+        onSuccess(
+          mergedHeader(
+            requestHeader = header,
+            responseHeader = apiResponse.header
+          ),
+          apiResponse.body.data
+        )
       }
-      apiResponse.code == HttpStatusCode.NOT_MODIFIED -> {
-        null.also {
-          imageDiskCache?.cacheMeta(url, apiResponse.header)
-        }
-      }
-      else -> null
+      apiResponse.code == NOT_MODIFIED -> onNotFound(apiResponse.header)
+      else -> onFailure()
     }
   }
 
+  // TODO: 유틸성 함수. 이동
   private fun mergedHeader(
     requestHeader: Map<String, String>,
     responseHeader: Map<String, String>
