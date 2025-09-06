@@ -39,7 +39,7 @@ fun AsyncImage(
     remember(rawClient) { HttpClientImpl.getInstance(rawClient) }
 
   val imageMemoryCache =
-    if (enableMemoryCache) remember { ImageMemoryCacheImpl.getInstance() }
+    if (enableMemoryCache) remember { AggressiveImageMemoryCacheImpl.getInstance() }
     else null
 
   val diskMemoryCache =
