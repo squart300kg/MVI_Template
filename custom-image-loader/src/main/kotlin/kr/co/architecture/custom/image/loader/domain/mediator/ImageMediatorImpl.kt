@@ -1,23 +1,16 @@
 package kr.co.architecture.custom.image.loader.domain.mediator
 
-import android.graphics.BitmapFactory
-import androidx.compose.ui.graphics.ImageBitmap
-import androidx.compose.ui.graphics.asImageBitmap
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.callbackFlow
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
-import kotlinx.coroutines.withContext
 import kr.co.architecture.custom.http.client.HttpHeaderConstants.Property.IF_MODIFIED_SINCE
 import kr.co.architecture.custom.http.client.HttpHeaderConstants.Property.IF_NONE_MATCH
 import kr.co.architecture.custom.http.client.HttpStatusCode.NOT_MODIFIED
 import kr.co.architecture.custom.http.client.HttpStatusCode.SUCCESS
-import kr.co.architecture.custom.image.loader.domain.model.Meta
 import kr.co.architecture.custom.image.loader.network.HttpClient
-import java.util.Locale
+import kr.co.architecture.custom.image.loader.util.decodeToImageBitmap
+import kr.co.architecture.custom.image.loader.util.mergedHeader
 
 class ImageMediatorImpl(
   private val imageMemoryCache: ImageMemoryCache? = null,
@@ -128,20 +121,4 @@ class ImageMediatorImpl(
         else -> emit(ImageState.Failure)
       }
     }.flowOn(Dispatchers.IO)
-
-  // TODO: 유틸성. 분리
-  private suspend fun ByteArray.decodeToImageBitmap(): ImageBitmap? =
-    withContext(Dispatchers.Default) {
-      BitmapFactory.decodeByteArray(this@decodeToImageBitmap, 0, size)?.asImageBitmap()
-    }
-
-  // TODO: 유틸성 함수. 이동
-  private fun mergedHeader(
-    requestHeader: Map<String, String>,
-    responseHeader: Map<String, String>
-  ): Map<String, String> =
-    buildMap {
-      putAll(requestHeader.mapKeys { it.key.lowercase(Locale.ROOT) })
-      responseHeader.forEach { (k, v) -> put(k.lowercase(Locale.ROOT), v) }
-    }
 }
