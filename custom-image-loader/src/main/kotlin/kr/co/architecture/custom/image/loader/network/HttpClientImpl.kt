@@ -3,7 +3,7 @@ package kr.co.architecture.custom.image.loader.network
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.first
-import kr.co.architecture.custom.http.client.HttpHeaderConstants.Method.GET
+import kr.co.architecture.custom.http.client.constants.HttpHeaderConstants.Method.GET
 import kr.co.architecture.custom.http.client.RawHttp11Client
 
 class HttpClientImpl private constructor(

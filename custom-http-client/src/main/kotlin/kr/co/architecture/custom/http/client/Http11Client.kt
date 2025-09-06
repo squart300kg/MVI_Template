@@ -2,24 +2,26 @@ package kr.co.architecture.custom.http.client
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import kr.co.architecture.custom.http.client.HttpHeaderConstants.HTTP_1_1
-import kr.co.architecture.custom.http.client.HttpHeaderConstants.Property.ACCEPT
-import kr.co.architecture.custom.http.client.HttpHeaderConstants.Property.ACCEPT_ENCODING
-import kr.co.architecture.custom.http.client.HttpHeaderConstants.Property.CONNECTION
-import kr.co.architecture.custom.http.client.HttpHeaderConstants.Property.CONTENT_ENCODING
-import kr.co.architecture.custom.http.client.HttpHeaderConstants.Property.CONTENT_LENGTH
-import kr.co.architecture.custom.http.client.HttpHeaderConstants.Property.CONTENT_TYPE
-import kr.co.architecture.custom.http.client.HttpHeaderConstants.Property.HOST
-import kr.co.architecture.custom.http.client.HttpHeaderConstants.Property.LOCATION
-import kr.co.architecture.custom.http.client.HttpHeaderConstants.Property.TRANSFER_ENCODING
-import kr.co.architecture.custom.http.client.HttpHeaderConstants.Property.USER_AGENT
-import kr.co.architecture.custom.http.client.HttpHeaderConstants.Value.CHUNKED
-import kr.co.architecture.custom.http.client.HttpHeaderConstants.Value.GZIP
-import kr.co.architecture.custom.http.client.HttpHeaderConstants.Value.IMAGE_ALL
-import kr.co.architecture.custom.http.client.HttpHeaderConstants.Value.KEEP_ALIVE
-import kr.co.architecture.custom.http.client.HttpStatusCode.MOVED_TEMP
-import kr.co.architecture.custom.http.client.HttpStatusCode.NOT_MODIFIED
+import kr.co.architecture.custom.http.client.constants.HttpHeaderConstants.HTTP_1_1
+import kr.co.architecture.custom.http.client.constants.HttpHeaderConstants.Property.ACCEPT
+import kr.co.architecture.custom.http.client.constants.HttpHeaderConstants.Property.ACCEPT_ENCODING
+import kr.co.architecture.custom.http.client.constants.HttpHeaderConstants.Property.CONNECTION
+import kr.co.architecture.custom.http.client.constants.HttpHeaderConstants.Property.CONTENT_ENCODING
+import kr.co.architecture.custom.http.client.constants.HttpHeaderConstants.Property.CONTENT_LENGTH
+import kr.co.architecture.custom.http.client.constants.HttpHeaderConstants.Property.CONTENT_TYPE
+import kr.co.architecture.custom.http.client.constants.HttpHeaderConstants.Property.HOST
+import kr.co.architecture.custom.http.client.constants.HttpHeaderConstants.Property.LOCATION
+import kr.co.architecture.custom.http.client.constants.HttpHeaderConstants.Property.TRANSFER_ENCODING
+import kr.co.architecture.custom.http.client.constants.HttpHeaderConstants.Property.USER_AGENT
+import kr.co.architecture.custom.http.client.constants.HttpHeaderConstants.Value.CHUNKED
+import kr.co.architecture.custom.http.client.constants.HttpHeaderConstants.Value.CLOSE
+import kr.co.architecture.custom.http.client.constants.HttpHeaderConstants.Value.GZIP
+import kr.co.architecture.custom.http.client.constants.HttpHeaderConstants.Value.IMAGE_ALL
+import kr.co.architecture.custom.http.client.constants.HttpHeaderConstants.Value.KEEP_ALIVE
+import kr.co.architecture.custom.http.client.constants.HttpStatusCode.MOVED_TEMP
+import kr.co.architecture.custom.http.client.constants.HttpStatusCode.NOT_MODIFIED
 import kr.co.architecture.custom.http.client.interceptor.CustomHttpLogger
+import kr.co.architecture.custom.http.client.model.Address
 import kr.co.architecture.custom.http.client.model.HttpResponse
 import kr.co.architecture.custom.http.client.model.toBytes
 import java.io.BufferedInputStream
@@ -60,6 +62,10 @@ class RawHttp11Client private constructor(
     }
   }
 
+  private val connectionPool by lazy(
+    mode = LazyThreadSafetyMode.PUBLICATION
+  ) { ConnectionPool.getInstance() }
+
   suspend fun callApi(
     method: String,
     url: String,
@@ -97,19 +103,22 @@ class RawHttp11Client private constructor(
         require(redirectDepth <= maxRedirects) { "redirects count is max($maxRedirects)" }
         val startNs = System.nanoTime()
 
-        // 1) hand shake 및 연결
+        // 1) hand-shake를 위한 주소 키 산출
         val host = url.host
         val pathAndQuery = url.extractPathAndQuery()
-        val socket = getSocket(
-          url = url,
-          readTimeoutMs = readTimeoutMs
+        val address = Address(
+          scheme = url.protocol.lowercase(),
+          host = url.host,
+          port = url.extractPort()
         )
 
-        socket.use { socket ->
+        // 2) 소켓 획득 (있으면 재사용, 없으면 새로)
+        val socket = connectionPool.acquire(address) ?: getSocket(url, readTimeoutMs)
+        try {
           val bufferedOutputStream = BufferedOutputStream(socket.getOutputStream())
           val bufferedInputStream = BufferedInputStream(socket.getInputStream())
 
-          // 2) 요청 헤더 구축
+          // 3) 요청 헤더 구축
           val requestHeader = buildString {
             append("$method $pathAndQuery ${HTTP_1_1}\r\n")
             append("$HOST: $host\r\n")
@@ -125,7 +134,7 @@ class RawHttp11Client private constructor(
             write(requestHeader.toByteArray(Charsets.US_ASCII))
             if (body != null) write(body)
 
-            // 3) API 호출
+            // 4) API 호출
             flush()
           }
 
@@ -134,7 +143,7 @@ class RawHttp11Client private constructor(
           httpLogger?.printRequestHeaderLog(requestHeader)
           httpLogger?.printRequestBodyLog()
 
-          // 4) 응답 헤더 상태줄 파싱 (HTTP/1.1 200 OK)
+          // 5) 응답 헤더 상태줄 파싱 (HTTP/1.1 200 OK)
           val (httpStatusCode, httpStatusMessage) = run {
             readLineAscii(bufferedInputStream)?.let { statusLine ->
               statusLine.split(' ', limit = 3).run {
@@ -145,7 +154,7 @@ class RawHttp11Client private constructor(
             } ?: throw IOException("http status line is null")
           }
 
-          // 5) 응답 헤더 본문 파싱
+          // 6) 응답 헤더 본문 파싱
           val responseHeader = mutableMapOf<String, String>()
           while (true) {
             val line = readLineAscii(bufferedInputStream) ?: break
@@ -163,7 +172,7 @@ class RawHttp11Client private constructor(
           httpLogger?.printResponseStartLog(httpStatusCode, httpStatusMessage, "$url", tookMs)
           httpLogger?.printResponseHeaderLog(responseHeader)
 
-          // 6) 리다이렉트 진행
+          // 7) 리다이렉트 진행
           if (httpStatusCode == MOVED_TEMP) {
             val location = responseHeader[LOCATION]
               ?: throw IOException("Redirect without Location")
@@ -178,7 +187,7 @@ class RawHttp11Client private constructor(
             )
           }
 
-          // 7) 응답 바디 파싱
+          // 8) 응답 바디 파싱
           val transfer = responseHeader[TRANSFER_ENCODING]
           val contentLen =
             responseHeader[CONTENT_LENGTH]?.toLongOrNull()
@@ -188,8 +197,10 @@ class RawHttp11Client private constructor(
             contentLen != null -> readFixed(bufferedInputStream, contentLen)
             else -> readToEnd(bufferedInputStream)
           }
+          val connectionHeader = responseHeader[CONNECTION]?.lowercase()
+          val canReuse = connectionHeader != CLOSE
 
-          // 8) 에러 응답 결과 반환
+          // 9) 에러 응답 결과 반환
           if (httpStatusCode in 400..599) {
             onResponseError(
               HttpResponse(
@@ -201,7 +212,7 @@ class RawHttp11Client private constructor(
             return@withContext
           }
 
-          // 9) 응답 바디 gzip으로 해제
+          // 10) 응답 바디 gzip으로 해제
           val contentType = responseHeader[CONTENT_TYPE]
           val isGzip = responseHeader[CONTENT_ENCODING]?.contains(GZIP) == true
           val bodyBytes =
@@ -216,7 +227,7 @@ class RawHttp11Client private constructor(
             rawSize = if (isGzip) rawBody.size else null
           )
 
-          // 10) 성공 응답 결과 반환
+          // 11) 성공 응답 결과 반환
           onResponseSuccess(
             HttpResponse(
               code = httpStatusCode,
@@ -225,6 +236,13 @@ class RawHttp11Client private constructor(
               body = bodyBytes.toBytes()
             )
           )
+
+          if (canReuse) connectionPool.release(address, socket)
+          else runCatching { socket.close() }
+
+        } catch (e: Exception) {
+          runCatching { socket.close() }
+          onResponseException(e)
         }
       } catch (e: Exception) {
         onResponseException(e)

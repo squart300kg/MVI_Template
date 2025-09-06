@@ -4,17 +4,15 @@ import kr.co.architecture.custom.http.client.HttpBufferConfig.BODY_MAX_ACCUMULAT
 import kr.co.architecture.custom.http.client.HttpBufferConfig.HEADER_LINE_INITIAL_CAPACITY_BYTES
 import kr.co.architecture.custom.http.client.HttpBufferConfig.HEADER_LINE_MAX_BYTES
 import kr.co.architecture.custom.http.client.HttpBufferConfig.STREAM_COPY_BUFFER_BYTES
-import kr.co.architecture.custom.http.client.HttpHeaderConstants.HTTP
-import kr.co.architecture.custom.http.client.HttpHeaderConstants.HTTPS
+import kr.co.architecture.custom.http.client.constants.HttpHeaderConstants.HTTP
+import kr.co.architecture.custom.http.client.constants.HttpHeaderConstants.HTTPS
 import java.io.ByteArrayOutputStream
 import java.io.EOFException
 import java.io.IOException
 import java.io.InputStream
 import java.net.Socket
 import java.net.URL
-import javax.net.ssl.HttpsURLConnection
 import javax.net.ssl.SNIHostName
-import javax.net.ssl.SSLPeerUnverifiedException
 import javax.net.ssl.SSLSocket
 import javax.net.ssl.SSLSocketFactory
 

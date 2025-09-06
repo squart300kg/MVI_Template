@@ -6,7 +6,7 @@ import kotlinx.coroutines.flow.first
 import kr.co.architecture.core.network.model.ApiResponse
 import kr.co.architecture.core.network.model.PicsumErrorApiResponse
 import kr.co.architecture.core.network.model.PicsumImagesApiResponse
-import kr.co.architecture.custom.http.client.HttpHeaderConstants.Method.GET
+import kr.co.architecture.custom.http.client.constants.HttpHeaderConstants.Method.GET
 import kr.co.architecture.custom.http.client.RawHttp11Client
 
 class PicsumApiImpl(

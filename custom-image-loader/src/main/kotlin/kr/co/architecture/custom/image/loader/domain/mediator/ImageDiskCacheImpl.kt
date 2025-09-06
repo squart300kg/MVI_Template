@@ -1,15 +1,15 @@
 package kr.co.architecture.custom.image.loader.domain.mediator
 
 import android.content.Context
-import kr.co.architecture.custom.http.client.HttpHeaderConstants.Property.AGE
-import kr.co.architecture.custom.http.client.HttpHeaderConstants.Property.CACHE_CONTROL
-import kr.co.architecture.custom.http.client.HttpHeaderConstants.Value.IMMUTABLE
-import kr.co.architecture.custom.http.client.HttpHeaderConstants.Value.MAX_AGE
-import kr.co.architecture.custom.http.client.HttpHeaderConstants.Value.MUST_REVALIDATE
-import kr.co.architecture.custom.http.client.HttpHeaderConstants.Value.NO_CACHE
-import kr.co.architecture.custom.http.client.HttpHeaderConstants.Value.NO_STORE
-import kr.co.architecture.custom.http.client.HttpHeaderConstants.Value.STALE_IF_ERROR
-import kr.co.architecture.custom.http.client.HttpHeaderConstants.Value.STALE_WHILE_REVALIDATE
+import kr.co.architecture.custom.http.client.constants.HttpHeaderConstants.Property.AGE
+import kr.co.architecture.custom.http.client.constants.HttpHeaderConstants.Property.CACHE_CONTROL
+import kr.co.architecture.custom.http.client.constants.HttpHeaderConstants.Value.IMMUTABLE
+import kr.co.architecture.custom.http.client.constants.HttpHeaderConstants.Value.MAX_AGE
+import kr.co.architecture.custom.http.client.constants.HttpHeaderConstants.Value.MUST_REVALIDATE
+import kr.co.architecture.custom.http.client.constants.HttpHeaderConstants.Value.NO_CACHE
+import kr.co.architecture.custom.http.client.constants.HttpHeaderConstants.Value.NO_STORE
+import kr.co.architecture.custom.http.client.constants.HttpHeaderConstants.Value.STALE_IF_ERROR
+import kr.co.architecture.custom.http.client.constants.HttpHeaderConstants.Value.STALE_WHILE_REVALIDATE
 import kr.co.architecture.custom.http.client.model.toBytes
 import kr.co.architecture.custom.image.loader.domain.mediator.ImageDiskCache.DiskEntry
 import kr.co.architecture.custom.image.loader.domain.model.DiskCacheConstants.Formatter._BIN

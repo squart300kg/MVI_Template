@@ -1,4 +1,4 @@
-package kr.co.architecture.custom.http.client
+package kr.co.architecture.custom.http.client.constants
 
 object HttpStatusCode {
   const val SUCCESS = 200

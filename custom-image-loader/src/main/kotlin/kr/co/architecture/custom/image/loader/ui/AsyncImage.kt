@@ -49,8 +49,8 @@ fun AsyncImage(
 
   val imageMediator: ImageMediator = remember {
     ImageMediatorImpl(
-      imageMemoryCache = imageMemoryCache,
-      imageDiskCache = diskMemoryCache,
+//      imageMemoryCache = imageMemoryCache,
+//      imageDiskCache = diskMemoryCache,
       httpClient = httpClient
     )
   }

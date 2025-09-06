@@ -5,10 +5,10 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
-import kr.co.architecture.custom.http.client.HttpHeaderConstants.Property.IF_MODIFIED_SINCE
-import kr.co.architecture.custom.http.client.HttpHeaderConstants.Property.IF_NONE_MATCH
-import kr.co.architecture.custom.http.client.HttpStatusCode.NOT_MODIFIED
-import kr.co.architecture.custom.http.client.HttpStatusCode.SUCCESS
+import kr.co.architecture.custom.http.client.constants.HttpHeaderConstants.Property.IF_MODIFIED_SINCE
+import kr.co.architecture.custom.http.client.constants.HttpHeaderConstants.Property.IF_NONE_MATCH
+import kr.co.architecture.custom.http.client.constants.HttpStatusCode.NOT_MODIFIED
+import kr.co.architecture.custom.http.client.constants.HttpStatusCode.SUCCESS
 import kr.co.architecture.custom.image.loader.network.HttpClient
 import kr.co.architecture.custom.image.loader.util.decodeToImageBitmap
 import kr.co.architecture.custom.image.loader.util.mergedHeader
