@@ -46,13 +46,4 @@ class ImageMemoryCacheImpl private constructor(
   private val lruCache = object : LruCache<String, Bitmap>(LRU_CACHE_NATIVE_HEAP_MAX_SIZE) {
     override fun sizeOf(key: String, value: Bitmap): Int = value.allocationByteCount
   }
-
-  private fun getAvailableHeapMemory(minEmergencyBytes: Long = 1L * 1024 * 1024): Int {
-    val (appMaxMemory, nowUsedMemory) = with (Runtime.getRuntime()) {
-      maxMemory() to totalMemory() - freeMemory()
-    }
-    val headroom = (appMaxMemory - nowUsedMemory - minEmergencyBytes).coerceAtLeast(0L)
-    // LruCache 용량 최대 타입에 맞게 변환
-    return headroom.coerceAtMost(Int.MAX_VALUE.toLong()).toInt()
-  }
 }
