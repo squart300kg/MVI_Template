@@ -79,6 +79,9 @@ class RawHttp11Client private constructor(
     onResponseException = onResponseException,
   )
 
+  /**
+   * 총 10개의 step으로 진행
+   */
   private suspend fun callApi(
     method: String,
     url: URL,
@@ -94,7 +97,7 @@ class RawHttp11Client private constructor(
         require(redirectDepth <= maxRedirects) { "redirects count is max($maxRedirects)" }
         val startNs = System.nanoTime()
 
-        // ---- hand shake 및 연결 ----
+        // 1) hand shake 및 연결
         val host = url.host
         val pathAndQuery = url.extractPathAndQuery()
         val socket = getSocket(
@@ -106,7 +109,7 @@ class RawHttp11Client private constructor(
           val bufferedOutputStream = BufferedOutputStream(socket.getOutputStream())
           val bufferedInputStream = BufferedInputStream(socket.getInputStream())
 
-          // ---- 요청 헤더 ----
+          // 2) 요청 헤더 구축
           val requestHeader = buildString {
             append("$method $pathAndQuery ${HTTP_1_1}\r\n")
             append("$HOST: $host\r\n")
@@ -121,13 +124,17 @@ class RawHttp11Client private constructor(
           bufferedOutputStream.run {
             write(requestHeader.toByteArray(Charsets.US_ASCII))
             if (body != null) write(body)
+
+            // 3) API 호출
             flush()
           }
+
+          // ===== API 요청 로그 ====
           httpLogger?.printRequestStartLog(method, "$url", HTTP_1_1)
           httpLogger?.printRequestHeaderLog(requestHeader)
           httpLogger?.printRequestBodyLog()
 
-          // ---- 응답 헤더 상태줄 파싱 (HTTP/1.1 200 OK) ----
+          // 4) 응답 헤더 상태줄 파싱 (HTTP/1.1 200 OK)
           val (httpStatusCode, httpStatusMessage) = run {
             readLineAscii(bufferedInputStream)?.let { statusLine ->
               statusLine.split(' ', limit = 3).run {
@@ -138,7 +145,7 @@ class RawHttp11Client private constructor(
             } ?: throw IOException("http status line is null")
           }
 
-          // ---- 응답 헤더 본문 파싱 ----
+          // 5) 응답 헤더 본문 파싱
           val responseHeader = mutableMapOf<String, String>()
           while (true) {
             val line = readLineAscii(bufferedInputStream) ?: break
@@ -151,11 +158,12 @@ class RawHttp11Client private constructor(
             }
           }
 
+          // ===== API 응답 로그 ====
           val tookMs = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - startNs)
           httpLogger?.printResponseStartLog(httpStatusCode, httpStatusMessage, "$url", tookMs)
           httpLogger?.printResponseHeaderLog(responseHeader)
 
-          // ---- 리다이렉트 진행 ----
+          // 6) 리다이렉트 진행
           if (httpStatusCode == MOVED_TEMP) {
             val location = responseHeader[LOCATION]
               ?: throw IOException("Redirect without Location")
@@ -170,7 +178,7 @@ class RawHttp11Client private constructor(
             )
           }
 
-          // ---- 응답 바디 파싱 ----
+          // 7) 응답 바디 파싱
           val transfer = responseHeader[TRANSFER_ENCODING]
           val contentLen =
             responseHeader[CONTENT_LENGTH]?.toLongOrNull()
@@ -181,7 +189,7 @@ class RawHttp11Client private constructor(
             else -> readToEnd(bufferedInputStream)
           }
 
-          // ---- 응답 에러 처리 ----
+          // 8) 에러 응답 결과 반환
           if (httpStatusCode in 400..599) {
             onResponseError(
               HttpResponse(
@@ -193,13 +201,14 @@ class RawHttp11Client private constructor(
             return@withContext
           }
 
-          // ---- 응답 바디 gzip으로 해제 ----
+          // 9) 응답 바디 gzip으로 해제
           val contentType = responseHeader[CONTENT_TYPE]
           val isGzip = responseHeader[CONTENT_ENCODING]?.contains(GZIP) == true
           val bodyBytes =
             if (httpStatusCode != NOT_MODIFIED && isGzip) GZIPInputStream(ByteArrayInputStream(rawBody)).use { it.readBytes() }
             else rawBody
 
+          // ===== API 응답 로그 ====
           httpLogger?.printResponseBodyLog(
             body = bodyBytes,
             contentType = contentType,
@@ -207,6 +216,7 @@ class RawHttp11Client private constructor(
             rawSize = if (isGzip) rawBody.size else null
           )
 
+          // 10) 성공 응답 결과 반환
           onResponseSuccess(
             HttpResponse(
               code = httpStatusCode,

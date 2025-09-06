@@ -32,8 +32,6 @@ data class PicsumImagesDtoResponse(
               val idValue = segments.getOrNull(2)
               if (idKey != null && idValue != null) "$protocol://$host/${idKey}/${idValue}/${dtoRequest.requestSize}/${dtoRequest.requestSize}"
               else it.downloadUrl
-
-              it.downloadUrl
             },
             width = it.width,
             height = it.height,

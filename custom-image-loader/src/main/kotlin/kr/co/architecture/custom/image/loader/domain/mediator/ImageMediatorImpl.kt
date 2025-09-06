@@ -2,6 +2,7 @@ package kr.co.architecture.custom.image.loader.domain.mediator
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import kr.co.architecture.custom.http.client.HttpHeaderConstants.Property.IF_MODIFIED_SINCE
@@ -23,25 +24,33 @@ class ImageMediatorImpl(
     flow {
       val now = System.currentTimeMillis()
 
-      // 1) 메모리 캐시
+      // 1) 메모리 캐시 체크
       imageMemoryCache?.get(url)?.let { emit(ImageState.Success(it)); return@flow }
 
-      // 2) 디스크 캐시
+      // 2) 디스크 캐시 체크
       val cachedDiskEntry = imageDiskCache?.getCachedEntry(url)
       if (cachedDiskEntry != null) {
         val diskCachedImageBitmap = cachedDiskEntry.bytes.data.decodeToImageBitmap()
+
         if (diskCachedImageBitmap != null) {
+          // 2-1) 캐싱된 디스크 이미지 히트.
           if (cachedDiskEntry.meta.isFresh(now)) {
-            imageMemoryCache?.cache(url, diskCachedImageBitmap)
+            imageMemoryCache?.cache(
+              key = url,
+              image = diskCachedImageBitmap
+            )
             emit(ImageState.Success(diskCachedImageBitmap))
             return@flow
           }
 
-          // 2-1) MaxAge ~ SWR 확인.
+          // 2-2) cache-control: max-age ~ stale-while-revalidate 확인.
           //  true -> 기존 보유 이미지, 메모리 캐싱 및 다운스트림. 그 후, SWR 검증
           //  false -> 네트워크 호출
           if (cachedDiskEntry.meta.canServeStaleWhileRevalidate(now)) {
-            imageMemoryCache?.cache(url, diskCachedImageBitmap)
+            imageMemoryCache?.cache(
+              key = url,
+              image = diskCachedImageBitmap
+            )
             emit(ImageState.Success(diskCachedImageBitmap))
 
             // SWR 재검증: 200이면 디스크/메모리 갱신용 바디 반환, 304면 null
@@ -49,32 +58,39 @@ class ImageMediatorImpl(
               cachedDiskEntry.meta.etag?.let { put(IF_NONE_MATCH, it) }
               cachedDiskEntry.meta.lastModified?.let { put(IF_MODIFIED_SINCE, it) }
             }
-            val apiResponse = httpClient.get(url = url, header = header)
-            val freshImageBytes = when {
+            val apiResponse = httpClient.get(
+              url = url,
+              header = header
+            )
+            when {
               apiResponse.code == SUCCESS && apiResponse.body != null -> {
-                apiResponse.body.data.also { body ->
-                  imageDiskCache.cacheBodyAndMeta(
-                    url = url,
-                    body = body,
-                    header = header
-                  )
-                }
+                val refreshedImageBitmap = apiResponse.body.data.decodeToImageBitmap() ?: return@flow
+                imageMemoryCache?.cache(
+                  key = url,
+                  image = refreshedImageBitmap
+                )
+                imageDiskCache.cacheBodyAndMeta(
+                  url = url,
+                  body = apiResponse.body.data,
+                  header = header
+                )
+                emit(ImageState.Success(refreshedImageBitmap))
+                return@flow
               }
               apiResponse.code == NOT_MODIFIED -> {
-                null.also { imageDiskCache.cacheMeta(url, header) }
+                imageDiskCache.cacheMeta(
+                  url = url,
+                  header = header
+                )
+                return@flow
               }
-              else -> null
+              else -> return@flow
             }
-
-            val freshImageBitmap = freshImageBytes?.decodeToImageBitmap() ?: return@flow
-            imageMemoryCache?.cache(url, freshImageBitmap)
-            emit(ImageState.Success(freshImageBitmap))
-            return@flow
           }
         }
       }
 
-      // 3) 네트워크 캐시 – 디스크 메타가 있으면 etag/lastModified 붙임
+      // 3) 네트워크 호출 및 캐싱 – 디스크 메타가 있으면 etag/lastModified 붙임
       val requestHeader = mutableMapOf<String, String>()
       cachedDiskEntry?.meta?.etag?.let {
         requestHeader[IF_NONE_MATCH] = it
@@ -90,8 +106,13 @@ class ImageMediatorImpl(
       when {
         // 200: 디코딩 -> 메모리/디스크 캐싱 -> 이미지 발행
         apiResponse.code == SUCCESS && apiResponse.body != null -> {
-          val imageBitmap = apiResponse.body.data.decodeToImageBitmap() ?: return@flow
-          imageMemoryCache?.cache(url, imageBitmap)
+          val imageBitmap = apiResponse.body.data.decodeToImageBitmap()
+            ?: run { emit(ImageState.Failure); return@flow }
+
+          imageMemoryCache?.cache(
+            key = url,
+            image = imageBitmap
+          )
           imageDiskCache?.cacheBodyAndMeta(
             url = url,
             body = apiResponse.body.data,
@@ -104,8 +125,13 @@ class ImageMediatorImpl(
         }
         // 304: 디코딩 -> 메모리 캐싱/디스크 캐싱(메타만 갱신) -> 이미지 발행
         apiResponse.code == NOT_MODIFIED && cachedDiskEntry != null -> {
-          val imageBitmap = cachedDiskEntry.bytes.data.decodeToImageBitmap() ?: return@flow
-          imageMemoryCache?.cache(url, imageBitmap)
+          val imageBitmap = cachedDiskEntry.bytes.data.decodeToImageBitmap()
+            ?: run { emit(ImageState.Failure); return@flow }
+
+          imageMemoryCache?.cache(
+            key = url,
+            image = imageBitmap
+          )
           imageDiskCache.cacheMeta(
             url = url,
             header = apiResponse.header
@@ -114,11 +140,18 @@ class ImageMediatorImpl(
         }
         // 서버 에러(eg., 40x, 50x..): soe 범위 내, 메모리 캐싱 -> 이미지 발행
         cachedDiskEntry?.meta?.canServeStaleOnError() == true -> {
-          val imageBitmap = cachedDiskEntry.bytes.data.decodeToImageBitmap() ?: return@flow
-          imageMemoryCache?.cache(url, imageBitmap)
+          val imageBitmap = cachedDiskEntry.bytes.data.decodeToImageBitmap()
+            ?: run { emit(ImageState.Failure); return@flow }
+
+          imageMemoryCache?.cache(
+            key = url,
+            image = imageBitmap
+          )
           emit(ImageState.Success(imageBitmap))
         }
         else -> emit(ImageState.Failure)
       }
-    }.flowOn(Dispatchers.IO)
+    }
+      .flowOn(Dispatchers.IO)
+      .catch { emit(ImageState.Failure) }
 }

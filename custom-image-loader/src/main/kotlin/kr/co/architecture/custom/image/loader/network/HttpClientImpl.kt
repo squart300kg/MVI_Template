@@ -41,7 +41,15 @@ class HttpClientImpl private constructor(
             )
           )
         },
-        onResponseError = { send(HttpClient.Response(this.code, this.header, this.body)) },
+        onResponseError = {
+          send(
+            HttpClient.Response(
+              code = this.code,
+              header = this.header,
+              body = this.body
+            )
+          )
+        },
         onResponseException = { throw this }
       )
 

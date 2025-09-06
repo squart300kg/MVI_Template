@@ -13,6 +13,7 @@ import kr.co.architecture.custom.http.client.RawHttp11Client
 import kr.co.architecture.custom.http.client.interceptor.CustomHttpLogger
 import kr.co.architecture.custom.image.loader.domain.mediator.ImageMemoryCacheImpl
 import kr.co.architecture.custom.image.loader.domain.mediator.ImageDiskCacheImpl
+import kr.co.architecture.custom.image.loader.domain.mediator.ImageMediator
 import kr.co.architecture.custom.image.loader.domain.mediator.ImageMediatorImpl
 import kr.co.architecture.custom.image.loader.domain.mediator.ImageState
 import kr.co.architecture.custom.image.loader.network.HttpClientImpl
@@ -20,11 +21,11 @@ import kr.co.architecture.custom.image.loader.network.HttpClientImpl
 @Composable
 fun AsyncImage(
   modifier: Modifier = Modifier,
+  url: String,
   enableMemoryCache: Boolean = false,
   enableDiskCache: Boolean = false,
   loadingPlaceholderContent: (@Composable () -> Unit)? = null,
   errorPlaceholderContent: (@Composable () -> Unit)? = null,
-  url: String,
   contentScale: ContentScale = ContentScale.Crop,
   context: Context = LocalContext.current
 ) {
@@ -46,7 +47,7 @@ fun AsyncImage(
     if (enableDiskCache) remember { ImageDiskCacheImpl.getInstance(context) }
     else null
 
-  val imageMediator = remember {
+  val imageMediator: ImageMediator = remember {
     ImageMediatorImpl(
       imageMemoryCache = imageMemoryCache,
       imageDiskCache = diskMemoryCache,
