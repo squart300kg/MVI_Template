@@ -11,9 +11,9 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kr.co.architecture.custom.http.client.RawHttp11Client
 import kr.co.architecture.custom.http.client.interceptor.CustomHttpLogger
+import kr.co.architecture.custom.image.loader.domain.mediator.ImageMemoryCacheImpl
 import kr.co.architecture.custom.image.loader.domain.mediator.ImageDiskCacheImpl
 import kr.co.architecture.custom.image.loader.domain.mediator.ImageMediatorImpl
-import kr.co.architecture.custom.image.loader.domain.mediator.ImageMemoryCacheImpl
 import kr.co.architecture.custom.image.loader.domain.mediator.ImageState
 import kr.co.architecture.custom.image.loader.network.HttpClientImpl
 
@@ -39,7 +39,7 @@ fun AsyncImage(
     remember(rawClient) { HttpClientImpl.getInstance(rawClient) }
 
   val imageMemoryCache =
-    if (enableMemoryCache) remember { AggressiveImageMemoryCacheImpl.getInstance() }
+    if (enableMemoryCache) remember { ImageMemoryCacheImpl.getInstance() }
     else null
 
   val diskMemoryCache =

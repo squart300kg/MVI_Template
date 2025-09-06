@@ -8,7 +8,7 @@ import androidx.compose.ui.graphics.asImageBitmap
 
 private const val LRU_CACHE_NATIVE_HEAP_MAX_SIZE = Int.MAX_VALUE
 
-class AggressiveImageMemoryCacheImpl private constructor(
+class ImageMemoryCacheImpl private constructor(
 ) : ImageMemoryCache {
 
   companion object {
@@ -18,7 +18,7 @@ class AggressiveImageMemoryCacheImpl private constructor(
     @JvmStatic
     fun getInstance(): ImageMemoryCache {
       return INSTANCE ?: synchronized(this) {
-        INSTANCE ?: AggressiveImageMemoryCacheImpl().also {
+        INSTANCE ?: ImageMemoryCacheImpl().also {
           INSTANCE = it
         }
       }
