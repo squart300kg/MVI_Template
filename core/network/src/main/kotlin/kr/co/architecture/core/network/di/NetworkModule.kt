@@ -10,7 +10,7 @@ import kr.co.architecture.core.network.BuildConfig
 import kr.co.architecture.core.network.PicsumApi
 import kr.co.architecture.core.network.PicsumApiImpl
 import kr.co.architecture.custom.http.client.RawHttp11Client
-import kr.co.architecture.custom.http.client.interceptor.CustomHttpLogger
+import kr.co.architecture.custom.http.client.CustomHttpLogger
 import javax.inject.Singleton
 
 @Module
@@ -24,7 +24,6 @@ object NetworkModule {
   @Provides
   @Singleton
   fun provideRawHttp11Client(
-    @ApplicationContext context: Context,
     httpLogger: CustomHttpLogger
   ): RawHttp11Client {
     return RawHttp11Client.getInstance(

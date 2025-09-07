@@ -20,7 +20,6 @@ import kr.co.architecture.custom.http.client.constants.HttpHeaderConstants.Value
 import kr.co.architecture.custom.http.client.constants.HttpHeaderConstants.Value.KEEP_ALIVE
 import kr.co.architecture.custom.http.client.constants.HttpStatusCode.MOVED_TEMP
 import kr.co.architecture.custom.http.client.constants.HttpStatusCode.NOT_MODIFIED
-import kr.co.architecture.custom.http.client.interceptor.CustomHttpLogger
 import kr.co.architecture.custom.http.client.model.Address
 import kr.co.architecture.custom.http.client.model.HttpResponse
 import kr.co.architecture.custom.http.client.model.toBytes
@@ -103,7 +102,7 @@ class RawHttp11Client private constructor(
         require(redirectDepth <= maxRedirects) { "redirects count is max($maxRedirects)" }
         val startNs = System.nanoTime()
 
-        // 1) hand-shake를 위한 주소 키 산출
+        // 1) hand-shake를 위한 주소 설정
         val host = url.host
         val pathAndQuery = url.extractPathAndQuery()
         val address = Address(

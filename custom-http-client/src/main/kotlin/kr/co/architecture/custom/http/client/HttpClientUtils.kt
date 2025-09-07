@@ -106,7 +106,6 @@ internal fun URL.extractPathAndQuery() = buildString {
   if (!query.isNullOrEmpty()) append('?').append(query)
 }
 
-// TODO: 싱글톤 여부 고려
 internal fun getSocket(
   url: URL,
   readTimeoutMs: Int
