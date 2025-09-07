@@ -26,7 +26,7 @@ import kr.co.architecture.core.ui.PaginationLoadEffect
 import kr.co.architecture.custom.image.loader.ui.AsyncImage
 
 @Composable
-fun FirstScreen(
+fun HomeScreen(
   modifier: Modifier = Modifier,
   windowInfo: WindowInfo =  LocalWindowInfo.current,
   viewModel: HomeViewModel = hiltViewModel()
@@ -43,7 +43,7 @@ fun FirstScreen(
     }
   }
 
-  FirstScreen(
+  HomeScreen(
     modifier = modifier,
     uiState = uiState,
     onScrollToEnd = { viewModel.setEvent(HomeUiEvent.OnScrolledToEnd) }
@@ -51,7 +51,7 @@ fun FirstScreen(
 }
 
 @Composable
-fun FirstScreen(
+fun HomeScreen(
   modifier: Modifier = Modifier,
   uiState: HomeUiState,
   onScrollToEnd: () -> Unit = {}
@@ -85,8 +85,6 @@ fun FirstScreen(
               loadingPlaceholderContent = {
                 BaseProgressBar(true)
               },
-              // TODO: 에러 종류에 따라 실패 이미지를 다르게 보여준다.
-              // TODO: 재시도 누를 수 있도록 ui 구성
               errorPlaceholderContent = {
                 ImageLoadingFailure()
               }

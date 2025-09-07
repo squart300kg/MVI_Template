@@ -10,7 +10,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import kr.co.architecture.core.ui.BaseCenterDialog
 import kr.co.architecture.core.ui.BaseProgressBar
 import kr.co.architecture.core.ui.theme.BaseTheme
-import kr.co.architecture.feature.home.FirstScreen
+import kr.co.architecture.feature.home.HomeScreen
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -25,7 +25,7 @@ class MainActivity : ComponentActivity() {
       val errorMessageState by viewModel.globalUiBus.errorDialog.collectAsStateWithLifecycle()
 
       BaseTheme {
-        FirstScreen()
+        HomeScreen()
 
         BaseProgressBar(loadingState)
 
