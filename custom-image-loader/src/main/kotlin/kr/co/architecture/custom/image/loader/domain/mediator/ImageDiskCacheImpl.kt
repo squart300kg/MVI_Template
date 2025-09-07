@@ -93,7 +93,7 @@ class ImageDiskCacheImpl private constructor(
     val expiresAt = when {
       policy.immutable -> Long.MAX_VALUE
       policy.maxAgeSeconds != null -> now + maxOf(0, policy.maxAgeSeconds - age) * 1000
-      else -> null // 명시적 만료 없음 → 항상 재검증 대상으로 취급
+      else -> null
     }
 
     writeAtomic(

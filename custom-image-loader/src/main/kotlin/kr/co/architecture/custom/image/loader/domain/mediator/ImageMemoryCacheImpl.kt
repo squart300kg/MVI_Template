@@ -32,6 +32,7 @@ class ImageMemoryCacheImpl private constructor(
   @Synchronized
   override fun get(key: String): ImageBitmap? =
     lruCache.get(key)?.asImageBitmap()
+
   @Synchronized
   override fun cache(key: String, image: ImageBitmap) {
     val imageBitmap = image.asAndroidBitmap()
@@ -45,5 +46,4 @@ class ImageMemoryCacheImpl private constructor(
 
     lruCache.put(key, imageBitmap)
   }
-
 }
