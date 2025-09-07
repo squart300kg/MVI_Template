@@ -14,7 +14,6 @@ import kr.co.architecture.custom.http.client.constants.HttpHeaderConstants.Prope
 import kr.co.architecture.custom.http.client.constants.HttpHeaderConstants.Property.TRANSFER_ENCODING
 import kr.co.architecture.custom.http.client.constants.HttpHeaderConstants.Property.USER_AGENT
 import kr.co.architecture.custom.http.client.constants.HttpHeaderConstants.Value.CHUNKED
-import kr.co.architecture.custom.http.client.constants.HttpHeaderConstants.Value.CLOSE
 import kr.co.architecture.custom.http.client.constants.HttpHeaderConstants.Value.GZIP
 import kr.co.architecture.custom.http.client.constants.HttpHeaderConstants.Value.IMAGE_ALL
 import kr.co.architecture.custom.http.client.constants.HttpHeaderConstants.Value.KEEP_ALIVE
@@ -85,7 +84,7 @@ class RawHttp11Client private constructor(
   )
 
   /**
-   * 총 10개의 step으로 진행
+   * 총 11개의 step으로 진행
    */
   private suspend fun callApi(
     method: String,
@@ -165,6 +164,11 @@ class RawHttp11Client private constructor(
               responseHeader[property] = value
             }
           }
+          val isKeepAlive = responseHeader[CONNECTION]?.lowercase()  == KEEP_ALIVE
+          val transferEncoding = responseHeader[TRANSFER_ENCODING]
+          val contentLength = responseHeader[CONTENT_LENGTH]?.toLongOrNull()
+          val contentType = responseHeader[CONTENT_TYPE]
+          val isGzip = responseHeader[CONTENT_ENCODING]?.contains(GZIP) == true
 
           // ===== API 응답 로그 ====
           val tookMs = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - startNs)
@@ -173,8 +177,13 @@ class RawHttp11Client private constructor(
 
           // 7) 리다이렉트 진행
           if (httpStatusCode == MOVED_TEMP) {
-            val location = responseHeader[LOCATION]
-              ?: throw IOException("Redirect without Location")
+            val location = responseHeader[LOCATION] ?: throw IOException("Redirect without Location")
+
+            // 7-1) 리다이렉트 직전, socket release or close
+            if (isKeepAlive) connectionPool.release(address, socket)
+            else runCatching { socket.close() }
+
+            // 7-2) 리다이렉트 요청
             return@withContext callApi(
               method = method,
               url = URL(url, location),
@@ -187,33 +196,14 @@ class RawHttp11Client private constructor(
           }
 
           // 8) 응답 바디 파싱
-          val transfer = responseHeader[TRANSFER_ENCODING]
-          val contentLen =
-            responseHeader[CONTENT_LENGTH]?.toLongOrNull()
           val rawBody = when {
             httpStatusCode == NOT_MODIFIED -> byteArrayOf(0)
-            transfer?.contains(CHUNKED) == true -> readChunked(bufferedInputStream)
-            contentLen != null -> readFixed(bufferedInputStream, contentLen)
+            transferEncoding?.contains(CHUNKED) == true -> readChunked(bufferedInputStream)
+            contentLength != null -> readFixed(bufferedInputStream, contentLength)
             else -> readToEnd(bufferedInputStream)
           }
-          val connectionHeader = responseHeader[CONNECTION]?.lowercase()
-          val canReuse = connectionHeader != CLOSE
 
-          // 9) 에러 응답 결과 반환
-          if (httpStatusCode in 400..599) {
-            onResponseError(
-              HttpResponse(
-                code = httpStatusCode,
-                message = httpStatusMessage,
-                body = rawBody.toBytes()
-              )
-            )
-            return@withContext
-          }
-
-          // 10) 응답 바디 gzip으로 해제
-          val contentType = responseHeader[CONTENT_TYPE]
-          val isGzip = responseHeader[CONTENT_ENCODING]?.contains(GZIP) == true
+          // 9) 응답 바디 gzip으로 해제
           val bodyBytes =
             if (httpStatusCode != NOT_MODIFIED && isGzip) GZIPInputStream(ByteArrayInputStream(rawBody)).use { it.readBytes() }
             else rawBody
@@ -226,26 +216,25 @@ class RawHttp11Client private constructor(
             rawSize = if (isGzip) rawBody.size else null
           )
 
-          // 11) 성공 응답 결과 반환
-          onResponseSuccess(
-            HttpResponse(
-              code = httpStatusCode,
-              message = httpStatusMessage,
-              header = responseHeader,
-              body = bodyBytes.toBytes()
-            )
-          )
-
-          if (canReuse) connectionPool.release(address, socket)
+          // 10) 응답 직전, socket release or close
+          if (isKeepAlive) connectionPool.release(address, socket)
           else runCatching { socket.close() }
 
+          val response = HttpResponse(
+            code = httpStatusCode,
+            message = httpStatusMessage,
+            header = responseHeader,
+            body = bodyBytes.toBytes()
+          )
+
+          // 11) 응답 결과 반환
+          if (httpStatusCode in 400..599) onResponseError(response)
+          else onResponseSuccess(response)
         } catch (e: Exception) {
           runCatching { socket.close() }
           onResponseException(e)
         }
-      } catch (e: Exception) {
-        onResponseException(e)
-      }
+      } catch (e: Exception) { onResponseException(e) }
     }
   }
 }

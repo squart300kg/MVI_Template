@@ -10,7 +10,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kr.co.architecture.custom.http.client.RawHttp11Client
-import kr.co.architecture.custom.http.client.interceptor.CustomHttpLogger
+import kr.co.architecture.custom.http.client.CustomHttpLogger
 import kr.co.architecture.custom.image.loader.domain.mediator.ImageMemoryCacheImpl
 import kr.co.architecture.custom.image.loader.domain.mediator.ImageDiskCacheImpl
 import kr.co.architecture.custom.image.loader.domain.mediator.ImageMediator
