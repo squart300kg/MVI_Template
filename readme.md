@@ -8,13 +8,14 @@
 > 7. 앱 시연 영상
 
 ## 1. 빌드 환경
-해다 과제가 실행된 빌드 환경을 의미합니다. 만약 과제 빌드에 문제가 있을 시, 아래 빌드 환경을 참고하시면 좋습니다.
+해당 과제가 실행된 빌드 환경을 의미합니다. 만약 과제 빌드에 문제가 있을 시, 아래 빌드 환경을 참고하시면 좋습니다.
 ![BuildConfig.png](readme-img/BuildConfig.png)
 
 ## 2. 아키텍처 구조도
+해당 과제가 실행된 아키텍처 구조입니다.
+
 ![Architecture.png](readme-img/Architecture.png)
 
-해당 과제가 실행된 아키텍처 구조입니다. 
 
 - **[App앱]** : `Google Guide to App Architecture`에 `MVI`를 결합해 사용했습니다. 구조는 `UI` / `Domain` / `Data` 레이어로 나뉘며, 각 레이어에 대응하는 `Model`과 `Mapper`를 둡니다(예: `*.DomainResponse`, 매퍼 함수 `mapperToDto()` / `mapperToUiModel()` 등).
 
@@ -24,7 +25,7 @@
   - 그 외 HTTP/1.1 기본 동작(chunked 전송 해제, Content-Length 고정 읽기, gzip 인코딩 해제, Connection: keep-alive 처리 등)을 구현했습니다.
 
 - **[custom-image-loader]** : `custom-http-client`를 사용해 이미지를 로딩하는 모듈입니다. `[GET] /v2/list call` -> `download_url call`시, 302 응답을 받습니다. 그 후, CDN(Fastly)서버로 리다이렉트합니다.
-  - 메모리 캐시: `ImageMemoryCacheImpl`(LRU 기반)
+  - 메모리 캐시: `ImageMemoryCacheImpl`(LRU 기반, Native Heap 2GB 한도. 초과 시, 추가하는 이미지 크기 초과분 만큼 trim)
   - 디스크 캐시: `ImageDiskCacheImpl`(내부 File저장, Cache-Control/ETag/Last-Modified 해석, SWR 갱신)
   - 호출 측은 `AsyncImage`에서 `enableMemoryCache`, `enableDiskCache` 플래그로 캐싱 전략을 선택할 수 있습니다.
 
