@@ -231,7 +231,6 @@ class RawHttp11Client private constructor(
           // 10) 응답 직전, socket release or close
           if (isKeepAlive) connectionPool.release(address, socket)
           else runCatching { socket.close() }
-//          socket.close()
 
           val response = HttpResponse(
             code = httpStatusCode,

@@ -52,53 +52,15 @@ class ImageMediatorImpl(
               image = diskCachedImageBitmap
             )
             emit(ImageState.Success(diskCachedImageBitmap))
-
-            // SWR 재검증: 200이면 디스크/메모리 갱신용 바디 반환, 304면 null
-            val header = buildMap {
-              cachedDiskEntry.meta.etag?.let { put(IF_NONE_MATCH, it) }
-              cachedDiskEntry.meta.lastModified?.let { put(IF_MODIFIED_SINCE, it) }
-            }
-            val apiResponse = httpClient.get(
-              url = url,
-              header = header
-            )
-            when {
-              apiResponse.code == SUCCESS && apiResponse.body != null -> {
-                val refreshedImageBitmap = apiResponse.body.data.decodeToImageBitmap() ?: return@flow
-                imageMemoryCache?.cache(
-                  key = url,
-                  image = refreshedImageBitmap
-                )
-                imageDiskCache.cacheBodyAndMeta(
-                  url = url,
-                  body = apiResponse.body.data,
-                  header = header
-                )
-                emit(ImageState.Success(refreshedImageBitmap))
-                return@flow
-              }
-              apiResponse.code == NOT_MODIFIED -> {
-                imageDiskCache.cacheMeta(
-                  url = url,
-                  header = header
-                )
-                return@flow
-              }
-              else -> return@flow
-            }
           }
         }
       }
 
       // 3) 네트워크 호출 및 캐싱 – 디스크 메타가 있으면 etag/lastModified 붙임
-      val requestHeader = mutableMapOf<String, String>()
-      cachedDiskEntry?.meta?.etag?.let {
-        requestHeader[IF_NONE_MATCH] = it
+      val requestHeader = buildMap {
+        cachedDiskEntry?.meta?.etag?.let { put(IF_NONE_MATCH, it) }
+        cachedDiskEntry?.meta?.lastModified?.let { put(IF_MODIFIED_SINCE, it) }
       }
-      cachedDiskEntry?.meta?.lastModified?.let {
-        requestHeader[IF_MODIFIED_SINCE] = it
-      }
-
       val apiResponse = httpClient.get(
         url = url,
         header = requestHeader
