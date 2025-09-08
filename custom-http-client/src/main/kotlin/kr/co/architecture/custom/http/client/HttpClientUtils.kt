@@ -12,10 +12,12 @@ import java.io.IOException
 import java.io.InputStream
 import java.net.InetSocketAddress
 import java.net.Socket
+import java.net.SocketTimeoutException
 import java.net.URL
 import javax.net.ssl.SNIHostName
 import javax.net.ssl.SSLSocket
 import javax.net.ssl.SSLSocketFactory
+import kotlin.math.max
 
 private object HttpBufferConfig {
   /** 헤더 한 줄 읽기 시작 시 BAOS 초기 용량 */
@@ -109,24 +111,39 @@ internal fun URL.extractPathAndQuery() = buildString {
 
 internal fun getSocket(
   url: URL,
-  readTimeoutMs: Int,
+  timeoutRetryCount: Int = 0,
+  maxRetryWhenConnectTimeout: Int,
+  connectTimeoutMs: Int,
+  readTimeoutMs: Int
 ): Socket {
   val port = url.extractPort()
-  return when (url.protocol.equals(HTTPS)) {
-    true -> {
-      (SSLSocketFactory.getDefault().createSocket(url.host, port) as SSLSocket).apply {
-        soTimeout = readTimeoutMs
-        sslParameters.apply {
-          serverNames = listOf(SNIHostName(url.host))
-          endpointIdentificationAlgorithm = HTTPS
-        }
-        startHandshake()
+  val address = InetSocketAddress(url.host, port)
+
+  val ssl = (SSLSocketFactory.getDefault().createSocket() as SSLSocket)
+  return try {
+    ssl.apply {
+      soTimeout = readTimeoutMs
+      connect(address, connectTimeoutMs)
+      sslParameters = ssl.sslParameters.apply {
+        serverNames = listOf(SNIHostName(url.host))
+        endpointIdentificationAlgorithm = HTTPS
       }
+      startHandshake()
     }
-    false -> {
-      Socket(url.host, port).apply {
-        soTimeout = readTimeoutMs
-      }
+  } catch (e: SocketTimeoutException) {
+    runCatching { ssl.close() }
+    if (timeoutRetryCount < maxRetryWhenConnectTimeout) {
+      getSocket(
+        url = url,
+        timeoutRetryCount = timeoutRetryCount + 1,
+        maxRetryWhenConnectTimeout = maxRetryWhenConnectTimeout,
+        connectTimeoutMs = connectTimeoutMs,
+        readTimeoutMs = readTimeoutMs
+      )
     }
+    else throw e
+  } catch (e: Exception) {
+    runCatching { ssl.close() }
+    throw IOException("HTTPS connect failed ${url.host}:$port", e)
   }
 }

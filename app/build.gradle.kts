@@ -13,7 +13,6 @@ android {
   dependencies {
     implementation(project(":feature:home"))
     implementation(project(":core:ui"))
-    implementation(project(":core:domain"))
     implementation(project(":core:repository"))
     baselineProfile(project(":benchmarks"))
 

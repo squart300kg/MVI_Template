@@ -46,6 +46,10 @@ internal class GlobalUiBusImpl @Inject constructor(): GlobalUiBus {
       }
       is ArchitectureSampleHttpFailure.Exception -> {
         when (throwable) {
+          is ArchitectureSampleHttpFailure.Exception.SocketTimeout -> {
+            UiText.StringResource(R.string.networkConnectionErrorTitle) to
+              UiText.StringResource(R.string.networkConnectionErrorContents)
+          }
           is ArchitectureSampleHttpFailure.Exception.NetworkConnection -> {
             UiText.StringResource(R.string.networkConnectionErrorTitle) to
               UiText.StringResource(R.string.networkConnectionErrorContents)

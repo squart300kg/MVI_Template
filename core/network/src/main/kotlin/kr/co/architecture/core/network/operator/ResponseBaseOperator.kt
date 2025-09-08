@@ -1,10 +1,10 @@
 package kr.co.architecture.core.network.operator
 
-import com.google.gson.Gson
 import kr.co.architecture.core.model.ArchitectureSampleHttpFailure
 import kr.co.architecture.core.network.model.ApiResponse
 import kr.co.architecture.core.network.model.PicsumErrorApiResponse
 import kr.co.architecture.core.network.model.PicsumImagesApiResponse
+import java.net.SocketTimeoutException
 import java.net.UnknownHostException
 
 fun ApiResponse<PicsumImagesApiResponse, PicsumErrorApiResponse>.getOrThrowAppFailure(): ApiResponse.Success<PicsumImagesApiResponse> =
@@ -26,6 +26,7 @@ fun ApiResponse<PicsumImagesApiResponse, PicsumErrorApiResponse>.getOrThrowAppFa
        */
       throw when (throwable) {
         is UnknownHostException -> ArchitectureSampleHttpFailure.Exception.NetworkConnection
+        is SocketTimeoutException -> ArchitectureSampleHttpFailure.Exception.SocketTimeout
         else -> ArchitectureSampleHttpFailure.Exception.Unknown
       }
     }

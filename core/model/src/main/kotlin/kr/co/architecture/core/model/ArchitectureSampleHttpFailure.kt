@@ -7,6 +7,7 @@ sealed class ArchitectureSampleHttpFailure: Exception() {
   ): ArchitectureSampleHttpFailure()
   sealed class Exception: ArchitectureSampleHttpFailure() {
     data object NetworkConnection: Exception()
+    data object SocketTimeout: Exception()
     data object Unknown: Exception()
   }
 }

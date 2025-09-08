@@ -33,6 +33,8 @@ import java.util.zip.GZIPInputStream
 
 class RawHttp11Client private constructor(
   private val userAgent: String,
+  private val maxRetryWhenConnectTimeout: Int,
+  private val connectTimeoutMs: Int,
   private val readTimeoutMs: Int,
   private val maxRedirects: Int,
   private val httpLogger: CustomHttpLogger?
@@ -45,13 +47,17 @@ class RawHttp11Client private constructor(
     @JvmStatic
     fun getInstance(
       userAgent: String = "RawHttp11/0.1",
+      maxRetryWhenConnectTimeout: Int = 3,
+      connectTimeoutMs: Int = 10_000,
       readTimeoutMs: Int = 10_000,
-      maxRedirects: Int = 5,
+      maxRedirects: Int = 3,
       httpLogger: CustomHttpLogger? = null
     ): RawHttp11Client {
       return INSTANCE ?: synchronized(this) {
         INSTANCE ?: RawHttp11Client(
           userAgent = userAgent,
+          maxRetryWhenConnectTimeout = maxRetryWhenConnectTimeout,
+          connectTimeoutMs = connectTimeoutMs,
           readTimeoutMs = readTimeoutMs,
           maxRedirects = maxRedirects,
           httpLogger = httpLogger,
@@ -111,7 +117,13 @@ class RawHttp11Client private constructor(
         )
 
         // 2) 소켓 획득 (있으면 재사용, 없으면 새로)
-        val socket = connectionPool.acquire(address) ?: getSocket(url, readTimeoutMs)
+        val socket = connectionPool.acquire(address) ?: getSocket(
+          url = url,
+          maxRetryWhenConnectTimeout = maxRetryWhenConnectTimeout,
+          connectTimeoutMs = connectTimeoutMs,
+          readTimeoutMs = readTimeoutMs
+        )
+
         try {
           val bufferedOutputStream = BufferedOutputStream(socket.getOutputStream())
           val bufferedInputStream = BufferedInputStream(socket.getInputStream())
@@ -219,6 +231,7 @@ class RawHttp11Client private constructor(
           // 10) 응답 직전, socket release or close
           if (isKeepAlive) connectionPool.release(address, socket)
           else runCatching { socket.close() }
+//          socket.close()
 
           val response = HttpResponse(
             code = httpStatusCode,

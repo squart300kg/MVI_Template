@@ -1,10 +1,8 @@
 package kr.co.architecture.core.network.di
 
-import android.content.Context
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
-import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import kr.co.architecture.core.network.BuildConfig
 import kr.co.architecture.core.network.PicsumApi
@@ -28,6 +26,8 @@ object NetworkModule {
   ): RawHttp11Client {
     return RawHttp11Client.getInstance(
       userAgent = "GalleryApp-RawHttp11",
+      maxRetryWhenConnectTimeout = 3,
+      connectTimeoutMs = 3_000,
       readTimeoutMs = 60_000,
       maxRedirects = 5,
       httpLogger = httpLogger
