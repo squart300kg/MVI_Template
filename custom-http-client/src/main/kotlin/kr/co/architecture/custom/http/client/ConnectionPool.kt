@@ -2,7 +2,6 @@ package kr.co.architecture.custom.http.client
 
 import kr.co.architecture.custom.http.client.constants.HttpHeaderConstants.HTTPS
 import kr.co.architecture.custom.http.client.model.Address
-import java.io.IOException
 import java.net.InetSocketAddress
 import java.net.Socket
 import java.net.SocketTimeoutException
@@ -110,7 +109,7 @@ class ConnectionPool private constructor(
       else throw e
     } catch (e: Exception) {
       runCatching { ssl.close() }
-      throw IOException("HTTPS connect failed ${address.host}:$port", e)
+      throw e
     }
   }
 }

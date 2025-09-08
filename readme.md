@@ -22,9 +22,9 @@
   - 302 Redirect(Location 헤더) 처리로 CDN(예: Fastly)로의 전환을 지원합니다.
   - 그 외 HTTP/1.1 기본 동작(chunked 전송 해제, Content-Length 고정 읽기, gzip 인코딩 해제, Connection: keep-alive 처리 등)을 구현했습니다.
 
-- **[custom-image-loader]** : `custom-http-client`를 사용해 이미지를 로딩하는 모듈입니다. `[GET] /v2/list`의 `download_url`을 받아 302 응답을 따라 CDN(Fastly)서버로 리다이렉트합니다.
+- **[custom-image-loader]** : `custom-http-client`를 사용해 이미지를 로딩하는 모듈입니다. `[GET] /v2/list call` -> `download_url call`시, 302 응답을 받습니다. 그 후, CDN(Fastly)서버로 리다이렉트합니다.
   - 메모리 캐시: `ImageMemoryCacheImpl`(LRU 기반)
-  - 디스크 캐시: `ImageDiskCacheImpl`(바이트 + .meta 저장, Cache-Control/ETag/Last-Modified 해석, SWR/304 갱신 지원)
+  - 디스크 캐시: `ImageDiskCacheImpl`(내부 File저장, Cache-Control/ETag/Last-Modified 해석, SWR 갱신)
   - 호출 측은 `AsyncImage`에서 `enableMemoryCache`, `enableDiskCache` 플래그로 캐싱 전략을 선택할 수 있습니다.
 
 ```kotlin
@@ -48,19 +48,20 @@ AsyncImage(
 ## 5. 그 외, API 오류
 - 현재 앱은 기기의 높이/너비를 측정 후, 기기의 해상도 pixel에 맞게 이미지의 높이/너비를 요청하고 있습니다. 현, 테스트 기기 기준 `540/540`으로
 요청했으며 그 결과, 간헐적으로 서버로부터 503 에러를 받습니다. (브라우저통한 호출도 동일)
-- 아래 `X`자로 표시 된 이미지를 볼 수 있습니다. 해당 이미지는 503 에러의 이미지로, `AsyncImage()`의 `errorPlaceholderContent` 파라미터를 통해 표현 가능합니다.
+- 아래 `X`자로 표시 된 이미지는 503 에러의 이미지로, `AsyncImage()`의 `errorPlaceholderContent` 파라미터를 통해 표현 가능합니다.
 위 2가지 사항 과제 검토 시, 참고 부탁드립니다.
 
 ![BenchmarkResult.png](readme-img/apiErrorScreenShot.jpeg)
 ![BenchmarkResult.png](readme-img/apiErrorLog.png)
 
 ## 6. 앱 시연 영상
-### 1). 주요 기능 시연 ([영상 보기](readme-img/main.mp4))
-- 첫 로딩 : 이미지를 네트워크 로딩 및 메모리/디스크 캐싱
+### 1). 주요 기능 ([영상 보기](readme-img/main.mp4))
+- 첫 로딩 : 이미지를 네트워크로 로딩 후 메모리/디스크 캐싱
   - 앱을 나가지 않고, 위로 스크롤 : 메모리 캐싱된 이미지 로딩
   - 앱을 나간 후 (백스택 삭제) 재접속 : 디스크 캐싱된 이미지 로딩
+- 그 외, 무한 스크롤하여 멀티 스레드 환경 내, 이미지 캐싱 / 캐싱 조회 / http통신 동작 확인
 
-### 2). 부가 기능 시연 - 다양한 상황(NetworkConnection, SocketTimeout, API Error)에서의 에러 대응 ([영상 보기](readme-img/sub2.mp4))
-- `hello world`에러의 경우, API 통신 흐름 중간에 임의로 발생시킨 에러입니다.
-- `API Key`에러의 경우, API키를 잘못된키로 하드코딩하여 임의로 발생시킨 에러입니다.
-- 그 외, 에러 상황을 분기처리했으며, 예상치 못한 에러는 `UNKNOWN`에러로 발생시켰습니다.
+### 2). 에러 대응 - NetworkConnection, SocketTimeout, Unknown Error ([영상 보기](readme-img/sub.mp4))
+- `NetworkConnection`에러의 경우, cellular, wifi를 모두 off했을 때 발생하는 에러입니다.
+- `SocketTimeout`에러의 경우, `connectTimeoutMs = 10`, `maxRetryWhenConnectTimeout = 1`로 설정해 임의로 발생시킨 에러입니다.
+- 그 외, 예상치 못한 에러는 `UNKNOWN`에러로 발생시켰습니다.(Eg., `thow Exception()`를 던져 임의로 발생)
