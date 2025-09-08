@@ -10,6 +10,4 @@ android {
   defaultConfig { }
 }
 
-dependencies {
-  implementation(project(":testing"))
-}
+dependencies { }

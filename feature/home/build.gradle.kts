@@ -13,7 +13,6 @@ android {
     implementation(project(":core:ui"))
     implementation(project(":core:model"))
     implementation(project(":core:repository"))
-    implementation(project(":testing"))
     implementation(project(":custom-image-loader"))
   }
 }
