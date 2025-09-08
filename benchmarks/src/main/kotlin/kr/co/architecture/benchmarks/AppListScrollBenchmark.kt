@@ -5,6 +5,10 @@ import androidx.benchmark.macro.FrameTimingMetric
 import androidx.benchmark.macro.StartupMode
 import androidx.benchmark.macro.junit4.MacrobenchmarkRule
 import androidx.test.internal.runner.junit4.AndroidJUnit4ClassRunner
+import androidx.test.uiautomator.By
+import androidx.test.uiautomator.Direction
+import kr.co.kurly.benchmarks.fling
+import kr.co.kurly.benchmarks.waitAndFindObject
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -20,31 +24,21 @@ class AppListScrollBenchmark {
   @Test
   fun startAndScrollProductListWithBaselineProfile() = startAndScrollProductList(CompilationMode.Partial())
 
-  @Test
-  fun startAndScrollProductListWithFull() = startAndScrollProductList(CompilationMode.Full())
+//  @Test
+//  fun startAndScrollProductListWithFull() = startAndScrollProductList(CompilationMode.Full())
 
   private fun startAndScrollProductList(compilationMode: CompilationMode) = benchmarkRule.measureRepeated(
     packageName = "kr.co.architecture.ssy",
     metrics = listOf(FrameTimingMetric()),
     compilationMode = compilationMode,
-    iterations = 1,
+    iterations = 3,
     startupMode = StartupMode.WARM,
     setupBlock = {
       pressHome()
       startActivityAndWait()
     }
   ) {
-//    // PRODUCT_LIST 찾기
-//    val productList = device.waitAndFindObject(By.res(PRODUCT_LIST))
-//
-//    // 수직 스크롤 (Grid, Vertical 대응)
-//    repeat(4) { device.fling(element = productList, direction = Direction.DOWN) }
-//    repeat(2) { device.fling(element = productList, direction = Direction.UP) }
-//
-//    // 수평 스크롤용 첫 horizontal 섹션 찾기
-//    device.findObject(By.res(Pattern.compile(".*_${HORIZONTAL_ITEMS}")))?.let { horizontalSection ->
-//      repeat(2) { device.fling(element = horizontalSection, direction = Direction.RIGHT) }
-//      repeat(1) { device.fling(element = horizontalSection, direction = Direction.LEFT) }
-//    }
+    val list = device.waitAndFindObject(By.scrollable(true), 5_000)
+    repeat(5) { device.fling(list, Direction.DOWN) }
   }
 }

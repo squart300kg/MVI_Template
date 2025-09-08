@@ -3,8 +3,9 @@
 > 2. 전체 아키텍처 구조도
 > 3. custom-http-client 흐름도
 > 4. custom-image-loader 흐름도
-> 5. 그 외, API 오류
-> 6. 앱 시연 영상
+> 5. BaselineProfile 성능 측정 결과
+> 6. 그 외, API 오류
+> 7. 앱 시연 영상
 
 ## 1. 빌드 환경
 해다 과제가 실행된 빌드 환경을 의미합니다. 만약 과제 빌드에 문제가 있을 시, 아래 빌드 환경을 참고하시면 좋습니다.
@@ -45,16 +46,22 @@ AsyncImage(
 ## 4. custom-image-loader
 ![Architecture.png](readme-img/custom-image-loader.png)
 
-## 5. 그 외, API 오류
+## 5. BaselineProfile 성능 측정 결과
+홈 화면의 성능 개선을 위해 BaselineProfile 생성 후, 3회 반복을 통한 벤치마크 측정 결과, 
+P99까지의 frame에 있어, 16.67 - 0.3ms 이내로 로딩됨을 확인할 수 있습니다.
+![benchmarkNone.png](readme-img/benchmarkNone.png)
+![benchmarkBaselineProfile.png](readme-img/benchmarkBaselineProfile.png)
+
+## 6. 그 외, API 오류
 - 현재 앱은 기기의 높이/너비를 측정 후, 기기의 해상도 pixel에 맞게 이미지의 높이/너비를 요청하고 있습니다. 현, 테스트 기기 기준 `540/540`으로
 요청했으며 그 결과, 간헐적으로 서버로부터 503 에러를 받습니다. (브라우저통한 호출도 동일)
 - 아래 `X`자로 표시 된 이미지는 503 에러의 이미지로, `AsyncImage()`의 `errorPlaceholderContent` 파라미터를 통해 표현 가능합니다.
 위 2가지 사항 과제 검토 시, 참고 부탁드립니다.
 
-![BenchmarkResult.png](readme-img/apiErrorScreenShot.jpeg)
-![BenchmarkResult.png](readme-img/apiErrorLog.png)
+![apiErrorScreenShot.png](readme-img/apiErrorScreenShot.jpeg)
+![apiErrorLog.png](readme-img/apiErrorLog.png)
 
-## 6. 앱 시연 영상
+## 7. 앱 시연 영상
 ### 1). 주요 기능 ([영상 보기](readme-img/main.mp4))
 - 첫 로딩 : 이미지를 네트워크로 로딩 후 메모리/디스크 캐싱
   - 앱을 나가지 않고, 위로 스크롤 : 메모리 캐싱된 이미지 로딩

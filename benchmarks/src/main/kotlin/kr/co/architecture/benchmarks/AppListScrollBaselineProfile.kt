@@ -21,18 +21,8 @@ class AppListScrollBaselineProfile {
   fun generate() =
     baselineProfileRule.collect("kr.co.architecture.ssy") {
       startActivityAndWait()
-//
-//      // PRODUCT_LIST 찾기
-//      val productList = device.waitAndFindObject(By.res(PRODUCT_LIST))
-//
-//      // 수직 스크롤 (Grid, Vertical 대응)
-//      repeat(4) { device.fling(element = productList, direction = Direction.DOWN) }
-//      repeat(2) { device.fling(element = productList, direction = Direction.UP) }
-//
-//      // 수평 스크롤용 첫 horizontal 섹션 찾기
-//      device.findObject(By.res(Pattern.compile(".*_${HORIZONTAL_ITEMS}")))?.let { horizontalSection ->
-//        repeat(2) { device.fling(element = horizontalSection, direction = Direction.RIGHT) }
-//        repeat(1) { device.fling(element = horizontalSection, direction = Direction.LEFT) }
-//      }
+
+      val list = device.waitAndFindObject(By.scrollable(true), 5_000)
+      repeat(5) { device.fling(list, Direction.DOWN) }
     }
 }
