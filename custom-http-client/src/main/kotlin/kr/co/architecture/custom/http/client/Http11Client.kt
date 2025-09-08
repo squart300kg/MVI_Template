@@ -117,8 +117,8 @@ class RawHttp11Client private constructor(
         )
 
         // 2) 소켓 획득 (있으면 재사용, 없으면 새로)
-        val socket = connectionPool.acquire(address) ?: getSocket(
-          url = url,
+        val socket = connectionPool.acquire(
+          address = address,
           maxRetryWhenConnectTimeout = maxRetryWhenConnectTimeout,
           connectTimeoutMs = connectTimeoutMs,
           readTimeoutMs = readTimeoutMs
