@@ -13,7 +13,7 @@ private const val MIN_SDK = 26
 private const val COMPILE_SDK = 35
 private const val VERSION_CODE = 1
 private const val VERSION_NAME = "1.0"
-private const val PACKAGE_NAME = "kr.co.architecture.ssy"
+private const val PACKAGE_NAME = "kr.co.architecture.yeo.ssy"
 
 internal fun Project.configureBaseAppVersion(
   commonExtension: CommonExtension<*, *, *, *, *, *>,
