@@ -11,10 +11,10 @@ import androidx.compose.ui.test.performScrollToNode
 import androidx.compose.ui.test.performTextInput
 import junit.framework.TestCase.assertEquals
 import kotlinx.collections.immutable.toImmutableList
-import kr.co.architecture.core.ui.BookCardUiModel
-import kr.co.architecture.core.ui.enums.SortUiEnum
-import kr.co.architecture.core.ui.util.UiText
-import kr.co.architecture.test.testing.ui.SearchTags
+import kr.co.architecture.yeo.core.ui.BookCardUiModel
+import kr.co.architecture.yeo.core.ui.enums.SortUiEnum
+import kr.co.architecture.yeo.core.ui.util.UiText
+import kr.co.architecture.yeo.test.testing.ui.SearchTags
 import org.junit.Rule
 import org.junit.Test
 

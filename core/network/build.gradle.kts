@@ -9,7 +9,7 @@ val properties = Properties()
 properties.load(project.rootProject.file("local.properties").inputStream())
 
 android {
-  namespace = "kr.co.architecture.core.network"
+  namespace = "kr.co.architecture.yeo.core.network"
 
   defaultConfig {
     buildConfigField("String", "API_KEY", "${properties["apiKey"]}")

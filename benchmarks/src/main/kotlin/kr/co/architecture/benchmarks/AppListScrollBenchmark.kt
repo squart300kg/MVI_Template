@@ -8,8 +8,8 @@ import androidx.test.internal.runner.junit4.AndroidJUnit4ClassRunner
 import androidx.test.uiautomator.By
 import androidx.test.uiautomator.Direction
 import androidx.test.uiautomator.Until
-import kr.co.architecture.test.testing.ui.SearchTags.HEADER_TEXT_FIELD
-import kr.co.architecture.test.testing.ui.SearchTags.bookCard
+import kr.co.architecture.yeo.test.testing.ui.SearchTags.HEADER_TEXT_FIELD
+import kr.co.architecture.yeo.test.testing.ui.SearchTags.bookCard
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith

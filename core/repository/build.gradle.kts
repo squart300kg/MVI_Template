@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-  namespace = "kr.co.architecture.core.repository"
+  namespace = "kr.co.architecture.yeo.core.repository"
 
   defaultConfig { }
 

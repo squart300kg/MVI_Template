@@ -2,8 +2,8 @@ package kr.co.architecture.feature.search.preview
 
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import kotlinx.collections.immutable.toImmutableList
-import kr.co.architecture.core.ui.BookCardUiModel
-import kr.co.architecture.core.ui.util.UiText
+import kr.co.architecture.yeo.core.ui.BookCardUiModel
+import kr.co.architecture.yeo.core.ui.util.UiText
 import kr.co.architecture.feature.search.SearchUiState
 import kr.co.architecture.feature.search.SearchUiType
 

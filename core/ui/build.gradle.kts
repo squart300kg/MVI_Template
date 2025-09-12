@@ -5,7 +5,7 @@ plugins {
 }
 
 android {
-  namespace = "kr.co.architecture.core.ui"
+  namespace = "kr.co.architecture.yeo.core.ui"
 
   defaultConfig { }
 

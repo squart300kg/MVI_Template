@@ -5,7 +5,7 @@ plugins {
 }
 
 android {
-  namespace = "kr.co.architecture.feature.detail"
+  namespace = "kr.co.architecture.yeo.feature.detail"
 
   defaultConfig { }
 

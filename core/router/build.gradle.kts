@@ -5,7 +5,7 @@ plugins {
 }
 
 android {
-  namespace = "kr.co.architecture.core.router"
+  namespace = "kr.co.architecture.yeo.core.router"
 
   defaultConfig { }
 

@@ -6,7 +6,7 @@ plugins {
 }
 
 android {
-  namespace = "kr.co.architecture.app"
+  namespace = "kr.co.architecture.yeo.app"
 
   defaultConfig { }
 

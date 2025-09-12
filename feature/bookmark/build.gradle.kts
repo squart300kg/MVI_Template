@@ -5,7 +5,7 @@ plugins {
 }
 
 android {
-  namespace = "kr.co.architecture.feature.bookmark"
+  namespace = "kr.co.architecture.yeo.feature.bookmark"
 
   defaultConfig { }
 

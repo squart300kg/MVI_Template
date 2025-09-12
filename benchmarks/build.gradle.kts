@@ -5,7 +5,7 @@ plugins {
 }
 
 android {
-  namespace = "kr.co.architecture.benchmarks"
+  namespace = "kr.co.architecture.yeo.benchmarks"
 
   defaultConfig { }
 }

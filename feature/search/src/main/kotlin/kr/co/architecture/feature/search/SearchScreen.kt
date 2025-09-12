@@ -19,16 +19,16 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import kotlinx.collections.immutable.toImmutableList
-import kr.co.architecture.core.ui.BookCard
-import kr.co.architecture.core.ui.NoResultContent
-import kr.co.architecture.core.ui.PaginationLoadEffect
-import kr.co.architecture.core.ui.SearchHeader
-import kr.co.architecture.core.ui.SearchRoute
-import kr.co.architecture.core.ui.SortMenuChip
-import kr.co.architecture.core.ui.enums.SortUiEnum
-import kr.co.architecture.core.ui.theme.BaseTheme
+import kr.co.architecture.yeo.core.ui.BookCard
+import kr.co.architecture.yeo.core.ui.NoResultContent
+import kr.co.architecture.yeo.core.ui.PaginationLoadEffect
+import kr.co.architecture.yeo.core.ui.SearchHeader
+import kr.co.architecture.yeo.core.ui.SearchRoute
+import kr.co.architecture.yeo.core.ui.SortMenuChip
+import kr.co.architecture.yeo.core.ui.enums.SortUiEnum
+import kr.co.architecture.yeo.core.ui.theme.BaseTheme
 import kr.co.architecture.feature.search.preview.SearchUiStatePreviewParam
-import kr.co.architecture.test.testing.ui.SearchTags
+import kr.co.architecture.yeo.test.testing.ui.SearchTags
 
 fun NavGraphBuilder.searchScreen() {
   composable<SearchRoute> {

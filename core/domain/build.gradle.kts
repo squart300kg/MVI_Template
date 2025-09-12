@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-  namespace = "kr.co.architecture.core.domain"
+  namespace = "kr.co.architecture.yeo.core.domain"
 
   defaultConfig { }
 

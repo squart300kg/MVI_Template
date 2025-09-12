@@ -6,8 +6,8 @@ import androidx.benchmark.macro.junit4.BaselineProfileRule
 import androidx.test.uiautomator.By
 import androidx.test.uiautomator.Direction
 import androidx.test.uiautomator.Until
-import kr.co.architecture.test.testing.ui.SearchTags.HEADER_TEXT_FIELD
-import kr.co.architecture.test.testing.ui.SearchTags.bookCard
+import kr.co.architecture.yeo.test.testing.ui.SearchTags.HEADER_TEXT_FIELD
+import kr.co.architecture.yeo.test.testing.ui.SearchTags.bookCard
 import org.junit.Rule
 import org.junit.Test
 

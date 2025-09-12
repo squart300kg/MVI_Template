@@ -5,7 +5,7 @@ plugins {
 }
 
 android {
-  namespace = "kr.co.architecture.core.database"
+  namespace = "kr.co.architecture.yeo.core.database"
 
   defaultConfig { }
 

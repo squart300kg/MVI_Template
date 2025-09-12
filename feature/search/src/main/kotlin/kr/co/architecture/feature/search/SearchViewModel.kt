@@ -11,17 +11,17 @@ import kotlinx.coroutines.flow.flatMapConcat
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
-import kr.co.architecture.core.domain.entity.ISBN
-import kr.co.architecture.core.domain.enums.BookmarkToggleTypeEnum
-import kr.co.architecture.core.domain.usecase.ObserveBookmarkedBooksUseCase
-import kr.co.architecture.core.domain.usecase.SearchBooksUseCase
-import kr.co.architecture.core.domain.usecase.ToggleBookmarkUseCase
-import kr.co.architecture.core.ui.BaseViewModel
-import kr.co.architecture.core.ui.BookCardUiModel
-import kr.co.architecture.core.ui.DetailRoute
-import kr.co.architecture.core.ui.enums.SortUiEnum
-import kr.co.architecture.core.ui.util.formatter.DateTextFormatter
-import kr.co.architecture.core.ui.util.formatter.MoneyTextFormatter
+import kr.co.architecture.yeo.core.domain.entity.ISBN
+import kr.co.architecture.yeo.core.domain.enums.BookmarkToggleTypeEnum
+import kr.co.architecture.yeo.core.domain.usecase.ObserveBookmarkedBooksUseCase
+import kr.co.architecture.yeo.core.domain.usecase.SearchBooksUseCase
+import kr.co.architecture.yeo.core.domain.usecase.ToggleBookmarkUseCase
+import kr.co.architecture.yeo.core.ui.BaseViewModel
+import kr.co.architecture.yeo.core.ui.BookCardUiModel
+import kr.co.architecture.yeo.core.ui.DetailRoute
+import kr.co.architecture.yeo.core.ui.enums.SortUiEnum
+import kr.co.architecture.yeo.core.ui.util.formatter.DateTextFormatter
+import kr.co.architecture.yeo.core.ui.util.formatter.MoneyTextFormatter
 import javax.inject.Inject
 
 @OptIn(ExperimentalCoroutinesApi::class)

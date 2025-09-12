@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-  namespace = "kr.co.test.testing"
+  namespace = "kr.co.test.yeo.testing"
 
   defaultConfig { }
 
