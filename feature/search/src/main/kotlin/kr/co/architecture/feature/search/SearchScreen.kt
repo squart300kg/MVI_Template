@@ -42,6 +42,7 @@ fun SearchScreen(
   viewModel: SearchViewModel = hiltViewModel()
 ) {
   val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+  // TODO: repeatOnLifecycle 적용하기
   LaunchedEffect(Unit) {
     viewModel.uiSideEffect.collect { effect ->
       when (effect) {

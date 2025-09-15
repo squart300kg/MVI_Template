@@ -30,6 +30,7 @@ abstract class BaseViewModel<State : UiState, Event : UiEvent, Effect : UiSideEf
   private val _uiState = MutableStateFlow<State>(initialState)
   val uiState = _uiState.asStateFlow()
 
+  // TODO: 여기는 SharedFlow가 더 낫다 
   private val _uiEvent = MutableSharedFlow<Event>()
   val uiEvent = _uiEvent.asSharedFlow()
 
