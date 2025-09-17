@@ -12,8 +12,8 @@ android {
   namespace = "kr.co.architecture.core.network"
 
   defaultConfig {
-    buildConfigField("String", "apiKey", "${properties["apiKey"]}")
-    buildConfigField("String", "apiUrl", "${properties["apiUrl"]}")
+    buildConfigField("String", "API_KEY", "${properties["apiKey"]}")
+    buildConfigField("String", "API_URL", "${properties["apiUrl"]}")
   }
 
   dependencies {

@@ -7,19 +7,20 @@ import com.skydoves.sandwich.retrofit.errorBody
 import com.skydoves.sandwich.suspendOnError
 import com.skydoves.sandwich.suspendOnException
 import kr.co.architecture.core.model.ArchitectureSampleHttpFailure
-import kr.co.architecture.core.network.model.CommonErrorResponse
-import kr.co.architecture.core.network.model.CommonResponse
+import kr.co.architecture.core.network.error.KakaoErrorApiResponse
+import kr.co.architecture.core.network.model.CommonApiResponse
 import java.net.UnknownHostException
 
 
-suspend fun <ENTITY> ApiResponse<CommonResponse<ENTITY>>.getOrThrowAppFailure(): List<ENTITY> = this
+suspend fun <ENTITY> ApiResponse<CommonApiResponse<ENTITY>>.getOrThrowAppFailure(): CommonApiResponse<ENTITY> = this
   .suspendOnError {
     throw try {
       /**
-       * API의 error case맞게 모델 파싱
+       * Kakao API의 error case맞게 모델 파싱
+
        * 실무 진행 시엔, 실제 발생 가능한 error case를 해당 블럭에서 정의 및 분기처리
        */
-      Gson().fromJson(errorBody?.string(), CommonErrorResponse::class.java)
+      Gson().fromJson(errorBody?.string(), KakaoErrorApiResponse::class.java)
     } catch (e: Exception) { throw e }
   }
   .suspendOnException {
@@ -30,8 +31,8 @@ suspend fun <ENTITY> ApiResponse<CommonResponse<ENTITY>>.getOrThrowAppFailure():
      * 실무 진행 시엔, 실제 발생 가능한 exception case를 해당 블럭에서 정의 및 분기처리
      */
     throw when (val e = throwable) {
-      is CommonErrorResponse -> ArchitectureSampleHttpFailure.Error(
-        code = e.status,
+      is KakaoErrorApiResponse -> ArchitectureSampleHttpFailure.Error(
+        code = e.errorType,
         message = e.message
       )
       is UnknownHostException -> ArchitectureSampleHttpFailure.Exception.NetworkConnection
@@ -39,4 +40,3 @@ suspend fun <ENTITY> ApiResponse<CommonResponse<ENTITY>>.getOrThrowAppFailure():
     }
   }
   .getOrThrow()
-  .articles
