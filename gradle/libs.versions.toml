@@ -3,7 +3,7 @@
 androidxCore = "1.12.0"
 androidxLlifecycleRuntimeKtx = "2.7.0"
 androidxActivityCompose = "1.8.2"
-androidxComposeBom = "2025.05.00"
+androidxComposeBom = "2025.09.00"
 androidxNavigation = "2.9.0"
 androidxHiltNavigationCompose = "1.2.0"
 androidxNavigationCommonKtx = "2.7.7"
@@ -14,7 +14,6 @@ mock = "5.5.0"
 androidxEspresso = "3.5.0"
 androidxLifecycleViewmodelCompose = "2.7.0"
 androidxLifecycleRuntimeCompose = "2.7.0"
-composeMaterial = "1.7.0-alpha06"
 androidxComposeMaterial3 = "1.2.0"
 ioCoilKtCompose = "2.6.0"
 kotlinxSerializationJson = "1.5.1"
@@ -43,7 +42,6 @@ baselineProfile = "1.2.4"
 
 # libraries and plugins
 daggerHilt = "2.52"
-material = "1.11.0"
 ksp = "2.0.0-1.0.21"
 espressoCore = "3.6.1"
 uiautomator = "2.3.0"
@@ -59,7 +57,6 @@ androidx-compose-ui-graphics = { group = "androidx.compose.ui", name = "ui-graph
 androidx-compose-ui-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview"}
 androidx-navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "androidxNavigation" }
 androidx-compose-material3 = { group = "androidx.compose.material3", name = "material3", version = "androidxComposeMaterial3" }
-androidx-compose-material = { group = "androidx.compose.material", name = "material", version.ref = "composeMaterial" }
 androidx-hilt-navigation-compose = { group = "androidx.hilt", name = "hilt-navigation-compose", version.ref = "androidxHiltNavigationCompose" }
 androidx-navigation-common-ktx = { group = "androidx.navigation", name = "navigation-common", version.ref = "androidxNavigationCommonKtx"}
 hilt-android-gradle-plugin = { module = "com.google.dagger:hilt-android-gradle-plugin", version.ref = "daggerHilt" }

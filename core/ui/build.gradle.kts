@@ -14,5 +14,6 @@ android {
     implementation(project(":core:router"))
     implementation(project(":core:domain"))
     implementation(project(":core:repository"))
+    implementation(project(":testing"))
   }
 }

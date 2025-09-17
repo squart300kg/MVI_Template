@@ -29,12 +29,10 @@ fun BaseTheme(
             WindowInsets.systemBars
               .union(WindowInsets.ime) // systemBars + ime 인셋 결합
               .asPaddingValues())
-          .fillMaxSize(),
-        color = Color.White
+          .fillMaxSize()
       ) {
         content()
       }
     }
   )
-
 }

@@ -32,7 +32,7 @@ class MainActivity : ComponentActivity() {
 
     setContent {
       val loadingState by viewModel.globalUiBus.loadingState.collectAsStateWithLifecycle()
-      val errorMessageState by viewModel.globalUiBus.errorDialog.collectAsStateWithLifecycle()
+      val errorMessageState by viewModel.globalUiBus.failureDialog.collectAsStateWithLifecycle()
       val navigator: MainNavigator = rememberMainNavigator()
 
       LaunchedRouter(navigator.navController)

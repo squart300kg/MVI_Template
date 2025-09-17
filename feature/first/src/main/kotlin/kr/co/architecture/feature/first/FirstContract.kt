@@ -33,8 +33,7 @@ data class UiModel(
 
 data class FirstUiState(
   val uiType: FirstUiType = FirstUiType.NONE,
-  val uiModels: ImmutableList<UiModel> = persistentListOf(),
-  val isLoading: Boolean = false
+  val uiModels: ImmutableList<UiModel> = persistentListOf()
 ) : UiState
 
 sealed interface FirstUiEvent : UiEvent {

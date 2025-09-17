@@ -5,25 +5,25 @@ import androidx.compose.material3.lightColorScheme
 import androidx.compose.ui.graphics.Color
 
 val LightColors = lightColorScheme(
-  primary = Color(0xFF6366F1),            // Indigo 500
+  primary = Color(0xFF6366F1),
   onPrimary = Color.White,
   primaryContainer = Color(0xFFE0E7FF),
   onPrimaryContainer = Color(0xFF1E1B4B),
 
-  secondary = Color(0xFF10B981),          // Emerald 500 (액션 포인트)
+  secondary = Color(0xFF10B981),
   onSecondary = Color.White,
   secondaryContainer = Color(0xFFD1FAE5),
   onSecondaryContainer = Color(0xFF064E3B),
 
-  background = Color(0xFFF7F8FA),         // 리스트 배경
+  background = Color(0xFFF7F8FA),
   onBackground = Color(0xFF111827),
 
-  surface = Color.White,                   // 카드/텍스트필드 바탕
+  surface = Color.White,
   onSurface = Color(0xFF111827),
-  surfaceVariant = Color(0xFFF1F5F9),      // 칩/분리선 배경
+  surfaceVariant = Color(0xFFF1F5F9),
   onSurfaceVariant = Color(0xFF6B7280),
 
-  outline = Color(0xFFE2E8F0),             // 테두리
+  outline = Color(0xFFE2E8F0),
   error = Color(0xFFEF4444),
   onError = Color.White
 )

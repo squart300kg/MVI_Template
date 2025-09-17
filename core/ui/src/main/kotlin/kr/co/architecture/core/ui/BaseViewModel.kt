@@ -26,20 +26,11 @@ abstract class BaseViewModel<State : UiState, Event : UiEvent, Effect : UiSideEf
 
   private val initialState: State by lazy { createInitialState() }
 
-  private val _loadingState = MutableStateFlow<Boolean>(false)
-  val loadingState = _loadingState.asStateFlow()
-
-  private val _refreshState = MutableStateFlow<Boolean>(false)
-  val refreshState = _refreshState.asStateFlow()
-
-  private val _errorMessageState = MutableSharedFlow<BaseCenterDialogUiModel>()
-  val errorMessageState = _errorMessageState.asSharedFlow()
-
   private val _uiState = MutableStateFlow<State>(initialState)
   val uiState = _uiState.asStateFlow()
 
-  private val _uiEvent = MutableSharedFlow<Event>()
-  val uiEvent = _uiEvent.asSharedFlow()
+  private val _uiEvent = Channel<Event>()
+  val uiEvent = _uiEvent.receiveAsFlow()
 
   private val _uiSideEffect: Channel<Effect> = Channel()
   val uiSideEffect = _uiSideEffect.receiveAsFlow()
@@ -75,7 +66,7 @@ abstract class BaseViewModel<State : UiState, Event : UiEvent, Effect : UiSideEf
 
   fun setEvent(event: Event) {
     val newEvent = event
-    viewModelScope.launch { _uiEvent.emit(newEvent) }
+    viewModelScope.launch { _uiEvent.send(newEvent) }
   }
 
   protected fun setState(reduce: State.() -> State) {

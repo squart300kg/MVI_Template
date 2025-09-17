@@ -14,7 +14,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import kr.co.architecture.core.ui.DetailRoute
@@ -29,13 +33,16 @@ fun NavGraphBuilder.detailScreen() {
 @Composable
 fun DetailScreen(
   modifier: Modifier = Modifier,
+  lifecycleOwner: LifecycleOwner = LocalLifecycleOwner.current,
   viewModel: DetailViewModel = hiltViewModel()
 ) {
   val uiState by viewModel.uiState.collectAsStateWithLifecycle()
   LaunchedEffect(Unit) {
-    viewModel.uiSideEffect.collect { effect ->
-      when (effect) {
-        is DetailUiSideEffect.Load -> viewModel.fetchData()
+    lifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+      viewModel.uiSideEffect.collect { effect ->
+        when (effect) {
+          is DetailUiSideEffect.Load -> viewModel.fetchData()
+        }
       }
     }
   }

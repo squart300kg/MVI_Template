@@ -7,7 +7,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
@@ -21,7 +20,7 @@ internal class GlobalUiBusImpl @Inject constructor(): GlobalUiBus {
 
   // 로딩은 중첩을 허용하는 카운터 방식(동시 요청 대비)
   private val _loadingCount = MutableStateFlow(0)
-  override val loadingState: StateFlow<Boolean> = _loadingCount
+  override val loadingState = _loadingCount.asStateFlow()
     .map { it > 0 }
     .distinctUntilChanged()
     .stateIn(
@@ -30,8 +29,15 @@ internal class GlobalUiBusImpl @Inject constructor(): GlobalUiBus {
       initialValue = false
     )
 
-  private val _errorDialog = MutableStateFlow<BaseCenterDialogUiModel?>(null)
-  override val errorDialog = _errorDialog.asStateFlow()
+  private val _failureDialog = MutableStateFlow<BaseCenterDialogUiModel?>(null)
+  override val failureDialog = _failureDialog.asStateFlow()
+
+  override fun setLoadingState(loadingState: Boolean) {
+    when (loadingState) {
+      true -> _loadingCount.update { it + 1 }
+      false -> _loadingCount.update { (it - 1).coerceAtLeast(0) }
+    }
+  }
 
   override fun showFailureDialog(
     throwable: Throwable
@@ -68,7 +74,7 @@ internal class GlobalUiBusImpl @Inject constructor(): GlobalUiBus {
       }
     }
 
-    _errorDialog.update {
+    _failureDialog.update {
       BaseCenterDialogUiModel(
         titleMessage = title,
         contentMessage = contents
@@ -76,14 +82,7 @@ internal class GlobalUiBusImpl @Inject constructor(): GlobalUiBus {
     }
   }
 
-  override fun setLoadingState(loadingState: Boolean) {
-    when (loadingState) {
-      true -> _loadingCount.update { it + 1 }
-      false -> _loadingCount.update { (it - 1).coerceAtLeast(0) }
-    }
-  }
-
   override fun dismissDialog() {
-    _errorDialog.value = null
+    _failureDialog.value = null
   }
 }
