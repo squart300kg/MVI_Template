@@ -1,8 +1,11 @@
 package kr.co.architecture.app.ui.tab
 
 import androidx.annotation.StringRes
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -10,6 +13,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
@@ -44,66 +48,77 @@ enum class MainTabEnum(
 fun NoMaterial3TabRow(
   modifier: Modifier = Modifier,
   selectedTab: MainTabEnum,
-  onSelectedTabChanced: (mainTabEnum: MainTabEnum) -> Unit = {},
+  onSelectedTabChanced: (MainTabEnum) -> Unit = {},
   colors: CustomColors = LocalCustomColors.current,
   typography: CustomTypography = LocalCustomTypography.current,
   density: Density = LocalDensity.current
 ) {
-  Row(
+  val tabCount = MainTabEnum.entries.size
+  val thinPx  = with(density) { 1.dp.toPx() }   // 회색 끝선
+  val animatedIndex by animateFloatAsState(
+    targetValue = selectedTab.tabIndex.toFloat(),
+    animationSpec = tween(durationMillis = 250, easing = FastOutSlowInEasing),
+    label = "tab-indicator-index"
+  )
+
+  Column(
     modifier = modifier
       .fillMaxWidth()
       .height(70.dp)
       .drawBehind {
-        val thin = with(density) { 1.dp.toPx() }
-        val y = size.height - thin / 2f
+        // 1) 회색 끝선 (전폭, 패딩 반영)
+        val y = size.height - thinPx / 2f
         drawLine(
           color = colors.border,
           start = Offset(0f, y),
           end   = Offset(size.width, y),
-          strokeWidth = thin
+          strokeWidth = thinPx
         )
       }
-      .padding(horizontal = 16.dp),
-    verticalAlignment = Alignment.Bottom
+      .padding(horizontal = 16.dp), // 내부 콘텐츠 폭은 여기 기준
+    verticalArrangement = Arrangement.spacedBy(11.dp)
   ) {
-    MainTabEnum.entries.forEachIndexed { index, mainTab ->
-      val selected = mainTab == selectedTab
-
-      Column(
-        modifier = Modifier
-          .weight(1f)
-          .noRippledClickable(
-            onClick = { onSelectedTabChanced(MainTabEnum.from(index)) }
-          ),
-        verticalArrangement = Arrangement.spacedBy(11.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
-      ) {
-        BasicText(
-          text = stringResource(mainTab.tabStringRes),
-          style = if (selected) typography.label else typography.labelMedium
-        )
-
-        Box(
+    // 라벨 영역
+    Row(
+      modifier = Modifier
+        .fillMaxWidth()
+        .weight(1f),
+      verticalAlignment = Alignment.Bottom
+    ) {
+      MainTabEnum.entries.forEachIndexed { index, tab ->
+        val selected = index == selectedTab.tabIndex
+        Column(
           modifier = Modifier
-            .fillMaxWidth()
-            .height(2.dp)
-            .drawBehind {
-              val thick = with(density) { 2.dp.toPx() }
+            .weight(1f)
+            .noRippledClickable(
+              onClick = { onSelectedTabChanced(MainTabEnum.from(index)) }
+            ),
+          verticalArrangement = Arrangement.spacedBy(11.dp),
+          horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+          BasicText(
+            text = stringResource(tab.tabStringRes),
+            style = if (selected) typography.label else typography.labelMedium
+          )
+        }
+      }
+    }
 
-              val startX = 0f
-              val endX = size.width
-              val y = size.height / 2f
-
-              if (selected) {
-                drawLine(
-                  color = colors.divider,
-                  start = Offset(startX, y),
-                  end   = Offset(endX, y),
-                  strokeWidth = thick,
-                  cap = StrokeCap.Round
-                )
-              }
-            }
+    // 하단 바: 회색 끝선(fillMaxWidth) + 슬라이딩 인디케이터
+    Canvas(Modifier.fillMaxWidth().height(2.dp)) {
+      // 2) 검정 인디케이터: 탭 폭 기준 슬라이드
+      if (tabCount > 0) {
+        val thick = with(density) { 2.dp.toPx() }
+        val y = size.height - thinPx / 2f
+        val segmentWidth = size.width / tabCount
+        val start = segmentWidth * animatedIndex
+        val end   = start + segmentWidth
+        drawLine(
+          color = colors.divider,
+          start = Offset(start, y),
+          end   = Offset(end,   y),
+          strokeWidth = thick,
+          cap = StrokeCap.Square
         )
       }
     }

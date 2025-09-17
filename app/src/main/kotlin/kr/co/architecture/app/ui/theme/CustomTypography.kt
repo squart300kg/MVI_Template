@@ -21,10 +21,10 @@ data class CustomTypography(
 )
 
 private fun typography(fontFamily: FontFamily = pretendard) = CustomTypography(
-  title = TextStyle(fontFamily = fontFamily, fontWeight = FontWeight.SemiBold, fontSize = 16.sp),
-  titleMedium = TextStyle(fontFamily = fontFamily, fontWeight = FontWeight.SemiBold, fontSize = 16.sp),
-  contents = TextStyle(fontFamily = fontFamily, fontWeight = FontWeight.SemiBold, fontSize = 16.sp),
-  contentsMedium = TextStyle(fontFamily = fontFamily, fontWeight = FontWeight.SemiBold, fontSize = 16.sp),
+  title = TextStyle(fontFamily = fontFamily, fontWeight = FontWeight.Bold, fontSize = 16.sp),
+  titleMedium = TextStyle(fontFamily = fontFamily, fontWeight = FontWeight.Light, fontSize = 14.sp),
+  contents = TextStyle(fontFamily = fontFamily, fontWeight = FontWeight.Medium, fontSize = 16.sp),
+  contentsMedium = TextStyle(fontFamily = fontFamily, fontWeight = FontWeight.Light, fontSize = 14.sp),
   label = TextStyle(fontFamily = fontFamily, fontWeight = FontWeight.Bold, fontSize = 16.sp),
   labelMedium = TextStyle(fontFamily = fontFamily, fontWeight = FontWeight.Light, fontSize = 16.sp),
 )
