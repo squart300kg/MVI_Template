@@ -5,8 +5,8 @@ import androidx.annotation.StringRes
 import androidx.compose.runtime.Composable
 import kr.co.architecture.app.R
 import kr.co.architecture.core.router.internal.navigator.Route
-import kr.co.architecture.core.ui.FirstRoute
-import kr.co.architecture.core.ui.SecondRoute
+import kr.co.architecture.core.ui.SearchRoute
+import kr.co.architecture.core.ui.BookmarkRoute
 
 enum class MainBottomTab(
   @DrawableRes val selectedIconRes: Int,
@@ -18,13 +18,13 @@ enum class MainBottomTab(
     selectedIconRes = R.drawable.tab_first_on,
     unselectedIconRes = R.drawable.tab_first_off,
     iconTextIdRes = R.string.first,
-    route = FirstRoute
+    route = SearchRoute
   ),
   SECOND(
     selectedIconRes = R.drawable.tab_second_on,
     unselectedIconRes = R.drawable.tab_second_off,
     iconTextIdRes = R.string.second,
-    route = SecondRoute
+    route = BookmarkRoute
   );
 
   companion object {

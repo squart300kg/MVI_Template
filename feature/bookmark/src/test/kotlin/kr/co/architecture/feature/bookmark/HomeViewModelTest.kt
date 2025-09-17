@@ -1,4 +1,4 @@
-package kr.co.architecture.feature.second
+package kr.co.architecture.feature.bookmark
 
 import kr.co.architecture.feature.home.HomeViewModel
 import kr.co.testing.TestRepository

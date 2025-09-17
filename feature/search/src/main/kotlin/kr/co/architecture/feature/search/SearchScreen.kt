@@ -25,11 +25,11 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
-import kr.co.architecture.core.ui.FirstRoute
+import kr.co.architecture.core.ui.SearchRoute
 import kr.co.architecture.core.ui.util.asString
 
 fun NavGraphBuilder.searchScreen() {
-  composable<FirstRoute> {
+  composable<SearchRoute> {
     SearchScreen()
   }
 }

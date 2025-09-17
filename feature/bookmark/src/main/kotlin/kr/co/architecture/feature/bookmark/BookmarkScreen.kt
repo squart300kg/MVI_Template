@@ -1,4 +1,4 @@
-package kr.co.architecture.feature.second
+package kr.co.architecture.feature.bookmark
 
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.padding
@@ -22,46 +22,46 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
-import kr.co.architecture.core.ui.SecondRoute
+import kr.co.architecture.core.ui.BookmarkRoute
 import kr.co.architecture.core.ui.util.asString
 
-fun NavGraphBuilder.secondScreen() {
-  composable<SecondRoute> {
-    SecondScreen()
+fun NavGraphBuilder.bookmarkScreen() {
+  composable<BookmarkRoute> {
+    BookmarkScreen()
   }
 }
 
 @Composable
-fun SecondScreen(
+fun BookmarkScreen(
   modifier: Modifier = Modifier,
   lifecycleOwner: LifecycleOwner = LocalLifecycleOwner.current,
-  viewModel: SecondViewModel = hiltViewModel()
+  viewModel: BookmarkViewModel = hiltViewModel()
 ) {
   val uiState by viewModel.uiState.collectAsStateWithLifecycle()
   LaunchedEffect(Unit) {
     lifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
       viewModel.uiSideEffect.collect { effect ->
         when (effect) {
-          is SecondUiSideEffect.Load -> viewModel.fetchData()
+          is BookmarkUiSideEffect.Load -> viewModel.fetchData()
         }
       }
     }
   }
-  SecondScreen(
+  BookmarkScreen(
     uiState = uiState,
     modifier = modifier,
   )
 }
 
 @Composable
-fun SecondScreen(
+fun BookmarkScreen(
   modifier: Modifier = Modifier,
-  uiState: SecondUiState,
+  uiState: BookmarkUiState,
 ) {
 
   when (uiState.uiType) {
-    SecondUiType.NONE -> {}
-    SecondUiType.LOADED -> {
+    BookmarkUiType.NONE -> {}
+    BookmarkUiType.LOADED -> {
       LazyColumn(modifier) {
         items(uiState.uiModels) { item ->
           Text(

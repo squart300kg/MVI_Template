@@ -20,7 +20,7 @@ import kr.co.architecture.core.ui.BaseProgressBar
 import kr.co.architecture.core.ui.theme.BaseTheme
 import kr.co.architecture.feature.detail.detailScreen
 import kr.co.architecture.feature.search.searchScreen
-import kr.co.architecture.feature.second.secondScreen
+import kr.co.architecture.feature.bookmark.bookmarkScreen
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -56,7 +56,7 @@ class MainActivity : ComponentActivity() {
             ) {
               searchScreen()
 
-              secondScreen()
+              bookmarkScreen()
 
               detailScreen()
             }
