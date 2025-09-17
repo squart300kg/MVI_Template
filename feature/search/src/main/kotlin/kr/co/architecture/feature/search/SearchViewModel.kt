@@ -1,7 +1,6 @@
 package kr.co.architecture.feature.search
 
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.collections.immutable.toImmutableList
 import kr.co.architecture.core.domain.GetSortedImagesAndVideosByRecentlyUseCase
 import kr.co.architecture.core.model.ContentsQuery
 import kr.co.architecture.core.ui.BaseViewModel
@@ -42,7 +41,10 @@ class SearchViewModel @Inject constructor(
             is SearchUiSideEffect.Load.More -> setStateAndGet { copy(page = page + 1) }.page
           }
         )
-      )
+      ).also {
+        println("contentsList 3: $it")
+
+      }
       setState {
         copy(
           uiType =

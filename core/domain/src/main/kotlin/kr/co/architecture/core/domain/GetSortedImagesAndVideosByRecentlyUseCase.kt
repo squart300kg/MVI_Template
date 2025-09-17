@@ -2,7 +2,9 @@ package kr.co.architecture.core.domain
 
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
+import kr.co.architecture.core.domain.formatter.DateTextFormatter
 import kr.co.architecture.core.model.ContentsQuery
+import kr.co.architecture.core.model.ContentsType
 import kr.co.architecture.core.repository.ImageRepository
 import kr.co.architecture.core.repository.VideoRepository
 import kr.co.architecture.core.repository.dto.ImageDto
@@ -12,7 +14,8 @@ import javax.inject.Inject
 
 class GetSortedImagesAndVideosByRecentlyUseCase @Inject constructor(
   private val imageRepository: ImageRepository,
-  private val videoRepository: VideoRepository
+  private val videoRepository: VideoRepository,
+  private val dateTextFormatter: DateTextFormatter
 ) {
   suspend operator fun invoke(query: ContentsQuery): Response {
     return coroutineScope {
@@ -20,12 +23,22 @@ class GetSortedImagesAndVideosByRecentlyUseCase @Inject constructor(
       val imageDto = async {
         imageRepository.getImages(query)
       }.await()
-        .let(Response::mapperToResponse)
+        .let {
+          Response.mapperToResponse(
+            imageDto = it,
+            dateTextFormatter = dateTextFormatter
+          )
+        }
 
       val videoDto = async {
         videoRepository.getVideos(query)
       }.await()
-        .let(Response::mapperToResponse)
+        .let {
+          Response.mapperToResponse(
+            videoDto = it,
+            dateTextFormatter = dateTextFormatter
+          )
+        }
 
       Response(
         contentsList = (imageDto.contentsList + videoDto.contentsList).sortedBy { it.dateTime },
@@ -43,29 +56,38 @@ class GetSortedImagesAndVideosByRecentlyUseCase @Inject constructor(
       val dateTime: String,
       val title: String,
       val collection: String? = null,
-      val contents: String
+      val contents: String,
+      val contentsType: ContentsType
     )
 
     companion object {
-      fun mapperToResponse(imageDto: ImageDto) = Response(
+      fun mapperToResponse(
+        imageDto: ImageDto,
+        dateTextFormatter: DateTextFormatter
+      ) = Response(
         contentsList = imageDto.images.map {
           Contents(
             thumbnailUrl = it.thumbnailUrl,
-            dateTime = it.dateTime,
+            dateTime = dateTextFormatter(it.dateTime),
             title = it.displaySiteName,
             contents = it.docUrl,
-            collection = it.collection
+            collection = it.collection,
+            contentsType = ContentsType.IMAGE
           )
         },
         pageableDto = imageDto.pageable
       )
-      fun mapperToResponse(videoDto: VideoDto) = Response(
+      fun mapperToResponse(
+        videoDto: VideoDto,
+        dateTextFormatter: DateTextFormatter
+      ) = Response(
         contentsList = videoDto.videos.map {
           Contents(
             thumbnailUrl = it.thumbnail,
-            dateTime = it.datetime,
+            dateTime = dateTextFormatter(it.datetime),
             title = it.title,
-            contents = it.url
+            contents = it.url,
+            contentsType = ContentsType.VIDEO
           )
         },
         pageableDto = videoDto.pageable

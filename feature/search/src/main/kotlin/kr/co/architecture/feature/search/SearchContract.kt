@@ -4,6 +4,7 @@ import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
 import kr.co.architecture.core.domain.GetSortedImagesAndVideosByRecentlyUseCase
+import kr.co.architecture.core.model.ContentsType
 import kr.co.architecture.core.repository.dto.PageableDto
 import kr.co.architecture.core.ui.UiEvent
 import kr.co.architecture.core.ui.UiSideEffect
@@ -20,7 +21,8 @@ data class UiModel(
   val dateTime: String,
   val title: String,
   val collection: String? = null,
-  val contents: String
+  val contents: String,
+  val contentsType: ContentsType
 ) {
   companion object {
     fun mapperToUiModel(contents: List<GetSortedImagesAndVideosByRecentlyUseCase.Response.Contents>) =
@@ -30,7 +32,11 @@ data class UiModel(
           dateTime = it.dateTime,
           title = it.title,
           collection = it.collection,
-          contents = it.contents
+          contents = it.contents,
+          contentsType = when (it.collection != null) {
+            true -> ContentsType.IMAGE
+            false -> ContentsType.VIDEO
+          }
         )
       }.toImmutableList()
   }
