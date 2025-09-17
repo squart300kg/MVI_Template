@@ -1,53 +1,23 @@
 package kr.co.architecture.core.ui.theme
 
-import androidx.compose.material3.darkColorScheme
+import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.ui.graphics.Color
+import androidx.core.graphics.toColorInt
 
-val LightColors = lightColorScheme(
-  primary = Color(0xFF6366F1),
-  onPrimary = Color.White,
-  primaryContainer = Color(0xFFE0E7FF),
-  onPrimaryContainer = Color(0xFF1E1B4B),
+val AppColors: ColorScheme = lightColorScheme(
+  primary = color("#6B4EFF"),
+  onPrimary = color("#FFFFFF"),
 
-  secondary = Color(0xFF10B981),
-  onSecondary = Color.White,
-  secondaryContainer = Color(0xFFD1FAE5),
-  onSecondaryContainer = Color(0xFF064E3B),
+  surface = color("#FFFFFF"),
+  onSurface = color("#121316"),        // 본문 텍스트
 
-  background = Color(0xFFF7F8FA),
-  onBackground = Color(0xFF111827),
+  surfaceVariant = color("#F2F3F5"),   // 검색바/회색 컨테이너
+  onSurfaceVariant = color("#6B7280"), // 보조 텍스트(날짜/플레이스홀더)
 
-  surface = Color.White,
-  onSurface = Color(0xFF111827),
-  surfaceVariant = Color(0xFFF1F5F9),
-  onSurfaceVariant = Color(0xFF6B7280),
+  secondaryContainer = color("#E8E3FF"),   // 칩 배경
+  onSecondaryContainer = color("#221A72"), // 칩 텍스트
 
-  outline = Color(0xFFE2E8F0),
-  error = Color(0xFFEF4444),
-  onError = Color.White
+  outline = color("#DBDDE3")           // 썸네일 테두리/디바이더
 )
-
-val DarkColors = darkColorScheme(
-  primary = Color(0xFF818CF8),
-  onPrimary = Color(0xFF1E1B4B),
-  primaryContainer = Color(0xFF312E81),
-  onPrimaryContainer = Color(0xFFE0E7FF),
-
-  secondary = Color(0xFF34D399),
-  onSecondary = Color(0xFF052E24),
-  secondaryContainer = Color(0xFF064E3B),
-  onSecondaryContainer = Color(0xFFD1FAE5),
-
-  background = Color(0xFF0B0F14),
-  onBackground = Color(0xFFE5E7EB),
-
-  surface = Color(0xFF111418),
-  onSurface = Color(0xFFE5E7EB),
-  surfaceVariant = Color(0xFF1A1F24),
-  onSurfaceVariant = Color(0xFF94A3B8),
-
-  outline = Color(0xFF29313A),
-  error = Color(0xFFF87171),
-  onError = Color(0xFF3B0B0B)
-)
+private fun color(hex: String): Color = Color(hex.toColorInt())

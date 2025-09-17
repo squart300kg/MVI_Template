@@ -18,8 +18,7 @@ data class VideoDto(
     fun mapperToDto(apiResponse: CommonApiResponse<kr.co.architecture.core.network.model.Video>) = VideoDto(
       videos = apiResponse.documents.map(::mapperToDto),
       pageable = PageableDto(
-        isEnd = apiResponse.meta.isEnd,
-        page = apiResponse.meta.pageableCount
+        isEnd = apiResponse.meta.isEnd
       )
     )
 

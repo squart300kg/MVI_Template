@@ -20,8 +20,7 @@ data class ImageDto(
     fun mapperToDto(apiResponse: CommonApiResponse<kr.co.architecture.core.network.model.Image>) = ImageDto(
       images = apiResponse.documents.map(::mapperToDto),
       pageable = PageableDto(
-        isEnd = apiResponse.meta.isEnd,
-        page = apiResponse.meta.pageableCount
+        isEnd = apiResponse.meta.isEnd
       )
     )
 

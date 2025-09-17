@@ -2,20 +2,31 @@ package kr.co.architecture.feature.search
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
@@ -79,38 +90,59 @@ fun SearchScreen(
       PaginationLoadEffect(
         listState = listState,
         isEnd = uiState.isEndPage,
-        bufferItemCount = 0,
+        bufferItemCount = 1,
         onScrollToEnd = onScrollToEnd
       )
+      // TODO: Text들 간격조정, MaterialTheme로 강제화되는것 확인
       LazyColumn(
         modifier = modifier,
+        contentPadding = PaddingValues(
+          top = 30.dp,
+          bottom = 56.dp
+        ),
+        verticalArrangement = Arrangement.spacedBy(24.dp),
         state = listState
       ) {
-        items(uiState.uiModels) { uiModel ->
+        itemsIndexed(uiState.uiModels) { index, uiModel ->
           Surface(
             modifier = Modifier
               .clickable(onClick = { onClickedItem(uiModel) }),
             shape = MaterialTheme.shapes.medium
           ) {
-            Row {
+            Row(
+              horizontalArrangement = Arrangement.spacedBy(10.dp),
+              verticalAlignment = Alignment.CenterVertically
+            ) {
+              // TODO: Glide와 비교하여 기술선택
               CoilAsyncImage(
-                modifier = Modifier,
+                modifier = Modifier
+                  .size(90.dp),
                 url = uiModel.thumbnailUrl
               )
 
-              Column {
-                Image(
-                  painter = painterResource(
-                    id = when (uiModel.contentsType) {
-                      ContentsType.VIDEO -> coreUiR.drawable.icon_video
-                      ContentsType.IMAGE -> coreUiR.drawable.icon_image
-                    }
-                  ),
-                  contentDescription = null
-                )
+              Spacer(
+                modifier = Modifier.width(10.dp)
+              )
 
-                Row {
+              Column {
+                Row(
+                  horizontalArrangement = Arrangement.spacedBy(4.dp),
+                  verticalAlignment = Alignment.CenterVertically
+                ) {
+                  Image(
+                    modifier = Modifier.size(20.dp),
+                    painter = painterResource(
+                      id = when (uiModel.contentsType) {
+                        ContentsType.VIDEO -> coreUiR.drawable.icon_video
+                        ContentsType.IMAGE -> coreUiR.drawable.icon_image
+                      }
+                    ),
+                    contentDescription = null
+                  )
+
                   Text(
+                    modifier = Modifier
+                      .padding(start = 4.dp),
                     text = uiModel.title,
                     style = MaterialTheme.typography.bodyLarge
                   )
@@ -123,9 +155,17 @@ fun SearchScreen(
                   }
                 }
 
+                Spacer(
+                  modifier = Modifier.height(6.dp)
+                )
+
                 Text(
                   text = uiModel.contents,
                   style = MaterialTheme.typography.bodyMedium
+                )
+
+                Spacer(
+                  modifier = Modifier.height(8.dp)
                 )
 
                 Text(
@@ -134,6 +174,12 @@ fun SearchScreen(
                 )
               }
             }
+          }
+
+          if (index == uiState.uiModels.lastIndex) {
+            Text(
+              text = "${uiState.page}"
+            )
           }
         }
       }

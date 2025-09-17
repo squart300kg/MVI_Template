@@ -33,18 +33,16 @@ class SearchViewModel @Inject constructor(
 
   fun fetchData(loadType: SearchUiSideEffect.Load) {
     launchWithLoading {
+      val page = when (loadType) {
+        is SearchUiSideEffect.Load.First -> setStateAndGet { copy(page = 1) }.page
+        is SearchUiSideEffect.Load.More -> setStateAndGet { copy(page = page + 1) }.page
+      }
       val response = getSortedImagesAndVideosByRecentlyUseCase(
         query = ContentsQuery(
           query = "빠더너스",
-          page = when (loadType) {
-            is SearchUiSideEffect.Load.First -> setStateAndGet { copy(page = 1) }.page
-            is SearchUiSideEffect.Load.More -> setStateAndGet { copy(page = page + 1) }.page
-          }
+          page = page
         )
-      ).also {
-        println("contentsList 3: $it")
-
-      }
+      )
       setState {
         copy(
           uiType =
@@ -52,7 +50,7 @@ class SearchViewModel @Inject constructor(
             else SearchUiType.LOADED_RESULT,
           uiModels = UiModel.mapperToUiModel(response.contentsList),
           isEndPage = response.pageableDto.isEnd,
-          page = response.pageableDto.page
+          page = page
         )
       }
     }
