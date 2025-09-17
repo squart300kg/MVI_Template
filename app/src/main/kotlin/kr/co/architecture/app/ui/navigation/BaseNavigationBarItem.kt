@@ -34,9 +34,7 @@ internal fun BaseNavigationBarWithItems(
     enter = fadeIn() + slideIn { IntOffset(0, it.height) },
     exit = fadeOut() + slideOut { IntOffset(0, it.height) }
   ) {
-    NavigationBar(
-      containerColor = Color.White
-    ) {
+    NavigationBar {
       MainBottomTab.entries.forEach { destination ->
         BaseNavigationBarItem(
           onClick = { onClickedBottomTab(destination) },
@@ -60,15 +58,12 @@ fun RowScope.BaseNavigationBarItem(
     selected = selected,
     onClick = onClick,
     alwaysShowLabel = false,
-    colors = NavigationBarItemDefaults.colors(
-      indicatorColor = Color.Transparent
-    ),
     icon = {
       Column {
         Image(
           modifier = Modifier
-              .size(24.dp)
-              .align(Alignment.CenterHorizontally),
+            .size(24.dp)
+            .align(Alignment.CenterHorizontally),
           painter = painterResource(
             id = if (selected) {
               destination.selectedIconRes
@@ -80,7 +75,8 @@ fun RowScope.BaseNavigationBarItem(
         )
 
         Text(
-          modifier = Modifier.align(Alignment.CenterHorizontally),
+          modifier = Modifier
+            .align(Alignment.CenterHorizontally),
           text = stringResource(destination.iconTextIdRes)
         )
       }
