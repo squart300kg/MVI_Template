@@ -1,18 +1,18 @@
 package kr.co.architecture.core.network.model
 
-import kotlinx.serialization.SerialName
+import com.google.gson.annotations.SerializedName
 
 data class Video(
-    @SerialName("author")
+    @SerializedName("author")
     val author: String,
-    @SerialName("datetime")
+    @SerializedName("datetime")
     val datetime: String,
-    @SerialName("play_time")
+    @SerializedName("play_time")
     val playTime: Int,
-    @SerialName("thumbnail")
+    @SerializedName("thumbnail")
     val thumbnail: String,
-    @SerialName("title")
+    @SerializedName("title")
     val title: String,
-    @SerialName("url")
+    @SerializedName("url")
     val url: String
 )

@@ -1,13 +1,13 @@
 package kr.co.architecture.feature.bookmark
 
-import kr.co.architecture.core.domain.GetListUseCase
+import kr.co.architecture.core.domain.GetSortedImagesAndVideosByRecentlyUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kr.co.architecture.core.ui.BaseViewModel
 import javax.inject.Inject
 
 @HiltViewModel
 class BookmarkViewModel @Inject constructor(
-  private val getListUseCase: GetListUseCase
+  private val getSortedImagesAndVideosByRecentlyUseCase: GetSortedImagesAndVideosByRecentlyUseCase
 ) : BaseViewModel<BookmarkUiState, BookmarkUiEvent, BookmarkUiSideEffect>() {
 
   override fun createInitialState() = BookmarkUiState()
@@ -22,13 +22,13 @@ class BookmarkViewModel @Inject constructor(
 
   fun fetchData() {
     launchWithLoading {
-      val names = getListUseCase()
-      setState {
-        copy(
-          uiType = BookmarkUiType.LOADED,
-          uiModels = UiModel.mapperToUi(names)
-        )
-      }
+//      val names = getSortedImagesAndVideosByRecentlyUseCase()
+//      setState {
+//        copy(
+//          uiType = BookmarkUiType.LOADED,
+//          uiModels = UiModel.mapperToUi(names)
+//        )
+//      }
     }
   }
 }

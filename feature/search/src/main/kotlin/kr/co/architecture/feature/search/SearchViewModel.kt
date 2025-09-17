@@ -1,14 +1,15 @@
 package kr.co.architecture.feature.search
 
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kr.co.architecture.core.domain.GetListUseCase
+import kotlinx.collections.immutable.toImmutableList
+import kr.co.architecture.core.domain.GetSortedImagesAndVideosByRecentlyUseCase
+import kr.co.architecture.core.model.ContentsQuery
 import kr.co.architecture.core.ui.BaseViewModel
-import kr.co.architecture.core.ui.DetailRoute
 import javax.inject.Inject
 
 @HiltViewModel
 class SearchViewModel @Inject constructor(
-  private val getListUseCase: GetListUseCase
+  private val getSortedImagesAndVideosByRecentlyUseCase: GetSortedImagesAndVideosByRecentlyUseCase
 ) : BaseViewModel<SearchUiState, SearchUiEvent, SearchUiSideEffect>() {
 
   override fun createInitialState() = SearchUiState()
@@ -16,25 +17,40 @@ class SearchViewModel @Inject constructor(
   override fun handleEvent(event: SearchUiEvent) {
     when (event) {
       is SearchUiEvent.OnClickedItem -> {
-        navigateTo(
-          route = DetailRoute(
-            id = event.item.id,
-            name = event.item.name.value ?: ""
-          )
-        )
+//        navigateTo(
+//          route = DetailRoute(
+//            id = event.item.id,
+//            name = event.item.name.value ?: ""
+//          )
+//        )
+      }
+      is SearchUiEvent.OnScrolledToEnd -> {
+        setEffect { SearchUiSideEffect.Load.More }
       }
     }
   }
 
-  init { setEffect { SearchUiSideEffect.Load } }
+  init { setEffect { SearchUiSideEffect.Load.First } }
 
-  fun fetchData() {
+  fun fetchData(loadType: SearchUiSideEffect.Load) {
     launchWithLoading {
-      val names = getListUseCase()
+      val response = getSortedImagesAndVideosByRecentlyUseCase(
+        query = ContentsQuery(
+          query = "빠더너스",
+          page = when (loadType) {
+            is SearchUiSideEffect.Load.First -> setStateAndGet { copy(page = 1) }.page
+            is SearchUiSideEffect.Load.More -> setStateAndGet { copy(page = page + 1) }.page
+          }
+        )
+      )
       setState {
         copy(
-          uiType = SearchUiType.LOADED,
-          uiModels = UiModel.mapperToUi(names)
+          uiType =
+            if (loadType is SearchUiSideEffect.Load.First && response.contentsList.isEmpty()) SearchUiType.EMPTY_RESULT
+            else SearchUiType.LOADED_RESULT,
+          uiModels = UiModel.mapperToUiModel(response.contentsList),
+          isEndPage = response.pageableDto.isEnd,
+          page = response.pageableDto.page
         )
       }
     }

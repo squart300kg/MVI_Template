@@ -10,6 +10,7 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.flow.updateAndGet
 import kotlinx.coroutines.launch
 import kr.co.architecture.core.router.internal.navigator.Navigator
 import kr.co.architecture.core.router.internal.navigator.Route
@@ -72,6 +73,11 @@ abstract class BaseViewModel<State : UiState, Event : UiEvent, Effect : UiSideEf
   protected fun setState(reduce: State.() -> State) {
     val newState = uiState.value.reduce()
     _uiState.update { newState }
+  }
+
+  protected fun setStateAndGet(reduce: State.() -> State): State {
+    val newState = uiState.value.reduce()
+    return _uiState.updateAndGet { newState }
   }
 
   protected fun setEffect(builder: () -> Effect) {

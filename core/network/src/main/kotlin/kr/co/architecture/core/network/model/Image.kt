@@ -1,22 +1,22 @@
 package kr.co.architecture.core.network.model
 
-import kotlinx.serialization.SerialName
+import com.google.gson.annotations.SerializedName
 
 data class Image(
-    @SerialName("collection")
+    @SerializedName("collection")
     val collection: String,
-    @SerialName("datetime")
+    @SerializedName("datetime")
     val datetime: String,
-    @SerialName("display_sitename")
-    val displaySitename: String,
-    @SerialName("doc_url")
+    @SerializedName("display_sitename")
+    val displaySiteName: String,
+    @SerializedName("doc_url")
     val docUrl: String,
-    @SerialName("height")
+    @SerializedName("height")
     val height: Int,
-    @SerialName("image_url")
+    @SerializedName("image_url")
     val imageUrl: String,
-    @SerialName("thumbnail_url")
+    @SerializedName("thumbnail_url")
     val thumbnailUrl: String,
-    @SerialName("width")
+    @SerializedName("width")
     val width: Int
 )

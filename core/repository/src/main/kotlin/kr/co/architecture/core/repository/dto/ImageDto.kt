@@ -8,8 +8,8 @@ data class ImageDto(
 ) {
   data class Image(
     val collection: String,
-    val datetime: String,
-    val displaySitename: String,
+    val dateTime: String,
+    val displaySiteName: String,
     val docUrl: String,
     val height: Int,
     val imageUrl: String,
@@ -27,8 +27,8 @@ data class ImageDto(
 
     fun mapperToDto(apiResponse: kr.co.architecture.core.network.model.Image) = Image(
       collection = apiResponse.collection,
-      datetime = apiResponse.datetime,
-      displaySitename = apiResponse.displaySitename,
+      dateTime = apiResponse.datetime,
+      displaySiteName = apiResponse.displaySiteName,
       docUrl = apiResponse.docUrl,
       height = apiResponse.height,
       imageUrl = apiResponse.imageUrl,
