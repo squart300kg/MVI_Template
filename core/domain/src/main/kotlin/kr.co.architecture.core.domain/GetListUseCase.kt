@@ -7,7 +7,6 @@ class GetListUseCase @Inject constructor(
   private val imageRepository: ImageRepository
 ) {
   suspend operator fun invoke(): List<String> {
-    return imageRepository.getImages()
-      .map { it.name }
+    return listOf("sdf", "sdf", "sdf", "sdf")
   }
 }

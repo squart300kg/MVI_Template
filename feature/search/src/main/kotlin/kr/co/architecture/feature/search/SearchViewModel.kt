@@ -1,4 +1,4 @@
-package kr.co.architecture.feature.first
+package kr.co.architecture.feature.search
 
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kr.co.architecture.core.domain.GetListUseCase
@@ -7,15 +7,15 @@ import kr.co.architecture.core.ui.DetailRoute
 import javax.inject.Inject
 
 @HiltViewModel
-class FirstViewModel @Inject constructor(
+class SearchViewModel @Inject constructor(
   private val getListUseCase: GetListUseCase
-) : BaseViewModel<FirstUiState, FirstUiEvent, FirstUiSideEffect>() {
+) : BaseViewModel<SearchUiState, SearchUiEvent, SearchUiSideEffect>() {
 
-  override fun createInitialState() = FirstUiState()
+  override fun createInitialState() = SearchUiState()
 
-  override fun handleEvent(event: FirstUiEvent) {
+  override fun handleEvent(event: SearchUiEvent) {
     when (event) {
-      is FirstUiEvent.OnClickedItem -> {
+      is SearchUiEvent.OnClickedItem -> {
         navigateTo(
           route = DetailRoute(
             id = event.item.id,
@@ -26,14 +26,14 @@ class FirstViewModel @Inject constructor(
     }
   }
 
-  init { setEffect { FirstUiSideEffect.Load } }
+  init { setEffect { SearchUiSideEffect.Load } }
 
   fun fetchData() {
     launchWithLoading {
       val names = getListUseCase()
       setState {
         copy(
-          uiType = FirstUiType.LOADED,
+          uiType = SearchUiType.LOADED,
           uiModels = UiModel.mapperToUi(names)
         )
       }

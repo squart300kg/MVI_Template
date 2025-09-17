@@ -19,7 +19,7 @@ import kr.co.architecture.core.ui.BaseCenterDialog
 import kr.co.architecture.core.ui.BaseProgressBar
 import kr.co.architecture.core.ui.theme.BaseTheme
 import kr.co.architecture.feature.detail.detailScreen
-import kr.co.architecture.feature.first.firstScreen
+import kr.co.architecture.feature.search.searchScreen
 import kr.co.architecture.feature.second.secondScreen
 
 @AndroidEntryPoint
@@ -54,7 +54,7 @@ class MainActivity : ComponentActivity() {
               navController = navigator.navController,
               startDestination = navigator.startDestination
             ) {
-              firstScreen()
+              searchScreen()
 
               secondScreen()
 

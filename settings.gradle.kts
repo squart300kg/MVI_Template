@@ -16,7 +16,7 @@ dependencyResolutionManagement {
 
 rootProject.name = "ArchitectureSample"
 include(":app")
-include(":feature:first")
+include(":feature:search")
 include(":feature:second")
 include(":feature:detail")
 include(":core:ui")

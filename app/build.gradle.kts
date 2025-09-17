@@ -11,7 +11,7 @@ android {
   defaultConfig { }
 
   dependencies {
-    implementation(project(":feature:first"))
+    implementation(project(":feature:search"))
     implementation(project(":feature:second"))
     implementation(project(":feature:detail"))
     implementation(project(":core:ui"))

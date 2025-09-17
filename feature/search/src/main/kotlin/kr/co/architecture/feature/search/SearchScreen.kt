@@ -1,4 +1,4 @@
-package kr.co.architecture.feature.first
+package kr.co.architecture.feature.search
 
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -28,46 +28,46 @@ import androidx.navigation.compose.composable
 import kr.co.architecture.core.ui.FirstRoute
 import kr.co.architecture.core.ui.util.asString
 
-fun NavGraphBuilder.firstScreen() {
+fun NavGraphBuilder.searchScreen() {
   composable<FirstRoute> {
-    FirstScreen()
+    SearchScreen()
   }
 }
 
 @Composable
-fun FirstScreen(
+fun SearchScreen(
   modifier: Modifier = Modifier,
   lifecycleOwner: LifecycleOwner = LocalLifecycleOwner.current,
-  viewModel: FirstViewModel = hiltViewModel()
+  viewModel: SearchViewModel = hiltViewModel()
 ) {
   val uiState by viewModel.uiState.collectAsStateWithLifecycle()
   LaunchedEffect(Unit) {
     lifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
       viewModel.uiSideEffect.collect { effect ->
         when (effect) {
-          is FirstUiSideEffect.Load -> viewModel.fetchData()
+          is SearchUiSideEffect.Load -> viewModel.fetchData()
         }
       }
     }
   }
 
-  FirstScreen(
+  SearchScreen(
     modifier = modifier,
     uiState = uiState,
-    onClickedItem = { viewModel.setEvent(FirstUiEvent.OnClickedItem(it)) }
+    onClickedItem = { viewModel.setEvent(SearchUiEvent.OnClickedItem(it)) }
   )
 }
 
 @Composable
-fun FirstScreen(
+fun SearchScreen(
   modifier: Modifier = Modifier,
-  uiState: FirstUiState,
+  uiState: SearchUiState,
   onClickedItem: (UiModel) -> Unit = {}
 ) {
 
   when (uiState.uiType) {
-    FirstUiType.NONE -> {}
-    FirstUiType.LOADED -> {
+    SearchUiType.NONE -> {}
+    SearchUiType.LOADED -> {
       LazyColumn(modifier) {
         items(uiState.uiModels) { item ->
           Surface(
