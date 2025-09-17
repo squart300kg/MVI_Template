@@ -1,4 +1,4 @@
-package kr.co.architecture.app.ui.theme
+package kr.co.architecture.core.ui.theme
 
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.text.TextStyle
@@ -6,7 +6,7 @@ import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
-import kr.co.architecture.app.R
+import kr.co.architecture.core.ui.R
 
 // TODO: 이걸 staticCompositionLocalOf vs compositionLocalOf ??
 val LocalCustomTypography = staticCompositionLocalOf { typography() }

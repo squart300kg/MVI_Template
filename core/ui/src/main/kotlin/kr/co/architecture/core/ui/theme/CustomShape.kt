@@ -1,4 +1,4 @@
-package kr.co.architecture.app.ui.theme
+package kr.co.architecture.core.ui.theme
 
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.staticCompositionLocalOf

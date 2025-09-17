@@ -24,10 +24,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.dp
 import kr.co.architecture.app.R
-import kr.co.architecture.app.ui.theme.CustomColors
-import kr.co.architecture.app.ui.theme.CustomTypography
-import kr.co.architecture.app.ui.theme.LocalCustomColors
-import kr.co.architecture.app.ui.theme.LocalCustomTypography
+import kr.co.architecture.core.ui.theme.CustomColors
+import kr.co.architecture.core.ui.theme.CustomTypography
+import kr.co.architecture.core.ui.theme.LocalCustomColors
+import kr.co.architecture.core.ui.theme.LocalCustomTypography
 import kr.co.architecture.core.ui.noRippledClickable
 
 enum class MainTabEnum(

@@ -11,7 +11,7 @@ import androidx.compose.runtime.setValue
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import dagger.hilt.android.AndroidEntryPoint
-import kr.co.architecture.app.ui.theme.NoMaterial3Theme
+import kr.co.architecture.core.ui.theme.NoMaterial3Theme
 import kr.co.architecture.app.ui.tab.MainTabEnum
 import kr.co.architecture.app.ui.tab.NoMaterial3TabRow
 import kr.co.architecture.core.ui.BaseCenterDialog

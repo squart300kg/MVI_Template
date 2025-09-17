@@ -31,6 +31,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import kr.co.architecture.core.model.ContentsType
 import kr.co.architecture.core.ui.CoilAsyncImage
 import kr.co.architecture.core.ui.PaginationLoadEffect
+import kr.co.architecture.core.ui.theme.LocalCustomTypography
 import kr.co.architecture.core.ui.R as coreUiR
 
 @Composable
@@ -80,6 +81,7 @@ fun SearchScreen(
         onScrollToEnd = onScrollToEnd
       )
       // TODO: Text들 간격조정, MaterialTheme로 강제화되는것 확인
+      val typography = LocalCustomTypography.current
       LazyColumn(
         modifier = modifier,
         contentPadding = PaddingValues(
@@ -124,12 +126,14 @@ fun SearchScreen(
                 BasicText(
                   modifier = Modifier
                     .padding(start = 4.dp),
-                  text = uiModel.title
+                  text = uiModel.title,
+                  style = typography.title
                 )
 
                 uiModel.collection?.let {
                   BasicText(
-                    text = it
+                    text = it,
+                    style = typography.titleMedium
                   )
                 }
               }
@@ -139,7 +143,8 @@ fun SearchScreen(
               )
 
               BasicText(
-                text = uiModel.contents
+                text = uiModel.contents,
+                style = typography.contents
               )
 
               Spacer(
@@ -147,7 +152,8 @@ fun SearchScreen(
               )
 
               BasicText(
-                text = uiModel.dateTime
+                text = uiModel.dateTime,
+                style = typography.contentsMedium
               )
             }
           }
