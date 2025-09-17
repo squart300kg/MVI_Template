@@ -1,7 +1,7 @@
 package kr.co.architecture.app
 
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kr.co.architecture.app.ui.navigation.MainBottomTab
+import kr.co.architecture.app.ui.tab.MainBottomTab
 import kr.co.architecture.core.ui.BaseViewModel
 import kr.co.architecture.core.ui.SearchRoute
 import kr.co.architecture.core.ui.BookmarkRoute

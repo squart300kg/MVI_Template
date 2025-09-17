@@ -14,6 +14,7 @@ import kotlinx.coroutines.flow.collectLatest
 import kr.co.architecture.core.router.internal.viewmodel.RouteSideEffect
 import kr.co.architecture.core.router.internal.viewmodel.RouterViewModel
 
+// TODO: 필요없으면 navigation 모듈 삭제
 @Composable
 fun LaunchedRouter(
   navHostController: NavHostController,

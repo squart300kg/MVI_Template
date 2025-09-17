@@ -12,41 +12,26 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import androidx.compose.material3.VerticalDivider
+import androidx.compose.foundation.text.BasicText
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.repeatOnLifecycle
-import androidx.navigation.NavGraphBuilder
-import androidx.navigation.compose.composable
 import kr.co.architecture.core.model.ContentsType
 import kr.co.architecture.core.ui.CoilAsyncImage
 import kr.co.architecture.core.ui.PaginationLoadEffect
-import kr.co.architecture.core.ui.SearchRoute
 import kr.co.architecture.core.ui.R as coreUiR
-
-fun NavGraphBuilder.searchScreen() {
-  composable<SearchRoute> {
-    SearchScreen()
-  }
-}
 
 @Composable
 fun SearchScreen(
@@ -81,6 +66,7 @@ fun SearchScreen(
   onScrollToEnd: () -> Unit
 ) {
 
+  // TODO: 엣지투엣지 대응
   // TODO: vectorImage 모두 사용했는지?
   when (uiState.uiType) {
     SearchUiType.NONE -> {}
@@ -98,86 +84,80 @@ fun SearchScreen(
         modifier = modifier,
         contentPadding = PaddingValues(
           top = 30.dp,
-          bottom = 56.dp
+          bottom = 56.dp,
+          start = 20.dp,
+          end = 20.dp
         ),
         verticalArrangement = Arrangement.spacedBy(24.dp),
         state = listState
       ) {
         itemsIndexed(uiState.uiModels) { index, uiModel ->
-          Surface(
+          Row(
             modifier = Modifier
               .clickable(onClick = { onClickedItem(uiModel) }),
-            shape = MaterialTheme.shapes.medium
+            horizontalArrangement = Arrangement.spacedBy(10.dp),
+            verticalAlignment = Alignment.CenterVertically
           ) {
-            Row(
-              horizontalArrangement = Arrangement.spacedBy(10.dp),
-              verticalAlignment = Alignment.CenterVertically
-            ) {
-              // TODO: Glide와 비교하여 기술선택
-              CoilAsyncImage(
-                modifier = Modifier
-                  .size(90.dp),
-                url = uiModel.thumbnailUrl
+            // TODO: Glide와 비교하여 기술선택
+            CoilAsyncImage(
+              modifier = Modifier
+                .size(90.dp),
+              url = uiModel.thumbnailUrl
+            )
+
+            Spacer(
+              modifier = Modifier.width(10.dp)
+            )
+
+            Column {
+              Row(
+                horizontalArrangement = Arrangement.spacedBy(4.dp),
+                verticalAlignment = Alignment.CenterVertically
+              ) {
+                Image(
+                  modifier = Modifier.size(20.dp),
+                  painter = painterResource(
+                    id = when (uiModel.contentsType) {
+                      ContentsType.VIDEO -> coreUiR.drawable.icon_video
+                      ContentsType.IMAGE -> coreUiR.drawable.icon_image
+                    }
+                  ),
+                  contentDescription = null
+                )
+
+                BasicText(
+                  modifier = Modifier
+                    .padding(start = 4.dp),
+                  text = uiModel.title
+                )
+
+                uiModel.collection?.let {
+                  BasicText(
+                    text = it
+                  )
+                }
+              }
+
+              Spacer(
+                modifier = Modifier.height(6.dp)
+              )
+
+              BasicText(
+                text = uiModel.contents
               )
 
               Spacer(
-                modifier = Modifier.width(10.dp)
+                modifier = Modifier.height(8.dp)
               )
 
-              Column {
-                Row(
-                  horizontalArrangement = Arrangement.spacedBy(4.dp),
-                  verticalAlignment = Alignment.CenterVertically
-                ) {
-                  Image(
-                    modifier = Modifier.size(20.dp),
-                    painter = painterResource(
-                      id = when (uiModel.contentsType) {
-                        ContentsType.VIDEO -> coreUiR.drawable.icon_video
-                        ContentsType.IMAGE -> coreUiR.drawable.icon_image
-                      }
-                    ),
-                    contentDescription = null
-                  )
-
-                  Text(
-                    modifier = Modifier
-                      .padding(start = 4.dp),
-                    text = uiModel.title,
-                    style = MaterialTheme.typography.bodyLarge
-                  )
-
-                  uiModel.collection?.let {
-                    Text(
-                      text = it,
-                      style = MaterialTheme.typography.bodySmall
-                    )
-                  }
-                }
-
-                Spacer(
-                  modifier = Modifier.height(6.dp)
-                )
-
-                Text(
-                  text = uiModel.contents,
-                  style = MaterialTheme.typography.bodyMedium
-                )
-
-                Spacer(
-                  modifier = Modifier.height(8.dp)
-                )
-
-                Text(
-                  text = uiModel.dateTime,
-                  style = MaterialTheme.typography.bodySmall
-                )
-              }
+              BasicText(
+                text = uiModel.dateTime
+              )
             }
           }
 
           if (index == uiState.uiModels.lastIndex) {
-            Text(
+            BasicText(
               text = "${uiState.page}"
             )
           }

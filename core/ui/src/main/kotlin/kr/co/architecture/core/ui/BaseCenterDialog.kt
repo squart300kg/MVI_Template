@@ -5,7 +5,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
@@ -29,7 +28,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import kr.co.architecture.core.ui.preview.BaseDialogUiModelPreviewParam
-import kr.co.architecture.core.ui.theme.BaseTheme
 import kr.co.architecture.core.ui.util.UiText
 import kr.co.architecture.core.ui.util.asString
 
@@ -123,9 +121,7 @@ fun BaseCenterDialogPreview(
   @PreviewParameter(BaseDialogUiModelPreviewParam::class)
   uiModel: BaseCenterDialogUiModel
 ) {
-  BaseTheme {
-    BaseCenterDialog(
-      baseCenterDialogUiModel = uiModel
-    )
-  }
+  BaseCenterDialog(
+    baseCenterDialogUiModel = uiModel
+  )
 }

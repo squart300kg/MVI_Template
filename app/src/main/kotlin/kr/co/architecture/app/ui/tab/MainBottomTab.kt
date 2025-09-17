@@ -1,6 +1,5 @@
-package kr.co.architecture.app.ui.navigation
+package kr.co.architecture.app.ui.tab
 
-import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.compose.runtime.Composable
 import kr.co.architecture.app.R
@@ -9,21 +8,15 @@ import kr.co.architecture.core.ui.SearchRoute
 import kr.co.architecture.core.ui.BookmarkRoute
 
 enum class MainBottomTab(
-  @DrawableRes val selectedIconRes: Int,
-  @DrawableRes val unselectedIconRes: Int,
   @StringRes val iconTextIdRes: Int,
   val route: Route
 ) {
   FIRST(
-    selectedIconRes = R.drawable.tab_first_on,
-    unselectedIconRes = R.drawable.tab_first_off,
-    iconTextIdRes = R.string.first,
+    iconTextIdRes = R.string.search,
     route = SearchRoute
   ),
   SECOND(
-    selectedIconRes = R.drawable.tab_second_on,
-    unselectedIconRes = R.drawable.tab_second_off,
-    iconTextIdRes = R.string.second,
+    iconTextIdRes = R.string.bookmark,
     route = BookmarkRoute
   );
 
