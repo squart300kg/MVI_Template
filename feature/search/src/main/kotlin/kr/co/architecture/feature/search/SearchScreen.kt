@@ -105,10 +105,6 @@ fun SearchScreen(
               url = uiModel.thumbnailUrl
             )
 
-            Spacer(
-              modifier = Modifier.width(10.dp)
-            )
-
             Column {
               Row(
                 horizontalArrangement = Arrangement.spacedBy(4.dp),

@@ -1,6 +1,9 @@
 package kr.co.architecture.core.ui
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -29,4 +32,32 @@ fun Modifier.baseClickable(
       onClick()
     }
   }
+}
+
+@OptIn(ExperimentalFoundationApi::class)
+fun Modifier.noRippledClickable(
+  onClick: () -> Unit = { },
+  onLongClick: () -> Unit = { },
+  delayMillis: Long = 1000L
+): Modifier = composed {
+  var isClickable by remember { mutableStateOf(true) }
+
+  fun clickBuilder(builder: () -> Unit) {
+    if (isClickable) {
+      isClickable = false
+      builder()
+    }
+  }
+  LaunchedEffect(isClickable) {
+    if (!isClickable) {
+      delay(delayMillis)
+      isClickable = true
+    }
+  }
+  this.combinedClickable(
+    onClick = { clickBuilder(onClick) },
+    onLongClick = { clickBuilder(onLongClick) },
+    indication = null,
+    interactionSource = remember { MutableInteractionSource() }
+  )
 }
