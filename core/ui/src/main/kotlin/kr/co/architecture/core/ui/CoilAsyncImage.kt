@@ -11,6 +11,7 @@ import androidx.compose.ui.graphics.painter.ColorPainter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
@@ -55,8 +56,9 @@ fun CoilAsyncImage(
     AsyncImage(
       model = request,
       placeholder = ColorPainter(colors.border),
-      contentDescription = contentDescription,
-      contentScale = ContentScale.Crop
+      error = painterResource(R.drawable.thumbnail_default),
+      contentScale = ContentScale.Crop,
+      contentDescription = contentDescription
     )
   }
 }
