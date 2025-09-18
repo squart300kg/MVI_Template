@@ -230,10 +230,7 @@ private fun Tail(
 ) {
   val colors = LocalCustomColors.current
   val typography = LocalCustomTypography.current
-  Column(
-    modifier = Modifier.fillMaxSize(),
-    verticalArrangement = Arrangement.spacedBy(5.dp)
-  ) {
+  Column {
     BasicText(
       modifier = Modifier
         .align(Alignment.CenterHorizontally),
@@ -244,6 +241,7 @@ private fun Tail(
     Box(
       modifier = Modifier
         .fillMaxWidth()
+        .padding(vertical = 12.dp)
         .height(1.dp)
         .background(colors.unselectedDivider)
     )
