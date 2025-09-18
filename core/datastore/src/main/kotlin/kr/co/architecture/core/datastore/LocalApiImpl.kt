@@ -18,11 +18,18 @@ class LocalApiImpl @Inject constructor(
 
   override fun observeBookmarkedBooks(): Flow<Set<MediaContentsEntity>> {
     return dataStore.data.map { preference ->
-      preference[MEDIA_CONTENTS_LIST]
-        ?.map {
-          MediaContentsEntity.mapperToEntity(StringMediaContentsEntity(it))
-        }?.toSet()
-        ?: emptySet()
+      val stringEntities = preference[MEDIA_CONTENTS_LIST] ?: emptySet()
+
+      buildSet(stringEntities.size) {
+        for (stringEntity in stringEntities) {
+          val parsed = try {
+            MediaContentsEntity.mapperToEntity(StringMediaContentsEntity(stringEntity))
+          } catch (_: Exception) {
+            null
+          }
+          if (parsed != null) add(parsed)
+        }
+      }
     }
   }
 

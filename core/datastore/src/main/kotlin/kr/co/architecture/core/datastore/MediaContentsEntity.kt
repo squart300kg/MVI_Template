@@ -25,5 +25,13 @@ data class MediaContentsEntity(
       contents = domain.contents,
       mediaContentsType = domain.mediaContentsType
     )
+    fun mapperToDomain(domain: MediaContentsEntity) = MediaContents(
+      thumbnailUrl = domain.thumbnailUrl,
+      dateTime = domain.dateTime,
+      title = domain.title,
+      collection = domain.collection,
+      contents = domain.contents,
+      mediaContentsType = domain.mediaContentsType
+    )
   }
 }
