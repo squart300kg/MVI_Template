@@ -1,6 +1,5 @@
 package kr.co.architecture.feature.search
 
-import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -10,6 +9,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
@@ -18,11 +18,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.BasicText
-import androidx.compose.foundation.text.BasicTextField
-import androidx.compose.foundation.text.KeyboardActions
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -31,10 +27,8 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -47,12 +41,7 @@ import kr.co.architecture.core.model.ContentsType
 import kr.co.architecture.core.ui.CoilAsyncImage
 import kr.co.architecture.core.ui.NoMaterial3SearchBarTextField
 import kr.co.architecture.core.ui.PaginationLoadEffect
-import kr.co.architecture.core.ui.noRippledClickable
-import kr.co.architecture.core.ui.theme.CustomColors
-import kr.co.architecture.core.ui.theme.CustomShapes
-import kr.co.architecture.core.ui.theme.CustomTypography
 import kr.co.architecture.core.ui.theme.LocalCustomColors
-import kr.co.architecture.core.ui.theme.LocalCustomShapes
 import kr.co.architecture.core.ui.theme.LocalCustomTypography
 import kr.co.architecture.core.ui.R as coreUiR
 
@@ -123,10 +112,12 @@ fun SearchScreen(
         )
 
         val typography = LocalCustomTypography.current
+        val colors = LocalCustomColors.current
         LazyColumn(
           modifier = Modifier,
           contentPadding = PaddingValues(
-            bottom = 56.dp
+            // TODO: 최 하단 56여백 주기
+//            bottom = 56.dp
           ),
           verticalArrangement = Arrangement.spacedBy(24.dp),
           state = listState
@@ -211,15 +202,38 @@ fun SearchScreen(
                 )
               }
             }
-
-            if (index == uiState.uiModels.lastIndex) {
-              BasicText(
-                text = "${uiState.page}"
-              )
-            }
+          }
+          item {
+            Tail(uiState.page)
           }
         }
       }
     }
+  }
+}
+
+@Composable
+private fun Tail(
+  page: Int
+) {
+  val colors = LocalCustomColors.current
+  val typography = LocalCustomTypography.current
+  Column(
+    modifier = Modifier.fillMaxSize(),
+    verticalArrangement = Arrangement.spacedBy(5.dp)
+  ) {
+    BasicText(
+      modifier = Modifier
+        .align(Alignment.CenterHorizontally),
+      text = "$page",
+      style = typography.title
+    )
+
+    Box(
+      modifier = Modifier
+        .fillMaxWidth()
+        .height(1.dp)
+        .background(colors.unselectedDivider)
+    )
   }
 }
