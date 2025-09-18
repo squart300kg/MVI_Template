@@ -1,6 +1,8 @@
 package kr.co.architecture.core.repository
 
 import kr.co.architecture.core.model.ContentsQuery
+import kr.co.architecture.core.model.MediaContents
+import kr.co.architecture.core.model.ToggleTypeEnum
 import kr.co.architecture.core.network.RemoteApi
 import kr.co.architecture.core.network.operator.getOrThrowAppFailure
 import kr.co.architecture.core.repository.dto.VideoDto
@@ -17,6 +19,10 @@ class VideoRepositoryImpl @Inject constructor(
     )
       .getOrThrowAppFailure()
       .let(VideoDto::mapperToDto)
+  }
+
+  override suspend fun toggleBookmark(contents: MediaContents, toggleType: ToggleTypeEnum) {
+    TODO("Not yet implemented")
   }
 }
 

@@ -1,6 +1,6 @@
 package kr.co.architecture.core.model
 
-enum class ContentsType {
+enum class MediaContentsTypeEnum {
   IMAGE,
   VIDEO
 }

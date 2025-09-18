@@ -4,13 +4,16 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.collections.immutable.PersistentList
 import kotlinx.collections.immutable.persistentListOf
 import kr.co.architecture.core.domain.GetSortedImagesAndVideosByRecentlyUseCase
+import kr.co.architecture.core.domain.ToggleBookmarkUseCase
 import kr.co.architecture.core.model.ContentsQuery
+import kr.co.architecture.core.model.ToggleTypeEnum
 import kr.co.architecture.core.ui.BaseViewModel
 import javax.inject.Inject
 
 @HiltViewModel
 class SearchViewModel @Inject constructor(
-  private val getSortedImagesAndVideosByRecentlyUseCase: GetSortedImagesAndVideosByRecentlyUseCase
+  private val getSortedImagesAndVideosByRecentlyUseCase: GetSortedImagesAndVideosByRecentlyUseCase,
+  private val toggleBookmarkUseCase: ToggleBookmarkUseCase
 ) : BaseViewModel<SearchUiState, SearchUiEvent, SearchUiSideEffect>() {
 
   private var query: String = ""
@@ -24,6 +27,17 @@ class SearchViewModel @Inject constructor(
         setEffect { SearchUiSideEffect.Load.More }
       }
       is SearchUiEvent.OnClickedBookmark -> {
+        launchWithLoading {
+          toggleBookmarkUseCase(
+            params = ToggleBookmarkUseCase.Params(
+              toggleType =
+                if (event.item.isBookmarked) ToggleTypeEnum.DELETE
+                else ToggleTypeEnum.SAVE,
+              mediaContentsType = event.item.mediaContentsType,
+              mediaContents = UiModelState.ContentsUiModel.mapperToDomainModel(event.item)
+            )
+          )
+        }
       }
       is SearchUiEvent.OnQueryChange -> {
         query = event.query
@@ -63,7 +77,7 @@ class SearchViewModel @Inject constructor(
       setState {
         copy(
           uiType =
-            if (loadType is SearchUiSideEffect.Load.First && response.contentsList.isEmpty()) SearchUiType.EMPTY_RESULT
+            if (loadType is SearchUiSideEffect.Load.First && response.mediaContentsList.isEmpty()) SearchUiType.EMPTY_RESULT
             else SearchUiType.LOADED_RESULT,
           uiModels = run {
             val pagingUiModel = UiModelState.PagingUiModel.mapperToUiModel(
@@ -71,7 +85,7 @@ class SearchViewModel @Inject constructor(
               page = nextPage
             )
             val contentsUiModels = UiModelState.ContentsUiModel.mapperToUiModel(
-              contents = response.contentsList
+              contents = response.mediaContentsList
             )
             val uiModelState = (contentsUiModels as PersistentList<UiModelState>)
               .add(pagingUiModel)

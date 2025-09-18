@@ -2,10 +2,10 @@ package kr.co.architecture.core.domain
 
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.supervisorScope
 import kr.co.architecture.core.domain.formatter.DateTextFormatter
 import kr.co.architecture.core.model.ContentsQuery
-import kr.co.architecture.core.model.ContentsType
+import kr.co.architecture.core.model.MediaContentsTypeEnum
+import kr.co.architecture.core.model.MediaContents
 import kr.co.architecture.core.repository.ImageRepository
 import kr.co.architecture.core.repository.VideoRepository
 import kr.co.architecture.core.repository.dto.ImageDto
@@ -49,38 +49,29 @@ class GetSortedImagesAndVideosByRecentlyUseCase @Inject constructor(
         }
 
       Response(
-        contentsList = (imageDto.contentsList + videoDto.contentsList).sortedBy { it.dateTime },
+        mediaContentsList = (imageDto.mediaContentsList + videoDto.mediaContentsList).sortedBy { it.dateTime },
         pageableDto = imageDto.pageableDto
       )
     }
   }
 
   data class Response(
-    val contentsList: List<Contents>,
+    val mediaContentsList: List<MediaContents>,
     val pageableDto: PageableDto
   ) {
-    data class Contents(
-      val thumbnailUrl: String,
-      val dateTime: String,
-      val title: String,
-      val collection: String? = null,
-      val contents: String,
-      val contentsType: ContentsType
-    )
-
     companion object {
       fun mapperToResponse(
         imageDto: ImageDto,
         dateTextFormatter: DateTextFormatter
       ) = Response(
-        contentsList = imageDto.images.map {
-          Contents(
+        mediaContentsList = imageDto.images.map {
+          MediaContents(
             thumbnailUrl = it.thumbnailUrl,
             dateTime = dateTextFormatter(it.dateTime),
             title = it.displaySiteName,
             contents = it.docUrl,
             collection = it.collection,
-            contentsType = ContentsType.IMAGE
+            mediaContentsType = MediaContentsTypeEnum.IMAGE
           )
         },
         pageableDto = imageDto.pageable
@@ -89,13 +80,13 @@ class GetSortedImagesAndVideosByRecentlyUseCase @Inject constructor(
         videoDto: VideoDto,
         dateTextFormatter: DateTextFormatter
       ) = Response(
-        contentsList = videoDto.videos.map {
-          Contents(
+        mediaContentsList = videoDto.videos.map {
+          MediaContents(
             thumbnailUrl = it.thumbnail,
             dateTime = dateTextFormatter(it.datetime),
             title = it.title,
             contents = it.url,
-            contentsType = ContentsType.VIDEO
+            mediaContentsType = MediaContentsTypeEnum.VIDEO
           )
         },
         pageableDto = videoDto.pageable

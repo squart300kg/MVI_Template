@@ -4,8 +4,8 @@ import androidx.compose.runtime.Immutable
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
-import kr.co.architecture.core.domain.GetSortedImagesAndVideosByRecentlyUseCase
-import kr.co.architecture.core.model.ContentsType
+import kr.co.architecture.core.model.MediaContentsTypeEnum
+import kr.co.architecture.core.model.MediaContents
 import kr.co.architecture.core.repository.dto.PageableDto
 import kr.co.architecture.core.ui.UiEvent
 import kr.co.architecture.core.ui.UiSideEffect
@@ -26,11 +26,11 @@ sealed interface UiModelState {
     val title: String,
     val collection: String? = null,
     val contents: String,
-    val contentsType: ContentsType,
+    val mediaContentsType: MediaContentsTypeEnum,
     val isBookmarked: Boolean = false
   ): UiModelState {
     companion object {
-      fun mapperToUiModel(contents: List<GetSortedImagesAndVideosByRecentlyUseCase.Response.Contents>) =
+      fun mapperToUiModel(contents: List<MediaContents>) =
         contents.map {
           ContentsUiModel(
             thumbnailUrl = it.thumbnailUrl,
@@ -38,12 +38,22 @@ sealed interface UiModelState {
             title = it.title,
             collection = it.collection,
             contents = it.contents,
-            contentsType = when (it.collection != null) {
-              true -> ContentsType.IMAGE
-              false -> ContentsType.VIDEO
+            mediaContentsType = when (it.collection != null) {
+              true -> MediaContentsTypeEnum.IMAGE
+              false -> MediaContentsTypeEnum.VIDEO
             }
           )
         }.toImmutableList()
+
+      fun mapperToDomainModel(uiModels: ContentsUiModel) =
+        MediaContents(
+          thumbnailUrl = uiModels.thumbnailUrl,
+          dateTime = uiModels.dateTime,
+          title = uiModels.title,
+          collection = uiModels.collection,
+          contents = uiModels.contents,
+          mediaContentsType = uiModels.mediaContentsType,
+        )
     }
   }
 
