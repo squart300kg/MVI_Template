@@ -4,7 +4,7 @@ import kotlinx.coroutines.flow.Flow
 
 interface LocalApi {
 
-  fun observeBookmarkedBooks(): Flow<Set<MediaContentsEntity>>
+  fun observeBookmarkedMedias(): Flow<Set<MediaContentsEntity>>
 
   suspend fun delete(entity: MediaContentsEntity)
 

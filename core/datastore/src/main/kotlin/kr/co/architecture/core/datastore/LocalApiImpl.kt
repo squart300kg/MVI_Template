@@ -16,7 +16,7 @@ class LocalApiImpl @Inject constructor(
 
   private val gson by lazy(LazyThreadSafetyMode.NONE) { Gson() }
 
-  override fun observeBookmarkedBooks(): Flow<Set<MediaContentsEntity>> {
+  override fun observeBookmarkedMedias(): Flow<Set<MediaContentsEntity>> {
     return dataStore.data.map { preference ->
       val stringEntities = preference[MEDIA_CONTENTS_LIST] ?: emptySet()
 

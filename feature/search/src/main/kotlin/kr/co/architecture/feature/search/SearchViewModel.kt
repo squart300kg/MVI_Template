@@ -58,6 +58,10 @@ class SearchViewModel @Inject constructor(
     }
   }
 
+  init {
+
+  }
+
   fun fetchData(loadType: SearchUiSideEffect.Load) {
     launchWithLoading {
       if (loadType is SearchUiSideEffect.Load.First) {

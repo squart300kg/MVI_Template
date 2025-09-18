@@ -17,8 +17,8 @@ class ImageRepositoryImpl @Inject constructor(
   private val localApi: LocalApi
 ) : ImageRepository {
 
-  override fun observeBookmarkedBooks(): Flow<Set<MediaContents>> =
-    localApi.observeBookmarkedBooks()
+  override fun observeBookmarkedMedias(): Flow<Set<MediaContents>> =
+    localApi.observeBookmarkedMedias()
       .map { entities ->
         entities.map { entity ->
           MediaContentsEntity.mapperToDomain(entity)

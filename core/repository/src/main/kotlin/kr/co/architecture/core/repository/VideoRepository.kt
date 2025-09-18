@@ -8,7 +8,7 @@ import kr.co.architecture.core.repository.dto.VideoDto
 
 interface VideoRepository {
 
-  fun observeBookmarkedBooks(): Flow<Set<MediaContents>>
+  fun observeBookmarkedMedias(): Flow<Set<MediaContents>>
 
   suspend fun getVideos(query: ContentsQuery): VideoDto
 

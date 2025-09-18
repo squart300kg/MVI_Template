@@ -24,6 +24,9 @@ class GetSortedImagesAndVideosByRecentlyUseCase @Inject constructor(
    * 2. 둘중 한 쪽만 에러날 경우, 에러가 나지 않은 쪽의 결과만 준다. (에러난 쪽은 emptyList로)
    * 3. 둘중 한 쪽이 데이터가 먼저 없을 경우(페이징 끝까지 다다름), 남아있는 데이터만 준다.
    * 4. 위 3번 후, 데이터가 남아있는 쪽의 API만 호출한다. 페이징 끝까지 다다른 API는 호출하지 않는다.
+   * 5. ImageRepository의 로컬로 조회해오는 observeBookmarkedMedias (Set<MediaContents>다운스트림)을 통해 remoteAPI호출인 getImages와 sync작업. 만약 데이터가 있다면 북마크 on
+   * 6. VideoRepository의 로컬로 조회해오는 observeBookmarkedMedias (Set<MediaContents>다운스트림)을 통해 remoteAPI호출인 getVideos와 sync작업. 만약 데이터가 있다면 북마크 on
+   * 7. 위 5,6번 작업할 때, 반복문 최소화해야함. 특히, observeBookmarkedMedias의 Set자료구조 특성 활용하면 좋음
    */
   suspend operator fun invoke(query: ContentsQuery): Response {
     return coroutineScope {
