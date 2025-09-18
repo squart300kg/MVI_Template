@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.text.BasicText
@@ -43,6 +44,7 @@ import kr.co.architecture.core.ui.NoMaterial3SearchBarTextField
 import kr.co.architecture.core.ui.PaginationLoadEffect
 import kr.co.architecture.core.ui.theme.LocalCustomColors
 import kr.co.architecture.core.ui.theme.LocalCustomTypography
+import kr.co.architecture.core.ui.util.asString
 import kr.co.architecture.core.ui.R as coreUiR
 
 @Composable
@@ -65,7 +67,10 @@ fun SearchScreen(
   SearchScreen(
     modifier = modifier,
     uiState = uiState,
-    onClickedItem = {},
+    onQueryChange = { viewModel.setEvent(SearchUiEvent.OnQueryChange(it)) },
+    onSearch = { viewModel.setEvent(SearchUiEvent.OnSearch) },
+    onClickedBookmark = { viewModel.setEvent(SearchUiEvent.OnClickedBookmark(it)) },
+    onClickedItem = { viewModel.setEvent(SearchUiEvent.OnClickedItem(it)) },
     onScrollToEnd = { viewModel.setEvent(SearchUiEvent.OnScrolledToEnd) }
   )
 }
@@ -74,7 +79,10 @@ fun SearchScreen(
 fun SearchScreen(
   modifier: Modifier = Modifier,
   uiState: SearchUiState,
-  onClickedItem: (UiModel) -> Unit = {},
+  onQueryChange: (String) -> Unit = {},
+  onSearch: (query: String) -> Unit = {},
+  onClickedBookmark: (UiModelState.ContentsUiModel) -> Unit = { },
+  onClickedItem: (UiModelState.ContentsUiModel) -> Unit = {},
   onScrollToEnd: () -> Unit
 ) {
 
@@ -107,12 +115,10 @@ fun SearchScreen(
         PaginationLoadEffect(
           listState = listState,
           isEnd = uiState.isEndPage,
-          bufferItemCount = 1,
+          bufferItemCount = 5,
           onScrollToEnd = onScrollToEnd
         )
-
         val typography = LocalCustomTypography.current
-        val colors = LocalCustomColors.current
         LazyColumn(
           modifier = Modifier,
           contentPadding = PaddingValues(
@@ -122,89 +128,95 @@ fun SearchScreen(
           verticalArrangement = Arrangement.spacedBy(24.dp),
           state = listState
         ) {
-          itemsIndexed(uiState.uiModels) { index, uiModel ->
-            Row(
-              modifier = Modifier
-                .clickable(onClick = { onClickedItem(uiModel) }),
-              horizontalArrangement = Arrangement.spacedBy(10.dp),
-              verticalAlignment = Alignment.CenterVertically
-            ) {
-              // TODO: Glide와 비교하여 기술선택
-              Box(
-                modifier = Modifier
-                  .size(90.dp)
-              ) {
-                CoilAsyncImage(
-                  url = uiModel.thumbnailUrl
-                )
-
-                Image(
-                  modifier = Modifier
-                    .align(Alignment.TopEnd)
-                    .offset((-10).dp, 10.dp)
-                    .size(22.dp),
-                  painter = painterResource(
-                    id = when (uiModel.isBookmarked) {
-                      true -> coreUiR.drawable.icon_like_on
-                      false -> coreUiR.drawable.icon_like_off
-                    }
-                  ),
-                  contentDescription = null
-                )
-              }
-
-              Column(
-                verticalArrangement = Arrangement.spacedBy(6.dp)
-              ) {
+          items(
+            items = uiState.uiModels
+          ) { uiModel ->
+            when (val uiModel = uiModel) {
+              is UiModelState.ContentsUiModel -> {
                 Row(
-                  modifier = Modifier.fillMaxWidth(),
-                  horizontalArrangement = Arrangement.spacedBy(4.dp),
+                  modifier = Modifier
+                    .clickable(onClick = { onClickedItem(uiModel) }),
+                  horizontalArrangement = Arrangement.spacedBy(10.dp),
                   verticalAlignment = Alignment.CenterVertically
                 ) {
-                  Image(
-                    modifier = Modifier.size(20.dp),
-                    painter = painterResource(
-                      id = when (uiModel.contentsType) {
-                        ContentsType.VIDEO -> coreUiR.drawable.icon_video
-                        ContentsType.IMAGE -> coreUiR.drawable.icon_image
+                  // TODO: Glide와 비교하여 기술선택
+                  Box(
+                    modifier = Modifier
+                      .size(90.dp)
+                  ) {
+                    CoilAsyncImage(
+                      url = uiModel.thumbnailUrl
+                    )
+
+                    Image(
+                      modifier = Modifier
+                        .align(Alignment.TopEnd)
+                        .offset((-10).dp, 10.dp)
+                        .size(22.dp),
+                      painter = painterResource(
+                        id = when (uiModel.isBookmarked) {
+                          true -> coreUiR.drawable.icon_like_on
+                          false -> coreUiR.drawable.icon_like_off
+                        }
+                      ),
+                      contentDescription = null
+                    )
+                  }
+
+                  Column(
+                    verticalArrangement = Arrangement.spacedBy(6.dp)
+                  ) {
+                    Row(
+                      modifier = Modifier.fillMaxWidth(),
+                      horizontalArrangement = Arrangement.spacedBy(4.dp),
+                      verticalAlignment = Alignment.CenterVertically
+                    ) {
+                      Image(
+                        modifier = Modifier.size(20.dp),
+                        painter = painterResource(
+                          id = when (uiModel.contentsType) {
+                            ContentsType.VIDEO -> coreUiR.drawable.icon_video
+                            ContentsType.IMAGE -> coreUiR.drawable.icon_image
+                          }
+                        ),
+                        contentDescription = null
+                      )
+
+                      BasicText(
+                        text = uiModel.title,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        style = typography.title
+                      )
+
+                      uiModel.collection?.let {
+                        BasicText(
+                          text = it,
+                          style = typography.titleMedium
+                        )
                       }
-                    ),
-                    contentDescription = null
-                  )
+                    }
 
-                  BasicText(
-                    text = uiModel.title,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                    style = typography.title
-                  )
-
-                  uiModel.collection?.let {
                     BasicText(
-                      text = it,
-                      style = typography.titleMedium
+                      text = uiModel.contents,
+                      style = typography.contents
+                    )
+
+                    Spacer(
+                      modifier = Modifier.height(2.dp)
+                    )
+
+                    BasicText(
+                      text = uiModel.dateTime,
+                      style = typography.contentsMedium
                     )
                   }
                 }
-
-                BasicText(
-                  text = uiModel.contents,
-                  style = typography.contents
-                )
-
-                Spacer(
-                  modifier = Modifier.height(2.dp)
-                )
-
-                BasicText(
-                  text = uiModel.dateTime,
-                  style = typography.contentsMedium
-                )
+              }
+              is UiModelState.PagingUiModel -> {
+                Tail(uiModel.page.asString())
               }
             }
-          }
-          item {
-            Tail(uiState.page)
           }
         }
       }
@@ -214,7 +226,7 @@ fun SearchScreen(
 
 @Composable
 private fun Tail(
-  page: Int
+  page: String
 ) {
   val colors = LocalCustomColors.current
   val typography = LocalCustomTypography.current
@@ -225,7 +237,7 @@ private fun Tail(
     BasicText(
       modifier = Modifier
         .align(Alignment.CenterHorizontally),
-      text = "$page",
+      text = page,
       style = typography.title
     )
 
