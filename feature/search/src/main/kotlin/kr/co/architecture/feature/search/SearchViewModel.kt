@@ -56,8 +56,7 @@ class SearchViewModel @Inject constructor(
       }
       val response = getSortedImagesAndVideosByRecentlyUseCase(
         query = ContentsQuery(
-          query = "빠더너스",
-//          query = query,
+          query = query,
           page = nextPage
         )
       )
