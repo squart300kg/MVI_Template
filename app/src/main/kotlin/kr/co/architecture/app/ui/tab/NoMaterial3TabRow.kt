@@ -54,7 +54,7 @@ fun NoMaterial3TabRow(
   density: Density = LocalDensity.current
 ) {
   val tabCount = MainTabEnum.entries.size
-  val thinPx  = with(density) { 1.dp.toPx() }
+  val thinPx  = with(density) { 0.5.dp.toPx() }
   val animatedIndex by animateFloatAsState(
     targetValue = selectedTab.tabIndex.toFloat(),
     animationSpec = tween(durationMillis = 250, easing = FastOutSlowInEasing)
@@ -68,7 +68,7 @@ fun NoMaterial3TabRow(
         // 1) 회색 끝선 (전폭, 패딩 반영)
         val y = size.height - thinPx / 2f
         drawLine(
-          color = colors.border,
+          color = colors.unselectedDivider,
           start = Offset(0f, y),
           end   = Offset(size.width, y),
           strokeWidth = thinPx
@@ -97,7 +97,7 @@ fun NoMaterial3TabRow(
         ) {
           BasicText(
             text = stringResource(tab.tabStringRes),
-            style = if (selected) typography.label else typography.labelMedium
+            style = if (selected) typography.tab else typography.tabMedium
           )
         }
       }
@@ -112,7 +112,7 @@ fun NoMaterial3TabRow(
         val start = segmentWidth * animatedIndex
         val end   = start + segmentWidth
         drawLine(
-          color = colors.divider,
+          color = colors.selectedDivider,
           start = Offset(start, y),
           end   = Offset(end,   y),
           strokeWidth = thick,

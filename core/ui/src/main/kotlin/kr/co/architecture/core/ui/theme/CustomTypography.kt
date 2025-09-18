@@ -16,17 +16,47 @@ data class CustomTypography(
   val titleMedium: TextStyle,
   val contents: TextStyle,
   val contentsMedium: TextStyle,
-  val label: TextStyle,
-  val labelMedium: TextStyle,
+  val tab: TextStyle,
+  val tabMedium: TextStyle,
 )
 
 private fun typography(fontFamily: FontFamily = defaultFont) = CustomTypography(
-  title = TextStyle(fontFamily = fontFamily, fontWeight = FontWeight.Bold, fontSize = 15.sp),
-  titleMedium = TextStyle(fontFamily = fontFamily, fontWeight = FontWeight.Normal, fontSize = 14.sp),
-  contents = TextStyle(fontFamily = fontFamily, fontWeight = FontWeight.Normal, fontSize = 13.sp),
-  contentsMedium = TextStyle(fontFamily = fontFamily, fontWeight = FontWeight.Normal, fontSize = 12.sp),
-  label = TextStyle(fontFamily = fontFamily, fontWeight = FontWeight.Bold, fontSize = 16.sp),
-  labelMedium = TextStyle(fontFamily = fontFamily, fontWeight = FontWeight.Light, fontSize = 16.sp),
+  title = TextStyle(
+    fontFamily = fontFamily,
+    fontWeight = FontWeight.Bold,
+    fontSize = 15.sp,
+    color = parseColor("#000000")
+  ),
+  titleMedium = TextStyle(
+    fontFamily = fontFamily,
+    fontWeight = FontWeight.Normal,
+    fontSize = 14.sp,
+    color = parseColor("#465179")
+  ),
+  contents = TextStyle(
+    fontFamily = fontFamily,
+    fontWeight = FontWeight.Normal,
+    fontSize = 13.sp,
+    color = parseColor("#444444")
+  ),
+  contentsMedium = TextStyle(
+    fontFamily = fontFamily,
+    fontWeight = FontWeight.Normal,
+    fontSize = 12.sp,
+    color = parseColor("#888888")
+  ),
+  tab = TextStyle(
+    fontFamily = fontFamily,
+    fontWeight = FontWeight.Bold,
+    fontSize = 16.sp,
+    color = parseColor("#222222")
+  ),
+  tabMedium = TextStyle(
+    fontFamily = fontFamily,
+    fontWeight = FontWeight.Normal,
+    fontSize = 16.sp,
+    color = parseColor("#888888")
+  ),
 )
 
 private val defaultFont: FontFamily by lazy {
