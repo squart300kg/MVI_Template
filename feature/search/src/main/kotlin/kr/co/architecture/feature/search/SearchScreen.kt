@@ -143,6 +143,7 @@ fun SearchScreen(
                 }
               }
 
+              // TODO: 간격 설정
               Spacer(
                 modifier = Modifier.height(6.dp)
               )

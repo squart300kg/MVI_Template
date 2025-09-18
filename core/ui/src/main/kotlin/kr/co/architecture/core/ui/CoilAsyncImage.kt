@@ -1,9 +1,13 @@
 package kr.co.architecture.core.ui
 
 import android.content.Context
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Box
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.painter.ColorPainter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
@@ -39,15 +43,20 @@ fun CoilAsyncImage(
     .transformations(RoundedCornersTransformation(roundPx))
     .build()
 
-  AsyncImage(
+  Box(
     modifier = modifier
+      .clip(shapes.shape)
       .border(
         width = 1.dp,
         color = colors.border,
         shape = shapes.shape
-      ),
-    model = request,
-    contentDescription = contentDescription,
-    contentScale = ContentScale.Crop
-  )
+      )
+  ) {
+    AsyncImage(
+      model = request,
+      placeholder = ColorPainter(colors.border),
+      contentDescription = contentDescription,
+      contentScale = ContentScale.Crop
+    )
+  }
 }
