@@ -1,6 +1,7 @@
 package kr.co.architecture.core.ui.theme
 
 import androidx.compose.runtime.staticCompositionLocalOf
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
@@ -18,6 +19,8 @@ data class CustomTypography(
   val contentsMedium: TextStyle,
   val tab: TextStyle,
   val tabMedium: TextStyle,
+  val searchContents: TextStyle,
+  val searchMedium: TextStyle,
 )
 
 private fun typography(fontFamily: FontFamily = defaultFont) = CustomTypography(
@@ -57,6 +60,19 @@ private fun typography(fontFamily: FontFamily = defaultFont) = CustomTypography(
     fontSize = 16.sp,
     color = parseColor("#888888")
   ),
+  searchContents = TextStyle(
+    fontFamily = fontFamily,
+    fontWeight = FontWeight.Normal,
+    fontSize = 16.sp,
+    color = parseColor("#222222")
+  ),
+  searchMedium = TextStyle(
+    fontFamily = fontFamily,
+    fontWeight = FontWeight.Normal,
+    fontSize = 16.sp,
+    color = Color.LightGray
+  ),
+
 )
 
 private val defaultFont: FontFamily by lazy {
