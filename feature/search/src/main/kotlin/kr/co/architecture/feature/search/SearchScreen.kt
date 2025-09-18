@@ -3,16 +3,15 @@ package kr.co.architecture.feature.search
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -104,13 +103,32 @@ fun SearchScreen(
             verticalAlignment = Alignment.CenterVertically
           ) {
             // TODO: Glide와 비교하여 기술선택
-            CoilAsyncImage(
+            Box(
               modifier = Modifier
-                .size(90.dp),
-              url = uiModel.thumbnailUrl
-            )
+                .size(90.dp)
+            ) {
+              CoilAsyncImage(
+                url = uiModel.thumbnailUrl
+              )
 
-            Column {
+              Image(
+                modifier = Modifier
+                  .align(Alignment.TopEnd)
+                  .offset((-10).dp, 10.dp)
+                  .size(22.dp),
+                painter = painterResource(
+                  id = when (uiModel.isBookmarked) {
+                    true -> coreUiR.drawable.icon_like_on
+                    false -> coreUiR.drawable.icon_like_off
+                  }
+                ),
+                contentDescription = null
+              )
+            }
+
+            Column(
+              verticalArrangement = Arrangement.spacedBy(6.dp)
+            ) {
               Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(4.dp),
@@ -128,10 +146,9 @@ fun SearchScreen(
                 )
 
                 BasicText(
-                  modifier = Modifier
-                    .weight(1f)
-                    .padding(start = 4.dp),
                   text = uiModel.title,
+                  maxLines = 1,
+                  overflow = TextOverflow.Ellipsis,
                   style = typography.title
                 )
 
@@ -143,20 +160,13 @@ fun SearchScreen(
                 }
               }
 
-              // TODO: 간격 설정
-              Spacer(
-                modifier = Modifier.height(6.dp)
-              )
-
               BasicText(
                 text = uiModel.contents,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
                 style = typography.contents
               )
 
               Spacer(
-                modifier = Modifier.height(8.dp)
+                modifier = Modifier.height(2.dp)
               )
 
               BasicText(

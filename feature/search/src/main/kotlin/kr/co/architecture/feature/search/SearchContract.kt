@@ -22,7 +22,8 @@ data class UiModel(
   val title: String,
   val collection: String? = null,
   val contents: String,
-  val contentsType: ContentsType
+  val contentsType: ContentsType,
+  val isBookmarked: Boolean = false
 ) {
   companion object {
     fun mapperToUiModel(contents: List<GetSortedImagesAndVideosByRecentlyUseCase.Response.Contents>) =
