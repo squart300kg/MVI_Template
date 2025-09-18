@@ -1,6 +1,7 @@
 package kr.co.architecture.core.ui
 
 import android.content.Context
+import androidx.compose.foundation.border
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
@@ -12,7 +13,9 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import coil.transform.RoundedCornersTransformation
 import kotlinx.coroutines.Dispatchers
+import kr.co.architecture.core.ui.theme.CustomColors
 import kr.co.architecture.core.ui.theme.CustomShapes
+import kr.co.architecture.core.ui.theme.LocalCustomColors
 import kr.co.architecture.core.ui.theme.LocalCustomShapes
 
 @Composable
@@ -21,6 +24,7 @@ fun CoilAsyncImage(
   url: String,
   contentDescription: String? = null,
   shapes: CustomShapes = LocalCustomShapes.current,
+  colors: CustomColors = LocalCustomColors.current,
   density: Density = LocalDensity.current,
   context: Context = LocalContext.current
 ) {
@@ -36,9 +40,14 @@ fun CoilAsyncImage(
     .build()
 
   AsyncImage(
+    modifier = modifier
+      .border(
+        width = 1.dp,
+        color = colors.border,
+        shape = shapes.shape
+      ),
     model = request,
     contentDescription = contentDescription,
-    contentScale = ContentScale.Crop,
-    modifier = modifier
+    contentScale = ContentScale.Crop
   )
 }

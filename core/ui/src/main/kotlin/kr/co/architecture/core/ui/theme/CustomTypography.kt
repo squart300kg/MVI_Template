@@ -20,19 +20,19 @@ data class CustomTypography(
   val labelMedium: TextStyle,
 )
 
-private fun typography(fontFamily: FontFamily = pretendard) = CustomTypography(
-  title = TextStyle(fontFamily = fontFamily, fontWeight = FontWeight.Bold, fontSize = 16.sp),
-  titleMedium = TextStyle(fontFamily = fontFamily, fontWeight = FontWeight.Light, fontSize = 14.sp),
-  contents = TextStyle(fontFamily = fontFamily, fontWeight = FontWeight.Medium, fontSize = 16.sp),
-  contentsMedium = TextStyle(fontFamily = fontFamily, fontWeight = FontWeight.Light, fontSize = 14.sp),
+private fun typography(fontFamily: FontFamily = defaultFont) = CustomTypography(
+  title = TextStyle(fontFamily = fontFamily, fontWeight = FontWeight.Bold, fontSize = 15.sp),
+  titleMedium = TextStyle(fontFamily = fontFamily, fontWeight = FontWeight.Normal, fontSize = 14.sp),
+  contents = TextStyle(fontFamily = fontFamily, fontWeight = FontWeight.Normal, fontSize = 13.sp),
+  contentsMedium = TextStyle(fontFamily = fontFamily, fontWeight = FontWeight.Normal, fontSize = 12.sp),
   label = TextStyle(fontFamily = fontFamily, fontWeight = FontWeight.Bold, fontSize = 16.sp),
   labelMedium = TextStyle(fontFamily = fontFamily, fontWeight = FontWeight.Light, fontSize = 16.sp),
 )
 
-private val pretendard: FontFamily by lazy {
+private val defaultFont: FontFamily by lazy {
   FontFamily(
     Font(R.font.pretendard_thin, FontWeight.Light),
-    Font(R.font.pretendard_regular, FontWeight.Medium),
+    Font(R.font.pretendard_regular, FontWeight.Normal),
     Font(R.font.pretendard_semibold, FontWeight.Bold)
   )
 }
