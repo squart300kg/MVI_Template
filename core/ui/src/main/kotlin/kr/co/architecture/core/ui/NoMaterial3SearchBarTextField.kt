@@ -1,6 +1,5 @@
 package kr.co.architecture.core.ui
 
-import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -15,39 +14,39 @@ import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
-import kr.co.architecture.core.ui.theme.CustomColors
-import kr.co.architecture.core.ui.theme.CustomShapes
-import kr.co.architecture.core.ui.theme.CustomTypography
 import kr.co.architecture.core.ui.theme.LocalCustomColors
 import kr.co.architecture.core.ui.theme.LocalCustomShapes
 import kr.co.architecture.core.ui.theme.LocalCustomTypography
 import kr.co.architecture.core.ui.R as coreUiR
 
-
 @Composable
 fun NoMaterial3SearchBarTextField(
   modifier: Modifier = Modifier,
-  value: String,
   onValueChange: (String) -> Unit,
   placeholder: String = "",
-  onClickedErase: () -> Unit = {},
-  enabled: Boolean = true,
-  colors: CustomColors = LocalCustomColors.current,
-  typography: CustomTypography = LocalCustomTypography.current,
-  shape: CustomShapes = LocalCustomShapes.current,
-  @DrawableRes leadingIconRes: Int = coreUiR.drawable.icon_search,
-  @DrawableRes trailingIconRes: Int = coreUiR.drawable.icon_delete
+  onSearch: () -> Unit = {},
+  onClickedErase: () -> Unit = {}
 ) {
+  val focusManager = LocalFocusManager.current
+  val keyboard = LocalSoftwareKeyboardController.current
+  val typography = LocalCustomTypography.current
+  var query by rememberSaveable { mutableStateOf("") }
   BasicTextField(
     modifier = modifier
-      .clip(shape.shape)
-      .background(colors.searchBackground)
+      .clip(LocalCustomShapes.current.shape)
+      .background(LocalCustomColors.current.searchBackground)
       /**
        * 과제 요구사항에 width를 335dp로 설정하라 나와있지만
        * 이는 `Configuration Change`에 대응을 못한다 판단되어 진행하지 않았습니다.
@@ -55,13 +54,18 @@ fun NoMaterial3SearchBarTextField(
       .height(54.dp)
       .padding(vertical = 15.dp)
       .padding(start = 20.dp, end = 18.dp),
-    value = value,
-    onValueChange = onValueChange,
+    value = query,
+    onValueChange = { query = it; onValueChange(query) },
     singleLine = true,
-    enabled = enabled,
     textStyle = typography.searchContents,
     keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
-    keyboardActions = KeyboardActions(onSearch = { defaultKeyboardAction(ImeAction.Search) }),
+    keyboardActions = KeyboardActions(
+      onSearch = {
+        onSearch()
+        focusManager.clearFocus(force = true)
+        keyboard?.hide()
+      }
+    ),
     decorationBox = { innerTextField ->
       Row(
         verticalAlignment = Alignment.CenterVertically,
@@ -71,7 +75,7 @@ fun NoMaterial3SearchBarTextField(
         Image(
           modifier = Modifier
             .size(24.dp),
-          painter = painterResource(leadingIconRes),
+          painter = painterResource(coreUiR.drawable.icon_search),
           contentDescription = null,
         )
 
@@ -81,7 +85,7 @@ fun NoMaterial3SearchBarTextField(
             .weight(1f),
           contentAlignment = Alignment.CenterStart
         ) {
-          if (value.isEmpty()) {
+          if (query.isEmpty()) {
             BasicText(
               text = placeholder,
               style = typography.searchMedium
@@ -96,12 +100,12 @@ fun NoMaterial3SearchBarTextField(
             .size(18.dp)
             .clip(CircleShape)
             .noRippledClickable(
-              onClick = { onClickedErase() }
+              onClick = { query = ""; onClickedErase() }
             ),
           contentAlignment = Alignment.Center
         ) {
           Image(
-            painter = painterResource(trailingIconRes),
+            painter = painterResource(coreUiR.drawable.icon_delete),
             contentDescription = null
           )
         }

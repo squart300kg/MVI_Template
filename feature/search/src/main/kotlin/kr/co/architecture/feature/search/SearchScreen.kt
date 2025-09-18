@@ -40,8 +40,11 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.repeatOnLifecycle
 import kr.co.architecture.core.model.ContentsType
 import kr.co.architecture.core.ui.CoilAsyncImage
+import kr.co.architecture.core.ui.EmptyResultContent
 import kr.co.architecture.core.ui.NoMaterial3SearchBarTextField
+import kr.co.architecture.core.ui.NoResultContent
 import kr.co.architecture.core.ui.PaginationLoadEffect
+import kr.co.architecture.core.ui.baseClickable
 import kr.co.architecture.core.ui.theme.LocalCustomColors
 import kr.co.architecture.core.ui.theme.LocalCustomTypography
 import kr.co.architecture.core.ui.util.asString
@@ -80,37 +83,33 @@ fun SearchScreen(
   modifier: Modifier = Modifier,
   uiState: SearchUiState,
   onQueryChange: (String) -> Unit = {},
-  onSearch: (query: String) -> Unit = {},
+  onSearch: () -> Unit = {},
   onClickedBookmark: (UiModelState.ContentsUiModel) -> Unit = { },
   onClickedItem: (UiModelState.ContentsUiModel) -> Unit = {},
   onScrollToEnd: () -> Unit
 ) {
 
   // TODO: vectorImage 모두 사용했는지?
-  when (uiState.uiType) {
-    SearchUiType.NONE -> {}
-    SearchUiType.EMPTY_RESULT -> {}
-    SearchUiType.LOADED_RESULT -> {
-      Column(
-        modifier = modifier
-          .padding(
-            top = 20.dp,
-            start = 20.dp,
-            end = 20.dp
-          ),
-        verticalArrangement = Arrangement.spacedBy(30.dp)
-      ) {
-        var query by rememberSaveable { mutableStateOf("") }
-        NoMaterial3SearchBarTextField(
-          modifier = Modifier,
-          value = query,
-          onValueChange = { query = it },
-          placeholder = stringResource(coreUiR.string.placeHolder),
-          onClickedErase = {
-            println("clickLog")
-          }
-        )
-
+  Column(
+    modifier = modifier
+      .padding(
+        top = 20.dp,
+        start = 20.dp,
+        end = 20.dp
+      ),
+    verticalArrangement = Arrangement.spacedBy(30.dp)
+  ) {
+    NoMaterial3SearchBarTextField(
+      modifier = Modifier,
+      onValueChange = onQueryChange,
+      placeholder = stringResource(coreUiR.string.placeHolder),
+      onSearch = onSearch,
+      onClickedErase = { onQueryChange("") }
+    )
+    when (uiState.uiType) {
+      SearchUiType.NONE -> NoResultContent()
+      SearchUiType.EMPTY_RESULT -> EmptyResultContent()
+      SearchUiType.LOADED_RESULT -> {
         val listState = rememberLazyListState()
         PaginationLoadEffect(
           listState = listState,
@@ -152,7 +151,8 @@ fun SearchScreen(
                       modifier = Modifier
                         .align(Alignment.TopEnd)
                         .offset((-10).dp, 10.dp)
-                        .size(22.dp),
+                        .size(22.dp)
+                        .baseClickable { onClickedBookmark(uiModel) },
                       painter = painterResource(
                         id = when (uiModel.isBookmarked) {
                           true -> coreUiR.drawable.icon_like_on

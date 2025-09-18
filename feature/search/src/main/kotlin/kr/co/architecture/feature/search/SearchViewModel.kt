@@ -24,7 +24,6 @@ class SearchViewModel @Inject constructor(
         setEffect { SearchUiSideEffect.Load.More }
       }
       is SearchUiEvent.OnClickedBookmark -> {
-
       }
       is SearchUiEvent.OnQueryChange -> {
         query = event.query
@@ -34,6 +33,7 @@ class SearchViewModel @Inject constructor(
         setEffect { SearchUiSideEffect.Load.First }
       }
       is SearchUiEvent.OnClickedItem -> {
+
 //        navigateTo(
 //          route = DetailRoute(
 //            id = event.item.id,
@@ -43,8 +43,6 @@ class SearchViewModel @Inject constructor(
       }
     }
   }
-
-  init { setEffect { SearchUiSideEffect.Load.First } }
 
   fun fetchData(loadType: SearchUiSideEffect.Load) {
     launchWithLoading {
