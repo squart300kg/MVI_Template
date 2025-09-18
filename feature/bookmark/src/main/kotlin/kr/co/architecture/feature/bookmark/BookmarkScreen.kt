@@ -170,6 +170,7 @@ private fun BookmarkGridItem(
       )
     }
 
+    // TODO: 폰트크기 13sp로 해야함
     BasicText(
       text = uiModel.dateTime,
       style = typography.contentsMedium
