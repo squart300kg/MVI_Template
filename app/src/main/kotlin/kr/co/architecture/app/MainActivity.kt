@@ -29,7 +29,7 @@ class MainActivity : ComponentActivity() {
       val viewModel = hiltViewModel<MainViewModel>()
       val loadingState by viewModel.globalUiBus.loadingState.collectAsStateWithLifecycle()
       val errorMessageState by viewModel.globalUiBus.failureDialog.collectAsStateWithLifecycle()
-      var tabIndex by rememberSaveable { mutableIntStateOf(MainTabEnum.SEARCH.tabIndex) }
+      var tabIndex by rememberSaveable { mutableIntStateOf(MainTabEnum.BOOKMARK.tabIndex) }
 
       NoMaterial3Theme {
         Column {

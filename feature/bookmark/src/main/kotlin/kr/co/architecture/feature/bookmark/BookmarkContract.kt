@@ -3,29 +3,37 @@ package kr.co.architecture.feature.bookmark
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
+import kr.co.architecture.core.model.MediaContents
+import kr.co.architecture.core.model.MediaContentsTypeEnum
 import kr.co.architecture.core.ui.UiEvent
 import kr.co.architecture.core.ui.UiSideEffect
 import kr.co.architecture.core.ui.UiState
-import kr.co.architecture.core.ui.util.UiText
 
 enum class BookmarkUiType {
   NONE,
-  LOADED
+  LOADED_RESULT,
+  EMPTY_RESULT
 }
 
+// TODO: uiModel의 text들 UiText로 변경
 data class UiModel(
-  val name: UiText
+  val title: String,
+  val thumbnailUrl: String,
+  val mediaContentsType: MediaContentsTypeEnum,
+  val dateTime: String,
+  val isBookmarked: Boolean = true
 ) {
   companion object {
-    fun mapperToUi(names: List<String>): ImmutableList<UiModel> {
-      return names
-        .map {
-          UiModel(
-            name = UiText.DynamicString(it)
-          )
-        }
-        .toImmutableList()
-    }
+    fun mapperToUiModel(contents: Set<MediaContents>) =
+      contents.map {
+        UiModel(
+          title = it.title,
+          thumbnailUrl = it.thumbnailUrl,
+          mediaContentsType = it.mediaContentsType,
+          dateTime = it.dateTime
+        )
+      }.toImmutableList()
+
   }
 }
 
@@ -35,9 +43,10 @@ data class BookmarkUiState(
 ) : UiState
 
 sealed interface BookmarkUiEvent : UiEvent {
-
+  data class OnClickedItem(val uiModel: UiModel) : BookmarkUiEvent
+  data class OnClickedBookmark(val uiModel: UiModel) : BookmarkUiEvent
 }
 
 sealed interface BookmarkUiSideEffect : UiSideEffect {
-  data object Load : BookmarkUiSideEffect
+  data class OnStartDetailActivity(val hellO: String): BookmarkUiSideEffect
 }

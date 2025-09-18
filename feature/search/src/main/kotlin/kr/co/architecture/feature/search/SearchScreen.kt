@@ -35,9 +35,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.repeatOnLifecycle
 import kr.co.architecture.core.model.MediaContentsTypeEnum
 import kr.co.architecture.core.ui.CoilAsyncImage
-import kr.co.architecture.core.ui.EmptyResultContent
-import kr.co.architecture.core.ui.NoMaterial3SearchBarTextField
 import kr.co.architecture.core.ui.NoResultContent
+import kr.co.architecture.core.ui.NoMaterial3SearchBarTextField
 import kr.co.architecture.core.ui.PaginationLoadEffect
 import kr.co.architecture.core.ui.baseClickable
 import kr.co.architecture.core.ui.theme.LocalCustomColors
@@ -102,8 +101,8 @@ fun SearchScreen(
       onClickedErase = { onQueryChange("") }
     )
     when (uiState.uiType) {
-      SearchUiType.NONE -> NoResultContent()
-      SearchUiType.EMPTY_RESULT -> EmptyResultContent()
+      SearchUiType.NONE -> NoResultContent(textRes = coreUiR.string.noResult)
+      SearchUiType.EMPTY_RESULT -> NoResultContent(textRes = coreUiR.string.emptyResult)
       SearchUiType.LOADED_RESULT -> {
         val listState = rememberLazyListState()
         PaginationLoadEffect(

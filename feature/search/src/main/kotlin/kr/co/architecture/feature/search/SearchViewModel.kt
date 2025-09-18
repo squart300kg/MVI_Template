@@ -94,7 +94,6 @@ class SearchViewModel @Inject constructor(
               .toImmutableList()
           )
         }
-        println("mediaContentsLog, observe : $mediaContents")
       }
       .launchIn(viewModelScope)
   }

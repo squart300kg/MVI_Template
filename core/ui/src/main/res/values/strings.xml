@@ -3,6 +3,7 @@
     <string name="placeHolder">검색어를 입력해주세요.</string>
     <string name="emptyResult">검색 결과가 없습니다.</string>
     <string name="noResult">검색어를 입력해주세요.</string>
+    <string name="noBookmark">북마크한 항목이 없어요</string>
     <string name="confirm">확인</string>
     <string name="networkConnectionErrorTitle">네트워크가 연결되어있지 않습니다.</string>
     <string name="networkConnectionErrorContents">네트워크 연결을 확인해주세요.</string>
