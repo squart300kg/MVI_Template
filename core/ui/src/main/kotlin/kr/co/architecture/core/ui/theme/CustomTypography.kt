@@ -9,6 +9,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import kr.co.architecture.core.ui.R
 
+// TODO: 색깔 제대로 적용된거 맞는지 확인
 // TODO: 이걸 staticCompositionLocalOf vs compositionLocalOf ??
 val LocalCustomTypography = staticCompositionLocalOf { typography() }
 

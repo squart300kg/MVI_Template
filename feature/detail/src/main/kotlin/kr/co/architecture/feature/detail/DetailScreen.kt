@@ -19,16 +19,7 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.repeatOnLifecycle
-import androidx.navigation.NavGraphBuilder
-import androidx.navigation.compose.composable
-import kr.co.architecture.core.ui.DetailRoute
 import kr.co.architecture.core.ui.util.asString
-
-fun NavGraphBuilder.detailScreen() {
-  composable<DetailRoute> {
-    DetailScreen()
-  }
-}
 
 @Composable
 fun DetailScreen(

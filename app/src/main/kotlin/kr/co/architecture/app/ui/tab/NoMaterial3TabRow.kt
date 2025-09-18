@@ -18,7 +18,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Density
@@ -29,6 +29,7 @@ import kr.co.architecture.core.ui.theme.CustomTypography
 import kr.co.architecture.core.ui.theme.LocalCustomColors
 import kr.co.architecture.core.ui.theme.LocalCustomTypography
 import kr.co.architecture.core.ui.noRippledClickable
+import kotlin.math.roundToInt
 
 enum class MainTabEnum(
   val tabIndex: Int,
@@ -103,20 +104,21 @@ fun NoMaterial3TabRow(
       }
     }
 
-    Canvas(Modifier.fillMaxWidth().height(2.dp)) {
-      // 2) 검정 인디케이터: 탭 폭 기준 슬라이드
+    Canvas(
+      modifier = Modifier
+        .fillMaxWidth()
+        .height(2.dp)
+    ) {
       if (tabCount > 0) {
-        val thick = with(density) { 2.dp.toPx() }
-        val y = size.height - thinPx / 2f
         val segmentWidth = size.width / tabCount
-        val start = segmentWidth * animatedIndex
-        val end   = start + segmentWidth
-        drawLine(
+        val left  = (segmentWidth * animatedIndex).roundToInt().toFloat()
+        val right = (segmentWidth * (animatedIndex + 1f)).roundToInt().toFloat()
+        val width = (right - left).coerceAtLeast(1f)
+
+        drawRect(
           color = colors.selectedDivider,
-          start = Offset(start, y),
-          end   = Offset(end,   y),
-          strokeWidth = thick,
-          cap = StrokeCap.Square
+          topLeft = Offset(left, 0f),
+          size = Size(width = width, height = size.height)
         )
       }
     }

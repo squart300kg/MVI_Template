@@ -19,7 +19,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
@@ -33,7 +32,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
@@ -47,9 +45,11 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.repeatOnLifecycle
 import kr.co.architecture.core.model.ContentsType
 import kr.co.architecture.core.ui.CoilAsyncImage
+import kr.co.architecture.core.ui.NoMaterial3SearchBarTextField
 import kr.co.architecture.core.ui.PaginationLoadEffect
 import kr.co.architecture.core.ui.noRippledClickable
 import kr.co.architecture.core.ui.theme.CustomColors
+import kr.co.architecture.core.ui.theme.CustomShapes
 import kr.co.architecture.core.ui.theme.CustomTypography
 import kr.co.architecture.core.ui.theme.LocalCustomColors
 import kr.co.architecture.core.ui.theme.LocalCustomShapes
@@ -89,22 +89,22 @@ fun SearchScreen(
   onScrollToEnd: () -> Unit
 ) {
 
-  // TODO: 엣지투엣지 대응
   // TODO: vectorImage 모두 사용했는지?
   when (uiState.uiType) {
     SearchUiType.NONE -> {}
     SearchUiType.EMPTY_RESULT -> {}
     SearchUiType.LOADED_RESULT -> {
-
       Column(
         modifier = modifier
           .padding(
+            top = 20.dp,
             start = 20.dp,
             end = 20.dp
-          )
+          ),
+        verticalArrangement = Arrangement.spacedBy(30.dp)
       ) {
         var query by rememberSaveable { mutableStateOf("") }
-        SearchBarField(
+        NoMaterial3SearchBarTextField(
           modifier = Modifier,
           value = query,
           onValueChange = { query = it },
@@ -122,12 +122,10 @@ fun SearchScreen(
           onScrollToEnd = onScrollToEnd
         )
 
-        // TODO: Text들 간격조정, MaterialTheme로 강제화되는것 확인
         val typography = LocalCustomTypography.current
         LazyColumn(
           modifier = Modifier,
           contentPadding = PaddingValues(
-            top = 30.dp,
             bottom = 56.dp
           ),
           verticalArrangement = Arrangement.spacedBy(24.dp),
@@ -224,84 +222,4 @@ fun SearchScreen(
       }
     }
   }
-}
-
-@Composable
-fun SearchBarField(
-  modifier: Modifier = Modifier,
-  value: String,
-  onValueChange: (String) -> Unit,
-  placeholder: String = "",
-  onClickedErase: () -> Unit = {},
-  enabled: Boolean = true,
-  colors: CustomColors = LocalCustomColors.current,
-  typo: CustomTypography = LocalCustomTypography.current,
-  shape: RoundedCornerShape = LocalCustomShapes.current.shape,
-  @DrawableRes leadingIconRes: Int = coreUiR.drawable.icon_search,
-  @DrawableRes trailingIconRes: Int = coreUiR.drawable.icon_delete
-) {
-  BasicTextField(
-    modifier = modifier
-      .clip(shape)
-      .background(colors.searchBackground)
-      /**
-       * 과제 요구사항에 width를 335dp로 설정하라 나와있지만
-       * 이는 `Configuration Change`에 대응을 못한다 판단되어 진행하지 않았습니다.
-       */
-      .height(54.dp)
-      .padding(vertical = 15.dp)
-      .padding(start = 20.dp, end = 18.dp),
-    value = value,
-    onValueChange = onValueChange,
-    singleLine = true,
-    enabled = enabled,
-    textStyle = typo.searchContents,
-    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
-    keyboardActions = KeyboardActions(onSearch = { defaultKeyboardAction(ImeAction.Search) }),
-    decorationBox = { innerTextField ->
-      Row(
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(8.dp)
-      ) {
-        // Leading icon
-        Image(
-          modifier = Modifier
-            .size(24.dp),
-          painter = painterResource(leadingIconRes),
-          contentDescription = null,
-        )
-
-        // Input + PlaceHolder
-        Box(
-          modifier = Modifier
-            .weight(1f),
-          contentAlignment = Alignment.CenterStart
-        ) {
-          if (value.isEmpty()) {
-            BasicText(
-              text = placeholder,
-              style = typo.searchMedium
-            )
-          }
-          innerTextField()
-        }
-
-        // Trading icon
-        Box(
-          modifier = Modifier
-            .size(18.dp)
-            .clip(CircleShape)
-            .noRippledClickable(
-              onClick = { onClickedErase() }
-            ),
-          contentAlignment = Alignment.Center
-        ) {
-          Image(
-            painter = painterResource(trailingIconRes),
-            contentDescription = null
-          )
-        }
-      }
-    }
-  )
 }
