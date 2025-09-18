@@ -85,6 +85,4 @@ class LocalApiImpl @Inject constructor(
     val MEDIA_CONTENTS_LIST = stringSetPreferencesKey("mediaContentsList")
 
   }
-  private fun MediaContentsEntity.uniqueId(): String =
-    "${mediaContentsType}:${this.hashCode()}"
 }

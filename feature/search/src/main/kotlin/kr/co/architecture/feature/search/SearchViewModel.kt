@@ -4,6 +4,7 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.collections.immutable.PersistentList
 import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kr.co.architecture.core.domain.GetSortedImagesAndVideosByRecentlyUseCase
@@ -11,6 +12,7 @@ import kr.co.architecture.core.domain.ObserveBookmarkedMediasUseCase
 import kr.co.architecture.core.domain.ToggleBookmarkUseCase
 import kr.co.architecture.core.model.ContentsQuery
 import kr.co.architecture.core.model.ToggleTypeEnum
+import kr.co.architecture.core.model.uniqueId
 import kr.co.architecture.core.ui.BaseViewModel
 import javax.inject.Inject
 
@@ -23,6 +25,7 @@ class SearchViewModel @Inject constructor(
 
   private var query: String = ""
   private var pageNumber = 1
+  private var bookmarkedKeys: Set<String> = emptySet()
 
   override fun createInitialState() = SearchUiState()
 
@@ -66,6 +69,31 @@ class SearchViewModel @Inject constructor(
   init {
     observeBookmarkedMediasUseCase()
       .onEach { mediaContents ->
+        // 1) 북마크 키 세트 생성
+        val bookmarkedKeysLocal: Set<String> = mediaContents
+          .asSequence()
+          .map { it.uniqueId() }
+          .toSet()
+
+        // 2)  추후 fetchData 때 활용을 위한 메모리 캐싱
+        bookmarkedKeys = bookmarkedKeysLocal
+
+        // 3) uiState.uiModels에 북마크 반영
+        setState {
+          copy(
+            uiModels = uiModels
+              .map { uiModel ->
+                when (uiModel) {
+                  is UiModelState.ContentsUiModel -> {
+                    val isBookmarked = bookmarkedKeysLocal.contains(uiModel.uniqueId())
+                    uiModel.copy(isBookmarked = isBookmarked)
+                  }
+                  is UiModelState.PagingUiModel -> uiModel
+                }
+              }
+              .toImmutableList()
+          )
+        }
         println("mediaContentsLog, observe : $mediaContents")
       }
       .launchIn(viewModelScope)
@@ -97,9 +125,20 @@ class SearchViewModel @Inject constructor(
               dto = response.pageableDto,
               page = nextPage
             )
-            val contentsUiModels = UiModelState.ContentsUiModel.mapperToUiModel(
+
+            // 새 컨텐츠 -> UI 모델 변환
+            val contentsUiModelsRaw = UiModelState.ContentsUiModel.mapperToUiModel(
               contents = response.mediaContentsList
             )
+
+            // 캐시된 bookmarkedKeys 로 북마크 반영(한 번의 contains)
+            val contentsUiModels = contentsUiModelsRaw
+              .map { uiModel ->
+                uiModel.copy(
+                  isBookmarked = bookmarkedKeys.contains(uiModel.uniqueId())
+                )
+              }.toImmutableList()
+
             val uiModelState = (contentsUiModels as PersistentList<UiModelState>)
               .add(pagingUiModel)
 

@@ -8,3 +8,6 @@ data class MediaContents(
   val contents: String,
   val mediaContentsType: MediaContentsTypeEnum
 )
+
+fun MediaContents.uniqueId(): String =
+  MediaIdentity.idOf(mediaContentsType, title, contents, thumbnailUrl)

@@ -4,6 +4,7 @@ import com.google.gson.Gson
 import kr.co.architecture.core.datastore.model.StringMediaContentsEntity
 import kr.co.architecture.core.model.MediaContents
 import kr.co.architecture.core.model.MediaContentsTypeEnum
+import kr.co.architecture.core.model.MediaIdentity
 
 data class MediaContentsEntity(
   val thumbnailUrl: String,
@@ -35,3 +36,6 @@ data class MediaContentsEntity(
     )
   }
 }
+
+fun MediaContentsEntity.uniqueId(): String =
+  MediaIdentity.idOf(mediaContentsType, title, contents, thumbnailUrl)

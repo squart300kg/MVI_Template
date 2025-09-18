@@ -2,6 +2,7 @@ package kr.co.architecture.core.domain
 
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.onEach
 import kr.co.architecture.core.model.MediaContents
 import kr.co.architecture.core.model.MediaContentsTypeEnum
@@ -20,5 +21,5 @@ class ObserveBookmarkedMediasUseCase @Inject constructor(
       flow2 = videoRepository.observeBookmarkedMedias()
     ) { images, videos ->
       (images + videos).sortedBy { it.dateTime }
-    }
+    }.distinctUntilChanged()
 }

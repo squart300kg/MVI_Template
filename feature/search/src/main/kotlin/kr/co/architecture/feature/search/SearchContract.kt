@@ -6,6 +6,7 @@ import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
 import kr.co.architecture.core.model.MediaContentsTypeEnum
 import kr.co.architecture.core.model.MediaContents
+import kr.co.architecture.core.model.MediaIdentity
 import kr.co.architecture.core.repository.dto.PageableDto
 import kr.co.architecture.core.ui.UiEvent
 import kr.co.architecture.core.ui.UiSideEffect
@@ -74,6 +75,10 @@ sealed interface UiModelState {
     }
   }
 }
+
+
+fun UiModelState.ContentsUiModel.uniqueId(): String =
+  MediaIdentity.idOf(mediaContentsType, title, contents, thumbnailUrl)
 
 data class SearchUiState(
   val uiType: SearchUiType = SearchUiType.NONE,
