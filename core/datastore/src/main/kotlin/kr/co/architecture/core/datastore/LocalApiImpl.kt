@@ -16,8 +16,8 @@ class LocalApiImpl @Inject constructor(
 
   private val gson by lazy(LazyThreadSafetyMode.NONE) { Gson() }
 
-  override fun observeBookmarkedMedias(): Flow<Set<MediaContentsEntity>> {
-    return dataStore.data.map { preference ->
+  override fun observeBookmarkedMedias(): Flow<Set<MediaContentsEntity>> =
+    dataStore.data.map { preference ->
       val stringEntities = preference[MEDIA_CONTENTS_LIST] ?: emptySet()
 
       buildSet(stringEntities.size) {
@@ -31,7 +31,6 @@ class LocalApiImpl @Inject constructor(
         }
       }
     }
-  }
 
   override suspend fun delete(entity: MediaContentsEntity) {
     val targetId = entity.uniqueId()
@@ -63,20 +62,19 @@ class LocalApiImpl @Inject constructor(
       val stringEntities = preferences[MEDIA_CONTENTS_LIST] ?: emptySet()
 
       val updated = buildSet(stringEntities.size + 1) {
-        // 기존 요소 한 번만 순회
+        // 기존 요소 한 번만 순회: 동일 uniqueId만 제외하고 모두 유지
         for (stringEntity in stringEntities) {
           val isSame = try {
             val entity = MediaContentsEntity.mapperToEntity(StringMediaContentsEntity(stringEntity))
             entity.uniqueId() == targetId
           } catch (_: Exception) { false }
 
-          if (isSame) {
-            add(targetJson) // 교체(최초 1회)
-          } else {
-            add(stringEntity) // 유지
-          }
+          if (!isSame) add(stringEntity)
         }
+        // 새 값은 마지막에 딱 한 번 추가 (없으면 추가, 있으면 교체 효과)
+        add(targetJson)
       }
+
       preferences[MEDIA_CONTENTS_LIST] = updated
     }
   }

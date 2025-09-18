@@ -1,9 +1,13 @@
 package kr.co.architecture.feature.search
 
+import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.collections.immutable.PersistentList
 import kotlinx.collections.immutable.persistentListOf
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kr.co.architecture.core.domain.GetSortedImagesAndVideosByRecentlyUseCase
+import kr.co.architecture.core.domain.ObserveBookmarkedMediasUseCase
 import kr.co.architecture.core.domain.ToggleBookmarkUseCase
 import kr.co.architecture.core.model.ContentsQuery
 import kr.co.architecture.core.model.ToggleTypeEnum
@@ -13,7 +17,8 @@ import javax.inject.Inject
 @HiltViewModel
 class SearchViewModel @Inject constructor(
   private val getSortedImagesAndVideosByRecentlyUseCase: GetSortedImagesAndVideosByRecentlyUseCase,
-  private val toggleBookmarkUseCase: ToggleBookmarkUseCase
+  private val toggleBookmarkUseCase: ToggleBookmarkUseCase,
+  private val observeBookmarkedMediasUseCase: ObserveBookmarkedMediasUseCase,
 ) : BaseViewModel<SearchUiState, SearchUiEvent, SearchUiSideEffect>() {
 
   private var query: String = ""
@@ -59,7 +64,11 @@ class SearchViewModel @Inject constructor(
   }
 
   init {
-
+    observeBookmarkedMediasUseCase()
+      .onEach { mediaContents ->
+        println("mediaContentsLog, observe : $mediaContents")
+      }
+      .launchIn(viewModelScope)
   }
 
   fun fetchData(loadType: SearchUiSideEffect.Load) {
