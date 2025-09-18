@@ -19,7 +19,7 @@ ioCoilKtCompose = "2.6.0"
 kotlinxSerializationJson = "1.5.1"
 okhttpLogging = "4.12.0"
 retrofit = "2.11.0"
-androidxDataStore = "1.0.0"
+androidxDataStore = "1.1.7"
 room = "2.8.0"
 workManager = "2.9.0"
 hiltWorker = "1.2.0"
@@ -77,7 +77,8 @@ com-google-dagger-hilt-compiler = { group = "com.google.dagger", name = "hilt-co
 okhttp-logging = { group = "com.squareup.okhttp3", name = "logging-interceptor", version.ref = "okhttpLogging" }
 retrofit-core = { group = "com.squareup.retrofit2", name = "retrofit", version.ref = "retrofit" }
 retrofit-gson-converter = { group = "com.squareup.retrofit2", name = "converter-gson",version.ref = "retrofit" }
-androidx-datastore-core = { group = "androidx.datastore", name = "datastore", version.ref = "androidxDataStore" }
+androidx-datastore-core = { group = "androidx.datastore", name = "datastore-core", version.ref = "androidxDataStore" }
+androidx-datastore-preference = { group = "androidx.datastore", name = "datastore-preferences", version.ref = "androidxDataStore" }
 androidx-room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "room"}
 androidx-room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "room"}
 androidx-room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "room"}

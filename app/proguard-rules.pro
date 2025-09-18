@@ -1,2 +1,2 @@
 -keep class kr.co.architecture.core.network.model.** { *; }
--keep class kr.co.architecture.core.database.entity.** { *; }
+-keep class kr.co.architecture.core.datastore.entity.** { *; }

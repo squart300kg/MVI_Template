@@ -5,14 +5,13 @@ plugins {
 }
 
 android {
-  namespace = "kr.co.architecture.core.database"
+  namespace = "kr.co.architecture.core.datastore"
 
   defaultConfig { }
 
   dependencies {
-    implementation(libs.androidx.room.runtime)
-    implementation(libs.androidx.room.ktx)
+    implementation(project(":core:model"))
 
-    ksp(libs.androidx.room.compiler)
+    implementation(libs.androidx.datastore.preference)
   }
 }

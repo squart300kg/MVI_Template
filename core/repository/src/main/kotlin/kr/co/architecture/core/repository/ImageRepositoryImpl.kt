@@ -1,5 +1,7 @@
 package kr.co.architecture.core.repository
 
+import kr.co.architecture.core.datastore.LocalApi
+import kr.co.architecture.core.datastore.MediaContentsEntity
 import kr.co.architecture.core.model.ContentsQuery
 import kr.co.architecture.core.model.MediaContents
 import kr.co.architecture.core.model.ToggleTypeEnum
@@ -9,7 +11,8 @@ import kr.co.architecture.core.repository.dto.ImageDto
 import javax.inject.Inject
 
 class ImageRepositoryImpl @Inject constructor(
-  private val remoteApi: RemoteApi
+  private val remoteApi: RemoteApi,
+  private val localApi: LocalApi
 ) : ImageRepository {
 
   override suspend fun getImages(query: ContentsQuery): ImageDto {
@@ -22,6 +25,10 @@ class ImageRepositoryImpl @Inject constructor(
   }
 
   override suspend fun toggleBookmark(contents: MediaContents, toggleType: ToggleTypeEnum) {
-    TODO("Not yet implemented")
+    val entity = MediaContentsEntity.mapperToEntity(contents)
+    when (toggleType) {
+      ToggleTypeEnum.SAVE -> localApi.upsert(entity)
+      ToggleTypeEnum.DELETE -> localApi.delete(entity)
+    }
   }
 }

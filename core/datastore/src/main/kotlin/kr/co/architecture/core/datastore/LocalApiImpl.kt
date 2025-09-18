@@ -1,0 +1,85 @@
+package kr.co.architecture.core.datastore
+
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.stringSetPreferencesKey
+import com.google.gson.Gson
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
+import kr.co.architecture.core.datastore.model.StringMediaContentsEntity
+import javax.inject.Inject
+
+class LocalApiImpl @Inject constructor(
+  private val dataStore: DataStore<Preferences>
+) : LocalApi {
+
+  private val gson by lazy(LazyThreadSafetyMode.NONE) { Gson() }
+
+  override fun observeBookmarkedBooks(): Flow<Set<MediaContentsEntity>> {
+    return dataStore.data.map { preference ->
+      preference[MEDIA_CONTENTS_LIST]
+        ?.map {
+          MediaContentsEntity.mapperToEntity(StringMediaContentsEntity(it))
+        }?.toSet()
+        ?: emptySet()
+    }
+  }
+
+  override suspend fun delete(entity: MediaContentsEntity) {
+    val targetId = entity.uniqueId()
+
+    dataStore.edit { preferences ->
+      val stringEntities = preferences[MEDIA_CONTENTS_LIST] ?: emptySet()
+
+      // 기존 요소 한 번만 순회
+      val updated = buildSet(stringEntities.size) {
+        for (stringEntity in stringEntities) {
+          val isSame = try {
+            val entity = MediaContentsEntity.mapperToEntity(StringMediaContentsEntity(stringEntity))
+            entity.uniqueId() == targetId
+          } catch (_: Exception) { false }
+
+          if (!isSame) add(stringEntity)
+        }
+      }
+
+      preferences[MEDIA_CONTENTS_LIST] = updated
+    }
+  }
+
+  override suspend fun upsert(entity: MediaContentsEntity) {
+    val targetId = entity.uniqueId()
+    val targetJson = gson.toJson(entity)
+
+    dataStore.edit { preferences ->
+      val stringEntities = preferences[MEDIA_CONTENTS_LIST] ?: emptySet()
+
+      val updated = buildSet(stringEntities.size + 1) {
+        // 기존 요소 한 번만 순회
+        for (stringEntity in stringEntities) {
+          val isSame = try {
+            val entity = MediaContentsEntity.mapperToEntity(StringMediaContentsEntity(stringEntity))
+            entity.uniqueId() == targetId
+          } catch (_: Exception) { false }
+
+          if (isSame) {
+            add(targetJson) // 교체(최초 1회)
+          } else {
+            add(stringEntity) // 유지
+          }
+        }
+      }
+      preferences[MEDIA_CONTENTS_LIST] = updated
+    }
+  }
+
+  companion object {
+    const val SHARED_PREFS_NAME = "SSY_APP"
+
+    val MEDIA_CONTENTS_LIST = stringSetPreferencesKey("mediaContentsList")
+
+  }
+  private fun MediaContentsEntity.uniqueId(): String =
+    "${mediaContentsType}:${this.hashCode()}"
+}

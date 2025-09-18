@@ -1,4 +1,4 @@
-package kr.co.architecture.core.common
+package kr.co.architecture.core.datastore
 
 import org.junit.Test
 
