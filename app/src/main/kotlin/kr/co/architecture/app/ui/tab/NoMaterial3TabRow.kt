@@ -54,11 +54,10 @@ fun NoMaterial3TabRow(
   density: Density = LocalDensity.current
 ) {
   val tabCount = MainTabEnum.entries.size
-  val thinPx  = with(density) { 1.dp.toPx() }   // 회색 끝선
+  val thinPx  = with(density) { 1.dp.toPx() }
   val animatedIndex by animateFloatAsState(
     targetValue = selectedTab.tabIndex.toFloat(),
-    animationSpec = tween(durationMillis = 250, easing = FastOutSlowInEasing),
-    label = "tab-indicator-index"
+    animationSpec = tween(durationMillis = 250, easing = FastOutSlowInEasing)
   )
 
   Column(
@@ -75,7 +74,7 @@ fun NoMaterial3TabRow(
           strokeWidth = thinPx
         )
       }
-      .padding(horizontal = 16.dp), // 내부 콘텐츠 폭은 여기 기준
+      .padding(horizontal = 16.dp),
     verticalArrangement = Arrangement.spacedBy(11.dp)
   ) {
     // 라벨 영역
@@ -104,7 +103,6 @@ fun NoMaterial3TabRow(
       }
     }
 
-    // 하단 바: 회색 끝선(fillMaxWidth) + 슬라이딩 인디케이터
     Canvas(Modifier.fillMaxWidth().height(2.dp)) {
       // 2) 검정 인디케이터: 탭 폭 기준 슬라이드
       if (tabCount > 0) {
