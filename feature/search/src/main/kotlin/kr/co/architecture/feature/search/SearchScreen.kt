@@ -144,6 +144,7 @@ fun SearchScreen(
 
               BasicText(
                 text = uiModel.contents,
+                maxLines = 1,
                 style = typography.contents
               )
 
