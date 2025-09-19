@@ -9,6 +9,10 @@ android {
 
   defaultConfig { }
 
+  buildFeatures {
+    dataBinding = true
+    compose = false
+  }
   dependencies {
     implementation(project(":core:ui"))
     implementation(project(":core:router"))
@@ -16,5 +20,7 @@ android {
     implementation(project(":core:model"))
     implementation(project(":core:repository"))
     implementation(project(":testing"))
+
+    implementation(libs.androidx.constraintlayout)
   }
 }

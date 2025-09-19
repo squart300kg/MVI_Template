@@ -6,6 +6,7 @@ import kotlinx.collections.immutable.toImmutableList
 import kr.co.architecture.core.domain.formatter.EraseDateUnderDayFormatter
 import kr.co.architecture.core.model.MediaContents
 import kr.co.architecture.core.model.MediaContentsTypeEnum
+import kr.co.architecture.core.model.MediaIdentity
 import kr.co.architecture.core.ui.UiEvent
 import kr.co.architecture.core.ui.UiSideEffect
 import kr.co.architecture.core.ui.UiState
@@ -73,6 +74,14 @@ data class UnbindingUiModel(
   val contents: String
 )
 
+fun UiModel.uniqueId(): String =
+  MediaIdentity.idOf(
+    mediaContentsType = bindingUiModel.mediaContentsType,
+    title = bindingUiModel.title,
+    contents = unbindingUiModel.contents,
+    thumbnailUrl = bindingUiModel.thumbnailUrl
+  )
+
 data class BookmarkUiState(
   val uiType: BookmarkUiType = BookmarkUiType.NONE,
   val uiModels: ImmutableList<UiModel> = persistentListOf()
@@ -84,5 +93,5 @@ sealed interface BookmarkUiEvent : UiEvent {
 }
 
 sealed interface BookmarkUiSideEffect : UiSideEffect {
-  data class OnStartDetailActivity(val hellO: String): BookmarkUiSideEffect
+
 }

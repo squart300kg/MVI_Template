@@ -14,6 +14,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import kr.co.architecture.core.ui.theme.NoMaterial3Theme
 import kr.co.architecture.app.ui.tab.MainTabEnum
 import kr.co.architecture.app.ui.tab.NoMaterial3TabRow
+import kr.co.architecture.core.router.LaunchedRouter
 import kr.co.architecture.core.ui.BaseCenterDialog
 import kr.co.architecture.core.ui.BaseProgressBar
 import kr.co.architecture.feature.bookmark.BookmarkScreen
@@ -30,6 +31,8 @@ class MainActivity : ComponentActivity() {
       val loadingState by viewModel.globalUiBus.loadingState.collectAsStateWithLifecycle()
       val errorMessageState by viewModel.globalUiBus.failureDialog.collectAsStateWithLifecycle()
       var tabIndex by rememberSaveable { mutableIntStateOf(MainTabEnum.BOOKMARK.tabIndex) }
+
+//      LaunchedRouter()
 
       NoMaterial3Theme {
         Column {

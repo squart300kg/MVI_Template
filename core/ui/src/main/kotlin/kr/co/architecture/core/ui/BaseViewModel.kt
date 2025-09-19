@@ -85,14 +85,6 @@ abstract class BaseViewModel<State : UiState, Event : UiEvent, Effect : UiSideEf
     viewModelScope.launch { _uiSideEffect.send(effectValue) }
   }
 
-  fun navigateBack() = viewModelScope.launch {
-    navigator.navigateBack()
-  }
-
-  fun navigateWeb(url: String) = viewModelScope.launch {
-    navigator.navigateWeb(url)
-  }
-
   fun navigateTo(
     route: Route,
     saveState: Boolean = false,
