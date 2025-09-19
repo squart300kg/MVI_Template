@@ -42,6 +42,7 @@ class DetailViewModel @Inject constructor(
       val origin = requireNotNull(savedStateHandle.get<String?>(ORIGIN)) {
         "ORIGIN cannot be null."
       }
+      println("detailLog 2; $id, $origin")
 
       observeBookmarkedMediasUseCase()
         .map { mediaContentsList ->

@@ -9,14 +9,7 @@ import kr.co.architecture.feature.detail.databinding.ActivityDetailBinding
 
 
 @AndroidEntryPoint
-class DetailActivity :
-  BaseDataBindingActivity<
-    ActivityDetailBinding,
-    DetailUiState,
-    DetailUiEvent,
-    DetailUiSideEffect,
-    DetailViewModel
-    >() {
+class DetailActivity : BaseDataBindingActivity<ActivityDetailBinding, DetailUiState, DetailUiEvent, DetailUiSideEffect, DetailViewModel>() {
 
   override val layoutResId: Int = R.layout.activity_detail
   override val variableId: Int = BR.vm
@@ -25,7 +18,14 @@ class DetailActivity :
   override fun onBindCreated(binding: ActivityDetailBinding) {
     val id = intent?.data?.getQueryParameter(ID)
     val origin = intent?.data?.getQueryParameter(ORIGIN)
-    if (id.isNullOrBlank() || origin.isNullOrBlank()) { finish(); return }
+    println("detailLog 1 ; $id, $origin")
+//    if (id.isNullOrBlank() || origin.isNullOrBlank()) { finish(); return }
+
+    // SavedStateHandle로 전달
+//    viewModel.apply {
+//      savedStateHandle[ID] = id
+//      savedStateHandle[ORIGIN] = fromBookmark
+//    }
   }
 
   override fun renderState(state: DetailUiState) {

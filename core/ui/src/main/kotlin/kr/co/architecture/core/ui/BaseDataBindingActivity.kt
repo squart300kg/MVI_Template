@@ -46,7 +46,6 @@ abstract class BaseDataBindingActivity<
     @Suppress("UNCHECKED_CAST")
     binding = DataBindingUtil.setContentView(this, layoutResId)
     binding.lifecycleOwner = this
-    // 레이아웃의 variable="vm" 에 ViewModel 주입
     binding.setVariable(variableId, viewModel)
 
     // 2) 추가 초기화 훅

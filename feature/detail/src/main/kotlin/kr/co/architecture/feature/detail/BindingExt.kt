@@ -1,17 +1,10 @@
 package kr.co.architecture.feature.detail
 
-import android.view.LayoutInflater
-import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.databinding.BindingAdapter
-import androidx.recyclerview.widget.DiffUtil
-import androidx.recyclerview.widget.ListAdapter
-import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
 import coil.load
 import kr.co.architecture.core.model.MediaContents
-import kr.co.architecture.core.model.uniqueId
-import kr.co.architecture.feature.detail.databinding.ItemDetailPageBinding
 
 // -------- Image --------
 
@@ -24,41 +17,13 @@ fun ImageView.bindImageUrl(url: String?) {
   }
 }
 
-// -------- ViewPager2 --------
-
-private class MediaPagerAdapter :
-  ListAdapter<MediaContents, MediaPagerAdapter.VH>(DIFF) {
-
-  class VH(val binding: ItemDetailPageBinding) : RecyclerView.ViewHolder(binding.root)
-
-  override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VH {
-    val inflater = LayoutInflater.from(parent.context)
-    val binding = ItemDetailPageBinding.inflate(inflater, parent, false)
-    return VH(binding)
-  }
-
-  override fun onBindViewHolder(holder: VH, position: Int) {
-    holder.binding.item = getItem(position)
-  }
-
-  companion object {
-    private val DIFF = object : DiffUtil.ItemCallback<MediaContents>() {
-      override fun areItemsTheSame(oldItem: MediaContents, newItem: MediaContents) =
-        oldItem.uniqueId() == newItem.uniqueId()
-
-      override fun areContentsTheSame(oldItem: MediaContents, newItem: MediaContents) =
-        oldItem == newItem
-    }
-  }
-}
-
 @BindingAdapter(value = ["pagerItems", "pagerStartIndex", "pagerEnabled"], requireAll = false)
 fun ViewPager2.bindPager(
   items: List<MediaContents>?,
   startIndex: Int?,
   enabled: Boolean?
 ) {
-  val adapter = (adapter as? MediaPagerAdapter) ?: MediaPagerAdapter().also { this.adapter = it }
+  val adapter = (adapter as? DetailPagerAdapter) ?: DetailPagerAdapter().also { this.adapter = it }
   val list = items ?: emptyList()
 
   // 1) 리스트 갱신 (DiffUtil)
