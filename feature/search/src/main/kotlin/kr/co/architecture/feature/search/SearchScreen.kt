@@ -83,7 +83,6 @@ fun SearchScreen(
   onScrollToEnd: () -> Unit
 ) {
 
-  // TODO: vectorImage 모두 사용했는지?
   Column(
     modifier = modifier
       .padding(

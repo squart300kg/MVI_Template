@@ -118,7 +118,7 @@ private fun BookmarkGridItem(
   ) {
     Box(
       modifier = Modifier
-        //과제 요구사항은 150dp * 150dp였으나, 해상도 대응 및 화면 회전 구성변경 대응을 위해
+        //과제 요구사항은 150dp * 150dp였으나, 해상도 대응 및 화면 회전 대응을 위해
         //비율로 설정하였습니다.
         .aspectRatio(1f)
     ) {
