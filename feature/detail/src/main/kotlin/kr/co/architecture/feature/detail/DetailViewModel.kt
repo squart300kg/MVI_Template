@@ -29,7 +29,7 @@ class DetailViewModel @Inject constructor(
 
       }
       is DetailUiEvent.OnClickedBack -> {
-
+        setEffect { DetailUiSideEffect.OnFinish }
       }
       is DetailUiEvent.OnSwipe -> {
         setState {

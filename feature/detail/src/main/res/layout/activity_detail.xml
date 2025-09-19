@@ -2,6 +2,9 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
+
+        <import type="kr.co.architecture.feature.detail.DetailUiEvent" />
+
         <variable
             name="vm"
             type="kr.co.architecture.feature.detail.DetailViewModel"/>
@@ -14,7 +17,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <!-- 상단바 하단 기준선 (56dp) -->
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/gdTopBarBottom"
             android:layout_width="wrap_content"
@@ -33,7 +35,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toTopOf="@id/gdTopBarBottom"
-            android:onClick='@{() -> vm.setEvent(kr.co.architecture.feature.detail.DetailUiEvent.OnClickedBack.INSTANCE)}'/>
+            android:onClick='@{() -> vm.setEvent(DetailUiEvent.OnClickedBack.INSTANCE)}'/>
 
         <!-- 좋아요 -->
         <ImageView
@@ -46,7 +48,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toTopOf="@id/gdTopBarBottom"
-            android:onClick='@{() -> vm.setEvent(kr.co.architecture.feature.detail.DetailUiEvent.OnClickedBookmark.INSTANCE)}'/>
+            android:onClick='@{() -> vm.setEvent(DetailUiEvent.OnClickedBookmark.INSTANCE)}'/>
 
         <!-- 타이틀: 현재 startIndex의 페이지 제목 -->
         <TextView
