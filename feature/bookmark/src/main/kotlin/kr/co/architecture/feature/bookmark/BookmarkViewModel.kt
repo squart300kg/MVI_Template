@@ -5,12 +5,14 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kr.co.architecture.core.domain.ObserveBookmarkedMediasUseCase
+import kr.co.architecture.core.domain.formatter.EraseDateUnderDayFormatter
 import kr.co.architecture.core.ui.BaseViewModel
 import javax.inject.Inject
 
 @HiltViewModel
 class BookmarkViewModel @Inject constructor(
-  private val observeBookmarkedMediasUseCase: ObserveBookmarkedMediasUseCase
+  private val observeBookmarkedMediasUseCase: ObserveBookmarkedMediasUseCase,
+  private val eraseDateUnderDayFormatter: EraseDateUnderDayFormatter
 ) : BaseViewModel<BookmarkUiState, BookmarkUiEvent, BookmarkUiSideEffect>() {
 
   override fun createInitialState() = BookmarkUiState()
@@ -34,7 +36,10 @@ class BookmarkViewModel @Inject constructor(
             uiType =
               if (book.isNotEmpty()) BookmarkUiType.LOADED_RESULT
               else BookmarkUiType.EMPTY_RESULT,
-            uiModels = UiModel.mapperToUiModel(book)
+            uiModels = UiModel.mapperToUiModel(
+              contents = book,
+              eraseDateUnderDayFormatter = eraseDateUnderDayFormatter
+            )
           )
         }
       }.launchIn(viewModelScope)

@@ -28,6 +28,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
@@ -128,12 +129,11 @@ private fun BookmarkGridItem(
         url = uiModel.thumbnailUrl
       )
 
-      // 우상단 북마크 버튼(하트)
       Image(
         modifier = Modifier
           .align(Alignment.TopEnd)
           .offset((-10).dp, 10.dp)
-          .size(22.dp)
+          .size(20.dp)
           .baseClickable { onClickedBookmark(uiModel) },
         painter = painterResource(
           id = when (uiModel.isBookmarked) {
@@ -170,10 +170,9 @@ private fun BookmarkGridItem(
       )
     }
 
-    // TODO: 폰트크기 13sp로 해야함
     BasicText(
       text = uiModel.dateTime,
-      style = typography.contentsMedium
+      style = typography.contentsMedium.copy(fontSize = 13.sp)
     )
   }
 }

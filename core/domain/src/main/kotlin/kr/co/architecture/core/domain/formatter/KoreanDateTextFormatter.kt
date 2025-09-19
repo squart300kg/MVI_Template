@@ -4,18 +4,30 @@ import java.time.OffsetDateTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeParseException
+import java.util.Date
 import java.util.Locale
 import javax.inject.Inject
 
 /**
- * 추후, 여러가지 format들이 생길경우, 구조화하여 사용 가능
- * 한국어 날짜(예: "yy년 M월 d일 H시 m분")로 표기하는 구현.
- * */
-class KoreanDateTextFormatter @Inject constructor() : DateTextFormatter {
+ * 날짜를 사용자에게 표시하기 좋은 문자열로 변환하는 포맷터.
+ *
+ * 예:
+ * ```
+ * val formatter = KoreanDateTextFormatter()
+ * formatter(Date())  // "25년 8월 27일 15시 23분 22초"
+ * ```
+ */
+class KoreanDateTextFormatter @Inject constructor() {
 
     private val displayFmt = DateTimeFormatter.ofPattern("yy년 M월 d일 H시 m분", Locale.KOREA)
 
-    override fun invoke(raw: String): String {
+    /**
+     * 주어진 [Date] 객체를 포맷팅하여 문자열로 반환한다.
+     *
+     * @param raw 포맷팅할 [String]타입의 날짜
+     * @return 포맷팅된 문자열 표현 (예: "25년 8월 27일 15시 23분 22초")
+     */
+    operator fun invoke(raw: String): String {
         val text = raw.trim()
         if (text.isEmpty()) return ""
 
@@ -25,7 +37,6 @@ class KoreanDateTextFormatter @Inject constructor() : DateTextFormatter {
             return ""
         }
 
-        // 시스템 기본 타임존 기준(예: Asia/Seoul)으로 로컬 날짜-시간 생성
         val localDateTime = instant.atZone(ZoneId.systemDefault()).toLocalDateTime()
         return displayFmt.format(localDateTime)
     }

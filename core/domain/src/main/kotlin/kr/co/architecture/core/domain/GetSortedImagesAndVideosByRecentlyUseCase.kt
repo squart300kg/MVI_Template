@@ -2,10 +2,10 @@ package kr.co.architecture.core.domain
 
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
-import kr.co.architecture.core.domain.formatter.DateTextFormatter
+import kr.co.architecture.core.domain.formatter.KoreanDateTextFormatter
 import kr.co.architecture.core.model.ContentsQuery
-import kr.co.architecture.core.model.MediaContentsTypeEnum
 import kr.co.architecture.core.model.MediaContents
+import kr.co.architecture.core.model.MediaContentsTypeEnum
 import kr.co.architecture.core.repository.ImageRepository
 import kr.co.architecture.core.repository.VideoRepository
 import kr.co.architecture.core.repository.dto.ImageDto
@@ -16,7 +16,7 @@ import javax.inject.Inject
 class GetSortedImagesAndVideosByRecentlyUseCase @Inject constructor(
   private val imageRepository: ImageRepository,
   private val videoRepository: VideoRepository,
-  private val dateTextFormatter: DateTextFormatter
+  private val dateTextFormatter: KoreanDateTextFormatter
 ) {
   // TODO: 이거 제일 중요함
   /**
@@ -65,7 +65,7 @@ class GetSortedImagesAndVideosByRecentlyUseCase @Inject constructor(
     companion object {
       fun mapperToResponse(
         imageDto: ImageDto,
-        dateTextFormatter: DateTextFormatter
+        dateTextFormatter: KoreanDateTextFormatter
       ) = Response(
         mediaContentsList = imageDto.images.map {
           MediaContents(
@@ -81,7 +81,7 @@ class GetSortedImagesAndVideosByRecentlyUseCase @Inject constructor(
       )
       fun mapperToResponse(
         videoDto: VideoDto,
-        dateTextFormatter: DateTextFormatter
+        dateTextFormatter: KoreanDateTextFormatter
       ) = Response(
         mediaContentsList = videoDto.videos.map {
           MediaContents(

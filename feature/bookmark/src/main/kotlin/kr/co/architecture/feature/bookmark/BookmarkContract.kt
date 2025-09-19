@@ -3,6 +3,7 @@ package kr.co.architecture.feature.bookmark
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
+import kr.co.architecture.core.domain.formatter.EraseDateUnderDayFormatter
 import kr.co.architecture.core.model.MediaContents
 import kr.co.architecture.core.model.MediaContentsTypeEnum
 import kr.co.architecture.core.ui.UiEvent
@@ -24,13 +25,16 @@ data class UiModel(
   val isBookmarked: Boolean = true
 ) {
   companion object {
-    fun mapperToUiModel(contents: Set<MediaContents>) =
+    fun mapperToUiModel(
+      contents: Set<MediaContents>,
+      eraseDateUnderDayFormatter: EraseDateUnderDayFormatter
+    ) =
       contents.map {
         UiModel(
           title = it.title,
           thumbnailUrl = it.thumbnailUrl,
           mediaContentsType = it.mediaContentsType,
-          dateTime = it.dateTime
+          dateTime = eraseDateUnderDayFormatter(it.dateTime)
         )
       }.toImmutableList()
 
