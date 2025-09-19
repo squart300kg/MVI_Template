@@ -39,10 +39,10 @@ class SearchViewModel @Inject constructor(
           toggleBookmarkUseCase(
             params = ToggleBookmarkUseCase.Params(
               toggleType =
-                if (event.item.isBookmarked) ToggleTypeEnum.DELETE
+                if (event.uiModel.isBookmarked) ToggleTypeEnum.DELETE
                 else ToggleTypeEnum.SAVE,
-              mediaContentsType = event.item.mediaContentsType,
-              mediaContents = UiModelState.ContentsUiModel.mapperToDomainModel(event.item)
+              mediaContentsType = event.uiModel.mediaContentsType,
+              mediaContents = UiModelState.ContentsUiModel.mapperToDomainModel(event.uiModel)
             )
           )
         }

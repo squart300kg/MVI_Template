@@ -16,8 +16,39 @@ enum class BookmarkUiType {
   EMPTY_RESULT
 }
 
-// TODO: uiModel의 text들 UiText로 변경
 data class UiModel(
+  val bindingUiModel: BindingUiModel,
+  val unbindingUiModel: UnbindingUiModel
+) {
+  companion object {
+    fun mapperToUiModel(
+      contents: Set<MediaContents>,
+      eraseDateUnderDayFormatter: EraseDateUnderDayFormatter
+    ) = contents.map {
+      UiModel(
+        bindingUiModel = BindingUiModel.mapperToUiModel(
+          contents = it,
+          eraseDateUnderDayFormatter = eraseDateUnderDayFormatter
+        ),
+        unbindingUiModel = UnbindingUiModel(
+          contents = it.contents
+        )
+      )
+    }.toImmutableList()
+
+    fun mapperToDomainModel(uiModelsState: UiModel) =
+      MediaContents(
+        thumbnailUrl = uiModelsState.bindingUiModel.thumbnailUrl,
+        dateTime = uiModelsState.bindingUiModel.dateTime,
+        title = uiModelsState.bindingUiModel.title,
+        contents = uiModelsState.unbindingUiModel.contents,
+        mediaContentsType = uiModelsState.bindingUiModel.mediaContentsType,
+      )
+  }
+}
+
+// TODO: uiModel의 text들 UiText로 변경
+data class BindingUiModel(
   val title: String,
   val thumbnailUrl: String,
   val mediaContentsType: MediaContentsTypeEnum,
@@ -26,20 +57,21 @@ data class UiModel(
 ) {
   companion object {
     fun mapperToUiModel(
-      contents: Set<MediaContents>,
+      contents: MediaContents,
       eraseDateUnderDayFormatter: EraseDateUnderDayFormatter
-    ) =
-      contents.map {
-        UiModel(
-          title = it.title,
-          thumbnailUrl = it.thumbnailUrl,
-          mediaContentsType = it.mediaContentsType,
-          dateTime = eraseDateUnderDayFormatter(it.dateTime)
-        )
-      }.toImmutableList()
-
+    ) = BindingUiModel(
+      title = contents.title,
+      thumbnailUrl = contents.thumbnailUrl,
+      mediaContentsType = contents.mediaContentsType,
+      dateTime = eraseDateUnderDayFormatter(contents.dateTime)
+    )
   }
+
 }
+
+data class UnbindingUiModel(
+  val contents: String
+)
 
 data class BookmarkUiState(
   val uiType: BookmarkUiType = BookmarkUiType.NONE,
@@ -47,8 +79,8 @@ data class BookmarkUiState(
 ) : UiState
 
 sealed interface BookmarkUiEvent : UiEvent {
-  data class OnClickedItem(val uiModel: UiModel) : BookmarkUiEvent
-  data class OnClickedBookmark(val uiModel: UiModel) : BookmarkUiEvent
+  data class OnClickedItem(val uiModelState: UiModel) : BookmarkUiEvent
+  data class OnClickedBookmark(val uiModelState: UiModel) : BookmarkUiEvent
 }
 
 sealed interface BookmarkUiSideEffect : UiSideEffect {

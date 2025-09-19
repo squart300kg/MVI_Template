@@ -87,9 +87,9 @@ data class SearchUiState(
 ) : UiState
 
 sealed interface SearchUiEvent : UiEvent {
-  data class OnClickedItem(val item: UiModelState.ContentsUiModel) : SearchUiEvent
+  data class OnClickedItem(val uiModel: UiModelState.ContentsUiModel) : SearchUiEvent
   data object OnScrolledToEnd : SearchUiEvent
-  data class OnClickedBookmark(val item: UiModelState.ContentsUiModel) : SearchUiEvent
+  data class OnClickedBookmark(val uiModel: UiModelState.ContentsUiModel) : SearchUiEvent
   data class OnQueryChange(val query: String) : SearchUiEvent
   data object OnSearch : SearchUiEvent
 }

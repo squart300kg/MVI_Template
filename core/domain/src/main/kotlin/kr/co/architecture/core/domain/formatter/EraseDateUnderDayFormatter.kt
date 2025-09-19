@@ -21,10 +21,10 @@ class EraseDateUnderDayFormatter @Inject constructor() {
    *  - "25년 8월 27일 15시 23분 22초" -> "25년 8월 27일"
    */
   operator fun invoke(text: String): String {
-    // 1) 정식 파싱 시도
+    // 1) 파싱 시도
     runCatching {
       val ldt = LocalDateTime.parse(text, inputFormatters)
-      return outputFormatter.format(ldt) // d/H/m만 써서 LocalDateTime도 OK
+      return outputFormatter.format(ldt)
     }
 
     // 2) 파싱 실패 시, "일"까지 자르는 안전한 폴백

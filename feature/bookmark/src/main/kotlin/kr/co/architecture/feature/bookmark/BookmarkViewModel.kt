@@ -5,13 +5,16 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kr.co.architecture.core.domain.ObserveBookmarkedMediasUseCase
+import kr.co.architecture.core.domain.ToggleBookmarkUseCase
 import kr.co.architecture.core.domain.formatter.EraseDateUnderDayFormatter
+import kr.co.architecture.core.model.ToggleTypeEnum
 import kr.co.architecture.core.ui.BaseViewModel
 import javax.inject.Inject
 
 @HiltViewModel
 class BookmarkViewModel @Inject constructor(
   private val observeBookmarkedMediasUseCase: ObserveBookmarkedMediasUseCase,
+  private val toggleBookmarkUseCase: ToggleBookmarkUseCase,
   private val eraseDateUnderDayFormatter: EraseDateUnderDayFormatter
 ) : BaseViewModel<BookmarkUiState, BookmarkUiEvent, BookmarkUiSideEffect>() {
 
@@ -23,21 +26,31 @@ class BookmarkViewModel @Inject constructor(
 
       }
       is BookmarkUiEvent.OnClickedBookmark -> {
-
+        launchWithLoading {
+          toggleBookmarkUseCase(
+            params = ToggleBookmarkUseCase.Params(
+              toggleType =
+                if (event.uiModelState.bindingUiModel.isBookmarked) ToggleTypeEnum.DELETE
+                else ToggleTypeEnum.SAVE,
+              mediaContentsType = event.uiModelState.bindingUiModel.mediaContentsType,
+              mediaContents = UiModel.mapperToDomainModel(event.uiModelState)
+            )
+          )
+        }
       }
     }
   }
 
   init {
     observeBookmarkedMediasUseCase()
-      .onEach { book ->
+      .onEach { mediaContents ->
         setState {
           copy(
             uiType =
-              if (book.isNotEmpty()) BookmarkUiType.LOADED_RESULT
+              if (mediaContents.isNotEmpty()) BookmarkUiType.LOADED_RESULT
               else BookmarkUiType.EMPTY_RESULT,
             uiModels = UiModel.mapperToUiModel(
-              contents = book,
+              contents = mediaContents,
               eraseDateUnderDayFormatter = eraseDateUnderDayFormatter
             )
           )

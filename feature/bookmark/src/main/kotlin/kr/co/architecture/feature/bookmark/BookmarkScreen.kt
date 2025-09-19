@@ -98,7 +98,7 @@ fun BookmarkScreen(
       items = uiState.uiModels
     ) { uiModel ->
       BookmarkGridItem(
-        uiModel = uiModel,
+        uiModelState = uiModel,
         onClick = { onClickedItem(uiModel) },
         onClickedBookmark = { onClickedBookmark(uiModel) }
       )
@@ -108,7 +108,7 @@ fun BookmarkScreen(
 
 @Composable
 private fun BookmarkGridItem(
-  uiModel: UiModel,
+  uiModelState: UiModel,
   onClick: () -> Unit = {},
   onClickedBookmark: (UiModel) -> Unit = {}
 ) {
@@ -126,7 +126,7 @@ private fun BookmarkGridItem(
     ) {
       CoilAsyncImage(
         modifier = Modifier.fillMaxSize(),
-        url = uiModel.thumbnailUrl
+        url = uiModelState.bindingUiModel.thumbnailUrl
       )
 
       Image(
@@ -134,9 +134,9 @@ private fun BookmarkGridItem(
           .align(Alignment.TopEnd)
           .offset((-10).dp, 10.dp)
           .size(20.dp)
-          .baseClickable { onClickedBookmark(uiModel) },
+          .baseClickable { onClickedBookmark(uiModelState) },
         painter = painterResource(
-          id = when (uiModel.isBookmarked) {
+          id = when (uiModelState.bindingUiModel.isBookmarked) {
             true -> coreUiR.drawable.icon_like_on
             false -> coreUiR.drawable.icon_like_off
           }
@@ -154,7 +154,7 @@ private fun BookmarkGridItem(
     ) {
       Image(
         painter = painterResource(
-          when (uiModel.mediaContentsType) {
+          when (uiModelState.bindingUiModel.mediaContentsType) {
             MediaContentsTypeEnum.IMAGE -> coreUiR.drawable.icon_image
             MediaContentsTypeEnum.VIDEO -> coreUiR.drawable.icon_video
           }
@@ -163,7 +163,7 @@ private fun BookmarkGridItem(
       )
 
       BasicText(
-        text = uiModel.title,
+        text = uiModelState.bindingUiModel.title,
         maxLines = 1,
         overflow = TextOverflow.Ellipsis,
         style = typography.title
@@ -171,7 +171,7 @@ private fun BookmarkGridItem(
     }
 
     BasicText(
-      text = uiModel.dateTime,
+      text = uiModelState.bindingUiModel.dateTime,
       style = typography.contentsMedium.copy(fontSize = 13.sp)
     )
   }
