@@ -2,6 +2,7 @@ plugins {
   alias(libs.plugins.android.library)
   alias(libs.plugins.architecture.sample.base.setting)
   alias(libs.plugins.architecture.sample.ui)
+  kotlin("kapt")
 }
 
 android {
@@ -21,6 +22,8 @@ android {
     implementation(project(":core:repository"))
     implementation(project(":testing"))
 
+    implementation(libs.androidx.lifecycle.runtime.ktx)
+    implementation(libs.androidx.lifecycle.viewmodel.ktx)
     implementation(libs.androidx.constraintlayout)
   }
 }

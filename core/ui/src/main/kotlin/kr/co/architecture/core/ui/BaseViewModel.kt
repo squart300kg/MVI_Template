@@ -85,6 +85,7 @@ abstract class BaseViewModel<State : UiState, Event : UiEvent, Effect : UiSideEf
     viewModelScope.launch { _uiSideEffect.send(effectValue) }
   }
 
+  // TODO: 화면이동 딥링크밖에 안한다면, 추후 이를 'navigateTo'로 네이밍 변경 및 다른것들 삭제
   fun navigateWeb(url: String) = viewModelScope.launch {
     navigator.navigateWeb(url)
   }

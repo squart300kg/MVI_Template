@@ -10,6 +10,10 @@ android {
 
   defaultConfig { }
 
+  buildFeatures {
+    dataBinding = true
+  }
+
   dependencies {
     implementation(project(":feature:search"))
     implementation(project(":feature:bookmark"))

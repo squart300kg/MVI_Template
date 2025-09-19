@@ -24,11 +24,12 @@ class BookmarkViewModel @Inject constructor(
   override fun handleEvent(event: BookmarkUiEvent) {
     when (event) {
       is BookmarkUiEvent.OnClickedItem -> {
-        val args = AppDeepLinks.Detail.Args(
-          id = event.uiModelState.uniqueId()
-        )
         navigateWeb(
-          url = AppDeepLinks.Detail.build(args)
+          url = AppDeepLinks.Detail.build(
+            args = AppDeepLinks.Detail.Args(
+              id = event.uiModelState.uniqueId()
+            )
+          )
         )
       }
       is BookmarkUiEvent.OnClickedBookmark -> {
