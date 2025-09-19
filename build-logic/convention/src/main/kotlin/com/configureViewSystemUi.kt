@@ -12,6 +12,7 @@ internal fun Project.configureViewSystemUi(
       add("implementation", libs.findLibrary("androidx-lifecycle-runtime-ktx").get())
       add("implementation", libs.findLibrary("androidx-lifecycle-viewmodel-ktx").get())
       add("implementation", libs.findLibrary("androidx-constraintlayout").get())
+      add("implementation", libs.findLibrary("androidx-viewpager2").get())
     }
   }
 }

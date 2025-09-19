@@ -1,5 +1,6 @@
 package kr.co.architecture.feature.detail
 
+import kr.co.architecture.core.model.MediaContents
 import kr.co.architecture.core.ui.UiEvent
 import kr.co.architecture.core.ui.UiSideEffect
 import kr.co.architecture.core.ui.UiState
@@ -12,14 +13,15 @@ enum class DetailUiType {
 
 data class DetailUiState(
   val uiType: DetailUiType = DetailUiType.NONE,
-  val id: UiText = UiText.DynamicString(""),
-  val name: UiText = UiText.DynamicString("")
+  val pages: List<MediaContents> = emptyList(),
+  val startIndex: Int = 0,
+  val pagingEnabled: Boolean = false
 ) : UiState
 
 sealed interface DetailUiEvent : UiEvent {
-
+  data object OnClickedBookmark: DetailUiEvent
+  data object OnClickedBack: DetailUiEvent
 }
-
 sealed interface DetailUiSideEffect : UiSideEffect {
-  data object Load : DetailUiSideEffect
+  data object OnFinish: DetailUiSideEffect
 }

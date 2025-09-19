@@ -1,6 +1,8 @@
 package kr.co.architecture.core.router
 
 import android.net.Uri
+import kr.co.architecture.core.router.AppDeepLinks.Detail.ArgsKey.ORIGIN
+import kr.co.architecture.core.router.AppDeepLinks.Detail.ArgsKey.ID
 
 object AppDeepLinks {
   private const val SCHEME = "custom_kb_app"
@@ -8,8 +10,16 @@ object AppDeepLinks {
   private const val PATH = "view"
 
   object Detail {
+    object ArgsKey {
+      const val ID = "id"
+      const val ORIGIN = "origin"
+    }
+    enum class Origin {
+      BOOKMARK, SEARCH
+    }
     data class Args(
-      val id: String
+      val id: String,
+      val origin: Origin
     )
 
     fun build(args: Args): String =
@@ -17,7 +27,8 @@ object AppDeepLinks {
         .scheme(SCHEME)
         .authority(HOST)
         .appendPath(PATH)
-        .appendQueryParameter("id", args.id)
+        .appendQueryParameter(ID, args.id)
+        .appendQueryParameter(ORIGIN, args.origin.name)
         .build()
         .toString()
   }

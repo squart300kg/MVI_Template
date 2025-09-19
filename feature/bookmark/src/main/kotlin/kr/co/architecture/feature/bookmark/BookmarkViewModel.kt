@@ -27,7 +27,8 @@ class BookmarkViewModel @Inject constructor(
         navigateWeb(
           url = AppDeepLinks.Detail.build(
             args = AppDeepLinks.Detail.Args(
-              id = event.uiModelState.uniqueId()
+              id = event.uiModelState.uniqueId(),
+              origin = AppDeepLinks.Detail.Origin.BOOKMARK
             )
           )
         )

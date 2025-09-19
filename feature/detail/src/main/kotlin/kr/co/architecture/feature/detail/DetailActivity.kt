@@ -2,6 +2,8 @@ package kr.co.architecture.feature.detail
 
 import androidx.activity.viewModels
 import dagger.hilt.android.AndroidEntryPoint
+import kr.co.architecture.core.router.AppDeepLinks.Detail.ArgsKey.ID
+import kr.co.architecture.core.router.AppDeepLinks.Detail.ArgsKey.ORIGIN
 import kr.co.architecture.core.ui.BaseDataBindingActivity
 import kr.co.architecture.feature.detail.databinding.ActivityDetailBinding
 
@@ -21,14 +23,9 @@ class DetailActivity :
   override val viewModel: DetailViewModel by viewModels()
 
   override fun onBindCreated(binding: ActivityDetailBinding) {
-    // 1) id 추출 (딥링크 or 명시적 인텐트)
-    val id = intent?.data?.getQueryParameter("id")
-      ?: intent?.getStringExtra("id")
-
-    if (id.isNullOrBlank()) {
-      finish(); return
-    }
-
+    val id = intent?.data?.getQueryParameter(ID)
+    val origin = intent?.data?.getQueryParameter(ORIGIN)
+    if (id.isNullOrBlank() || origin.isNullOrBlank()) { finish(); return }
   }
 
   override fun renderState(state: DetailUiState) {
@@ -37,7 +34,7 @@ class DetailActivity :
 
   override fun handleSideEffect(effect: DetailUiSideEffect) {
     when (effect) {
-      DetailUiSideEffect.Load -> viewModel.fetchData()
+      DetailUiSideEffect.OnFinish -> finish()
     }
   }
 }

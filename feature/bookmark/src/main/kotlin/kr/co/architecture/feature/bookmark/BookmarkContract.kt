@@ -92,6 +92,4 @@ sealed interface BookmarkUiEvent : UiEvent {
   data class OnClickedBookmark(val uiModelState: UiModel) : BookmarkUiEvent
 }
 
-sealed interface BookmarkUiSideEffect : UiSideEffect {
-
-}
+sealed interface BookmarkUiSideEffect : UiSideEffect
