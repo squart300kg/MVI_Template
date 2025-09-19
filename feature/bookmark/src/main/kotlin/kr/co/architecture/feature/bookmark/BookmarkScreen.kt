@@ -17,14 +17,12 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -86,13 +84,12 @@ fun BookmarkScreen(
     columns = GridCells.Fixed(2),
     state = gridState,
     contentPadding = PaddingValues(
-//      start = 30.dp,
-//      end = 30.dp,
-//      top = 30.dp,
-//      bottom = 30.dp
+      start = 30.dp,
+      end = 30.dp,
+      top = 30.dp
     ),
-//    horizontalArrangement = Arrangement.spacedBy(30.dp),
-//    verticalArrangement = Arrangement.spacedBy(40.dp)
+    horizontalArrangement = Arrangement.spacedBy(15.dp),
+    verticalArrangement = Arrangement.spacedBy(40.dp)
   ) {
     items(
       items = uiState.uiModels
@@ -108,24 +105,26 @@ fun BookmarkScreen(
 
 @Composable
 private fun BookmarkGridItem(
+  modifier: Modifier = Modifier,
   uiModelState: UiModel,
   onClick: () -> Unit = {},
   onClickedBookmark: (UiModel) -> Unit = {}
 ) {
   val typography = LocalCustomTypography.current
   Column(
-    modifier = Modifier
+    modifier = modifier
       .clickable(onClick = onClick),
     verticalArrangement = Arrangement.spacedBy(6.dp)
   ) {
     Box(
       modifier = Modifier
-        .size(150.dp)
+        /**
+         * 과제 요구사항은 이미지 150dp * 150dp였으나, 해상도 대응 및 화면 회전 구성변경 대응을 위해
+         * 비율로 설정하였습니다.
+         */
         .aspectRatio(1f)
-        .clip(RoundedCornerShape(12.dp))
     ) {
       CoilAsyncImage(
-        modifier = Modifier.fillMaxSize(),
         url = uiModelState.bindingUiModel.thumbnailUrl
       )
 
