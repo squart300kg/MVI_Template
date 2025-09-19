@@ -28,7 +28,7 @@ import kr.co.architecture.core.ui.theme.CustomColors
 import kr.co.architecture.core.ui.theme.CustomTypography
 import kr.co.architecture.core.ui.theme.LocalCustomColors
 import kr.co.architecture.core.ui.theme.LocalCustomTypography
-import kr.co.architecture.core.ui.noRippledClickable
+import kr.co.architecture.core.ui.util.noRippledClickable
 import kotlin.math.roundToInt
 
 enum class MainTabEnum(

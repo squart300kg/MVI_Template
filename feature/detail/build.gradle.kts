@@ -21,9 +21,5 @@ android {
     implementation(project(":core:model"))
     implementation(project(":core:repository"))
     implementation(project(":testing"))
-
-    implementation(libs.androidx.lifecycle.runtime.ktx)
-    implementation(libs.androidx.lifecycle.viewmodel.ktx)
-    implementation(libs.androidx.constraintlayout)
   }
 }

@@ -1,4 +1,4 @@
-package kr.co.architecture.core.ui
+package kr.co.architecture.core.ui.util
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable

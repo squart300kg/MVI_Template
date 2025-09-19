@@ -1,6 +1,7 @@
 import com.configureAndroidCompose
 import com.configureAndroidTestUtil
 import com.configureUiUtil
+import com.configureViewSystemUi
 import com.getBasePluginExtension
 import org.gradle.api.Plugin
 import org.gradle.api.Project
@@ -12,6 +13,7 @@ class AndroidUiPlugin : Plugin<Project> {
         configureAndroidCompose(extension)
         configureUiUtil(extension)
         configureAndroidTestUtil(extension)
+        configureViewSystemUi(extension)
       }
     }
   }

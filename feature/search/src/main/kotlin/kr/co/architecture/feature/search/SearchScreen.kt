@@ -38,7 +38,7 @@ import kr.co.architecture.core.ui.CoilAsyncImage
 import kr.co.architecture.core.ui.NoResultContent
 import kr.co.architecture.core.ui.NoMaterial3SearchBarTextField
 import kr.co.architecture.core.ui.PaginationLoadEffect
-import kr.co.architecture.core.ui.baseClickable
+import kr.co.architecture.core.ui.util.baseClickable
 import kr.co.architecture.core.ui.theme.LocalCustomColors
 import kr.co.architecture.core.ui.theme.LocalCustomTypography
 import kr.co.architecture.core.ui.util.asString

@@ -9,6 +9,8 @@ android {
 
   defaultConfig { }
 
+  buildFeatures { dataBinding = true }
+
   dependencies {
     implementation(project(":core:model"))
     implementation(project(":core:router"))

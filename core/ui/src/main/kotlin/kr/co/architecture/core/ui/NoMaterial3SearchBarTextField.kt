@@ -29,6 +29,7 @@ import androidx.compose.ui.unit.dp
 import kr.co.architecture.core.ui.theme.LocalCustomColors
 import kr.co.architecture.core.ui.theme.LocalCustomShapes
 import kr.co.architecture.core.ui.theme.LocalCustomTypography
+import kr.co.architecture.core.ui.util.noRippledClickable
 import kr.co.architecture.core.ui.R as coreUiR
 
 @Composable

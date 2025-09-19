@@ -30,7 +30,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kr.co.architecture.core.model.MediaContentsTypeEnum
 import kr.co.architecture.core.ui.CoilAsyncImage
 import kr.co.architecture.core.ui.NoResultContent
-import kr.co.architecture.core.ui.baseClickable
+import kr.co.architecture.core.ui.util.baseClickable
 import kr.co.architecture.core.ui.theme.LocalCustomTypography
 import kr.co.architecture.core.ui.R as coreUiR
 
