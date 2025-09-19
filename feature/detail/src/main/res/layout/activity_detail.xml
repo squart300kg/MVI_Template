@@ -66,7 +66,7 @@
             app:layout_constraintEnd_toStartOf="@id/btnLike"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toTopOf="@id/gdTopBarBottom"
-            android:text='@{ state.mediaContents.size() > state.startIndex ? state.mediaContents.get(state.startIndex).title : "" }'/>
+            android:text='@{ state.uiModel.size() > state.startIndex ? state.uiModel.get(state.startIndex).bindingUiModel.title : "" }'/>
 
         <!-- 이미지 페이저 -->
         <androidx.viewpager2.widget.ViewPager2
@@ -79,7 +79,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintDimensionRatio="1:1"
             app:layout_constraintVertical_bias="0.5"
-            app:pagerItems="@{state.mediaContents}"
+            app:pagerItems="@{state.uiModel}"
             app:pagerStartIndex='@{state.startIndex}'
             app:pagerOnPageSelected='@{vm}'/>
     </androidx.constraintlayout.widget.ConstraintLayout>

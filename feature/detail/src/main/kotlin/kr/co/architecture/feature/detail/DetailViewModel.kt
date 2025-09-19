@@ -29,18 +29,19 @@ class DetailViewModel @Inject constructor(
   override fun handleEvent(event: DetailUiEvent) {
     when (event) {
       is DetailUiEvent.OnClickedBookmark -> {
-        launchWithLoading {
-          toggleBookmarkUseCase(
-            params = ToggleBookmarkUseCase.Params(
-              toggleType = ToggleTypeEnum.DELETE
-//                if (event.mediaContents) ToggleTypeEnum.DELETE
-//                else ToggleTypeEnum.SAVE
-              ,
-              mediaContentsType = event.mediaContents.mediaContentsType,
-              mediaContents = event.mediaContents
-            )
-          )
-        }
+        println("clicked bookmark : ${event.uiModel}")
+//        launchWithLoading {
+//          toggleBookmarkUseCase(
+//            params = ToggleBookmarkUseCase.Params(
+//              toggleType = ToggleTypeEnum.DELETE
+////                if (event.mediaContents) ToggleTypeEnum.DELETE
+////                else ToggleTypeEnum.SAVE
+//              ,
+//              mediaContentsType = event.uiModel.mediaContentsType,
+//              mediaContents = event.uiModel
+//            )
+//          )
+//        }
       }
       is DetailUiEvent.OnClickedBack -> {
         setEffect { DetailUiSideEffect.OnFinish }
@@ -61,24 +62,40 @@ class DetailViewModel @Inject constructor(
       val origin = requireNotNull(savedStateHandle.get<String?>(ORIGIN)) {
         "ORIGIN cannot be null."
       }
+      // TODO: usecase로 옮길수있을지?
       observeBookmarkedMediasUseCase()
         .map { mediaContentsList ->
           when (AppDeepLinks.Detail.Origin.valueOf(origin)) {
             AppDeepLinks.Detail.Origin.BOOKMARK -> {
               // N개짜리 리스트 구축, 시작 인덱스 산출 (스크롤 있음)
-              val initial = ArrayList<MediaContents>(mediaContentsList.size) to -1
-              val (pages, startIndex) = mediaContentsList.foldIndexed(initial) { index, acc, mediaContents ->
-                val (mediaContentsList, searchedIndex) = acc
-                mediaContentsList.add(mediaContents)
+              val initial = ArrayList<UiModel>(mediaContentsList.size) to -1
+              val (uiModels, startIndex) = mediaContentsList.foldIndexed(initial) { index, acc, mediaContents ->
+                val (uiModels, searchedIndex) = acc
+                uiModels.add(
+                  UiModel(
+                    bindingUiModel = UiModel.BindingUiModel(
+                      title = mediaContents.title,
+                      thumbnailUrl = mediaContents.thumbnailUrl,
+                      isBookmarked = true,
+                    ),
+                    unbindingUiModel = UiModel.UnbindingUiModel(
+                      dateTime = mediaContents.dateTime,
+                      collection = mediaContents.collection,
+                      contents = mediaContents.contents,
+                      mediaContentsType = mediaContents.mediaContentsType,
+                    )
+                  )
+                )
                 val newlyFoundIndex =
                   if (searchedIndex == -1 && mediaContents.uniqueId() == id) index
                   else searchedIndex
-                mediaContentsList to newlyFoundIndex
+                uiModels to newlyFoundIndex
               }
+
               setState {
                 DetailUiState(
                   uiType = DetailUiType.LOADED,
-                  mediaContents = pages,
+                  uiModel = uiModels,
                   startIndex = startIndex
                 )
               }
@@ -88,11 +105,25 @@ class DetailViewModel @Inject constructor(
               // 1개짜리 원소 리스트 구축 (스크롤 없음)
               mediaContentsList
                 .firstOrNull { it.uniqueId() == id }
-                ?.let { target ->
+                ?.let { mediaContents ->
                   setState {
                     DetailUiState(
                       uiType = DetailUiType.LOADED,
-                      mediaContents = listOf(target),
+                      uiModel = listOf(
+                        UiModel(
+                          bindingUiModel = UiModel.BindingUiModel(
+                            title = mediaContents.title,
+                            thumbnailUrl = mediaContents.thumbnailUrl,
+                            isBookmarked = true,
+                          ),
+                          unbindingUiModel = UiModel.UnbindingUiModel(
+                            dateTime = mediaContents.dateTime,
+                            collection = mediaContents.collection,
+                            contents = mediaContents.contents,
+                            mediaContentsType = mediaContents.mediaContentsType,
+                          )
+                        )
+                      ),
                       startIndex = 0
                     )
                   }

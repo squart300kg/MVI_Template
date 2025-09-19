@@ -15,9 +15,24 @@ fun ImageView.bindImageUrl(url: String?) {
   }
 }
 
+@BindingAdapter(
+  value = ["bookmarkVm", "bookmarkIndex"],
+  requireAll = true
+)
+fun ImageView.bindBookmarkClick(
+  viewModel: DetailViewModel?,
+  index: Int?
+) {
+  setOnClickListener {
+    if (viewModel == null || index == null) return@setOnClickListener
+    val item = viewModel.uiState.value.uiModel.getOrNull(index) ?: return@setOnClickListener
+    viewModel.setEvent(DetailUiEvent.OnClickedBookmark(item))
+  }
+}
+
 @BindingAdapter(value = ["pagerItems", "pagerStartIndex"], requireAll = true)
 fun ViewPager2.bindPager(
-  items: List<MediaContents>?,
+  items: List<UiModel>?,
   startIndex: Int?
 ) {
   val pagerAdapter = (adapter as? DetailPagerAdapter)
@@ -34,19 +49,4 @@ fun ViewPager2.bindOnPageSelected(viewModel: DetailViewModel) {
       viewModel.setEvent(DetailUiEvent.OnSwipe(position))
     }
   })
-}
-
-@BindingAdapter(
-  value = ["bookmarkVm", "bookmarkIndex"],
-  requireAll = true
-)
-fun ImageView.bindBookmarkClick(
-  viewModel: DetailViewModel?,
-  index: Int?
-) {
-  setOnClickListener {
-    if (viewModel == null || index == null) return@setOnClickListener
-    val item = viewModel.uiState.value.mediaContents.getOrNull(index) ?: return@setOnClickListener
-    viewModel.setEvent(DetailUiEvent.OnClickedBookmark(item))
-  }
 }

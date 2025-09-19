@@ -5,12 +5,10 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import kr.co.architecture.core.model.MediaContents
-import kr.co.architecture.core.model.uniqueId
 import kr.co.architecture.feature.detail.databinding.ItemDetailPageBinding
 
 class DetailPagerAdapter :
-  ListAdapter<MediaContents, DetailPagerAdapter.ViewHolder>(DIFF) {
+  ListAdapter<UiModel, DetailPagerAdapter.ViewHolder>(DIFF) {
 
   init { setHasStableIds(true) }
 
@@ -23,17 +21,17 @@ class DetailPagerAdapter :
   }
 
   override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-    holder.binding.item = getItem(position)
+    holder.binding.item = getItem(position).bindingUiModel
   }
 
   class ViewHolder(val binding: ItemDetailPageBinding) : RecyclerView.ViewHolder(binding.root)
 
   companion object Companion {
-    private val DIFF = object : DiffUtil.ItemCallback<MediaContents>() {
-      override fun areItemsTheSame(oldItem: MediaContents, newItem: MediaContents) =
+    private val DIFF = object : DiffUtil.ItemCallback<UiModel>() {
+      override fun areItemsTheSame(oldItem: UiModel, newItem: UiModel) =
         oldItem.uniqueId() == newItem.uniqueId()
 
-      override fun areContentsTheSame(oldItem: MediaContents, newItem: MediaContents) =
+      override fun areContentsTheSame(oldItem: UiModel, newItem: UiModel) =
         oldItem == newItem
     }
   }
