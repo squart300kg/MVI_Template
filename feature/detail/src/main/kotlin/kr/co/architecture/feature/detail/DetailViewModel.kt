@@ -50,7 +50,7 @@ class DetailViewModel @Inject constructor(
             AppDeepLinks.Detail.Origin.BOOKMARK -> {
               // N개짜리 리스트 구축, 시작 인덱스 산출 (스크롤 있음)
               val initial = ArrayList<MediaContents>(mediaContentsList.size) to -1
-              val (pages, newlyFoundIndex) = mediaContentsList.foldIndexed(initial) { index, acc, mediaContents ->
+              val (pages, startIndex) = mediaContentsList.foldIndexed(initial) { index, acc, mediaContents ->
                 val (mediaContentsList, searchedIndex) = acc
                 mediaContentsList.add(mediaContents)
                 val newlyFoundIndex =
@@ -58,14 +58,11 @@ class DetailViewModel @Inject constructor(
                   else searchedIndex
                 mediaContentsList to newlyFoundIndex
               }
-              val startIndex = if (newlyFoundIndex >= 0) newlyFoundIndex else 0
-
               setState {
                 DetailUiState(
                   uiType = DetailUiType.LOADED,
                   pages = pages,
-                  startIndex = startIndex,
-                  pagingEnabled = pages.size > 1
+                  startIndex = startIndex
                 )
               }
             }
@@ -79,8 +76,7 @@ class DetailViewModel @Inject constructor(
                     DetailUiState(
                       uiType = DetailUiType.LOADED,
                       pages = listOf(target),
-                      startIndex = 0,
-                      pagingEnabled = false
+                      startIndex = 0
                     )
                   }
                 }

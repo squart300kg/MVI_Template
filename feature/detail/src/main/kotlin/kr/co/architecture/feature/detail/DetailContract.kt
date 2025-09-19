@@ -15,7 +15,6 @@ data class DetailUiState(
   val uiType: DetailUiType = DetailUiType.NONE,
   val pages: List<MediaContents> = emptyList(),
   val startIndex: Int = 0,
-  val pagingEnabled: Boolean = false
 ) : UiState
 
 sealed interface DetailUiEvent : UiEvent {

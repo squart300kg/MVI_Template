@@ -18,7 +18,6 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:pagerItems="@{state.pages}"
-            app:pagerStartIndex="@{state.startIndex}"
-            app:pagerEnabled="@{state.pagingEnabled}" />
+            app:pagerStartIndex="@{state.startIndex}" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
