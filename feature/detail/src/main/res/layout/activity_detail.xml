@@ -1,23 +1,84 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
+
     <data>
-        <variable name="vm"    type="kr.co.architecture.feature.detail.DetailViewModel"/>
-        <variable name="state" type="kr.co.architecture.feature.detail.DetailUiState"/>
+        <variable
+            name="vm"
+            type="kr.co.architecture.feature.detail.DetailViewModel"/>
+        <variable
+            name="state"
+            type="kr.co.architecture.feature.detail.DetailUiState"/>
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
+        <!-- 상단바 하단 기준선 (56dp) -->
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/gdTopBarBottom"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_begin="56dp" />
+
+        <!-- 뒤로가기 -->
+        <ImageView
+            android:id="@+id/btnBack"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:scaleType="center"
+            android:src="@drawable/icon_back"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/gdTopBarBottom"
+            android:onClick='@{() -> vm.setEvent(kr.co.architecture.feature.detail.DetailUiEvent.OnClickedBack.INSTANCE)}'/>
+
+        <!-- 좋아요 -->
+        <ImageView
+            android:id="@+id/btnLike"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:scaleType="center"
+            android:src="@drawable/icon_like_on"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/gdTopBarBottom"
+            android:onClick='@{() -> vm.setEvent(kr.co.architecture.feature.detail.DetailUiEvent.OnClickedBookmark.INSTANCE)}'/>
+
+        <!-- 타이틀: 현재 startIndex의 페이지 제목 -->
+        <TextView
+            android:id="@+id/tvTitle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="18dp"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:textStyle="bold"
+            android:textSize="18sp"
+            android:textColor="@android:color/black"
+            app:layout_constraintStart_toEndOf="@id/btnBack"
+            app:layout_constraintEnd_toStartOf="@id/btnLike"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/gdTopBarBottom"
+            android:text='@{ state.pages.size() > state.startIndex ? state.pages.get(state.startIndex).title : "" }'/>
+
+        <!-- 이미지 페이저 -->
         <androidx.viewpager2.widget.ViewPager2
             android:id="@+id/pager"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            app:layout_constraintTop_toTopOf="parent"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginTop="16dp"
+            app:layout_constraintTop_toBottomOf="@id/gdTopBarBottom"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:pagerItems="@{state.pages}"
-            app:pagerStartIndex="@{state.startIndex}" />
+            app:pagerItems='@{state.pages}'
+            app:pagerStartIndex='@{state.startIndex}'
+            app:pagerOnPageSelected='@{vm}'/>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

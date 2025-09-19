@@ -20,6 +20,7 @@ data class DetailUiState(
 sealed interface DetailUiEvent : UiEvent {
   data object OnClickedBookmark: DetailUiEvent
   data object OnClickedBack: DetailUiEvent
+  data class OnSwipe(val position: Int): DetailUiEvent
 }
 sealed interface DetailUiSideEffect : UiSideEffect {
   data object OnFinish: DetailUiSideEffect

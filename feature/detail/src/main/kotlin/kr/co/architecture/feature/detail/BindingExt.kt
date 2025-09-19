@@ -26,3 +26,12 @@ fun ViewPager2.bindPager(
     post { setCurrentItem(startIndex ?: 0, false) }
   }
 }
+
+@BindingAdapter("pagerOnPageSelected")
+fun ViewPager2.bindOnPageSelected(viewModel: DetailViewModel) {
+  registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
+    override fun onPageSelected(position: Int) {
+      viewModel.setEvent(DetailUiEvent.OnSwipe(position))
+    }
+  })
+}

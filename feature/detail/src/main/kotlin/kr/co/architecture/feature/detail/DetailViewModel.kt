@@ -31,6 +31,11 @@ class DetailViewModel @Inject constructor(
       is DetailUiEvent.OnClickedBack -> {
 
       }
+      is DetailUiEvent.OnSwipe -> {
+        setState {
+          copy(startIndex = event.position)
+        }
+      }
     }
   }
 
