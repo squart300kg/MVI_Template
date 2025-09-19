@@ -13,6 +13,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
+import coil.size.Precision
 import coil.transform.RoundedCornersTransformation
 import kotlinx.coroutines.Dispatchers
 import kr.co.architecture.core.ui.theme.LocalCustomColors
@@ -35,6 +36,7 @@ fun CoilAsyncImage(
     .memoryCacheKey(url)
     .diskCacheKey(url)
     .dispatcher(Dispatchers.IO)
+    .precision(Precision.EXACT)
     .allowHardware(true)
     .transformations(RoundedCornersTransformation(roundPx))
     .build()
