@@ -4,11 +4,15 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.launch
 import kr.co.architecture.core.domain.ObserveBookmarkedMediasUseCase
+import kr.co.architecture.core.domain.SearchMediaContentsUseCase
 import kr.co.architecture.core.domain.ToggleBookmarkUseCase
 import kr.co.architecture.core.model.MediaContents
+import kr.co.architecture.core.model.MediaContentsTypeEnum
 import kr.co.architecture.core.model.ToggleTypeEnum
 import kr.co.architecture.core.model.uniqueId
 import kr.co.architecture.core.router.AppDeepLinks
@@ -21,6 +25,7 @@ import javax.inject.Inject
 class DetailViewModel @Inject constructor(
   private val savedStateHandle: SavedStateHandle,
   private val toggleBookmarkUseCase: ToggleBookmarkUseCase,
+  private val searchMediaContentsUseCase: SearchMediaContentsUseCase,
   private val observeBookmarkedMediasUseCase: ObserveBookmarkedMediasUseCase
 ) : BaseViewModel<DetailUiState, DetailUiEvent, DetailUiSideEffect>() {
 
@@ -63,77 +68,71 @@ class DetailViewModel @Inject constructor(
         "ORIGIN cannot be null."
       }
       // TODO: usecase로 옮길수있을지?
-      observeBookmarkedMediasUseCase()
-        .map { mediaContentsList ->
-          when (AppDeepLinks.Detail.Origin.valueOf(origin)) {
-            AppDeepLinks.Detail.Origin.BOOKMARK -> {
-              // N개짜리 리스트 구축, 시작 인덱스 산출 (스크롤 있음)
-              val initial = ArrayList<UiModel>(mediaContentsList.size) to -1
-              val (uiModels, startIndex) = mediaContentsList.foldIndexed(initial) { index, acc, mediaContents ->
-                val (uiModels, searchedIndex) = acc
-                uiModels.add(
-                  UiModel(
-                    bindingUiModel = UiModel.BindingUiModel(
-                      title = mediaContents.title,
-                      thumbnailUrl = mediaContents.thumbnailUrl,
-                      isBookmarked = true,
-                    ),
-                    unbindingUiModel = UiModel.UnbindingUiModel(
-                      dateTime = mediaContents.dateTime,
-                      collection = mediaContents.collection,
-                      contents = mediaContents.contents,
-                      mediaContentsType = mediaContents.mediaContentsType,
-                    )
-                  )
-                )
-                val newlyFoundIndex =
-                  if (searchedIndex == -1 && mediaContents.uniqueId() == id) index
-                  else searchedIndex
-                uiModels to newlyFoundIndex
-              }
-
+      viewModelScope.launch {
+        when (AppDeepLinks.Detail.Origin.valueOf(origin)) {
+          AppDeepLinks.Detail.Origin.SEARCH -> {
+            // 1개짜리 원소 리스트 구축 (스크롤 없음)
+            searchMediaContentsUseCase(id)?.let { mediaContents ->
               setState {
                 DetailUiState(
                   uiType = DetailUiType.LOADED,
-                  uiModel = uiModels,
-                  startIndex = startIndex
+                  uiModel = listOf(
+                    UiModel(
+                      bindingUiModel = UiModel.BindingUiModel(
+                        title = mediaContents.title,
+                        thumbnailUrl = mediaContents.thumbnailUrl,
+                        isBookmarked = true,
+                      ),
+                      unbindingUiModel = UiModel.UnbindingUiModel(
+                        dateTime = mediaContents.dateTime,
+                        collection = mediaContents.collection,
+                        contents = mediaContents.contents,
+                        mediaContentsType = mediaContents.mediaContentsType,
+                      )
+                    )
+                  ),
+                  startIndex = 0
                 )
               }
             }
+          }
+          AppDeepLinks.Detail.Origin.BOOKMARK -> {
+            // N개짜리 리스트 구축, 시작 인덱스 산출 (스크롤 있음)
+            val mediaContentsList = observeBookmarkedMediasUseCase().first()
+            val initial = ArrayList<UiModel>(mediaContentsList.size) to -1
+            val (uiModels, startIndex) = mediaContentsList.foldIndexed(initial) { index, acc, mediaContents ->
+              val (uiModels, searchedIndex) = acc
+              uiModels.add(
+                UiModel(
+                  bindingUiModel = UiModel.BindingUiModel(
+                    title = mediaContents.title,
+                    thumbnailUrl = mediaContents.thumbnailUrl,
+                    isBookmarked = true,
+                  ),
+                  unbindingUiModel = UiModel.UnbindingUiModel(
+                    dateTime = mediaContents.dateTime,
+                    collection = mediaContents.collection,
+                    contents = mediaContents.contents,
+                    mediaContentsType = mediaContents.mediaContentsType,
+                  )
+                )
+              )
+              val newlyFoundIndex =
+                if (searchedIndex == -1 && mediaContents.uniqueId() == id) index
+                else searchedIndex
+              uiModels to newlyFoundIndex
+            }
 
-            AppDeepLinks.Detail.Origin.SEARCH -> {
-              // 1개짜리 원소 리스트 구축 (스크롤 없음)
-              mediaContentsList
-                .firstOrNull { it.uniqueId() == id }
-                ?.let { mediaContents ->
-                  setState {
-                    DetailUiState(
-                      uiType = DetailUiType.LOADED,
-                      uiModel = listOf(
-                        UiModel(
-                          bindingUiModel = UiModel.BindingUiModel(
-                            title = mediaContents.title,
-                            thumbnailUrl = mediaContents.thumbnailUrl,
-                            isBookmarked = true,
-                          ),
-                          unbindingUiModel = UiModel.UnbindingUiModel(
-                            dateTime = mediaContents.dateTime,
-                            collection = mediaContents.collection,
-                            contents = mediaContents.contents,
-                            mediaContentsType = mediaContents.mediaContentsType,
-                          )
-                        )
-                      ),
-                      startIndex = 0
-                    )
-                  }
-                }
+            setState {
+              DetailUiState(
+                uiType = DetailUiType.LOADED,
+                uiModel = uiModels,
+                startIndex = startIndex
+              )
             }
           }
         }
-        .distinctUntilChanged()
-        .launchIn(viewModelScope)
+      }
     }.onFailure { setEffect { DetailUiSideEffect.OnFinish } }
-
   }
 }

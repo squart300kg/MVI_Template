@@ -15,7 +15,8 @@ object AppDeepLinks {
       const val ORIGIN = "origin"
     }
     enum class Origin {
-      BOOKMARK, SEARCH
+      SEARCH,
+      BOOKMARK
     }
     data class Args(
       val id: String,

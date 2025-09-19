@@ -9,5 +9,11 @@ data class MediaContents(
   val mediaContentsType: MediaContentsTypeEnum
 )
 
+// TODO: id의 값을 inline class로 두기
 fun MediaContents.uniqueId(): String =
-  MediaIdentity.idOf(mediaContentsType, title, contents, thumbnailUrl)
+  MediaIdentity.idOf(
+    mediaContentsType = mediaContentsType,
+    title = title,
+    contents = contents,
+    thumbnailUrl = thumbnailUrl
+  )

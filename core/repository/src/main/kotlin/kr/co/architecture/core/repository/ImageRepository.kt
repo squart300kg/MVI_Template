@@ -12,5 +12,7 @@ interface ImageRepository {
 
   suspend fun getImages(query: ContentsQuery): ImageDto
 
+  suspend fun searchImages(id: String): ImageDto.Image?
+
   suspend fun toggleBookmark(contents: MediaContents, toggleType: ToggleTypeEnum)
 }

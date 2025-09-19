@@ -3,6 +3,7 @@ package kr.co.architecture.core.domain
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import kr.co.architecture.core.domain.formatter.KoreanDateTextFormatter
+import kr.co.architecture.core.domain.mapper.MediaContentsMapper
 import kr.co.architecture.core.model.ContentsQuery
 import kr.co.architecture.core.model.MediaContents
 import kr.co.architecture.core.model.MediaContentsTypeEnum
@@ -68,13 +69,9 @@ class GetSortedImagesAndVideosByRecentlyUseCase @Inject constructor(
         dateTextFormatter: KoreanDateTextFormatter
       ) = Response(
         mediaContentsList = imageDto.images.map {
-          MediaContents(
-            thumbnailUrl = it.thumbnailUrl,
-            dateTime = dateTextFormatter(it.dateTime),
-            title = it.displaySiteName,
-            contents = it.docUrl,
-            collection = it.collection,
-            mediaContentsType = MediaContentsTypeEnum.IMAGE
+          MediaContentsMapper.mapperToDomain(
+            image = it,
+            dateTextFormatter = dateTextFormatter
           )
         },
         pageableDto = imageDto.pageable
@@ -84,12 +81,9 @@ class GetSortedImagesAndVideosByRecentlyUseCase @Inject constructor(
         dateTextFormatter: KoreanDateTextFormatter
       ) = Response(
         mediaContentsList = videoDto.videos.map {
-          MediaContents(
-            thumbnailUrl = it.thumbnail,
-            dateTime = dateTextFormatter(it.datetime),
-            title = it.title,
-            contents = it.url,
-            mediaContentsType = MediaContentsTypeEnum.VIDEO
+          MediaContentsMapper.mapperToDomain(
+            video = it,
+            dateTextFormatter = dateTextFormatter
           )
         },
         pageableDto = videoDto.pageable

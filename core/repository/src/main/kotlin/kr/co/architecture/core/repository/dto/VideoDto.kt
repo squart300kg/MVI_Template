@@ -1,5 +1,8 @@
 package kr.co.architecture.core.repository.dto
 
+import kr.co.architecture.core.model.MediaContents
+import kr.co.architecture.core.model.MediaContentsTypeEnum
+import kr.co.architecture.core.model.MediaIdentity
 import kr.co.architecture.core.network.model.CommonApiResponse
 
 data class VideoDto(
@@ -32,3 +35,11 @@ data class VideoDto(
     )
   }
 }
+
+fun VideoDto.Video.uniqueId(): String =
+  MediaIdentity.idOf(
+    mediaContentsType = MediaContentsTypeEnum.VIDEO,
+    title = title,
+    contents = url,
+    thumbnailUrl = thumbnail
+  )

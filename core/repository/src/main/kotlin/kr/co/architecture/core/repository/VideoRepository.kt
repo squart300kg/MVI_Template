@@ -12,5 +12,7 @@ interface VideoRepository {
 
   suspend fun getVideos(query: ContentsQuery): VideoDto
 
+  suspend fun searchVideo(id: String): VideoDto.Video?
+
   suspend fun toggleBookmark(contents: MediaContents, toggleType: ToggleTypeEnum)
 }
