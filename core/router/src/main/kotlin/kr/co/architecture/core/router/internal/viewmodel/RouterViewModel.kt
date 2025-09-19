@@ -24,7 +24,7 @@ internal class RouterViewModel @Inject constructor(
           )
 
           is InternalRoute.NavigateWeb -> RouteSideEffect.NavigateWeb(router.url)
-
+          is InternalRoute.NavigateDeepLink -> RouteSideEffect.NavigateDeepLink(router.url, router.extras)
           is InternalRoute.NavigateBack -> RouteSideEffect.NavigateBack
         }
       }

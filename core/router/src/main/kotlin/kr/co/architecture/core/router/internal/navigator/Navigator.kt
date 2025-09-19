@@ -33,4 +33,6 @@ interface Navigator {
    * 주로 NavController의 `popBackStack()` 또는 Activity의 `finish()`에 해당한다.
    */
   suspend fun navigateBack()
+
+  suspend fun navigateDeepLink(url: String, extras: Map<String, String> = emptyMap())
 }

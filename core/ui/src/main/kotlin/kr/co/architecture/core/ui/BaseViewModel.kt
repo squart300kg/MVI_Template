@@ -90,6 +90,14 @@ abstract class BaseViewModel<State : UiState, Event : UiEvent, Effect : UiSideEf
     navigator.navigateWeb(url)
   }
 
+  // TODO: 화면이동 딥링크밖에 안한다면, 추후 이를 'navigateTo'로 네이밍 변경 및 다른것들 삭제
+  fun navigateDeepLink(
+    url: String,
+    extras: Map<String, String> = emptyMap()
+  ) = viewModelScope.launch {
+    navigator.navigateDeepLink(url, extras)
+  }
+
   fun navigateTo(
     route: Route,
     saveState: Boolean = false,

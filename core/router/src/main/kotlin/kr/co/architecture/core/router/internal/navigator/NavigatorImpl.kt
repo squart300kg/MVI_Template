@@ -26,4 +26,8 @@ internal class NavigatorImpl @Inject constructor(): Navigator, InternalNavigator
   override suspend fun navigateBack() {
     channel.send(InternalRoute.NavigateBack)
   }
+
+  override suspend fun navigateDeepLink(url: String, extras: Map<String, String>) {
+    channel.send(InternalRoute.NavigateDeepLink(url, extras))
+  }
 }

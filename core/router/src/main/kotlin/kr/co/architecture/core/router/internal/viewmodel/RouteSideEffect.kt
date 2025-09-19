@@ -12,5 +12,10 @@ internal sealed interface RouteSideEffect {
 
   data class NavigateWeb(val url: String) : RouteSideEffect
 
+  data class NavigateDeepLink(
+    val url: String,
+    val extras: Map<String, String>
+  ) : RouteSideEffect
+
   data object NavigateBack : RouteSideEffect
 }

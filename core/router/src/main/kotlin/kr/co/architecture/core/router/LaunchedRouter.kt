@@ -1,7 +1,10 @@
 package kr.co.architecture.core.router
 
+import android.content.Intent
+import android.net.Uri
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.platform.UriHandler
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -33,6 +36,7 @@ private fun InternalLaunchedRouter(
   uriHandler: UriHandler,
   routerViewModel: RouterViewModel = hiltViewModel(),
 ) {
+  val context = LocalContext.current
   val lifecycleOwner = LocalLifecycleOwner.current
   LaunchedEffect(routerViewModel, lifecycleOwner) {
     lifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -58,6 +62,14 @@ private fun InternalLaunchedRouter(
               }
               launchSingleTop = sideEffect.launchSingleTop
             }
+          }
+          is RouteSideEffect.NavigateDeepLink -> {
+            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(sideEffect.url)).apply {
+              for ((key, value) in sideEffect.extras) {
+                putExtra(key, value)
+              }
+            }
+            context.startActivity(intent)
           }
         }
       }
