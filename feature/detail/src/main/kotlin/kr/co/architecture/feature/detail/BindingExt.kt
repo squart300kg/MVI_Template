@@ -35,3 +35,18 @@ fun ViewPager2.bindOnPageSelected(viewModel: DetailViewModel) {
     }
   })
 }
+
+@BindingAdapter(
+  value = ["bookmarkVm", "bookmarkIndex"],
+  requireAll = true
+)
+fun ImageView.bindBookmarkClick(
+  viewModel: DetailViewModel?,
+  index: Int?
+) {
+  setOnClickListener {
+    if (viewModel == null || index == null) return@setOnClickListener
+    val item = viewModel.uiState.value.mediaContents.getOrNull(index) ?: return@setOnClickListener
+    viewModel.setEvent(DetailUiEvent.OnClickedBookmark(item))
+  }
+}

@@ -7,7 +7,9 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kr.co.architecture.core.domain.ObserveBookmarkedMediasUseCase
+import kr.co.architecture.core.domain.ToggleBookmarkUseCase
 import kr.co.architecture.core.model.MediaContents
+import kr.co.architecture.core.model.ToggleTypeEnum
 import kr.co.architecture.core.model.uniqueId
 import kr.co.architecture.core.router.AppDeepLinks
 import kr.co.architecture.core.router.AppDeepLinks.Detail.ArgsKey.ID
@@ -18,6 +20,7 @@ import javax.inject.Inject
 @HiltViewModel
 class DetailViewModel @Inject constructor(
   private val savedStateHandle: SavedStateHandle,
+  private val toggleBookmarkUseCase: ToggleBookmarkUseCase,
   private val observeBookmarkedMediasUseCase: ObserveBookmarkedMediasUseCase
 ) : BaseViewModel<DetailUiState, DetailUiEvent, DetailUiSideEffect>() {
 
@@ -26,7 +29,18 @@ class DetailViewModel @Inject constructor(
   override fun handleEvent(event: DetailUiEvent) {
     when (event) {
       is DetailUiEvent.OnClickedBookmark -> {
-
+        launchWithLoading {
+          toggleBookmarkUseCase(
+            params = ToggleBookmarkUseCase.Params(
+              toggleType = ToggleTypeEnum.DELETE
+//                if (event.mediaContents) ToggleTypeEnum.DELETE
+//                else ToggleTypeEnum.SAVE
+              ,
+              mediaContentsType = event.mediaContents.mediaContentsType,
+              mediaContents = event.mediaContents
+            )
+          )
+        }
       }
       is DetailUiEvent.OnClickedBack -> {
         setEffect { DetailUiSideEffect.OnFinish }
@@ -47,8 +61,6 @@ class DetailViewModel @Inject constructor(
       val origin = requireNotNull(savedStateHandle.get<String?>(ORIGIN)) {
         "ORIGIN cannot be null."
       }
-      println("detailLog 2; $id, $origin")
-
       observeBookmarkedMediasUseCase()
         .map { mediaContentsList ->
           when (AppDeepLinks.Detail.Origin.valueOf(origin)) {
@@ -66,7 +78,7 @@ class DetailViewModel @Inject constructor(
               setState {
                 DetailUiState(
                   uiType = DetailUiType.LOADED,
-                  pages = pages,
+                  mediaContents = pages,
                   startIndex = startIndex
                 )
               }
@@ -80,7 +92,7 @@ class DetailViewModel @Inject constructor(
                   setState {
                     DetailUiState(
                       uiType = DetailUiType.LOADED,
-                      pages = listOf(target),
+                      mediaContents = listOf(target),
                       startIndex = 0
                     )
                   }
