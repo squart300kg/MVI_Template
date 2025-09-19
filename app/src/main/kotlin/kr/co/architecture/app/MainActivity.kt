@@ -32,7 +32,7 @@ class MainActivity : ComponentActivity() {
       val errorMessageState by viewModel.globalUiBus.failureDialog.collectAsStateWithLifecycle()
       var tabIndex by rememberSaveable { mutableIntStateOf(MainTabEnum.BOOKMARK.tabIndex) }
 
-//      LaunchedRouter()
+      LaunchedRouter()
 
       NoMaterial3Theme {
         Column {

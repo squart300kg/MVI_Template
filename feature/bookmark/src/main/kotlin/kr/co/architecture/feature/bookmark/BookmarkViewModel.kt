@@ -8,8 +8,8 @@ import kr.co.architecture.core.domain.ObserveBookmarkedMediasUseCase
 import kr.co.architecture.core.domain.ToggleBookmarkUseCase
 import kr.co.architecture.core.domain.formatter.EraseDateUnderDayFormatter
 import kr.co.architecture.core.model.ToggleTypeEnum
+import kr.co.architecture.core.router.AppDeepLinks
 import kr.co.architecture.core.ui.BaseViewModel
-import kr.co.architecture.core.ui.DetailRoute
 import javax.inject.Inject
 
 @HiltViewModel
@@ -24,10 +24,11 @@ class BookmarkViewModel @Inject constructor(
   override fun handleEvent(event: BookmarkUiEvent) {
     when (event) {
       is BookmarkUiEvent.OnClickedItem -> {
-        navigateTo(
-          route = DetailRoute(
-            id = event.uiModelState.uniqueId()
-          )
+        val args = AppDeepLinks.Detail.Args(
+          id = event.uiModelState.uniqueId()
+        )
+        navigateWeb(
+          url = AppDeepLinks.Detail.build(args)
         )
       }
       is BookmarkUiEvent.OnClickedBookmark -> {

@@ -10,6 +10,7 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import kotlinx.coroutines.flow.collectLatest
 import kr.co.architecture.core.router.internal.viewmodel.RouteSideEffect
 import kr.co.architecture.core.router.internal.viewmodel.RouterViewModel
@@ -17,7 +18,7 @@ import kr.co.architecture.core.router.internal.viewmodel.RouterViewModel
 // TODO: 필요없으면 navigation 모듈 삭제
 @Composable
 fun LaunchedRouter(
-  navHostController: NavHostController,
+  navHostController: NavHostController = rememberNavController(),
   uriHandler: UriHandler = LocalUriHandler.current,
 ) {
   InternalLaunchedRouter(
