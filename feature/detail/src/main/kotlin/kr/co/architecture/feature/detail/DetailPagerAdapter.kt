@@ -10,19 +10,23 @@ import kr.co.architecture.core.model.uniqueId
 import kr.co.architecture.feature.detail.databinding.ItemDetailPageBinding
 
 class DetailPagerAdapter :
-  ListAdapter<MediaContents, DetailPagerAdapter.VH>(DIFF) {
+  ListAdapter<MediaContents, DetailPagerAdapter.ViewHolder>(DIFF) {
 
-  class VH(val binding: ItemDetailPageBinding) : RecyclerView.ViewHolder(binding.root)
+  init { setHasStableIds(true) }
 
-  override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VH {
+  override fun getItemId(position: Int) = getItem(position).uniqueId().hashCode().toLong()
+
+  override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
     val inflater = LayoutInflater.from(parent.context)
     val binding = ItemDetailPageBinding.inflate(inflater, parent, false)
-    return VH(binding)
+    return ViewHolder(binding)
   }
 
-  override fun onBindViewHolder(holder: VH, position: Int) {
+  override fun onBindViewHolder(holder: ViewHolder, position: Int) {
     holder.binding.item = getItem(position)
   }
+
+  class ViewHolder(val binding: ItemDetailPageBinding) : RecyclerView.ViewHolder(binding.root)
 
   companion object Companion {
     private val DIFF = object : DiffUtil.ItemCallback<MediaContents>() {

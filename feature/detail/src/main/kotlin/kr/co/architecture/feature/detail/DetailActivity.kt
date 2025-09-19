@@ -5,7 +5,6 @@ import dagger.hilt.android.AndroidEntryPoint
 import kr.co.architecture.core.ui.BaseDataBindingActivity
 import kr.co.architecture.feature.detail.databinding.ActivityDetailBinding
 
-
 @AndroidEntryPoint
 class DetailActivity : BaseDataBindingActivity<ActivityDetailBinding, DetailUiState, DetailUiEvent, DetailUiSideEffect, DetailViewModel>() {
 
