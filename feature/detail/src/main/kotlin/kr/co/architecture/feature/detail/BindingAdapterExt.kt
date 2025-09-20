@@ -24,7 +24,7 @@ fun ImageView.onClickBookmark(viewModel: DetailViewModel?, index: Int?) {
   }
 }
 
-@BindingAdapter("bookmarkOn")
+@BindingAdapter("bindBookmarkState")
 fun ImageView.bindBookmarkIcon(isBookmarked: Boolean?) {
   setImageResource(
     if (isBookmarked == true) coreUiR.drawable.icon_like_on
