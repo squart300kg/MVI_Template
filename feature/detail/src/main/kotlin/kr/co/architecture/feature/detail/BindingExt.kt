@@ -9,7 +9,13 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.viewpager2.widget.ViewPager2
 import coil.load
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.flow.cancel
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.mapNotNull
+import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.launch
 import kr.co.architecture.core.ui.R as coreUiR
 
@@ -25,42 +31,40 @@ fun ImageView.bindImageUrl(url: String?) {
 // TODO: 코드정리
 @BindingAdapter(value = ["bookmarkVm", "bookmarkIndex"], requireAll = true)
 fun ImageView.bindBookmark(vm: DetailViewModel?, index: Int?) {
-  // 기존 수집 Job 정리
-  val key = R.id.iv_like_state_job
-  (getTag(key) as? Job)?.cancel()
-  setTag(key, null)
-
-  // 클릭 리스너 초기화
-  setOnClickListener(null)
-
   if (vm == null || index == null) {
-    setImageResource(coreUiR.drawable.icon_like_off)
     return
   }
 
-  // 클릭 → 즉시 이벤트 전송
+  // ★ 같은 (vm, index)면 재설치/재구독 안 함 → 중복 수집 방지
+  val argsKey = R.id.iv_like_args
+  val prev = getTag(argsKey) as? Pair<DetailViewModel, Int>
+  if (prev?.first === vm && prev.second == index) return
+  setTag(argsKey, vm to index)
+
+  (getTag(R.id.iv_like_state_job) as? Job)?.cancel()
+  setTag(R.id.iv_like_state_job, null)
+
   setOnClickListener {
     val item = vm.uiState.value.uiModels.getOrNull(index) ?: return@setOnClickListener
     vm.setEvent(DetailUiEvent.OnClickedBookmark(item))
   }
 
-  // 아이콘 상태 구독 (수명주기 안전)
-  val owner = findViewTreeLifecycleOwner()
-  if (owner == null) {
-    val isOn = vm.uiState.value.uiModels.getOrNull(index)?.bindingUiModel?.isBookmarked == true
-    setImageResource(if (isOn) coreUiR.drawable.icon_like_on else coreUiR.drawable.icon_like_off)
-    return
-  }
-
+  val owner = findViewTreeLifecycleOwner() ?: return
   val job = owner.lifecycleScope.launch {
     owner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-      vm.uiState.collectLatest { state ->
-        val isOn = state.uiModels.getOrNull(index)?.bindingUiModel?.isBookmarked == true
-        setImageResource(if (isOn) coreUiR.drawable.icon_like_on else coreUiR.drawable.icon_like_off)
-      }
+      vm.uiState
+        .mapNotNull { it.uiModels.getOrNull(index)?.bindingUiModel?.isBookmarked }
+        .collectLatest { isOn ->
+          println("collectLatest, $isOn, hashCode : ${this.hashCode()}")
+
+          setImageResource(
+            if (isOn) coreUiR.drawable.icon_like_on
+            else coreUiR.drawable.icon_like_off
+          )
+        }
     }
   }
-  setTag(key, job)
+  setTag(R.id.iv_like_state_job, job)
 }
 
 @BindingAdapter(value = ["pagerItems", "pagerStartIndex"], requireAll = true)
