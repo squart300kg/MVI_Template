@@ -50,7 +50,7 @@
             app:layout_constraintBottom_toTopOf="@id/gdTopBarBottom"
             app:bookmarkVm='@{vm}'
             app:bookmarkIndex='@{state.startIndex}'
-            />
+            app:bookmarkOn='@{ state.uiModels.size() > state.startIndex ? state.uiModels.get(state.startIndex).bindingUiModel.isBookmarked : false }' />
 
         <!-- 타이틀: 현재 startIndex의 페이지 제목 -->
         <TextView
