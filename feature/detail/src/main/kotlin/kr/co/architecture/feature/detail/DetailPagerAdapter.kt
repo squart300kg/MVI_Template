@@ -26,7 +26,7 @@ class DetailPagerAdapter :
 
   class ViewHolder(val binding: ItemDetailPageBinding) : RecyclerView.ViewHolder(binding.root)
 
-  companion object Companion {
+  companion object {
     private val DIFF = object : DiffUtil.ItemCallback<UiModel>() {
       override fun areItemsTheSame(oldItem: UiModel, newItem: UiModel) =
         oldItem.uniqueId() == newItem.uniqueId()

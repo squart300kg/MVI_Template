@@ -41,7 +41,6 @@ class SearchViewModel @Inject constructor(
               toggleType =
                 if (event.uiModel.isBookmarked) ToggleTypeEnum.DELETE
                 else ToggleTypeEnum.SAVE,
-              mediaContentsType = event.uiModel.mediaContentsType,
               mediaContents = UiModelState.ContentsUiModel.mapperToDomainModel(event.uiModel)
             )
           )

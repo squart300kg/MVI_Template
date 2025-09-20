@@ -44,7 +44,6 @@ class BookmarkViewModel @Inject constructor(
               toggleType =
                 if (event.uiModelState.bindingUiModel.isBookmarked) ToggleTypeEnum.DELETE
                 else ToggleTypeEnum.SAVE,
-              mediaContentsType = event.uiModelState.bindingUiModel.mediaContentsType,
               mediaContents = UiModel.mapperToDomainModel(event.uiModelState)
             )
           )

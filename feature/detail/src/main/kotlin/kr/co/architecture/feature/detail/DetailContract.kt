@@ -1,10 +1,12 @@
 package kr.co.architecture.feature.detail
 
+import kr.co.architecture.core.model.MediaContents
 import kr.co.architecture.core.model.MediaContentsTypeEnum
 import kr.co.architecture.core.model.MediaIdentity
 import kr.co.architecture.core.ui.UiEvent
 import kr.co.architecture.core.ui.UiSideEffect
 import kr.co.architecture.core.ui.UiState
+import java.util.LinkedList
 
 enum class DetailUiType {
   NONE,
@@ -26,6 +28,18 @@ data class UiModel(
     val contents: String,
     val mediaContentsType: MediaContentsTypeEnum
   )
+
+  companion object {
+    fun mapperToDomain(uiModel: UiModel) =
+      MediaContents(
+        title = uiModel.bindingUiModel.title,
+        thumbnailUrl = uiModel.bindingUiModel.thumbnailUrl,
+        dateTime = uiModel.unbindingUiModel.dateTime,
+        collection = uiModel.unbindingUiModel.collection,
+        contents = uiModel.unbindingUiModel.contents,
+        mediaContentsType = uiModel.unbindingUiModel.mediaContentsType
+      )
+  }
 }
 
 fun UiModel.uniqueId(): String =
@@ -37,7 +51,7 @@ fun UiModel.uniqueId(): String =
   )
 data class DetailUiState(
   val uiType: DetailUiType = DetailUiType.NONE,
-  val uiModel: List<UiModel> = emptyList(),
+  val uiModels: LinkedList<UiModel> = LinkedList(),
   val startIndex: Int = 0,
 ) : UiState
 

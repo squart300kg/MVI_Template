@@ -8,6 +8,7 @@ import kr.co.architecture.feature.detail.databinding.ActivityDetailBinding
 @AndroidEntryPoint
 class DetailActivity : BaseDataBindingActivity<ActivityDetailBinding, DetailUiState, DetailUiEvent, DetailUiSideEffect, DetailViewModel>() {
 
+  // TODO: 확대 사진이 흐릿함. 좀 더 선명하게 할순없는지
   override val layoutResId: Int = R.layout.activity_detail
   override val variableId: Int = BR.vm
   override val viewModel: DetailViewModel by viewModels()

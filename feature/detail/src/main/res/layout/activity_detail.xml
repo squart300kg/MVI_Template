@@ -49,7 +49,8 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toTopOf="@id/gdTopBarBottom"
             app:bookmarkVm='@{vm}'
-            app:bookmarkIndex='@{state.startIndex}' />
+            app:bookmarkIndex='@{state.startIndex}'
+            />
 
         <!-- 타이틀: 현재 startIndex의 페이지 제목 -->
         <TextView
@@ -66,7 +67,7 @@
             app:layout_constraintEnd_toStartOf="@id/btnLike"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toTopOf="@id/gdTopBarBottom"
-            android:text='@{ state.uiModel.size() > state.startIndex ? state.uiModel.get(state.startIndex).bindingUiModel.title : "" }'/>
+            android:text='@{ state.uiModels.size() > state.startIndex ? state.uiModels.get(state.startIndex).bindingUiModel.title : "" }'/>
 
         <!-- 이미지 페이저 -->
         <androidx.viewpager2.widget.ViewPager2
@@ -79,7 +80,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintDimensionRatio="1:1"
             app:layout_constraintVertical_bias="0.5"
-            app:pagerItems="@{state.uiModel}"
+            app:pagerItems="@{state.uiModels}"
             app:pagerStartIndex='@{state.startIndex}'
             app:pagerOnPageSelected='@{vm}'/>
     </androidx.constraintlayout.widget.ConstraintLayout>

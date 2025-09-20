@@ -12,7 +12,7 @@ class ToggleBookmarkUseCase @Inject constructor(
   private val videoRepository: VideoRepository
 ) {
   suspend operator fun invoke(params: Params) {
-    when (params.mediaContentsType) {
+    when (params.mediaContents.mediaContentsType) {
       MediaContentsTypeEnum.IMAGE -> imageRepository.toggleBookmark(
         contents = params.mediaContents,
         toggleType = params.toggleType
@@ -26,7 +26,6 @@ class ToggleBookmarkUseCase @Inject constructor(
 
   data class Params(
     val toggleType: ToggleTypeEnum,
-    val mediaContentsType: MediaContentsTypeEnum,
     val mediaContents: MediaContents
   )
 }
