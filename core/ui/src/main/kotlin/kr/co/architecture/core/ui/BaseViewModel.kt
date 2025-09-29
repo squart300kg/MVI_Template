@@ -90,7 +90,11 @@ abstract class BaseViewModel<State : UiState, Event : UiEvent, Effect : UiSideEf
     saveState: Boolean = false,
     launchSingleTop: Boolean = false
   ) = viewModelScope.launch {
-    navigator.navigate(route, saveState, launchSingleTop)
+    navigator.navigate(
+      route = route,
+      saveState = saveState,
+      launchSingleTop = launchSingleTop,
+    )
   }
 
   fun <T> launchWithCatching(
