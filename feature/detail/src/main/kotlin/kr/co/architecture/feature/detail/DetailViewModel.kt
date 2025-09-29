@@ -26,7 +26,7 @@ class DetailViewModel @Inject constructor(
   }
 
   fun fetchData() {
-    launchWithLoading {
+    launchWithCatching {
       val id = savedStateHandle.toRoute<DetailRoute>().id
       val name = savedStateHandle.toRoute<DetailRoute>().name
 

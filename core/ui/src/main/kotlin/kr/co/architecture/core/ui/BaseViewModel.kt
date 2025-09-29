@@ -4,9 +4,7 @@ import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
@@ -95,15 +93,18 @@ abstract class BaseViewModel<State : UiState, Event : UiEvent, Effect : UiSideEf
     navigator.navigate(route, saveState, launchSingleTop)
   }
 
-  fun <T> launchWithLoading(block: suspend () -> T) {
+  fun <T> launchWithCatching(
+    withLoading: Boolean = true,
+    block: suspend () -> T
+  ) {
     viewModelScope.launch {
       try {
-        globalUiBus.setLoadingState(true)
+        if (withLoading) globalUiBus.setLoadingState(true)
         block()
       } catch (e: Exception) {
         globalUiBus.showFailureDialog(e)
       } finally {
-        globalUiBus.setLoadingState(false)
+        if (withLoading) globalUiBus.setLoadingState(false)
       }
     }
   }
