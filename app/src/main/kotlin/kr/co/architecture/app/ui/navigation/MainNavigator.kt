@@ -23,7 +23,7 @@ internal class MainNavigator(
     }
 
   @Composable
-  fun shouldShowBottomBar() = MainBottomTab.contains {//
+  fun shouldShowBottomBar() = MainBottomTab.contains {
     currentDestination?.hasRoute(it::class) == true
   }
 }
