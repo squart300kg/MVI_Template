@@ -29,7 +29,7 @@ class FirstViewModel @Inject constructor(
   init { setEffect { FirstUiSideEffect.Load } }
 
   fun fetchData() {
-    launchWithLoading {
+    launchWithCatching {
       val names = getListUseCase()
       setState {
         copy(

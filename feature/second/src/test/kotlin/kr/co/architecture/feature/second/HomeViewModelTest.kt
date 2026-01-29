@@ -1,24 +1,33 @@
 package kr.co.architecture.feature.second
 
-import kr.co.architecture.feature.home.HomeViewModel
-import kr.co.testing.TestRepository
+import kr.co.architecture.core.domain.GetListUseCase
+import kr.co.architecture.core.domain.repository.ArticleRepository
+import kr.co.architecture.core.model.Article
 import kr.co.architecture.test.testing.util.MainDispatcherRule
 import org.junit.Before
 import org.junit.Rule
+import org.junit.Test
 
-class HomeViewModelTest {
+class SecondViewModelTest {
   @get:Rule
   val mainDispatcherRule = MainDispatcherRule()
 
-  private lateinit var viewModel: HomeViewModel
+  private lateinit var viewModel: SecondViewModel
 
-  private val newsRepository = TestRepository()
+  private val repository = object : ArticleRepository {
+    override suspend fun getList(): List<Article> = emptyList()
+  }
 
   @Before
   fun setup() {
-    viewModel = HomeViewModel(
-      repository = newsRepository
+    viewModel = SecondViewModel(
+      getListUseCase = GetListUseCase(repository)
     )
+  }
+
+  @Test
+  fun createViewModel() {
+    // construction smoke test
   }
 
 }

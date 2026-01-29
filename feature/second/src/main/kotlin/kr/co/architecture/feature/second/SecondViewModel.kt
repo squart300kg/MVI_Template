@@ -28,7 +28,7 @@ class SecondViewModel @Inject constructor(
   init { setEffect { SecondUiSideEffect.Load } }
 
   fun fetchData() {
-    launchWithLoading {
+    launchWithCatching {
       val names = getListUseCase()
       setState {
         copy(

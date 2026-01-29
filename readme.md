@@ -12,7 +12,7 @@
 - [버디스탁 구글 스토어](https://play.google.com/store/apps/details?id=com.pickstudio.buddystock)
 
 # 🏛️ Architecture?
-`Main Branch`, `Class101 Branch`모두, `MVI` 패턴과 `Google의 App Architecture Guide` 결합하여 만들어졌습니다.
+`MVI` 패턴을 유지하면서, 모듈 단위로 `Clean Architecture`의 의존성 역전(Dependency Inversion)을 적용했습니다.
 
 ## 👉 1. Now In Android Architecture?
 Google에서 Android App 구축 시, 권장하는 아키텍처 구조로 일명, `Google App Architecture`라고 불립니다. 기존, `Clean Architecture`와 다른 점은, `Dmoain Layer`를 선택적으로 구현할 수 있고, 의존성 관점에서 독립적으로 존재하지 않는다는 점입니다.
@@ -28,10 +28,17 @@ Google에서 Android App 구축 시, 권장하는 아키텍처 구조로 일명,
     - 순수 kotlin로직으로 구성돼야 함
     - Computational한 로직 정의
     - 여럿 ViewModel의 공통 로직 정의
-  - Data Layer ([Data Layer Guide](https://developer.android.com/topic/architecture/data-layer?hl=ko)): 
+  - Data Layer ([Data Layer Guide](https://developer.android.com/topic/architecture/data-layer?hl=ko)):
     - Single Source Of Truth원칙
     - UI Layer, Domain Layer는 데이터 출처를 신경쓰지 않은 채, Data Layer의 Repository(interface)만 바라본다.
     - Repository는 여러 데이터 출처(RestAPI, WebSocket, Room, DataStore...)로부터 데이터를 구성할 수 있으며, 이는 캡슐화된다.
+
+## 👉 (Updated) Clean Architecture 적용
+- `:core:domain`은 `:core:repository`에 의존하지 않습니다.
+- Repository 인터페이스(Contract)는 `domain`에 위치하고, 구현체는 `data(:core:repository)`에 위치합니다.
+- 구현체 바인딩은 Hilt `@Binds`로 처리합니다.
+
+자세한 규칙/모듈 매핑은 `ARCHITECTURE.md`를 참고하세요.
 
 **ps. 추가로, 아래 블로그 글을 통해, Android App Architecture의 구현 예시를 공부할 수 있습니다.**
 - [안드로이드 Google App Architecture에 대하여1](https://velog.io/@squart300kg/%EC%95%88%EB%93%9C%EB%A1%9C%EC%9D%B4%EB%93%9C-Clean-Architecture%EC%97%90-%EB%8C%80%ED%95%98%EC%97%AC)
