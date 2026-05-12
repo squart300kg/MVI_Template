@@ -27,7 +27,7 @@ Compose UI를 feature module 구조와 MVI 경계에 맞게 작성하고, 눈으
 - 가능하면 ViewModel wrapper가 아니라 Content Composable을 Preview합니다.
 - 한 번만 쓰는 UI는 공통화하지 않고, 2곳 이상 반복되면 feature 내부 공통 Composable을 먼저 고려합니다.
 
-## 텍스트 렌더링 기준
+### 텍스트 렌더링 기준
 
 - `String` 상태는 `Text(value)`로 직접 표시합니다.
 - [UiText.kt](../../core/ui/src/main/kotlin/kr/co/architecture/core/ui/util/UiText.kt) 상태는 Composable에서만 `asString()`으로 resolve합니다.
@@ -53,17 +53,7 @@ Compose UI를 feature module 구조와 MVI 경계에 맞게 작성하고, 눈으
 - 필요한 string/color/dimen resource
 - 필요 시 feature-local 또는 `core:ui` 공통 Composable
 
-## 점검
-
-- Composable이 repository/use case를 직접 호출하지 않는가
-- ViewModel이 UI rendering detail을 알지 않는가
-- feature Composable이 `BaseProgressBar`, 전역 `BaseCenterDialog`, `NavHostController`를 직접 사용하지 않는가
-- `UiText.asString()`이 Composable 표시 경계 밖으로 새지 않았는가
-- 텍스트가 하드코딩으로 과하게 남지 않았는가
-- Preview가 빌드 가능한가
-- 공통 Composable API가 화면별 세부 구현을 과하게 노출하지 않는가
-
-## 예시
+### 예시
 
 ```kotlin
 @Composable
@@ -87,3 +77,13 @@ private fun SampleContent(
   // uiState와 callback만 사용해 렌더링합니다.
 }
 ```
+
+## 점검
+
+- Composable이 repository/use case를 직접 호출하지 않는가
+- ViewModel이 UI rendering detail을 알지 않는가
+- feature Composable이 `BaseProgressBar`, 전역 `BaseCenterDialog`, `NavHostController`를 직접 사용하지 않는가
+- `UiText.asString()`이 Composable 표시 경계 밖으로 새지 않았는가
+- 텍스트가 하드코딩으로 과하게 남지 않았는가
+- Preview가 빌드 가능한가
+- 공통 Composable API가 화면별 세부 구현을 과하게 노출하지 않는가
