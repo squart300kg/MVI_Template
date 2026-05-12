@@ -8,7 +8,7 @@ import org.junit.Test
 class FeatureArchitectureRulesTest {
 
   @Test
-  fun `reports direct feature navigation usage`() {
+  fun `feature 화면에서 navigation 객체를 직접 사용하면 위반으로 보고한다`() {
     val code = """
       package kr.co.architecture.feature.sample
 
@@ -25,7 +25,7 @@ class FeatureArchitectureRulesTest {
   }
 
   @Test
-  fun `allows viewmodel navigation method names`() {
+  fun `viewmodel navigation method 호출은 허용한다`() {
     val code = """
       package kr.co.architecture.feature.sample
 
@@ -44,7 +44,7 @@ class FeatureArchitectureRulesTest {
   }
 
   @Test
-  fun `reports direct feature global ui usage`() {
+  fun `feature 화면에서 전역 ui를 직접 렌더링하면 위반으로 보고한다`() {
     val code = """
       package kr.co.architecture.feature.sample
 

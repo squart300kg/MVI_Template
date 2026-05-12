@@ -6,7 +6,7 @@
 
 ## 1. 시작 순서
 
-- 구현 전 [project-baseline-guide](.ai-skills/common/project-baseline-guide.md)로 모듈 경계와 기본 규칙을 확인합니다.
+- 구현 전 [architecture-baseline-guide](.ai-skills/common/architecture-baseline-guide.md)로 모듈 경계와 아키텍처 기준을 확인합니다.
 - 작업 유형에 맞는 스킬을 아래 목차에서 선택합니다.
 - 문서나 스킬을 수정했다면 [ai-docs-guide](.ai-skills/workflow/ai-docs-guide.md)를 따릅니다.
 - 완료 전 [complete-task-and-final-check](.ai-skills/common/complete-task-and-final-check.md) 기준으로 검증합니다.
@@ -15,19 +15,17 @@
 
 ### 2-1. 공통 기준
 
-- 프로젝트 기준: [project-baseline-guide](.ai-skills/common/project-baseline-guide.md)
+- 아키텍처 기준: [architecture-baseline-guide](.ai-skills/common/architecture-baseline-guide.md)
 - 공통 Kotlin/Compose 코드 스타일: [common-coding-guide](.ai-skills/common/common-coding-guide.md)
+- 빌드/Gradle 오류 분석: [build](.ai-skills/common/build.md)
 - 작업 완료 점검: [complete-task-and-final-check](.ai-skills/common/complete-task-and-final-check.md)
 
 ### 2-2. UI 레이어
 
-- Compose 화면/컴포넌트: [composable-guide](.ai-skills/ui-layer/composable-guide.md)
-- Navigation/route: [composable-navigation-guide](.ai-skills/ui-layer/composable-navigation-guide.md)
-- Preview: [composable-preview-guide](.ai-skills/ui-layer/composable-preview-guide.md)
-- Dialog/BottomSheet: [new-dialog-creation-guide](.ai-skills/ui-layer/new-dialog-creation-guide.md)
-- ViewModel/Contract: [viewmodel-guide](.ai-skills/ui-layer/viewmodel-guide.md)
-- UiModel/mapper: [ui-model-guide](.ai-skills/ui-layer/ui-model-guide.md)
-- Compose UI 공통화: [extract-shared-compose](.ai-skills/ui-layer/extract-shared-compose.md)
+- Compose 화면/Preview/공통화: [ui-screen-guide](.ai-skills/ui-layer/ui-screen-guide.md)
+- Navigation/route: [ui-navigation-guide](.ai-skills/ui-layer/ui-navigation-guide.md)
+- ViewModel/Contract/UiModel: [ui-state-viewmodel-guide](.ai-skills/ui-layer/ui-state-viewmodel-guide.md)
+- Dialog/BottomSheet: [ui-dialog-bottomsheet-guide](.ai-skills/ui-layer/ui-dialog-bottomsheet-guide.md)
 
 ### 2-3. Domain/Data
 
@@ -38,7 +36,6 @@
 
 - 테스트 작성: [test-writing-guide](.ai-skills/test/test-writing-guide.md)
 - 정적 분석/품질 게이트: [static-analysis-guide](.ai-skills/test/static-analysis-guide.md)
-- 빌드/Gradle 오류 분석: [build](.ai-skills/ci-cd/build.md)
 
 ### 2-5. Workflow
 

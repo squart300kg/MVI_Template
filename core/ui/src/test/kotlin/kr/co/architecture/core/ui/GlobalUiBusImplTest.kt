@@ -34,10 +34,10 @@ class GlobalUiBusImplTest {
 
   @Test
   fun `로딩 증가 후 감소하면 loadingState가 true에서 false로 바뀐다`() = runTest {
-    // GIVEN
+    // 준비
     val job = bus.loadingState.launchIn(this)
 
-    // WHEN
+    // 실행
     bus.setLoadingState(true)
     advanceUntilIdle()
     assertEquals(
@@ -45,7 +45,7 @@ class GlobalUiBusImplTest {
       bus.loadingState.value
     )
 
-    // THEN
+    // 검증
     bus.setLoadingState(false)
     advanceUntilIdle()
     assertEquals(
@@ -57,7 +57,7 @@ class GlobalUiBusImplTest {
 
   @Test
   fun `로딩 증가 횟수가 감소 횟수보다 많은 상태에서 로딩을 감소시켰을 때 loadingState는 true이다`() = runTest {
-    // GIVEN
+    // 준비
     val job = bus.loadingState.launchIn(this)
     bus.setLoadingState(true)
     bus.setLoadingState(true)
@@ -67,11 +67,11 @@ class GlobalUiBusImplTest {
       bus.loadingState.value
     )
 
-    // WHEN
+    // 실행
     bus.setLoadingState(false)
     advanceUntilIdle()
 
-    // THEN
+    // 검증
     assertEquals(
       true,
       bus.loadingState.value
@@ -82,7 +82,7 @@ class GlobalUiBusImplTest {
 
   @Test
   fun `로딩 감소 횟수가 증가 횟수보다 많은 상태에서 로딩을 증가시켰을 때 loadingState는 true이다`() = runTest {
-    // GIVEN
+    // 준비
     val job = bus.loadingState.launchIn(this)
     bus.setLoadingState(false)
     bus.setLoadingState(false)
@@ -92,11 +92,11 @@ class GlobalUiBusImplTest {
       bus.loadingState.value
     )
 
-    // WHEN
+    // 실행
     bus.setLoadingState(true)
     advanceUntilIdle()
 
-    // THEN
+    // 검증
     assertEquals(
       true,
       bus.loadingState.value
@@ -107,16 +107,16 @@ class GlobalUiBusImplTest {
 
   @Test
   fun `showFailureDialog를 호출하면 failureDialog에서 다운스트림받는다`() = runTest {
-    // GIVEN
+    // 준비
     val job = bus.failureDialog.launchIn(this)
 
-    // WHEN
+    // 실행
     bus.showFailureDialog(
       kotlin.Exception("HelloWorld")
     )
     advanceUntilIdle()
 
-    // THEN
+    // 검증
     assertNotNull(bus.failureDialog.value)
 
     job.cancel()
@@ -124,10 +124,10 @@ class GlobalUiBusImplTest {
 
   @Test
   fun `서버 에러 문자열은 표시 슬롯에서 PlainText로 전달된다`() = runTest {
-    // GIVEN
+    // 준비
     val job = bus.failureDialog.launchIn(this)
 
-    // WHEN
+    // 실행
     bus.showFailureDialog(
       ArchitectureSampleHttpFailure.Error(
         code = "400",
@@ -136,7 +136,7 @@ class GlobalUiBusImplTest {
     )
     advanceUntilIdle()
 
-    // THEN
+    // 검증
     val dialog = bus.failureDialog.value
     assertEquals(
       UiText.PlainText("400"),
@@ -152,7 +152,7 @@ class GlobalUiBusImplTest {
 
   @Test
   fun `dismissDialog를 호출하면 failureDialog에서 null을 받는다`() = runTest {
-    // GIVEN
+    // 준비
     val job = bus.failureDialog.launchIn(this)
     bus.showFailureDialog(
       kotlin.Exception("HelloWorld")
@@ -160,11 +160,11 @@ class GlobalUiBusImplTest {
     advanceUntilIdle()
     assertNotNull(bus.failureDialog.value)
 
-    // WHEN
+    // 실행
     bus.dismissDialog()
     advanceUntilIdle()
 
-    //THEN
+    // 검증
     assertNull(bus.failureDialog.value)
 
     job.cancel()

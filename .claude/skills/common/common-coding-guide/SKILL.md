@@ -8,12 +8,14 @@ description: MVI Template의 Kotlin/Compose 코드를 작성하거나 정리할 
 ## 목적
 
 구현 속도를 해치지 않으면서 읽기 쉬운 Kotlin 코드를 유지합니다.
+모듈 경계와 아키텍처 판단은 [architecture-baseline-guide](architecture-baseline-guide.md)를 따릅니다.
 
 ## 사용 시점
 
 - Kotlin 파일을 새로 만들거나 수정할 때
 - 불필요한 helper, wrapper, abstraction을 만들지 판단할 때
 - 작업 마감 전 미사용 코드와 import를 정리할 때
+- 새 모듈/계층 위치 판단이 아니라 코드 표현 방식을 정리할 때
 
 ## 핵심 원칙
 

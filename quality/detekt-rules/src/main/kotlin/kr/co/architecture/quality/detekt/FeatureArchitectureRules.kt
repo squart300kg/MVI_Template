@@ -36,6 +36,10 @@ internal abstract class PackageScopedRule(
   }
 }
 
+/**
+ * Feature 화면에서 navigation 객체를 직접 소유하는 코드를 막습니다.
+ * 화면 이동은 ViewModel의 navigation method로 모읍니다.
+ */
 internal class NoFeatureDirectNavigationRule(
   config: Config,
 ) : PackageScopedRule(config) {
@@ -89,7 +93,7 @@ internal class NoFeatureDirectNavigationRule(
         entity = Entity.from(element),
         message =
           "Feature 화면 이동은 ViewModel의 navigateTo, navigateBack, navigateWeb 메서드로 요청하세요. " +
-            ".ai-skills/ui-layer/composable-navigation-guide.md를 참고하세요.",
+            ".ai-skills/ui-layer/ui-navigation-guide.md를 참고하세요.",
       ),
     )
   }
@@ -105,6 +109,10 @@ internal class NoFeatureDirectNavigationRule(
   }
 }
 
+/**
+ * Feature 화면에서 전역 loading/error UI를 직접 렌더링하는 코드를 막습니다.
+ * 공통 loading/error 표시는 ViewModel의 GlobalUiBus 경로로 모읍니다.
+ */
 internal class NoFeatureGlobalUiDirectUsageRule(
   config: Config,
 ) : PackageScopedRule(config) {
@@ -142,7 +150,7 @@ internal class NoFeatureGlobalUiDirectUsageRule(
         entity = Entity.from(element),
         message =
           "전역 progress/error UI는 feature에서 직접 렌더링하지 말고 ViewModel의 GlobalUiBus 경로를 사용하세요. " +
-            ".ai-skills/ui-layer/viewmodel-guide.md와 .ai-skills/ui-layer/new-dialog-creation-guide.md를 참고하세요.",
+            ".ai-skills/ui-layer/ui-state-viewmodel-guide.md와 .ai-skills/ui-layer/ui-dialog-bottomsheet-guide.md를 참고하세요.",
       ),
     )
   }

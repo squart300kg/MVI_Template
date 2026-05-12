@@ -27,8 +27,8 @@ class FirstViewModelTest {
   }
 
   @Test
-  fun createViewModel() {
-    // construction smoke test
+  fun `viewmodel을 생성할 수 있다`() {
+    // 생성 확인용 테스트
   }
 
   @Test
