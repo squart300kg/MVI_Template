@@ -5,10 +5,8 @@ import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ActivityRetainedComponent
 import dagger.hilt.android.scopes.ActivityRetainedScoped
-import dagger.hilt.components.SingletonComponent
 import kr.co.architecture.core.ui.GlobalUiBus
 import kr.co.architecture.core.ui.GlobalUiBusImpl
-import javax.inject.Singleton
 
 @Module
 @InstallIn(ActivityRetainedComponent::class)

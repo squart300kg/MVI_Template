@@ -39,6 +39,7 @@ androidGradlePlugin = "8.8.2"
 jetbrainsKotlin = "2.2.20"
 serializationPluginVer = "1.7.10"
 baselineProfile = "1.2.4"
+detekt = "1.23.8"
 
 # libraries and plugins
 daggerHilt = "2.57.1"
@@ -102,6 +103,9 @@ com-github-skydoves-sandwich-retrofit = { group = "com.github.skydoves", name = 
 kotlinx-coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref = "kotlinxCoroutines" }
 androidx-test-rules = { group = "androidx.test", name = "rules", version.ref = "androidxTestRules" }
 ksp-gradlePlugin = { group = "com.google.devtools.ksp", name = "com.google.devtools.ksp.gradle.plugin", version.ref = "ksp" }
+detekt-api = { group = "io.gitlab.arturbosch.detekt", name = "detekt-api", version.ref = "detekt" }
+detekt-test = { group = "io.gitlab.arturbosch.detekt", name = "detekt-test", version.ref = "detekt" }
+detekt-formatting = { group = "io.gitlab.arturbosch.detekt", name = "detekt-formatting", version.ref = "detekt" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "androidGradlePlugin" }
@@ -114,6 +118,8 @@ org-jetbrains-kotlin-plugin-serialization = { id ="org.jetbrains.kotlin.plugin.s
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "jetbrainsKotlin" }
 androidx-baseline-profile = { id = "androidx.baselineprofile", version.ref = "baselineProfile" }
+jetbrains-kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "jetbrainsKotlin" }
+detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
 
 # Plugins defined by this project
 architecture-sample-ui = { id = "architecture.sample.ui", version = "unspecified"  }

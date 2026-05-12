@@ -1,0 +1,81 @@
+build:
+  maxIssues: 0
+
+config:
+  validation: true
+  warningsAsErrors: false
+  excludes: "mvi-template-style,mvi-template-style.*,mvi-template-style>.*"
+
+processors:
+  active: true
+
+console-reports:
+  active: true
+
+output-reports:
+  active: true
+
+comments:
+  active: false
+
+complexity:
+  active: false
+
+exceptions:
+  active: false
+
+naming:
+  active: false
+
+style:
+  active: true
+  ForbiddenComment:
+    active: false
+  MagicNumber:
+    active: false
+  MayBeConst:
+    active: false
+  NewLineAtEndOfFile:
+    active: false
+  MaxLineLength:
+    active: false
+  ReturnCount:
+    active: false
+  UseCheckOrError:
+    active: false
+  UtilityClassWithPublicConstructor:
+    active: false
+  UnusedPrivateClass:
+    active: true
+  UnusedPrivateMember:
+    active: true
+    allowedNames: ".*Preview$"
+  UnusedPrivateProperty:
+    active: true
+  WildcardImport:
+    active: true
+
+formatting:
+  active: true
+  NoUnusedImports:
+    active: true
+  NoWildcardImports:
+    active: true
+
+empty-blocks:
+  active: true
+  EmptyCatchBlock:
+    active: true
+  EmptyClassBlock:
+    active: false
+  EmptyFunctionBlock:
+    active: false
+
+mvi-template-style:
+  active: true
+  NoFeatureDirectNavigation:
+    active: true
+    targetPackage: "kr.co.architecture.feature"
+  NoFeatureGlobalUiDirectUsage:
+    active: true
+    targetPackage: "kr.co.architecture.feature"

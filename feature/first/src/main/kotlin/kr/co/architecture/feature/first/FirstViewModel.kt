@@ -19,7 +19,7 @@ class FirstViewModel @Inject constructor(
         navigateTo(
           route = DetailRoute(
             id = event.item.id,
-            name = event.item.name.value ?: ""
+            name = event.item.name
           )
         )
       }
@@ -29,7 +29,7 @@ class FirstViewModel @Inject constructor(
   init { setEffect { FirstUiSideEffect.Load } }
 
   fun fetchData() {
-    launchWithLoading {
+    launchWithCatching {
       val names = getListUseCase()
       setState {
         copy(

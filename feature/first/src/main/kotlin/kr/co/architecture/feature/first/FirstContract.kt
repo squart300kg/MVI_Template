@@ -6,7 +6,6 @@ import kotlinx.collections.immutable.toImmutableList
 import kr.co.architecture.core.ui.UiEvent
 import kr.co.architecture.core.ui.UiSideEffect
 import kr.co.architecture.core.ui.UiState
-import kr.co.architecture.core.ui.util.UiText
 
 enum class FirstUiType {
   NONE,
@@ -15,7 +14,7 @@ enum class FirstUiType {
 
 data class UiModel(
   val id: String,
-  val name: UiText
+  val name: String
 ) {
   companion object {
     fun mapperToUi(names: List<String>): ImmutableList<UiModel> {
@@ -23,7 +22,7 @@ data class UiModel(
         .mapIndexed { index, name ->
           UiModel(
             id = "$index",
-            name = UiText.DynamicString(name)
+            name = name
           )
         }
         .toImmutableList()

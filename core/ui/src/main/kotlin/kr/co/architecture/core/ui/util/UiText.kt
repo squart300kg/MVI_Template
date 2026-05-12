@@ -10,57 +10,59 @@ import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
 
 @Immutable
-data class UiText(
-  val value: String? = null,
-  @StringRes val resId: Int? = null,
-  val args: ImmutableList<Any> = persistentListOf(),
-  val parts: ImmutableList<UiText> = persistentListOf()
-) {
+sealed interface UiText {
+  @Immutable
+  data class PlainText(val value: String) : UiText
+
+  @Immutable
+  data class Resource(
+    @param:StringRes val resId: Int,
+    val args: ImmutableList<Any> = persistentListOf()
+  ) : UiText
+
+  @Immutable
+  data class Composite(
+    val parts: ImmutableList<UiText> = persistentListOf()
+  ) : UiText
+
   companion object {
-    fun DynamicString(value: String) = UiText(value = value)
-    fun StringResource(@StringRes resId: Int, args : List<Any> = emptyList()) =
-      UiText(resId = resId, args = args.toImmutableList())
-    fun Combined(parts: List<UiText>) = UiText(parts = parts.toImmutableList())
+    fun StringResource(
+      @StringRes resId: Int,
+      args: List<Any> = emptyList()
+    ): UiText = Resource(resId = resId, args = args.toImmutableList())
+
+    fun Combined(parts: List<UiText>): UiText =
+      Composite(parts = parts.toImmutableList())
   }
 }
 
 /**
- * `plus`함수는 UiText.StringResource와 UiText.DynamicString를 '+' 연산자를 통해 합치기 기능을 제공
+ * `plus`함수는 UiText.StringResource와 UiText.PlainText를 '+' 연산자로 합치기 기능을 제공
  */
 operator fun UiText.plus(other: UiText): UiText =
   UiText.Combined(listOf(this, other))
 
 operator fun UiText.plus(other: String): UiText =
-  this + UiText.DynamicString(other)
-
-operator fun String.plus(other: UiText): UiText =
-  UiText.DynamicString(this) + other
+  this + UiText.PlainText(other)
 
 @Composable
 fun UiText.asString(): String {
-  return when {
-    value != null -> value
-    resId != null -> stringResource(resId, *args.toTypedArray())
-    parts.isNotEmpty() -> buildString { parts.forEach { append(it.asString()) } }
-    else -> ""
+  return when (this) {
+    is UiText.PlainText -> value
+    is UiText.Resource -> stringResource(resId, *args.toTypedArray())
+    is UiText.Composite -> buildString { parts.forEach { append(it.asString()) } }
   }
 }
 
 fun UiText.asString(context: Context): String {
-  return when {
-    value != null -> value
-    resId != null -> context.getString(resId, *args.toTypedArray())
-    parts.isNotEmpty() -> buildString { parts.forEach { append(it.asString(context)) } }
-    else -> ""
+  return when (this) {
+    is UiText.PlainText -> value
+    is UiText.Resource -> context.getString(resId, *args.toTypedArray())
+    is UiText.Composite -> buildString { parts.forEach { append(it.asString(context)) } }
   }
 }
 
 @Composable
 fun UiText.isNotEmpty(): Boolean {
-  return when {
-    value != null -> value.isNotEmpty()
-    resId != null -> stringResource(resId, *args.toTypedArray()).isNotEmpty()
-    parts.isNotEmpty() -> parts.any { it.isNotEmpty() }
-    else -> false
-  }
+  return asString().isNotEmpty()
 }

@@ -1,17 +1,11 @@
 package kr.co.architecture.core.domain
 
+import org.junit.Assert.assertEquals
 import org.junit.Test
 
-import org.junit.Assert.*
-
-/**
- * Example local unit test, which will execute on the development machine (host).
- *
- * See [testing documentation](http://d.android.com/tools/testing).
- */
 class ExampleUnitTest {
     @Test
-    fun addition_isCorrect() {
+    fun `덧셈 결과가 올바르다`() {
         assertEquals(4, 2 + 2)
     }
 }

@@ -1,0 +1,11 @@
+.DS_Store
+.gradle/
+.idea/
+build/
+**/build/
+!.agents/skills/ci-cd/build/
+!.agents/skills/ci-cd/build/SKILL.md
+!.claude/skills/ci-cd/build/
+!.claude/skills/ci-cd/build/SKILL.md
+local.properties
+*.jks
