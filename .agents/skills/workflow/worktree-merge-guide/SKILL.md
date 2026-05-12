@@ -23,6 +23,7 @@ description: 작업을 git worktree로 격리하고 PR 생성/갱신, rebase, qu
 - base 최신화는 merge보다 rebase를 우선합니다.
 - rebase 충돌은 `ours/theirs`를 기계적으로 고르지 않고 양쪽 의도를 비교해 해결합니다.
 - PR 병합은 GitHub PR squash merge로 처리하고 로컬 merge로 대체하지 않습니다.
+- 사용자가 `$worktree-merge-guide`로 작업 실행을 맡기면, 명시적으로 PR까지만 요청하지 않는 한 PR 생성에서 멈추지 않고 검증, squash merge, clean worktree 정리까지 완료합니다.
 - 열린 PR 여러 개를 수동으로 병합할 때는 의존성, 변경 범위, 오래된 PR 순으로 우선순위를 명시합니다.
 - 검증 실패 상태에서는 merge하지 않습니다.
 - 이 스킬이 만든 clean worktree만 정리합니다.
