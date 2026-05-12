@@ -18,7 +18,7 @@ Gradle 실패를 빠르게 재현하고 원인을 코드, 리소스, 의존성, 
 
 - 먼저 가장 작은 실패 명령을 실행합니다.
 - 환경 문제와 코드 문제를 분리해서 수정합니다.
-- Android 과제 작업의 기본 성공 기준은 `./gradlew qualityGateFast`입니다.
+- Android 작업의 기본 성공 기준은 `./gradlew qualityGateFast`입니다.
 
 ## 절차
 

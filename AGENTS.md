@@ -1,57 +1,84 @@
-# MVI Template Agent Runbook
+# MVI Template 하네스 인덱스
 
-## 목적
+이 문서는 스킬 목차와 검증 진입점 역할만 합니다.
+상세 규칙과 절차는 링크된 스킬 문서를 정본으로 봅니다.
+[AGENTS.md](AGENTS.md)와 [CLAUDE.md](CLAUDE.md)는 동일 내용이며, `./scripts/sync-harness-docs.sh copy`로 동기화합니다.
 
-이 프로젝트는 6시간 안드로이드 사전과제에서 바로 기능 구현을 시작할 수 있도록 유지하는 Clean Architecture + MVI starter입니다.
+## 1. 시작 순서
 
-## 기본 구조
+- 구현 전 [project-baseline-guide](.ai-skills/common/project-baseline-guide.md)로 모듈 경계와 기본 규칙을 확인합니다.
+- 작업 유형에 맞는 스킬을 아래 목차에서 선택합니다.
+- 문서나 스킬을 수정했다면 [ai-docs-guide](.ai-skills/workflow/ai-docs-guide.md)를 따릅니다.
+- 완료 전 [complete-task-and-final-check](.ai-skills/common/complete-task-and-final-check.md) 기준으로 검증합니다.
 
-- `app`: `MainActivity`, root `NavHost`, bottom navigation, app-level ViewModel
+## 2. 스킬 목차
+
+### 2-1. 공통 기준
+
+- 프로젝트 기준: [project-baseline-guide](.ai-skills/common/project-baseline-guide.md)
+- 공통 Kotlin/Compose 코드 스타일: [common-coding-guide](.ai-skills/common/common-coding-guide.md)
+- 작업 완료 점검: [complete-task-and-final-check](.ai-skills/common/complete-task-and-final-check.md)
+
+### 2-2. UI 레이어
+
+- Compose 화면/컴포넌트: [composable-guide](.ai-skills/ui-layer/composable-guide.md)
+- Navigation/route: [composable-navigation-guide](.ai-skills/ui-layer/composable-navigation-guide.md)
+- Preview: [composable-preview-guide](.ai-skills/ui-layer/composable-preview-guide.md)
+- Dialog/BottomSheet: [new-dialog-creation-guide](.ai-skills/ui-layer/new-dialog-creation-guide.md)
+- ViewModel/Contract: [viewmodel-guide](.ai-skills/ui-layer/viewmodel-guide.md)
+- UiModel/mapper: [ui-model-guide](.ai-skills/ui-layer/ui-model-guide.md)
+- Compose UI 공통화: [extract-shared-compose](.ai-skills/ui-layer/extract-shared-compose.md)
+
+### 2-3. Domain/Data
+
+- Domain 계층 경계: [domain-layer](.ai-skills/domain-layer/domain-layer.md)
+- 서버 API 연동: [integrate-server-api-guide](.ai-skills/data-layer/integrate-server-api-guide.md)
+
+### 2-4. Test/Quality
+
+- 테스트 작성: [test-writing-guide](.ai-skills/test/test-writing-guide.md)
+- 정적 분석/품질 게이트: [static-analysis-guide](.ai-skills/test/static-analysis-guide.md)
+- 빌드/Gradle 오류 분석: [build](.ai-skills/ci-cd/build.md)
+
+### 2-5. Workflow
+
+- 문서/스킬 관리: [ai-docs-guide](.ai-skills/workflow/ai-docs-guide.md)
+- Shell script 관리: [shell-script-guide](.ai-skills/workflow/shell-script-guide.md)
+- Worktree/PR/merge: [worktree-merge-guide](.ai-skills/workflow/worktree-merge-guide.md)
+
+## 3. 프로젝트 경계
+
+- `app`: root `NavHost`, app-level ViewModel, global UI host
 - `feature/*`: 화면 단위 Compose UI, Contract, ViewModel
 - `core:ui`: 공통 Compose UI, `BaseViewModel`, `GlobalUiBus`, route model
-- `core:router`: ViewModel에서 navigation을 요청할 수 있게 하는 router abstraction
+- `core:router`: ViewModel navigation 요청을 처리하는 router abstraction
 - `core:domain`: UseCase와 repository interface
-- `core:repository`: repository implementation
+- `core:repository`: repository implementation과 mapper
 - `core:network`: Retrofit/API/DTO
 - `core:database`: Room/local source
 - `core:model`: layer 간 공유 model
 - `testing`: coroutine rule, fake/stub helper
+- `quality:detekt-rules`: Detekt custom rule
 - `build-logic`: Android convention plugin
 
-## 작업 규칙
-
-- 현재 골격 샘플인 `first`, `second`, `detail` feature는 과제 전까지 유지합니다.
-- 새 화면은 `feature/<name>` 모듈 또는 가장 가까운 기존 feature 안에 `*Contract.kt`, `*ViewModel.kt`, `*Screen.kt` 순서로 추가합니다.
-- domain repository interface는 `core:domain`, 구현체는 `core:repository`에 둡니다.
-- 화면 이동은 feature Composable에서 `NavHostController`를 직접 호출하지 않고 ViewModel의 `navigateTo`, `navigateBack`, `navigateWeb`으로 요청합니다.
-- 전역 progress와 에러 메시지 다이얼로그는 ViewModel의 `launchWithCatching`/`globalUiBus` 경로를 사용합니다.
-- 사용자 노출 문자열/색상/치수는 가능한 resource 또는 theme token을 우선합니다.
-- `.ai-skills`를 수정하면 `./scripts/sync-harness-docs.sh copy`를 실행해 mirror를 갱신합니다.
-
-## 기본 명령
+## 4. 검증 명령
 
 ```bash
 ./gradlew :app:compileDebugKotlin
 ./gradlew :app:assembleDebug
 ./gradlew testDebugUnitTest
 ./gradlew lintDebug
+./gradlew detekt
 ./gradlew verifyHarnessConsistency
 ./gradlew verifyArchitectureRules
 ./gradlew qualityGateFast
 ```
 
-## Skill 정본
+## 5. 유지 방식
 
-- 원본: `.ai-skills`
+- 스킬 원본: `.ai-skills`
 - Codex mirror: `.agents/skills`
 - Claude mirror: `.claude/skills`
-- sync: `./scripts/sync-harness-docs.sh copy`
-- consistency: `./scripts/verify-harness-consistency.sh`
-- architecture: `./scripts/verify-architecture-rules.sh`
-
-## 마감 기준
-
-- 앱이 debug 기준으로 컴파일됩니다.
-- 변경한 ViewModel/domain/data logic에는 단위 테스트를 추가하거나 기존 테스트를 갱신합니다.
-- 스킬/런북/스크립트를 바꾸면 sync와 harness consistency 검증을 통과합니다.
-- 최종 보고에는 실행한 검증 명령과 실패/생략 사유를 포함합니다.
+- 문서/스킬 sync: `./scripts/sync-harness-docs.sh copy`
+- 하네스 검증: `./scripts/verify-harness-consistency.sh`
+- 구조 검증: `./scripts/verify-architecture-rules.sh`

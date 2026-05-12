@@ -1,7 +1,6 @@
 package kr.co.architecture.core.network
 
 import com.skydoves.sandwich.ApiResponse
-import kr.co.architecture.core.network.BuildConfig
 import kr.co.architecture.core.network.model.ArticleResponse
 import kr.co.architecture.core.network.model.CommonResponse
 import retrofit2.http.GET

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# 역할: Android feature source가 starter의 navigation/global UI 경계를 지키는지 검증합니다.
+# 역할: Android feature source가 navigation/global UI 경계를 지키는지 검증합니다.
 # 입력/실행:
 #   - ./scripts/verify-architecture-rules.sh
 # 예상 결과:

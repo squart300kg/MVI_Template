@@ -11,23 +11,24 @@ description: MVI Template의 AGENTS/CLAUDE/.ai-skills/.agents/.claude 문서를 
 
 ## 사용 시점
 
-- `AGENTS.md`, `CLAUDE.md`를 수정할 때
-- `.ai-skills` 하위 skill 원본을 추가, 수정, 삭제할 때
-- `scripts/sync-harness-docs.sh` 또는 `scripts/verify-harness-consistency.sh`를 수정할 때
+- [AGENTS.md](../../AGENTS.md), [CLAUDE.md](../../CLAUDE.md)를 수정할 때
+- [.ai-skills](../../.ai-skills) 하위 skill 원본을 추가, 수정, 삭제할 때
+- [sync-harness-docs.sh](../../scripts/sync-harness-docs.sh) 또는 [verify-harness-consistency.sh](../../scripts/verify-harness-consistency.sh)를 수정할 때
 
 ## 핵심 원칙
 
-- `.ai-skills`가 skill 원본입니다.
-- `.agents/skills`, `.claude/skills`, `CLAUDE.md`는 sync 결과물입니다.
+- [.ai-skills](../../.ai-skills)가 skill 원본입니다.
+- [.agents/skills](../../.agents/skills), [.claude/skills](../../.claude/skills), [CLAUDE.md](../../CLAUDE.md)는 sync 결과물입니다.
 - 새 skill은 `목적`, `사용 시점`, `핵심 원칙`, `절차`, `출력`, `점검` 구조를 우선합니다.
 - source `.ai-skills/*.md` 문서는 500줄을 넘기지 않습니다. 커지면 관심사별 skill로 분리합니다.
 - 같은 레벨의 bullet이 6개 이상이거나 주제가 섞이면 2~4개 소제목으로 나눕니다.
 - 실제 파일 경로는 가능한 Markdown 링크로 표기하고, 명령 예시는 code block에 둡니다.
+- 스킬 내부에서 다른 스킬이나 로컬 파일을 참조할 때는 plain path나 inline code path 대신 Markdown 링크를 사용합니다.
 - 기존 프로젝트명, 패키지명, 명령어가 남지 않도록 현재 모듈과 명령 기준으로 바꿉니다.
 
 ## 절차
 
-1. 원본 문서를 `.ai-skills` 또는 `AGENTS.md`에서 수정합니다.
+1. 원본 문서를 [.ai-skills](../../.ai-skills) 또는 [AGENTS.md](../../AGENTS.md)에서 수정합니다.
 2. flat bullet이나 중복 설명이 늘어나면 `목적`, `사용 시점`, `핵심 원칙`, `절차`, `출력`, `점검` 구조로 다시 정리합니다.
 3. `./scripts/sync-harness-docs.sh copy`를 실행합니다.
 4. `./scripts/verify-harness-consistency.sh`로 mirror 정합성을 확인합니다.
@@ -36,7 +37,7 @@ description: MVI Template의 AGENTS/CLAUDE/.ai-skills/.agents/.claude 문서를 
 ## 출력
 
 - 수정된 원본 문서
-- sync로 갱신된 `CLAUDE.md`, `.agents/skills`, `.claude/skills`
+- sync로 갱신된 [CLAUDE.md](../../CLAUDE.md), [.agents/skills](../../.agents/skills), [.claude/skills](../../.claude/skills)
 - 실행한 검증 명령과 결과
 
 ## 점검

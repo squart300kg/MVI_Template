@@ -7,7 +7,7 @@ description: MVI Template의 Kotlin/Compose 코드를 작성하거나 정리할 
 
 ## 목적
 
-과제 구현 속도를 해치지 않으면서 읽기 쉬운 Kotlin 코드를 유지합니다.
+구현 속도를 해치지 않으면서 읽기 쉬운 Kotlin 코드를 유지합니다.
 
 ## 사용 시점
 
@@ -21,7 +21,7 @@ description: MVI Template의 Kotlin/Compose 코드를 작성하거나 정리할 
 - 실제 중복이 생기기 전에는 공통 abstraction을 만들지 않습니다.
 - public API는 의도가 드러나는 이름과 명시적인 타입을 사용합니다.
 - 테스트 fake는 `testing` 모듈에 둘 수 있지만, 한 테스트에서만 쓰면 테스트 파일 내부에 둡니다.
-- `.ai-skills`를 바꾸면 `./scripts/sync-harness-docs.sh copy`를 실행합니다.
+- [.ai-skills](../../.ai-skills)를 바꾸면 `./scripts/sync-harness-docs.sh copy`를 실행합니다.
 
 ## 절차
 

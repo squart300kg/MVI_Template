@@ -1,5 +1,6 @@
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
+import io.gitlab.arturbosch.detekt.Detekt
 import org.gradle.api.tasks.Exec
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
 
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 buildscript {
@@ -17,6 +18,37 @@ plugins {
   alias(libs.plugins.compose.compiler) apply false
   alias(libs.plugins.org.jetbrains.kotlin.plugin.serialization) apply false
   alias(libs.plugins.android.test) apply false
+  alias(libs.plugins.detekt)
+}
+
+dependencies {
+  detektPlugins(project(":quality:detekt-rules"))
+  detektPlugins(libs.detekt.formatting)
+}
+
+detekt {
+  buildUponDefaultConfig = false
+  parallel = true
+  config.setFrom(files("$rootDir/detekt.yml"))
+  source.setFrom(
+    files(
+      "app/src/main/kotlin",
+      "core",
+      "feature",
+      "testing/src/main/kotlin",
+    )
+  )
+}
+
+tasks.withType<Detekt>().configureEach {
+  exclude("**/build/**")
+  reports {
+    html.required.set(true)
+    xml.required.set(false)
+    txt.required.set(true)
+    sarif.required.set(false)
+    md.required.set(false)
+  }
 }
 
 tasks.register<Exec>("verifyHarnessConsistency") {
@@ -27,15 +59,17 @@ tasks.register<Exec>("verifyHarnessConsistency") {
 
 tasks.register<Exec>("verifyArchitectureRules") {
   group = "verification"
-  description = "Verifies starter architecture rules for feature navigation and global UI."
+  description = "Verifies project architecture rules for feature navigation and global UI."
   commandLine("bash", "./scripts/verify-architecture-rules.sh")
 }
 
 tasks.register("qualityGateFast") {
   group = "verification"
-  description = "Runs the fast local quality gate for Android assignment work."
+  description = "Runs the fast local quality gate for Android work."
   dependsOn("verifyHarnessConsistency")
   dependsOn("verifyArchitectureRules")
+  dependsOn("detekt")
+  dependsOn(":quality:detekt-rules:test")
   dependsOn(":app:compileDebugKotlin")
 }
 

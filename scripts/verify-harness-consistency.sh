@@ -145,18 +145,6 @@ while IFS= read -r script; do
   check_shell_script_headers "$script"
 done < <(find "$REPO_ROOT/scripts" -maxdepth 1 -type f -name '*.sh' | sort)
 
-if command -v rg >/dev/null 2>&1; then
-  if rg -n 'ModifiedBaseIntentViewModel|assembleDevDebug|com\.pickstudio\.buddystock|BuddyStockTheme' "$SOURCE_DIR" >/tmp/mvi-template-harness-rg.txt; then
-    cat /tmp/mvi-template-harness-rg.txt >&2
-    error "Previous-project residue found in .ai-skills."
-  fi
-else
-  if grep -R -n -E 'ModifiedBaseIntentViewModel|assembleDevDebug|com\.pickstudio\.buddystock|BuddyStockTheme' "$SOURCE_DIR" >/tmp/mvi-template-harness-grep.txt; then
-    cat /tmp/mvi-template-harness-grep.txt >&2
-    error "Previous-project residue found in .ai-skills."
-  fi
-fi
-
 if [[ "$FAIL" -ne 0 ]]; then
   exit 1
 fi

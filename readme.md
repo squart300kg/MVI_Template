@@ -1,11 +1,11 @@
 # MVI Template
 
-Android 사전과제에서 바로 기능 구현을 시작하기 위한 Clean Architecture + MVI starter입니다.
+Clean Architecture + MVI 기반 Android 템플릿입니다.
 
 ## 목표
 
-- 기존 멀티모듈 골격을 유지합니다.
-- `first`, `second`, `detail` 샘플 feature를 남겨 화면, navigation, ViewModel, domain/data 흐름을 빠르게 참고할 수 있게 합니다.
+- 기존 멀티모듈 구조를 유지합니다.
+- `first`, `second`, `detail` 샘플 feature를 통해 화면, navigation, ViewModel, domain/data 흐름을 확인할 수 있게 합니다.
 - CI가 없어도 로컬과 AI 작업 절차에서 `qualityGateFast`로 최소 품질선을 확인합니다.
 
 ## Requirements
@@ -53,6 +53,7 @@ project-root
 ./gradlew :app:assembleDebug
 ./gradlew testDebugUnitTest
 ./gradlew lintDebug
+./gradlew detekt
 ./gradlew verifyHarnessConsistency
 ./gradlew verifyArchitectureRules
 ./gradlew qualityGateFast
@@ -101,9 +102,9 @@ Gradle에서도 같은 검증을 실행할 수 있습니다.
 ./gradlew verifyArchitectureRules
 ```
 
-## Assignment Workflow
+## Work Flow
 
-1. 요구사항을 `UiState`, `UiEvent`, `UiSideEffect`로 나눕니다.
+1. 구현할 동작을 `UiState`, `UiEvent`, `UiSideEffect`로 나눕니다.
 2. 필요한 model, repository interface, use case를 domain부터 추가합니다.
 3. repository/network/database 구현을 연결합니다.
 4. Compose Content는 stateless하게 두고 ViewModel wrapper에서 state/effect를 연결합니다.

@@ -32,7 +32,7 @@ description: 작업을 git worktree로 격리하고 PR 생성/갱신, rebase, qu
 1. `git status --short --branch`와 `git worktree list`로 현재 상태를 확인합니다.
 2. `git fetch origin --prune` 후 base branch를 확정합니다.
 3. 작업 branch와 worktree를 만들고 해당 worktree에서만 수정합니다.
-4. 구현 후 `./scripts/sync-harness-docs.sh copy`가 필요한지 확인합니다.
+4. 구현 후 [sync-harness-docs.sh](../../scripts/sync-harness-docs.sh) 실행이 필요한지 확인합니다.
 5. `./gradlew qualityGateFast`를 실행합니다.
 6. 변경을 커밋하고 작업 branch를 push합니다.
 7. PR을 생성하거나 기존 PR 본문을 최신 작업 내용으로 갱신합니다.

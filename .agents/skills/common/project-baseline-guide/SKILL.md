@@ -7,7 +7,7 @@ description: MVI Template에서 Android 기능을 추가하거나 수정할 때 
 
 ## 목적
 
-과제 중 빠르게 구현하더라도 현재 Clean Architecture + MVI 골격을 유지합니다.
+빠르게 구현하더라도 현재 Clean Architecture + MVI 골격을 유지합니다.
 
 ## 사용 시점
 
@@ -30,7 +30,7 @@ description: MVI Template에서 Android 기능을 추가하거나 수정할 때 
 2. UI state/event/effect를 Contract에 정의합니다.
 3. ViewModel은 event 처리, state 갱신, side effect 발생만 담당하게 둡니다.
 4. 데이터가 필요하면 domain use case와 repository interface부터 추가합니다.
-5. 화면 이동과 loading/error가 starter 공통 경로를 쓰는지 확인합니다.
+5. 화면 이동과 loading/error가 공통 경로를 쓰는지 확인합니다.
 6. 작업 중 빠른 확인은 `./gradlew :app:compileDebugKotlin`을 실행합니다.
 7. 마감 전에는 `./gradlew qualityGateFast`를 실행합니다.
 

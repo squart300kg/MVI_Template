@@ -7,7 +7,7 @@ description: core:domain, core:model, core:repository, core:network, core:databa
 
 ## 목적
 
-Clean Architecture 의존 방향을 지키면서 과제 기능의 domain/data 경계를 빠르게 추가합니다.
+Clean Architecture 의존 방향을 지키면서 기능의 domain/data 경계를 빠르게 추가합니다.
 
 ## 사용 시점
 

@@ -14,7 +14,7 @@ class RepositoryImpl @Inject constructor(
   override suspend fun getList(): List<Article> {
     if (BuildConfig.apiKey.isBlank()) {
       return listOf(
-        Article(name = "Starter clean architecture"),
+        Article(name = "Clean architecture template"),
         Article(name = "MVI feature module"),
         Article(name = "Typed navigation")
       )
