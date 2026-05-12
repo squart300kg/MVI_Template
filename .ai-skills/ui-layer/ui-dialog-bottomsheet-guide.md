@@ -41,14 +41,7 @@ description: 전역 error/loading UI와 화면 전용 Dialog/BottomSheet 상태,
 - Preview
 - 필요한 string resource
 
-## 점검
-
-- dismiss 경로가 빠지지 않았는가
-- 화면 회전 후 상태가 의도대로 유지되는가
-- 공통 에러 Dialog와 역할이 겹치지 않는가
-- 에러 메시지/로딩 처리가 feature Composable이 아니라 `GlobalUiBus` 경로로 연결됐는가
-
-## 예시
+### 예시
 
 ```kotlin
 // 에러/로딩은 feature UiState에 두지 않습니다.
@@ -61,3 +54,10 @@ data class SampleUiState(
   val confirmDialog: ConfirmDialogUiModel? = null,
 )
 ```
+
+## 점검
+
+- dismiss 경로가 빠지지 않았는가
+- 화면 회전 후 상태가 의도대로 유지되는가
+- 공통 에러 Dialog와 역할이 겹치지 않는가
+- 에러 메시지/로딩 처리가 feature Composable이 아니라 `GlobalUiBus` 경로로 연결됐는가

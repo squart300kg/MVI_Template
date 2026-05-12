@@ -44,16 +44,7 @@ description: Typed route, NavGraphBuilder 확장, bottom tab navigation, ViewMod
 - ViewModel navigation event 처리
 - 필요한 tab/resource 변경
 
-## 점검
-
-- route argument 타입이 직렬화 가능한가
-- feature Composable이 `NavHostController`나 `NavController`를 import하지 않는가
-- feature Composable에서 `navigate(...)`, `popBackStack()`, `LocalUriHandler`를 직접 쓰지 않았는가
-- 화면 이동이 ViewModel의 `navigateTo`, `navigateBack`, `navigateWeb`로 모였는가
-- startDestination과 bottom tab current state가 맞는가
-- back stack 동작이 기존 화면과 충돌하지 않는가
-
-## 예시
+### 예시
 
 ```kotlin
 @Composable
@@ -79,3 +70,12 @@ internal fun SampleRoute(
   )
 }
 ```
+
+## 점검
+
+- route argument 타입이 직렬화 가능한가
+- feature Composable이 `NavHostController`나 `NavController`를 import하지 않는가
+- feature Composable에서 `navigate(...)`, `popBackStack()`, `LocalUriHandler`를 직접 쓰지 않았는가
+- 화면 이동이 ViewModel의 `navigateTo`, `navigateBack`, `navigateWeb`로 모였는가
+- startDestination과 bottom tab current state가 맞는가
+- back stack 동작이 기존 화면과 충돌하지 않는가
