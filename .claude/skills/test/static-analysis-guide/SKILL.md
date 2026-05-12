@@ -17,18 +17,20 @@ description: qualityGateFast, Android lint, 하네스 정합성 검증을 추가
 
 ## 핵심 원칙
 
-- 빠른 기본 게이트는 compile, unit test, lint, harness consistency입니다.
-- detekt/ktlint 커스텀 룰은 필요해질 때만 추가합니다.
+- 빠른 기본 게이트는 compile, unit test, lint, harness consistency, architecture script입니다.
+- detekt/ktlint 커스텀 룰은 필요해질 때만 추가하고, 과제 starter에서는 shell 검증을 우선합니다.
 - 게이트가 느려지면 과제 중 사용 빈도가 떨어지므로 기본 경로는 빠르게 유지합니다.
 - 문서 규칙과 실제 검증 스크립트가 어긋나지 않아야 합니다.
+- navigation과 전역 UI 규칙은 `verifyArchitectureRules`에서 최소한으로 강제합니다.
 
 ## 절차
 
 1. 새 규칙이 script, Gradle task, lint 중 어디에 맞는지 정합니다.
 2. 하네스 문서 정합성은 shell script에 둡니다.
-3. Android 코드 품질은 Gradle compile/test/lint task에 둡니다.
-4. `qualityGateFast`에 포함한 뒤 로컬에서 실행합니다.
-5. skill 문서에 명령과 기준을 갱신합니다.
+3. Android 구조 규칙은 `scripts/verify-architecture-rules.sh`와 `verifyArchitectureRules`에 둡니다.
+4. Android 코드 품질은 Gradle compile/test/lint task에 둡니다.
+5. `qualityGateFast`에 포함한 뒤 로컬에서 실행합니다.
+6. skill 문서에 명령과 기준을 갱신합니다.
 
 ## 출력
 
@@ -41,3 +43,34 @@ description: qualityGateFast, Android lint, 하네스 정합성 검증을 추가
 - `./gradlew qualityGateFast`가 한 번에 실행되는가
 - 실패 메시지가 다음 행동을 알려주는가
 - sync 결과물이 원본과 일치하는가
+
+## 규칙 카탈로그
+
+### Navigation
+
+- `SA-NAV-001`: feature Screen/Content Composable은 `NavHostController`, `NavController`, `LocalUriHandler`를 직접 사용하지 않습니다.
+- `SA-NAV-002`: feature Composable은 `navigate(...)`, `popBackStack()`을 직접 호출하지 않습니다.
+- `SA-NAV-003`: 화면 이동은 ViewModel의 `navigateTo(Route)`, `navigateBack()`, `navigateWeb(url)`로 요청합니다.
+
+### Global UI
+
+- `SA-GLOBAL-UI-001`: feature source는 전역 progress를 위해 `BaseProgressBar`를 직접 렌더링하지 않습니다.
+- `SA-GLOBAL-UI-002`: 공통 에러 메시지 다이얼로그는 feature-local `BaseCenterDialog`가 아니라 `GlobalUiBus` 경로를 사용합니다.
+- `SA-GLOBAL-UI-003`: suspend 작업의 기본 loading/error 처리는 `BaseViewModel.launchWithCatching`을 사용합니다.
+
+### ViewModel / Contract
+
+- `SA-VIEWMODEL-001`: Contract는 `UiState`, `UiEvent`, `UiSideEffect`를 함께 유지합니다.
+- `SA-VIEWMODEL-002`: state mutation은 `setState { copy(...) }`로 모읍니다.
+- `SA-VIEWMODEL-003`: ViewModel은 Compose API, `NavHostController`, Android View 타입에 의존하지 않습니다.
+
+### UiModel / Mapper
+
+- `SA-MODEL-001`: DTO/Entity를 `UiState`나 Composable에 직접 노출하지 않습니다.
+- `SA-MODEL-002`: 단순 collection wrapper `*ListUiModel`은 만들지 않습니다.
+- `SA-MODEL-003`: 기본값은 생성자 default parameter로 표현하고 `getDefault()` factory를 만들지 않습니다.
+
+### Script / Harness
+
+- `SA-SCRIPT-001`: `scripts/*.sh`는 `shell-script-guide`의 필수 헤더를 가집니다.
+- `SA-HARNESS-001`: `.ai-skills` 원본과 `.agents`/`.claude` mirror는 sync 결과와 일치해야 합니다.

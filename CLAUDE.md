@@ -23,6 +23,8 @@
 - 현재 골격 샘플인 `first`, `second`, `detail` feature는 과제 전까지 유지합니다.
 - 새 화면은 `feature/<name>` 모듈 또는 가장 가까운 기존 feature 안에 `*Contract.kt`, `*ViewModel.kt`, `*Screen.kt` 순서로 추가합니다.
 - domain repository interface는 `core:domain`, 구현체는 `core:repository`에 둡니다.
+- 화면 이동은 feature Composable에서 `NavHostController`를 직접 호출하지 않고 ViewModel의 `navigateTo`, `navigateBack`, `navigateWeb`으로 요청합니다.
+- 전역 progress와 에러 메시지 다이얼로그는 ViewModel의 `launchWithCatching`/`globalUiBus` 경로를 사용합니다.
 - 사용자 노출 문자열/색상/치수는 가능한 resource 또는 theme token을 우선합니다.
 - `.ai-skills`를 수정하면 `./scripts/sync-harness-docs.sh copy`를 실행해 mirror를 갱신합니다.
 
@@ -34,6 +36,7 @@
 ./gradlew testDebugUnitTest
 ./gradlew lintDebug
 ./gradlew verifyHarnessConsistency
+./gradlew verifyArchitectureRules
 ./gradlew qualityGateFast
 ```
 
@@ -44,6 +47,7 @@
 - Claude mirror: `.claude/skills`
 - sync: `./scripts/sync-harness-docs.sh copy`
 - consistency: `./scripts/verify-harness-consistency.sh`
+- architecture: `./scripts/verify-architecture-rules.sh`
 
 ## 마감 기준
 

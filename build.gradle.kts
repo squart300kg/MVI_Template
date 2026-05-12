@@ -25,10 +25,17 @@ tasks.register<Exec>("verifyHarnessConsistency") {
   commandLine("bash", "./scripts/verify-harness-consistency.sh")
 }
 
+tasks.register<Exec>("verifyArchitectureRules") {
+  group = "verification"
+  description = "Verifies starter architecture rules for feature navigation and global UI."
+  commandLine("bash", "./scripts/verify-architecture-rules.sh")
+}
+
 tasks.register("qualityGateFast") {
   group = "verification"
   description = "Runs the fast local quality gate for Android assignment work."
   dependsOn("verifyHarnessConsistency")
+  dependsOn("verifyArchitectureRules")
   dependsOn(":app:compileDebugKotlin")
 }
 

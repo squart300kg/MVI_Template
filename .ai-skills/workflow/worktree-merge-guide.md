@@ -19,8 +19,11 @@ description: 작업을 git worktree로 격리하고 PR 생성/갱신, rebase, qu
 
 - base branch는 사용자가 지정한 값을 우선하고, 없으면 현재 tracking branch를 사용합니다.
 - 기존 PR을 이어가는 요청이 아니라면 새 branch와 새 worktree를 만듭니다.
+- 같은 작업 맥락에서 기존 PR을 이어가면 기존 branch/worktree를 재사용합니다.
 - base 최신화는 merge보다 rebase를 우선합니다.
+- rebase 충돌은 `ours/theirs`를 기계적으로 고르지 않고 양쪽 의도를 비교해 해결합니다.
 - PR 병합은 GitHub PR squash merge로 처리하고 로컬 merge로 대체하지 않습니다.
+- 열린 PR 여러 개를 수동으로 병합할 때는 의존성, 변경 범위, 오래된 PR 순으로 우선순위를 명시합니다.
 - 검증 실패 상태에서는 merge하지 않습니다.
 - 이 스킬이 만든 clean worktree만 정리합니다.
 
@@ -34,14 +37,16 @@ description: 작업을 git worktree로 격리하고 PR 생성/갱신, rebase, qu
 6. 변경을 커밋하고 작업 branch를 push합니다.
 7. PR을 생성하거나 기존 PR 본문을 최신 작업 내용으로 갱신합니다.
 8. merge 요청이면 최신 `origin/<base>` 위로 rebase 후 다시 검증합니다.
-9. 검증 통과 후 `gh pr merge --squash`로 병합합니다.
-10. 병합된 branch와 이 스킬이 만든 clean worktree를 정리합니다.
+9. 여러 PR merge 요청이면 열린 PR 목록과 우선순위를 먼저 사용자에게 보고합니다.
+10. 검증 통과 후 `gh pr merge --squash`로 병합합니다.
+11. 병합된 branch와 이 스킬이 만든 clean worktree를 정리합니다.
 
 ## 출력
 
 - base branch와 작업 branch
 - worktree path
 - PR URL
+- PR 우선순위와 처리 순서
 - rebase 결과
 - 검증 명령과 결과
 - merge/cleanup 결과
@@ -52,3 +57,4 @@ description: 작업을 git worktree로 격리하고 PR 생성/갱신, rebase, qu
 - PR 생성 전 `git status --short`가 의도한 변경만 보여주는가
 - `qualityGateFast` 결과를 PR 본문이나 최종 보고에 남겼는가
 - merge 후 base branch가 최신 원격 head를 가리키는가
+- 임시 worktree가 남아 branch 전환을 막지 않는가

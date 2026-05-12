@@ -54,6 +54,7 @@ project-root
 ./gradlew testDebugUnitTest
 ./gradlew lintDebug
 ./gradlew verifyHarnessConsistency
+./gradlew verifyArchitectureRules
 ./gradlew qualityGateFast
 ```
 
@@ -90,12 +91,14 @@ Skill 원본과 mirror는 다음 구조를 사용합니다.
 ```bash
 ./scripts/sync-harness-docs.sh copy
 ./scripts/verify-harness-consistency.sh
+./scripts/verify-architecture-rules.sh
 ```
 
 Gradle에서도 같은 검증을 실행할 수 있습니다.
 
 ```bash
 ./gradlew verifyHarnessConsistency
+./gradlew verifyArchitectureRules
 ```
 
 ## Assignment Workflow
@@ -104,5 +107,7 @@ Gradle에서도 같은 검증을 실행할 수 있습니다.
 2. 필요한 model, repository interface, use case를 domain부터 추가합니다.
 3. repository/network/database 구현을 연결합니다.
 4. Compose Content는 stateless하게 두고 ViewModel wrapper에서 state/effect를 연결합니다.
-5. ViewModel 또는 mapper 테스트를 추가합니다.
-6. `./gradlew qualityGateFast`로 마감 검증을 실행합니다.
+5. 화면 이동은 ViewModel의 `navigateTo`, `navigateBack`, `navigateWeb`으로 요청합니다.
+6. 로딩/에러는 `launchWithCatching`과 `globalUiBus` 경로로 처리합니다.
+7. ViewModel 또는 mapper 테스트를 추가합니다.
+8. `./gradlew qualityGateFast`로 마감 검증을 실행합니다.

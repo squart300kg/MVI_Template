@@ -1,4 +1,13 @@
 #!/usr/bin/env bash
+# 역할: AGENTS/CLAUDE 문서와 .ai-skills 원본을 Codex/Claude skill mirror로 동기화합니다.
+# 입력/실행:
+#   - ./scripts/sync-harness-docs.sh copy
+#   - 입력이 없으면 copy 명령을 기본값으로 사용합니다.
+# 예상 결과:
+#   - CLAUDE.md가 AGENTS.md와 같아지고 .agents/.claude skill mirror가 재생성됩니다.
+# 주요 동작:
+#   - AGENTS.md를 CLAUDE.md로 복사합니다.
+#   - .ai-skills/*.md를 mirror의 SKILL.md 구조로 변환합니다.
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -69,6 +78,24 @@ if [[ ${#SOURCES[@]} -eq 0 ]]; then
   exit 1
 fi
 
+skill_path_for_source() {
+  local rel="$1"
+  local without_ext="${rel%.md}"
+
+  if [[ "$without_ext" == */* ]]; then
+    local parent="${without_ext%/*}"
+    local leaf="${without_ext##*/}"
+    local parent_leaf="${parent##*/}"
+
+    if [[ "$leaf" == "$parent_leaf" ]]; then
+      printf '%s\n' "$parent"
+      return
+    fi
+  fi
+
+  printf '%s\n' "$without_ext"
+}
+
 sync_dest() {
   local dest_root="$1"
   local label="$2"
@@ -79,7 +106,8 @@ sync_dest() {
 
   for src in "${SOURCES[@]}"; do
     local rel="${src#${SOURCE_DIR}/}"
-    local skill="${rel%.md}"
+    local skill
+    skill="$(skill_path_for_source "$rel")"
     local dest_file="$dest_root/$skill/SKILL.md"
 
     mkdir -p "$(dirname "$dest_file")"
