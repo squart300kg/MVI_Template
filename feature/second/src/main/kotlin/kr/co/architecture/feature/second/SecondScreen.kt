@@ -23,7 +23,6 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import kr.co.architecture.core.ui.SecondRoute
-import kr.co.architecture.core.ui.util.asString
 
 fun NavGraphBuilder.secondScreen() {
   composable<SecondRoute> {
@@ -73,7 +72,7 @@ fun SecondScreen(
                     color = Color.LightGray
                 )
                 .padding(8.dp),
-            text = item.name.asString(),
+            text = item.name,
             style = TextStyle(
               fontSize = 20.sp,
             )

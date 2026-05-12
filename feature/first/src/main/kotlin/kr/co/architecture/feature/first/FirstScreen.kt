@@ -26,7 +26,6 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import kr.co.architecture.core.ui.FirstRoute
-import kr.co.architecture.core.ui.util.asString
 
 fun NavGraphBuilder.firstScreen() {
   composable<FirstRoute> {
@@ -83,7 +82,7 @@ fun FirstScreen(
                 )
                 .padding(8.dp)
                 .clickable(onClick = { onClickedItem(item) }),
-              text = item.name.asString(),
+              text = item.name,
               style = TextStyle(
                 fontSize = 20.sp,
               )

@@ -19,7 +19,7 @@ class FirstViewModel @Inject constructor(
         navigateTo(
           route = DetailRoute(
             id = event.item.id,
-            name = event.item.name.value ?: ""
+            name = event.item.name
           )
         )
       }

@@ -22,7 +22,6 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import kr.co.architecture.core.ui.DetailRoute
-import kr.co.architecture.core.ui.util.asString
 
 fun NavGraphBuilder.detailScreen() {
   composable<DetailRoute> {
@@ -75,10 +74,10 @@ fun DetailScreen(
             .padding(10.dp)
         ) {
           Text(
-            text = "ID : ${uiState.id.asString()}"
+            text = "ID : ${uiState.id}"
           )
           Text(
-            text = uiState.name.asString()
+            text = uiState.name
           )
         }
       }
