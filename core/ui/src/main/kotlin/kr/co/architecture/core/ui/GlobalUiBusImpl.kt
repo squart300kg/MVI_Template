@@ -47,8 +47,8 @@ internal class GlobalUiBusImpl @Inject constructor(): GlobalUiBus {
      */
     val (title, contents) = when (throwable) {
       is ArchitectureSampleHttpFailure.Error -> {
-        UiText.DynamicString(throwable.code) to
-          UiText.DynamicString(throwable.message)
+        UiText.PlainText(throwable.code) to
+          UiText.PlainText(throwable.message)
       }
       is ArchitectureSampleHttpFailure.Exception -> {
         when (throwable) {
@@ -58,19 +58,19 @@ internal class GlobalUiBusImpl @Inject constructor(): GlobalUiBus {
           }
           is ArchitectureSampleHttpFailure.Exception.Unknown -> {
             (throwable.message?.let {
-              UiText.DynamicString(it)
+              UiText.PlainText(it)
             } ?: run {
               UiText.StringResource(R.string.unknownError)
-            }) to UiText.DynamicString(throwable.stackTraceToString())
+            }) to UiText.PlainText(throwable.stackTraceToString())
           }
         }
       }
       else -> {
         (throwable.message?.let {
-          UiText.DynamicString(it)
+          UiText.PlainText(it)
         } ?: run {
           UiText.StringResource(R.string.unknownError)
-        }) to UiText.DynamicString(throwable.stackTraceToString())
+        }) to UiText.PlainText(throwable.stackTraceToString())
       }
     }
 

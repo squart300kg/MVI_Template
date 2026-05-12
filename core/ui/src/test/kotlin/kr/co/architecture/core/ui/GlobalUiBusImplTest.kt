@@ -4,6 +4,8 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
+import kr.co.architecture.core.model.ArchitectureSampleHttpFailure
+import kr.co.architecture.core.ui.util.UiText
 import kr.co.architecture.test.testing.util.MainDispatcherRule
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
@@ -116,6 +118,34 @@ class GlobalUiBusImplTest {
 
     // THEN
     assertNotNull(bus.failureDialog.value)
+
+    job.cancel()
+  }
+
+  @Test
+  fun `서버 에러 문자열은 표시 슬롯에서 PlainText로 전달된다`() = runTest {
+    // GIVEN
+    val job = bus.failureDialog.launchIn(this)
+
+    // WHEN
+    bus.showFailureDialog(
+      ArchitectureSampleHttpFailure.Error(
+        code = "400",
+        message = "Bad Request"
+      )
+    )
+    advanceUntilIdle()
+
+    // THEN
+    val dialog = bus.failureDialog.value
+    assertEquals(
+      UiText.PlainText("400"),
+      dialog?.titleMessage
+    )
+    assertEquals(
+      UiText.PlainText("Bad Request"),
+      dialog?.contentMessage
+    )
 
     job.cancel()
   }
