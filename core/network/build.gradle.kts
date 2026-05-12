@@ -6,14 +6,40 @@ plugins {
 }
 
 val properties = Properties()
-properties.load(project.rootProject.file("local.properties").inputStream())
+val localPropertiesFile = project.rootProject.file("local.properties")
+if (localPropertiesFile.exists()) {
+  properties.load(localPropertiesFile.inputStream())
+}
+
+fun propertyOrDefault(
+  name: String,
+  defaultValue: String
+): String {
+  return providers
+    .environmentVariable(name)
+    .orElse(providers.gradleProperty(name))
+    .orElse(properties[name]?.toString() ?: defaultValue)
+    .get()
+}
+
+fun quotedBuildConfigValue(value: String): String {
+  return "\"${value.replace("\\", "\\\\").replace("\"", "\\\"")}\""
+}
 
 android {
   namespace = "kr.co.architecture.core.network"
 
   defaultConfig {
-    buildConfigField("String", "apiKey", "${properties["apiKey"]}")
-    buildConfigField("String", "apiUrl", "${properties["apiUrl"]}")
+    buildConfigField(
+      "String",
+      "apiKey",
+      quotedBuildConfigValue(propertyOrDefault("apiKey", ""))
+    )
+    buildConfigField(
+      "String",
+      "apiUrl",
+      quotedBuildConfigValue(propertyOrDefault("apiUrl", "https://newsapi.org/"))
+    )
   }
 
   dependencies {
@@ -26,4 +52,3 @@ android {
     implementation(libs.com.github.skydoves.sandwich.retrofit)
   }
 }
-

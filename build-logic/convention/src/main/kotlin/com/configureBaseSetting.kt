@@ -14,6 +14,9 @@ internal fun Project.configureBaseSetting(
   pluginManager.apply("org.jetbrains.kotlin.plugin.serialization")
 
   commonExtension.apply {
+    buildFeatures {
+      buildConfig = true
+    }
     when (this) {
       is ApplicationExtension -> {
         defaultConfig {

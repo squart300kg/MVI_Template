@@ -1,4 +1,5 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
+import org.gradle.api.tasks.Exec
 
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 buildscript {
@@ -16,6 +17,19 @@ plugins {
   alias(libs.plugins.compose.compiler) apply false
   alias(libs.plugins.org.jetbrains.kotlin.plugin.serialization) apply false
   alias(libs.plugins.android.test) apply false
+}
+
+tasks.register<Exec>("verifyHarnessConsistency") {
+  group = "verification"
+  description = "Verifies AGENTS/CLAUDE and .ai-skills mirror consistency."
+  commandLine("bash", "./scripts/verify-harness-consistency.sh")
+}
+
+tasks.register("qualityGateFast") {
+  group = "verification"
+  description = "Runs the fast local quality gate for Android assignment work."
+  dependsOn("verifyHarnessConsistency")
+  dependsOn(":app:compileDebugKotlin")
 }
 
 subprojects {
@@ -37,6 +51,15 @@ subprojects {
           )
         )
       }
+    }
+  }
+}
+
+gradle.projectsEvaluated {
+  tasks.named("qualityGateFast").configure {
+    subprojects.forEach { subproject ->
+      subproject.tasks.findByName("testDebugUnitTest")?.let { dependsOn(it) }
+      subproject.tasks.findByName("lintDebug")?.let { dependsOn(it) }
     }
   }
 }

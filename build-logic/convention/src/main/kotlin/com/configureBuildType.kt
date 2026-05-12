@@ -3,30 +3,46 @@ package com
 import com.android.build.api.dsl.ApplicationExtension
 import com.android.build.api.dsl.CommonExtension
 import org.gradle.api.Project
-import org.gradle.kotlin.dsl.dependencies
-import org.gradle.kotlin.dsl.provideDelegate
 
 internal fun Project.configureBuildType(
   commonExtension: CommonExtension<*, *, *, *, *, *>,
 ) {
+  val releaseStoreFile = file("./keystore/ssyssy.jks")
+  val releaseStorePassword = providers
+    .environmentVariable("RELEASE_PASSWD")
+    .orElse(providers.gradleProperty("RELEASE_KEYSTORE_PASSWORD"))
+    .orNull
+  val releaseKeyAlias = providers
+    .environmentVariable("RELEASE_KEY_ALIAS")
+    .orElse(providers.gradleProperty("RELEASE_KEY_ALIAS"))
+    .orNull
+  val releaseKeyPassword = providers
+    .environmentVariable("RELEASE_KEY_PASSWD")
+    .orElse(providers.gradleProperty("RELEASE_KEY_PASSWORD"))
+    .orNull
+  val hasReleaseSigning = releaseStoreFile.exists() &&
+    !releaseStorePassword.isNullOrBlank() &&
+    !releaseKeyAlias.isNullOrBlank() &&
+    !releaseKeyPassword.isNullOrBlank()
+
   commonExtension.apply {
     signingConfigs {
-      create("release") {
-        val RELEASE_KEYSTORE_PASSWORD: String by this@configureBuildType
-        val RELEASE_KEY_ALIAS: String by this@configureBuildType
-        val RELEASE_KEY_PASSWORD: String by this@configureBuildType
-
-        storeFile = this@configureBuildType.file("./keystore/ssyssy.jks")
-        storePassword = System.getenv("RELEASE_PASSWD") ?: RELEASE_KEYSTORE_PASSWORD
-        keyAlias = System.getenv("RELEASE_KEY_ALIAS") ?: RELEASE_KEY_ALIAS
-        keyPassword = System.getenv("RELEASE_KEY_PASSWD") ?: RELEASE_KEY_PASSWORD
+      if (hasReleaseSigning) {
+        create("release") {
+          storeFile = releaseStoreFile
+          storePassword = releaseStorePassword
+          keyAlias = releaseKeyAlias
+          keyPassword = releaseKeyPassword
+        }
       }
     }
     (this as? ApplicationExtension)?.apply {
       buildTypes {
         getByName("release") {
 //          isDebuggable = true
-          signingConfig = signingConfigs.getByName("release")
+          if (hasReleaseSigning) {
+            signingConfig = signingConfigs.getByName("release")
+          }
         }
       }
     }
@@ -42,7 +58,5 @@ internal fun Project.configureBuildType(
         )
       }
     }
-
-    dependencies { }
   }
 }
