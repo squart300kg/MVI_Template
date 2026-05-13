@@ -17,22 +17,32 @@ Clean Architecture 의존 방향을 지키면서 기능의 domain/data 경계를
 
 ## 핵심 원칙
 
+### 의존 경계
+
 - `core:domain`은 Android, Retrofit, Room, Compose에 의존하지 않습니다.
 - repository interface와 UseCase는 `core:domain`에 둡니다.
 - layer 간 공유되는 앱 모델은 `core:model`에 둡니다.
+
+### 구현 경계
+
 - repository 구현체와 mapper는 `core:repository`에 둡니다.
 - DTO/API는 `core:network`, Entity/DAO는 `core:database`에 둡니다.
 - feature는 repository 구현체가 아니라 UseCase 또는 domain repository interface에 의존합니다.
 
 ## 절차
 
+### 계약 정의
+
 1. 화면이 필요한 데이터를 `core:model`의 model로 먼저 정의합니다.
 2. `core:domain`에 repository interface를 만들고 필요한 suspend API를 선언합니다.
 3. 한 책임만 가진 UseCase를 `core:domain`에 추가합니다.
-4. 외부 API가 필요하면 `core:network`에 DTO와 Retrofit API를 추가합니다.
-5. 로컬 저장이 필요하면 `core:database`에 Entity/DAO를 추가합니다.
-6. `core:repository`에서 DTO/Entity를 model로 변환하고 interface 구현체를 만듭니다.
-7. Hilt binding을 추가해 feature ViewModel에서 UseCase를 주입합니다.
+
+### 데이터 구현
+
+1. 외부 API가 필요하면 `core:network`에 DTO와 Retrofit API를 추가합니다.
+2. 로컬 저장이 필요하면 `core:database`에 Entity/DAO를 추가합니다.
+3. `core:repository`에서 DTO/Entity를 model로 변환하고 interface 구현체를 만듭니다.
+4. Hilt binding을 추가해 feature ViewModel에서 UseCase를 주입합니다.
 
 ## 출력
 

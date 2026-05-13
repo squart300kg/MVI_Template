@@ -17,13 +17,21 @@ Compose UI를 feature module 구조와 MVI 경계에 맞게 작성하고, 눈으
 
 ## 핵심 원칙
 
+### Composable 경계
+
 - Route entry Composable과 stateless Content Composable을 분리합니다.
 - Wrapper는 ViewModel state 수집과 effect collect만 담당합니다.
 - Content는 `uiState`와 callback만 받아 렌더링합니다.
 - `modifier: Modifier = Modifier`는 가능한 마지막 파라미터에 둡니다.
+
+### 리소스와 공통 UI
+
 - 문자열, 색상, 치수는 resource 또는 theme token을 우선합니다.
 - 전역 progress와 에러 메시지 다이얼로그는 feature Composable이 직접 그리지 않고 [ui-dialog-bottomsheet-guide](ui-dialog-bottomsheet-guide.md)를 따릅니다.
 - Screen/Content Composable은 `NavHostController`를 직접 받지 않고 [ui-navigation-guide](ui-navigation-guide.md)의 ViewModel callback 경로를 사용합니다.
+
+### Preview와 공통화
+
 - 가능하면 ViewModel wrapper가 아니라 Content Composable을 Preview합니다.
 - 한 번만 쓰는 UI는 공통화하지 않고, 2곳 이상 반복되면 feature 내부 공통 Composable을 먼저 고려합니다.
 
@@ -37,13 +45,18 @@ Compose UI를 feature module 구조와 MVI 경계에 맞게 작성하고, 눈으
 
 ## 절차
 
+### 구조 작성
+
 1. 기존 feature의 `firstScreen`, `secondScreen`, `detailScreen` 패턴을 확인합니다.
 2. `NavGraphBuilder` 확장 함수에서 route entry를 등록합니다.
 3. ViewModel wrapper에서 `collectAsStateWithLifecycle()`을 사용합니다.
 4. Content Composable을 만들고 state/callback을 hoist합니다.
 5. loading/error는 ViewModel의 `launchWithCatching`과 `globalUiBus` 경로로 처리되게 둡니다.
-6. 상태가 2개 이상이면 `PreviewParameterProvider`를 사용하고, 단순 상태는 간단 Preview로 확인합니다.
-7. 공통화가 필요하면 기존 화면 동작을 바꾸지 않는 범위에서 Composable만 추출합니다.
+
+### Preview와 추출
+
+1. 상태가 2개 이상이면 `PreviewParameterProvider`를 사용하고, 단순 상태는 간단 Preview로 확인합니다.
+2. 공통화가 필요하면 기존 화면 동작을 바꾸지 않는 범위에서 Composable만 추출합니다.
 
 ## 출력
 
@@ -80,10 +93,15 @@ private fun SampleContent(
 
 ## 점검
 
+### 경계 점검
+
 - Composable이 repository/use case를 직접 호출하지 않는가
 - ViewModel이 UI rendering detail을 알지 않는가
 - feature Composable이 `BaseProgressBar`, 전역 `BaseCenterDialog`, `NavHostController`를 직접 사용하지 않는가
 - `UiText.asString()`이 Composable 표시 경계 밖으로 새지 않았는가
+
+### 품질 점검
+
 - 텍스트가 하드코딩으로 과하게 남지 않았는가
 - Preview가 빌드 가능한가
 - 공통 Composable API가 화면별 세부 구현을 과하게 노출하지 않는가

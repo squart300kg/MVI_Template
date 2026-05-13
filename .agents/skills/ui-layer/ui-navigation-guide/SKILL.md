@@ -18,23 +18,36 @@ description: Typed route, NavGraphBuilder 확장, bottom tab navigation, ViewMod
 
 ## 핵심 원칙
 
+### Route 등록
+
 - route model은 [NavigationRoute.kt](../../core/ui/src/main/kotlin/kr/co/architecture/core/ui/NavigationRoute.kt)에 둡니다.
 - 각 feature는 자체 `NavGraphBuilder.<feature>Screen()` 확장 함수를 제공합니다.
 - root 등록은 [MainActivity.kt](../../app/src/main/kotlin/kr/co/architecture/app/MainActivity.kt)의 `NavHost`에서 수행합니다.
+
+### Navigation 경계
+
 - `NavHostController`는 root/router 계층에서만 소유합니다.
 - Screen/Content Composable은 `NavHostController`, `NavController`, `LocalUriHandler`를 직접 받거나 호출하지 않습니다.
 - 화면 이동은 ViewModel의 `navigateTo(Route)`, `navigateBack()`, `navigateWeb(url)` 메서드로만 요청합니다.
 - Composable은 navigation 이벤트를 ViewModel event/callback으로 전달하고 직접 `navigate(...)`, `popBackStack()`을 호출하지 않습니다.
+
+### Argument 처리
+
 - Composable에서 argument를 직접 오래 보관하지 않고 ViewModel 또는 typed route 입력으로 넘깁니다.
 
 ## 절차
 
+### Route 등록
+
 1. `@Serializable` route를 추가합니다.
 2. feature `Screen.kt`에 `composable<Route>` 등록 함수를 추가합니다.
 3. root `NavHost`에 feature registration을 추가합니다.
-4. 사용자 액션은 `setEvent(...)` 또는 ViewModel callback으로 전달합니다.
-5. ViewModel에서 `navigateTo(Route)`, `navigateBack()`, `navigateWeb(url)` 중 하나를 호출합니다.
-6. bottom tab이면 [MainBottomTab.kt](../../app/src/main/kotlin/kr/co/architecture/app/ui/navigation/MainBottomTab.kt)과 icon/string resource를 함께 수정합니다.
+
+### 이동 연결
+
+1. 사용자 액션은 `setEvent(...)` 또는 ViewModel callback으로 전달합니다.
+2. ViewModel에서 `navigateTo(Route)`, `navigateBack()`, `navigateWeb(url)` 중 하나를 호출합니다.
+3. bottom tab이면 [MainBottomTab.kt](../../app/src/main/kotlin/kr/co/architecture/app/ui/navigation/MainBottomTab.kt)과 icon/string resource를 함께 수정합니다.
 
 ## 출력
 
@@ -73,9 +86,14 @@ internal fun SampleRoute(
 
 ## 점검
 
+### Route 점검
+
 - route argument 타입이 직렬화 가능한가
 - feature Composable이 `NavHostController`나 `NavController`를 import하지 않는가
 - feature Composable에서 `navigate(...)`, `popBackStack()`, `LocalUriHandler`를 직접 쓰지 않았는가
+
+### 이동 점검
+
 - 화면 이동이 ViewModel의 `navigateTo`, `navigateBack`, `navigateWeb`로 모였는가
 - startDestination과 bottom tab current state가 맞는가
 - back stack 동작이 기존 화면과 충돌하지 않는가

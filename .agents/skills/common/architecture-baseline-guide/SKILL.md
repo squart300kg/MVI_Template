@@ -17,23 +17,36 @@ description: MVI Template에서 Android 기능을 추가하거나 수정할 때 
 
 ## 핵심 원칙
 
+### 모듈 경계
+
 - feature는 `*Contract.kt`, `*ViewModel.kt`, `*Screen.kt`를 함께 유지합니다.
 - repository interface는 `core:domain`, 구현체는 `core:repository`에 둡니다.
 - DTO는 `core:network`, 공유 model은 `core:model`에 둡니다.
 - 공통 UI와 MVI base type은 `core:ui`를 우선 사용합니다.
+
+### 화면 경계
+
 - navigation은 typed route, `NavGraphBuilder` 확장, ViewModel `navigateTo`/`navigateBack`/`navigateWeb` 패턴을 유지합니다.
 - 전역 loading/error는 feature state가 아니라 `BaseViewModel.launchWithCatching`과 `GlobalUiBus` 경로를 사용합니다.
+
+### 보조 기준
+
 - 코드 스타일과 단순화 기준은 [common-coding-guide](common-coding-guide.md), Gradle 실패 분석은 [build](build.md)를 따릅니다.
 
 ## 절차
+
+### 구조 설계
 
 1. 변경할 화면과 데이터 흐름이 어느 모듈에 속하는지 먼저 정합니다.
 2. UI state/event/effect를 Contract에 정의합니다.
 3. ViewModel은 event 처리, state 갱신, side effect 발생만 담당하게 둡니다.
 4. 데이터가 필요하면 domain use case와 repository interface부터 추가합니다.
 5. 화면 이동과 loading/error가 공통 경로를 쓰는지 확인합니다.
-6. 작업 중 빠른 확인은 `./gradlew :app:compileDebugKotlin`을 실행합니다.
-7. 완료 전에는 `./gradlew qualityGateFast`를 실행합니다.
+
+### 검증
+
+1. 작업 중 빠른 확인은 `./gradlew :app:compileDebugKotlin`을 실행합니다.
+2. 완료 전에는 `./gradlew qualityGateFast`를 실행합니다.
 
 ## 출력
 
