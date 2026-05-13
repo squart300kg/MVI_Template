@@ -18,21 +18,31 @@ description: 전역 error/loading UI와 화면 전용 Dialog/BottomSheet 상태,
 
 ## 핵심 원칙
 
+### 전역 UI
+
 - 공통 에러 메시지 다이얼로그는 feature-local dialog가 아니라 ViewModel의 `globalUiBus.showFailureDialog(...)` 또는 `launchWithCatching` 경로를 사용합니다.
 - `BaseCenterDialog`는 [MainActivity.kt](../../app/src/main/kotlin/kr/co/architecture/app/MainActivity.kt)에서 `globalUiBus.failureDialog`를 구독해 표시하는 전역 경로를 우선합니다.
+- loading은 feature 화면에 별도 progress state를 만들지 않고 [GlobalUiBus.kt](../../core/ui/src/main/kotlin/kr/co/architecture/core/ui/GlobalUiBus.kt) 경로를 사용합니다.
+
+### 화면 전용 UI
+
 - 화면 전용 Dialog 상태는 `UiState`에 명시적으로 둡니다.
 - Dialog wrapper와 content를 분리합니다.
 - confirm/dismiss callback은 화면에서 주입합니다.
-- loading은 feature 화면에 별도 progress state를 만들지 않고 [GlobalUiBus.kt](../../core/ui/src/main/kotlin/kr/co/architecture/core/ui/GlobalUiBus.kt) 경로를 사용합니다.
 
 ## 절차
+
+### 역할 구분
 
 1. 에러 메시지 표시인지 사용자 선택/입력 플로우인지 먼저 구분합니다.
 2. 에러 메시지나 전역 loading이라면 feature dialog/progress를 만들지 않고 ViewModel의 `launchWithCatching` 또는 `globalUiBus.showFailureDialog(...)`를 사용합니다.
 3. 사용자 선택/입력 플로우라면 상태 필드와 event를 Contract에 추가합니다.
-4. ViewModel에서 표시/닫기 상태를 갱신합니다.
-5. Composable은 상태에 따라 Dialog를 렌더링합니다.
-6. 주요 상태 Preview를 추가합니다.
+
+### 구현과 확인
+
+1. ViewModel에서 표시/닫기 상태를 갱신합니다.
+2. Composable은 상태에 따라 Dialog를 렌더링합니다.
+3. 주요 상태 Preview를 추가합니다.
 
 ## 출력
 
