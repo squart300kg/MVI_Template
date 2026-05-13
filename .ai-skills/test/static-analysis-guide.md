@@ -74,7 +74,7 @@ description: qualityGateFast, Android lint, 하네스 정합성 검증을 추가
 #### Script / Harness
 
 - `SA-SCRIPT-001`: `scripts/*.sh`는 `shell-script-guide`의 필수 헤더를 가집니다.
-- `SA-HARNESS-001`: `.ai-skills` 원본과 `.agents`/`.claude` mirror는 sync 결과와 일치해야 합니다.
+- `SA-HARNESS-001`: `.ai-skills` 원본과 생성된 `.agents`/`.claude` local mirror는 sync 결과와 일치해야 합니다.
 
 ### Detekt Custom Rule
 

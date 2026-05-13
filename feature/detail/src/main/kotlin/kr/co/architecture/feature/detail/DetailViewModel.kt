@@ -14,11 +14,7 @@ class DetailViewModel @Inject constructor(
 
   override fun createInitialState() = DetailUiState()
 
-  override fun handleEvent(event: DetailUiEvent) {
-    when (event) {
-      else -> {}
-    }
-  }
+  override fun handleEvent(event: DetailUiEvent) = Unit
 
   init {
     setEffect { DetailUiSideEffect.Load }

@@ -5,7 +5,7 @@ import org.gradle.api.Project
 import org.gradle.kotlin.dsl.dependencies
 
 internal fun Project.configureDaggerHilt(
-  commonExtension: CommonExtension<*, *, *, *, *, *>,
+  commonExtension: CommonExtension,
 ) {
   pluginManager.apply("com.google.dagger.hilt.android")
   pluginManager.apply("com.google.devtools.ksp")

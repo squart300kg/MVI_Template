@@ -2,7 +2,6 @@ plugins {
   alias(libs.plugins.android.application)
   alias(libs.plugins.architecture.sample.base.setting)
   alias(libs.plugins.architecture.sample.ui)
-  alias(libs.plugins.androidx.baseline.profile)
 }
 
 android {
@@ -18,9 +17,5 @@ android {
     implementation(project(":core:router"))
     implementation(project(":core:domain"))
     implementation(project(":core:repository"))
-    baselineProfile(project(":benchmarks"))
-
-    implementation(libs.androidx.profile.installer)
   }
 }
-

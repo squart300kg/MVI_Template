@@ -74,8 +74,8 @@
 ## 5. 유지 방식
 
 - 스킬 원본: `.ai-skills`
-- Codex mirror: `.agents/skills`
-- Claude mirror: `.claude/skills`
+- Codex mirror: `.agents/skills` (gitignored local sync result)
+- Claude mirror: `.claude/skills` (gitignored local sync result)
 - 문서/스킬 sync: `./scripts/sync-harness-docs.sh copy`
 - 하네스 검증: `./scripts/verify-harness-consistency.sh`
 - 구조 검증: `./scripts/verify-architecture-rules.sh`

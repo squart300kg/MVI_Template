@@ -2,27 +2,21 @@ package com
 
 import com.android.build.api.dsl.ApplicationExtension
 import com.android.build.api.dsl.CommonExtension
-import org.gradle.api.JavaVersion
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.dependencies
 
 internal fun Project.configureBaseSetting(
-  commonExtension: CommonExtension<*, *, *, *, *, *>,
+  commonExtension: CommonExtension,
 ) {
 
-  pluginManager.apply("org.jetbrains.kotlin.android")
   pluginManager.apply("org.jetbrains.kotlin.plugin.serialization")
 
   commonExtension.apply {
-    buildFeatures {
-      buildConfig = true
-    }
+    buildFeatures.buildConfig = true
     when (this) {
       is ApplicationExtension -> {
-        defaultConfig {
-          vectorDrawables {
-            useSupportLibrary = true
-          }
+        defaultConfig.vectorDrawables {
+          useSupportLibrary = true
         }
         packaging {
           resources.excludes += "/META-INF/{AL2.0,LGPL2.1}"

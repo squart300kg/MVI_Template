@@ -1,11 +1,9 @@
 .DS_Store
 .gradle/
 .idea/
+.agents/
+.claude/
 build/
 **/build/
-!.agents/skills/ci-cd/build/
-!.agents/skills/ci-cd/build/SKILL.md
-!.claude/skills/ci-cd/build/
-!.claude/skills/ci-cd/build/SKILL.md
 local.properties
 *.jks
