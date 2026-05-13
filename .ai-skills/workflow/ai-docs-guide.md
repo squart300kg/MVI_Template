@@ -21,7 +21,7 @@ description: MVI Template의 AGENTS/CLAUDE/.ai-skills/.agents/.claude 문서를 
 ### 정본과 동기화
 
 - [.ai-skills](../../.ai-skills)가 skill 원본입니다.
-- [.agents/skills](../../.agents/skills), [.claude/skills](../../.claude/skills), [CLAUDE.md](../../CLAUDE.md)는 sync 결과물입니다.
+- [.agents/skills](../../.agents/skills), [.claude/skills](../../.claude/skills)는 gitignored local sync 결과물이고, [CLAUDE.md](../../CLAUDE.md)는 tracked sync 결과물입니다.
 - 같은 내용은 한 정본에만 적고 다른 문서에서는 링크합니다.
 
 ### 문서 구조
@@ -72,7 +72,7 @@ description: MVI Template의 AGENTS/CLAUDE/.ai-skills/.agents/.claude 문서를 
 ## 출력
 
 - 수정된 원본 문서
-- sync로 갱신된 [CLAUDE.md](../../CLAUDE.md), [.agents/skills](../../.agents/skills), [.claude/skills](../../.claude/skills)
+- sync로 갱신된 [CLAUDE.md](../../CLAUDE.md)와 local mirror인 [.agents/skills](../../.agents/skills), [.claude/skills](../../.claude/skills)
 - 실행한 검증 명령과 결과
 
 ### 기본 템플릿

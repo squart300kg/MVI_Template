@@ -1,6 +1,7 @@
 import io.gitlab.arturbosch.detekt.Detekt
 import org.gradle.api.tasks.Exec
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 buildscript {
@@ -74,13 +75,15 @@ tasks.register("qualityGateFast") {
 }
 
 subprojects {
-  tasks.withType<KotlinCompilationTask<*>>().configureEach {
+  tasks.withType<KotlinCompile>().configureEach {
     compilerOptions {
+      val composeCompilerDir = project.layout.buildDirectory.dir("compose_compiler").get().asFile.absolutePath
+      jvmTarget.set(JvmTarget.JVM_17)
       if (project.findProperty("composeCompilerReports") == "true") {
         freeCompilerArgs.addAll(
           listOf(
             "-P",
-            "plugin:androidx.compose.compiler.plugins.kotlin:reportsDestination=${project.buildDir}/compose_compiler"
+            "plugin:androidx.compose.compiler.plugins.kotlin:reportsDestination=$composeCompilerDir"
           )
         )
       }
@@ -88,7 +91,7 @@ subprojects {
         freeCompilerArgs.addAll(
           listOf(
             "-P",
-            "plugin:androidx.compose.compiler.plugins.kotlin:metricsDestination=${project.buildDir}/compose_compiler"
+            "plugin:androidx.compose.compiler.plugins.kotlin:metricsDestination=$composeCompilerDir"
           )
         )
       }

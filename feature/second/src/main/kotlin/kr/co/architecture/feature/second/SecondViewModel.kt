@@ -12,11 +12,7 @@ class SecondViewModel @Inject constructor(
 
   override fun createInitialState() = SecondUiState()
 
-  override fun handleEvent(event: SecondUiEvent) {
-    when (event) {
-      else -> {}
-    }
-  }
+  override fun handleEvent(event: SecondUiEvent) = Unit
 
   init { setEffect { SecondUiSideEffect.Load } }
 

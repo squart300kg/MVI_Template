@@ -29,7 +29,7 @@ import org.gradle.kotlin.dsl.getByType
 val Project.libs
   get(): VersionCatalog = extensions.getByType<VersionCatalogsExtension>().named("libs")
 
-internal fun Project.getBasePluginExtension(): CommonExtension<*, *, *, *, *, *>? =
+internal fun Project.getBasePluginExtension(): CommonExtension? =
   when {
     plugins.hasPlugin("com.android.application") -> extensions.getByType<ApplicationExtension>()
     plugins.hasPlugin("com.android.library") -> extensions.getByType<LibraryExtension>()

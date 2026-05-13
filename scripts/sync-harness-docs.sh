@@ -4,7 +4,7 @@
 #   - ./scripts/sync-harness-docs.sh copy
 #   - 입력이 없으면 copy 명령을 기본값으로 사용합니다.
 # 예상 결과:
-#   - CLAUDE.md가 AGENTS.md와 같아지고 .agents/.claude skill mirror가 재생성됩니다.
+#   - CLAUDE.md가 AGENTS.md와 같아지고 gitignored .agents/.claude skill mirror가 재생성됩니다.
 # 주요 동작:
 #   - AGENTS.md를 CLAUDE.md로 복사합니다.
 #   - .ai-skills/*.md를 mirror의 SKILL.md 구조로 변환합니다.
@@ -22,7 +22,7 @@ usage() {
 Usage: $(basename "$0") [copy]
 
 Commands:
-  copy    Sync AGENTS.md to CLAUDE.md and mirror .ai-skills into .agents/.claude
+  copy    Sync AGENTS.md to CLAUDE.md and mirror .ai-skills into gitignored .agents/.claude
 USAGE
 }
 

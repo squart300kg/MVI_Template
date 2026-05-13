@@ -5,7 +5,7 @@ import com.android.build.api.dsl.CommonExtension
 import org.gradle.api.Project
 
 internal fun Project.configureBuildType(
-  commonExtension: CommonExtension<*, *, *, *, *, *>,
+  commonExtension: CommonExtension,
 ) {
   val releaseStoreFile = file("./keystore/ssyssy.jks")
   val releaseStorePassword = providers
@@ -25,7 +25,7 @@ internal fun Project.configureBuildType(
     !releaseKeyAlias.isNullOrBlank() &&
     !releaseKeyPassword.isNullOrBlank()
 
-  commonExtension.apply {
+  (commonExtension as? ApplicationExtension)?.apply {
     signingConfigs {
       if (hasReleaseSigning) {
         create("release") {
@@ -36,27 +36,24 @@ internal fun Project.configureBuildType(
         }
       }
     }
-    (this as? ApplicationExtension)?.apply {
-      buildTypes {
-        getByName("release") {
-//          isDebuggable = true
-          if (hasReleaseSigning) {
-            signingConfig = signingConfigs.getByName("release")
-          }
+    buildTypes {
+      getByName("release") {
+//        isDebuggable = true
+        if (hasReleaseSigning) {
+          signingConfig = signingConfigs.getByName("release")
         }
       }
     }
-    buildTypes {
-      getByName("release") {
-        // AGP버전 8.4.0부터 라이브러리 모듈 자체적으로 코드축소 실행하여
-        // 'R8: Type a.a is defined multiple times'에러 발생.
-        // 따라서 앱 모듈에만 코드축소 적용
-        isMinifyEnabled = commonExtension is ApplicationExtension
-        proguardFiles(
-          getDefaultProguardFile("proguard-android-optimize.txt"),
-          "proguard-rules.pro"
-        )
-      }
-    }
+  }
+
+  commonExtension.buildTypes.getByName("release") {
+    // AGP버전 8.4.0부터 라이브러리 모듈 자체적으로 코드축소 실행하여
+    // 'R8: Type a.a is defined multiple times'에러 발생.
+    // 따라서 앱 모듈에만 코드축소 적용
+    isMinifyEnabled = commonExtension is ApplicationExtension
+    proguardFiles(
+      commonExtension.getDefaultProguardFile("proguard-android-optimize.txt"),
+      "proguard-rules.pro"
+    )
   }
 }

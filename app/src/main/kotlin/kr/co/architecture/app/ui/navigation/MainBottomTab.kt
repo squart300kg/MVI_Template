@@ -9,9 +9,9 @@ import kr.co.architecture.core.ui.FirstRoute
 import kr.co.architecture.core.ui.SecondRoute
 
 enum class MainBottomTab(
-  @DrawableRes val selectedIconRes: Int,
-  @DrawableRes val unselectedIconRes: Int,
-  @StringRes val iconTextIdRes: Int,
+  @param:DrawableRes val selectedIconRes: Int,
+  @param:DrawableRes val unselectedIconRes: Int,
+  @param:StringRes val iconTextIdRes: Int,
   val route: Route
 ) {
   FIRST(

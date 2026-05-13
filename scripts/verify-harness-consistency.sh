@@ -3,10 +3,10 @@
 # 입력/실행:
 #   - ./scripts/verify-harness-consistency.sh
 # 예상 결과:
-#   - AGENTS/CLAUDE와 .ai-skills mirror가 일치하면 성공합니다.
+#   - AGENTS/CLAUDE와 .ai-skills 원본이 유효하고, 로컬 mirror가 있으면 일치할 때 성공합니다.
 #   - 불일치, 누락, 이전 프로젝트 residue, script 헤더 누락이 있으면 실패합니다.
 # 주요 동작:
-#   - 원본/mirror skill 파일을 비교합니다.
+#   - 원본 skill 파일을 확인하고, 생성된 mirror가 있으면 비교합니다.
 #   - scripts/*.sh 필수 헤더와 문법을 확인합니다.
 set -euo pipefail
 
@@ -39,8 +39,19 @@ require_dir() {
 require_file "$REPO_ROOT/AGENTS.md"
 require_file "$REPO_ROOT/CLAUDE.md"
 require_dir "$SOURCE_DIR"
-require_dir "$AGENTS_DEST"
-require_dir "$CLAUDE_DEST"
+
+CHECK_AGENTS_MIRROR=0
+CHECK_CLAUDE_MIRROR=0
+if [[ -d "$AGENTS_DEST" ]]; then
+  CHECK_AGENTS_MIRROR=1
+else
+  echo "[harness] .agents mirror not found; skipped. Run ./scripts/sync-harness-docs.sh copy to generate it."
+fi
+if [[ -d "$CLAUDE_DEST" ]]; then
+  CHECK_CLAUDE_MIRROR=1
+else
+  echo "[harness] .claude mirror not found; skipped. Run ./scripts/sync-harness-docs.sh copy to generate it."
+fi
 
 if [[ -f "$REPO_ROOT/AGENTS.md" && -f "$REPO_ROOT/CLAUDE.md" ]]; then
   if ! cmp -s "$REPO_ROOT/AGENTS.md" "$REPO_ROOT/CLAUDE.md"; then
@@ -100,8 +111,12 @@ compare_mirror_file() {
 
 while IFS= read -r src; do
   check_skill_frontmatter "$src"
-  compare_mirror_file "$src" "$AGENTS_DEST" "agents"
-  compare_mirror_file "$src" "$CLAUDE_DEST" "claude"
+  if [[ "$CHECK_AGENTS_MIRROR" -eq 1 ]]; then
+    compare_mirror_file "$src" "$AGENTS_DEST" "agents"
+  fi
+  if [[ "$CHECK_CLAUDE_MIRROR" -eq 1 ]]; then
+    compare_mirror_file "$src" "$CLAUDE_DEST" "claude"
+  fi
 done < <(find "$SOURCE_DIR" -type f -name '*.md' | sort)
 
 check_extra_mirror_files() {
@@ -120,8 +135,12 @@ check_extra_mirror_files() {
   done < <(find "$dest_root" -type f -name 'SKILL.md' | sort)
 }
 
-check_extra_mirror_files "$AGENTS_DEST" "agents"
-check_extra_mirror_files "$CLAUDE_DEST" "claude"
+if [[ "$CHECK_AGENTS_MIRROR" -eq 1 ]]; then
+  check_extra_mirror_files "$AGENTS_DEST" "agents"
+fi
+if [[ "$CHECK_CLAUDE_MIRROR" -eq 1 ]]; then
+  check_extra_mirror_files "$CLAUDE_DEST" "claude"
+fi
 
 check_shell_script_headers() {
   local script="$1"

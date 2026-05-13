@@ -6,10 +6,8 @@ import org.gradle.api.Project
 import org.gradle.kotlin.dsl.dependencies
 
 internal fun Project.configureBenchmarks(
-  commonExtension: CommonExtension<*, *, *, *, *, *>,
+  commonExtension: CommonExtension,
 ) {
-  pluginManager.apply("org.jetbrains.kotlin.android")
-
   (commonExtension as TestExtension).apply {
     defaultConfig {
       testInstrumentationRunnerArguments["androidx.benchmark.fullTracing.enable"] = "true"
