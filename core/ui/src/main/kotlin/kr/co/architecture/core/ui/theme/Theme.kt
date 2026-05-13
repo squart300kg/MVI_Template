@@ -1,13 +1,7 @@
 package kr.co.architecture.core.ui.theme
 
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.ime
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.systemBars
-import androidx.compose.foundation.layout.union
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
@@ -21,12 +15,8 @@ fun BaseTheme(
     colorScheme = if (isSystemInDarkTheme()) DarkColors else LightColors,
     content = {
       Surface(
-        modifier = Modifier
-          .padding(
-            WindowInsets.systemBars
-              .union(WindowInsets.ime) // systemBars + ime 인셋 결합
-              .asPaddingValues())
-          .fillMaxSize()
+        modifier = Modifier.fillMaxSize(),
+        color = MaterialTheme.colorScheme.background
       ) {
         content()
       }
