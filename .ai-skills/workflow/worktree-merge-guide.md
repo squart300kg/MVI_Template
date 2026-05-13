@@ -24,6 +24,11 @@ description: 작업을 git worktree로 격리하고 PR 생성/갱신, rebase, qu
 - 같은 작업 맥락에서 기존 PR을 이어가면 기존 branch/worktree를 재사용합니다.
 - 이 스킬이 만든 clean worktree만 정리합니다.
 
+### 격리 실행
+
+- `$worktree-merge-guide`를 실행할 때는 기존 작업 디렉터리에서 직접 커밋하지 않고, 작업마다 별도 branch와 별도 worktree를 만든 뒤 그 worktree에서만 수정합니다.
+- 기존 PR을 이어가는 경우에도 해당 PR branch와 worktree를 명시적으로 확인한 뒤 그 worktree에서만 커밋합니다.
+
 ### Rebase와 충돌
 
 - base 최신화는 merge보다 rebase를 우선합니다.
@@ -33,7 +38,14 @@ description: 작업을 git worktree로 격리하고 PR 생성/갱신, rebase, qu
 
 ### PR과 merge
 
+#### Commit message
+
+- 이 스킬로 만드는 작업 commit message와 squash merge subject는 한국어로 작성합니다.
+
+#### PR 처리
+
 - PR 병합은 GitHub PR squash merge로 처리하고 로컬 merge로 대체하지 않습니다.
+- 작업 결과는 작업 branch push, PR 생성/갱신, GitHub PR merge 순서로 전달하며 base branch 직접 commit/push로 대체하지 않습니다.
 - 사용자가 `$worktree-merge-guide`로 작업 실행을 맡기면, 명시적으로 PR까지만 요청하지 않는 한 PR 생성에서 멈추지 않고 검증, squash merge, clean worktree 정리까지 완료합니다.
 - 열린 PR 여러 개를 수동으로 병합할 때는 의존성, 변경 범위, 오래된 PR 순으로 우선순위를 명시합니다.
 - 검증 실패 상태에서는 merge하지 않습니다.
@@ -49,14 +61,14 @@ description: 작업을 git worktree로 격리하고 PR 생성/갱신, rebase, qu
 1. [divide-task](./divide-task.md) 기준으로 작업을 단일 에이전트로 유지할지 멀티 에이전트로 나눌지 먼저 판단합니다.
 2. `git status --short --branch`와 `git worktree list`로 현재 상태를 확인합니다.
 3. `git fetch origin --prune` 후 base branch를 확정합니다.
-4. 작업 branch와 worktree를 만들고 해당 worktree에서만 수정합니다.
+4. 작업마다 새 branch와 새 worktree를 만들고 이후 수정, 커밋, push는 해당 worktree에서만 실행합니다.
 
 ### 구현과 PR
 
 1. 구현 전 base가 앞서 있으면 해당 변경 내용과 PR diff를 확인하고 rebase/resolve/검증을 끝낸 뒤 작업을 시작합니다.
 2. 구현 후 [sync-harness-docs.sh](../../scripts/sync-harness-docs.sh) 실행이 필요한지 확인합니다.
 3. `./gradlew qualityGateFast`를 실행합니다.
-4. 변경을 커밋하고 작업 branch를 push합니다.
+4. 변경을 한국어 commit message로 커밋하고 작업 branch를 push합니다.
 5. PR을 생성하거나 기존 PR 본문을 최신 작업 내용으로 갱신합니다.
 
 ### 병합과 정리
@@ -83,8 +95,14 @@ description: 작업을 git worktree로 격리하고 PR 생성/갱신, rebase, qu
 
 ## 점검
 
+### 격리 점검
+
 - 현재 요청과 무관한 worktree나 dirty file을 건드리지 않았는가
+- 작업마다 별도 branch와 별도 worktree를 만들고 해당 worktree에서만 수정/커밋했는가
 - PR 생성 전 `git status --short`가 의도한 변경만 보여주는가
+
+### 병합 점검
+
 - `qualityGateFast` 결과를 PR 본문이나 최종 보고에 남겼는가
 - merge 후 base branch가 최신 원격 head를 가리키는가
 - 임시 worktree가 남아 branch 전환을 막지 않는가

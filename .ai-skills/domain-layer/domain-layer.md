@@ -21,7 +21,12 @@ Clean Architecture 의존 방향을 지키면서 기능의 domain/data 경계를
 
 - `core:domain`은 Android, Retrofit, Room, Compose에 의존하지 않습니다.
 - repository interface와 UseCase는 `core:domain`에 둡니다.
-- layer 간 공유되는 앱 모델은 `core:model`에 둡니다.
+
+### 모델 위치
+
+- `core:domain` 내부에서만 쓰는 model은 `core:domain`에 둡니다.
+- feature, repository, mapper 등 여러 layer가 함께 쓰는 domain model은 `core:model`에 둡니다.
+- DTO/API response와 Room Entity는 domain model로 직접 쓰지 않고 각 data module에서 mapper로 변환합니다.
 
 ### 구현 경계
 
@@ -33,9 +38,10 @@ Clean Architecture 의존 방향을 지키면서 기능의 domain/data 경계를
 
 ### 계약 정의
 
-1. 화면이 필요한 데이터를 `core:model`의 model로 먼저 정의합니다.
-2. `core:domain`에 repository interface를 만들고 필요한 suspend API를 선언합니다.
-3. 한 책임만 가진 UseCase를 `core:domain`에 추가합니다.
+1. 필요한 model이 domain 내부 전용인지 여러 layer 공유 domain model인지 먼저 구분합니다.
+2. domain 내부 전용 model은 `core:domain`, 여러 layer 공유 domain model은 `core:model`에 정의합니다.
+3. `core:domain`에 repository interface를 만들고 필요한 suspend API를 선언합니다.
+4. 한 책임만 가진 UseCase를 `core:domain`에 추가합니다.
 
 ### 데이터 구현
 
